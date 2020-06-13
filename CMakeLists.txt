@@ -141,6 +141,8 @@ if (BUILD_API_EXAMPLES)
     add_subdirectory("examples")
 endif ()
 
+add_subdirectory("bot")
+
 if (BUILD_API_TESTS)
     add_subdirectory("tests")
 endif ()

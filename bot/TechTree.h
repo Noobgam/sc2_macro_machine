@@ -20,10 +20,8 @@ struct TypeData
     bool                    isSupplyProvider= false;
     bool                    isResourceDepot = false;
     bool                    isAddon         = false;
-#ifdef SC2API
     sc2::AbilityID          buildAbility    = 0;     // the ability that creates this item
     sc2::AbilityID          warpAbility     = 0;      // the ability that creates this item via warp-in
-#endif
     std::vector<UnitType>   whatBuilds;       // any of these units can build the item
     std::vector<UnitType>   requiredUnits;    // owning ONE of these is required to make
     std::vector<CCUpgrade>  requiredUpgrades; // having ALL of these is required to make

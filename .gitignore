@@ -63,3 +63,5 @@ doxygen.log
 node_modules
 package.json
 package-lock.json
+
+cmake-build-debug

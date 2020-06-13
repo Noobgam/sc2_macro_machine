@@ -9,7 +9,7 @@ CCBot::CCBot()
     , m_gameCommander(*this)
     , m_techTree(*this)
 {
-    
+
 }
 
 void CCBot::OnGameStart() 

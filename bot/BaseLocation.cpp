@@ -90,13 +90,8 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<Unit> & re
     if (!isStartLocation())
     {
         UnitType depot = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot);
-#ifdef SC2API
         int offsetX = 0;
         int offsetY = 0;
-#else
-        int offsetX = 1;
-        int offsetY = 1;
-#endif
         
         // the position of the depot will be the closest spot we can build one from the resource center
         for (auto & tile : getClosestTiles())

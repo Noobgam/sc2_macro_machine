@@ -285,11 +285,7 @@ bool MapTools::isValidPosition(const CCPosition & pos) const
 
 void MapTools::drawLine(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color) const
 {
-#ifdef SC2API
     m_bot.Debug()->DebugLineOut(sc2::Point3D(x1, y1, terrainHeight(x1, y1) + 0.2f), sc2::Point3D(x2, y2, terrainHeight(x2, y2) + 0.2f), color);
-#else
-    BWAPI::Broodwar->drawLineMap(BWAPI::Position(x1, y1), BWAPI::Position(x2, y2), color);
-#endif
 }
 
 void MapTools::drawLine(const CCPosition & p1, const CCPosition & p2, const CCColor & color) const

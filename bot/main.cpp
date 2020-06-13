@@ -8,6 +8,7 @@
 #include "sc2utils/sc2_manage_process.h"
 #include "sc2api/sc2_api.h"
 
+#define _DEBUG
 #ifdef _DEBUG
 int main(int argc, char* argv[]) 
 {
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
     //          Setting this = N means the bot's onFrame gets called once every N frames
     //          The bot may crash or do unexpected things if its logic is not called every frame
     coordinator.SetStepSize(stepSize);
-    coordinator.SetRealtime(false);
+    coordinator.SetRealtime(true);
 
     coordinator.SetParticipants({
         sc2::CreateParticipant(Util::GetRaceFromString(botRaceString), &bot),

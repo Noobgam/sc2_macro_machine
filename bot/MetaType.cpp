@@ -11,7 +11,6 @@ MetaType::MetaType()
 {
 }
 
-#ifdef SC2API
 MetaType::MetaType(const std::string & name, CCBot & bot)
     : MetaType()
 {
@@ -37,69 +36,7 @@ MetaType::MetaType(const std::string & name, CCBot & bot)
 
     BOT_ASSERT(false, "Could not find MetaType with name: %s", name.c_str());
 }
-#else
-   MetaType::MetaType(const std::string & name, CCBot & bot)
-    : MetaType()
-{
-    m_bot = &bot;
 
-    std::string inputName(name);
-    std::replace(inputName.begin(), inputName.end(), '_', ' ');
-
-    for (const BWAPI::UnitType & unitType : BWAPI::UnitTypes::allUnitTypes())
-    {
-        // check to see if the names match exactly
-        std::string typeName = unitType.getName();
-        std::replace(typeName.begin(), typeName.end(), '_', ' ');
-        if (typeName == inputName)
-        {
-            *this = MetaType(UnitType(unitType, bot), bot);
-            return;
-        }
-
-        // check to see if the names match without the race prefix
-        const std::string & raceName = unitType.getRace().getName();
-        if ((typeName.length() > raceName.length()) && (typeName.compare(raceName.length() + 1, typeName.length(), inputName) == 0))
-        {
-            *this = MetaType(UnitType(unitType, bot), bot);
-            return;
-        }
-    }
-
-    for (const BWAPI::TechType & techType : BWAPI::TechTypes::allTechTypes())
-    {
-        std::string typeName = techType.getName();
-        std::replace(typeName.begin(), typeName.end(), '_', ' ');
-        if (typeName == inputName)
-        {
-            *this = MetaType(techType, bot);
-            return;
-        }
-    }
-
-    for (const BWAPI::UpgradeType & upgradeType : BWAPI::UpgradeTypes::allUpgradeTypes())
-    {
-        std::string typeName = upgradeType.getName();
-        std::replace(typeName.begin(), typeName.end(), '_', ' ');
-        if (typeName == inputName)
-        {
-            *this = MetaType(upgradeType, bot);
-            return;
-        }
-    }
-
-    BOT_ASSERT(false, "Could not find MetaType with name: %s", name.c_str());
-}
-
-MetaType::MetaType(const BWAPI::TechType & t, CCBot & bot) 
-    : m_tech(t)
-    , m_type(MetaTypes::Tech) 
-    , m_race(t.getRace())
-    , m_name(t.getName())
-    , m_bot(&bot)
-{
-}
-#endif
 
 
 MetaType::MetaType(const UnitType & unitType, CCBot & bot)
