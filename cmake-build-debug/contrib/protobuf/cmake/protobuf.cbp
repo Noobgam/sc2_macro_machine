@@ -1,0 +1,1322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="protobuf"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\contrib\;CMake Files\contrib\SDL-mirror\;CMake Files\contrib\SDL-mirror\cmake\;CMake Files\contrib\SDL-mirror\include\;CMake Files\contrib\civetweb\;CMake Files\contrib\civetweb\cmake\;CMake Files\contrib\civetweb\src\;CMake Files\contrib\protobuf\;CMake Files\contrib\protobuf\cmake\;CMake Files\contrib\ipv6-parse\;CMake Files\src\;CMake Files\examples\;CMake Files\tests\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libprotobuf-lite">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/libprotobuf-lited.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 libprotobuf-lite"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libprotobuf-lite/fast">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/libprotobuf-lited.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 libprotobuf-lite/fast"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="protoc">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/protoc.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 protoc"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="protoc/fast">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/protoc.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 protoc/fast"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libprotobuf">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/libprotobufd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 libprotobuf"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libprotobuf/fast">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/libprotobufd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 libprotobuf/fast"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libprotoc">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/libprotocd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DLIBPROTOC_EXPORTS"/>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 libprotoc"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libprotoc/fast">
+				<Option output="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/bin/libprotocd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DLIBPROTOC_EXPORTS"/>
+					<Add option="-DGOOGLE_PROTOBUF_CMAKE_BUILD"/>
+					<Add option="-DHAVE_PTHREAD"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake"/>
+					<Add directory="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 libprotoc/fast"/>
+					<CompileFile command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe -f &quot;C:/Users/shess/CLionProjects/cpp-sc2/cmake-build-debug/contrib/protobuf/cmake/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/any.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/any.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/any.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/any.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/any_lite.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/api.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/api.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/arena.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/arena.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/arenastring.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/code_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/code_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/command_line_interface.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/command_line_interface.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_enum.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_enum.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_enum_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_enum_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_extension.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_extension.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_file.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_file.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_helpers.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_helpers.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_map_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_map_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_message.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_message.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_message_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_message_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_message_layout_helper.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_options.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_padding_optimizer.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_padding_optimizer.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_primitive_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_primitive_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_service.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_service.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_string_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/cpp/cpp_string_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_doc_comment.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_doc_comment.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_enum.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_enum.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_enum_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_enum_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_field_base.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_field_base.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_helpers.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_helpers.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_map_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_map_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_message.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_message.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_message_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_message_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_options.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_primitive_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_primitive_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_reflection_class.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_reflection_class.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_enum_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_enum_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_message_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_message_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_primitive_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_repeated_primitive_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_source_generator_base.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_source_generator_base.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_wrapper_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/csharp/csharp_wrapper_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/importer.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/importer.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_context.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_context.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_doc_comment.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_doc_comment.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum_field_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum_field_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_enum_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_extension.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_extension.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_extension_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_extension_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_file.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_file.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_generator_factory.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_generator_factory.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_helpers.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_helpers.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_map_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_map_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_map_field_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_map_field_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_builder.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_builder.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_builder_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_builder_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_field_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_field_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_message_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_name_resolver.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_name_resolver.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_options.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_primitive_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_primitive_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_primitive_field_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_primitive_field_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_service.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_service.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_shared_code_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_shared_code_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_string_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_string_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_string_field_lite.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/java/java_string_field_lite.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/js/js_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/js/js_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/js/well_known_types_embed.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/js/well_known_types_embed.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/main.cc">
+			<Option target="protoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_enum.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_enum.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_enum_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_enum_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_extension.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_extension.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_file.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_file.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_helpers.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_helpers.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_map_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_map_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_message.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_message.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_message_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_message_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_nsobject_methods.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_oneof.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_oneof.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_primitive_field.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/objectivec/objectivec_primitive_field.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/parser.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/parser.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/php/php_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/php/php_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/plugin.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/plugin.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/plugin.pb.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/python/python_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/python/python_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/ruby/ruby_generator.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/ruby/ruby_generator.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/scc.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/subprocess.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/subprocess.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/zip_writer.cc">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/compiler/zip_writer.h">
+			<Option target="libprotoc"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/descriptor.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/descriptor.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/descriptor.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/descriptor.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/descriptor_database.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/descriptor_database.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/duration.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/duration.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/dynamic_message.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/dynamic_message.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/empty.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/empty.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/extension_set.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/extension_set.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/extension_set_heavy.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/field_mask.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/field_mask.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_enum_util.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_enum_util.h">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_reflection.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_reflection.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_table_driven.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_table_driven.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_table_driven_lite.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_table_driven_lite.h">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_util.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/generated_message_util.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/implicit_weak_message.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/implicit_weak_message.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/coded_stream.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/coded_stream.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/gzip_stream.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/gzip_stream.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/io_win32.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/io_win32.h">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/printer.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/printer.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/strtod.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/strtod.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/tokenizer.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/tokenizer.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/zero_copy_stream.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/zero_copy_stream.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/zero_copy_stream_impl.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/zero_copy_stream_impl.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/zero_copy_stream_impl_lite.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/io/zero_copy_stream_impl_lite.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/map_field.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/map_field.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/message.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/message.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/message_lite.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/message_lite.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/parse_context.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/parse_context.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/reflection_ops.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/reflection_ops.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/repeated_field.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/repeated_field.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/service.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/service.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/source_context.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/source_context.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/struct.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/struct.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/bytestream.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/bytestream.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/common.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/common.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/int128.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/int128.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/once.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/status.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/status.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/statusor.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/statusor.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/stringpiece.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/stringpiece.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/stringprintf.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/stringprintf.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/structurally_valid.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/strutil.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/strutil.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/substitute.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/substitute.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/time.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/stubs/time.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/text_format.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/text_format.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/timestamp.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/timestamp.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/type.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/type.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/unknown_field_set.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/unknown_field_set.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/delimited_message_util.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/delimited_message_util.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/field_comparator.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/field_comparator.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/field_mask_util.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/field_mask_util.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/datapiece.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/datapiece.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/default_value_objectwriter.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/default_value_objectwriter.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/error_listener.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/error_listener.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/field_mask_utility.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/field_mask_utility.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/json_escaping.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/json_escaping.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/json_objectwriter.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/json_objectwriter.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/json_stream_parser.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/json_stream_parser.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/object_writer.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/object_writer.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/proto_writer.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/proto_writer.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/protostream_objectsource.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/protostream_objectsource.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/protostream_objectwriter.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/protostream_objectwriter.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/type_info.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/type_info.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/type_info_test_helper.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/type_info_test_helper.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/utility.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/internal/utility.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/json_util.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/json_util.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/message_differencer.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/message_differencer.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/time_util.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/time_util.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/type_resolver_util.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/util/type_resolver_util.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/wire_format.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/wire_format.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/wire_format_lite.cc">
+			<Option target="libprotobuf-lite"/>
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/wire_format_lite.h">
+			<Option target="libprotobuf-lite"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/wrappers.pb.cc">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/src/google/protobuf/wrappers.pb.h">
+			<Option target="libprotobuf"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/SDL-mirror/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\contrib\SDL-mirror\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/SDL-mirror/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\contrib\SDL-mirror\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/SDL-mirror/cmake/macros.cmake">
+			<Option virtualFolder="CMake Files\contrib\SDL-mirror\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/SDL-mirror/cmake/sdlchecks.cmake">
+			<Option virtualFolder="CMake Files\contrib\SDL-mirror\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/SDL-mirror/include/SDL_config.h.cmake">
+			<Option virtualFolder="CMake Files\contrib\SDL-mirror\include\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\contrib\civetweb\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/cmake/AddCCompilerFlag.cmake">
+			<Option virtualFolder="CMake Files\contrib\civetweb\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/cmake/AddCXXCompilerFlag.cmake">
+			<Option virtualFolder="CMake Files\contrib\civetweb\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/cmake/DetermineTargetArchitecture.cmake">
+			<Option virtualFolder="CMake Files\contrib\civetweb\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/cmake/FindLibDl.cmake">
+			<Option virtualFolder="CMake Files\contrib\civetweb\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/cmake/FindLibRt.cmake">
+			<Option virtualFolder="CMake Files\contrib\civetweb\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/cmake/FindWinSock.cmake">
+			<Option virtualFolder="CMake Files\contrib\civetweb\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/civetweb/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\contrib\civetweb\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/install.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/libprotobuf-lite.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/libprotobuf.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/libprotoc.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protobuf-config-version.cmake.in">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protobuf-config.cmake.in">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protobuf-lite.pc.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protobuf-module.cmake.in">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protobuf-options.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protobuf.pc.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/protobuf/cmake/protoc.cmake">
+			<Option virtualFolder="CMake Files\contrib\protobuf\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/ipv6-parse/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\contrib\ipv6-parse\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/contrib/ipv6-parse/ipv6_config.h.in">
+			<Option virtualFolder="CMake Files\contrib\ipv6-parse\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\"/>
+		</Unit>
+		<Unit filename="C:/Users/shess/CLionProjects/cpp-sc2/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
