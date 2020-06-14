@@ -1,6 +1,6 @@
 #include "GameCommander.h"
 #include "general/CCBot.h"
-#include "Util.h"
+#include "util/Util.h"
 
 GameCommander::GameCommander(CCBot & bot)
     : m_bot                 (bot)

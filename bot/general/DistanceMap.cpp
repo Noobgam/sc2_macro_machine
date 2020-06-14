@@ -1,6 +1,6 @@
 #include "DistanceMap.h"
 #include "CCBot.h"
-#include "../Util.h"
+#include "../util/Util.h"
 
 const size_t LegalActions = 4;
 const int actionX[LegalActions] = {1, -1, 0, 0};

@@ -1,6 +1,6 @@
 #include "MicroManager.h"
 #include "../general/CCBot.h"
-#include "../Util.h"
+#include "../util/Util.h"
 
 MicroManager::MicroManager(CCBot & bot)
     : m_bot(bot)

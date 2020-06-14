@@ -1,8 +1,8 @@
 #pragma once
 
-#include "general/model/Common.h"
-#include "general/model/Unit.h"
-#include "general/model/UnitType.h"
+#include "../../general/model/Common.h"
+#include "../../general/model/Unit.h"
+#include "../../general/model/UnitType.h"
 
 namespace BuildingStatus
 {

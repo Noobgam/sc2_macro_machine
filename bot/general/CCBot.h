@@ -2,12 +2,12 @@
 
 #include "model/Common.h"
 
+#include "../BotConfig.h"
+#include "../GameCommander.h"
 #include "MapTools.h"
 #include "BaseLocationManager.h"
 #include "UnitInfoManager.h"
-#include "../WorkerManager.h"
-#include "../BotConfig.h"
-#include "../GameCommander.h"
+#include "WorkerManager.h"
 #include "TechTree.h"
 #include "model/MetaType.h"
 #include "model/Unit.h"

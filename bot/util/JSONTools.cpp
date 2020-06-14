@@ -1,5 +1,5 @@
 #include "JSONTools.h"
-#include "util/BotAssert.h"
+#include "BotAssert.h"
 
 namespace JSONTools
 {

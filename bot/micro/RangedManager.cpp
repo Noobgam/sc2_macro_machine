@@ -1,6 +1,6 @@
-#include "RangedManager.h"
-#include "../Util.h"
 #include "../general/CCBot.h"
+#include "../util/Util.h"
+#include "RangedManager.h"
 
 RangedManager::RangedManager(CCBot & bot)
     : MicroManager(bot)

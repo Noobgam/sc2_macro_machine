@@ -1,5 +1,5 @@
 #include "BaseLocation.h"
-#include "../Util.h"
+#include "../util/Util.h"
 #include "CCBot.h"
 #include <sstream>
 #include <iostream>

@@ -1,8 +1,8 @@
-#include "../general/model/Common.h"
+#include "../../general/model/Common.h"
+#include "../../general/CCBot.h"
+#include "../../util/Util.h"
 #include "BuildingPlacer.h"
-#include "../general/CCBot.h"
-#include "../Building.h"
-#include "../Util.h"
+#include "Building.h"
 
 BuildingPlacer::BuildingPlacer(CCBot & bot)
     : m_bot(bot)

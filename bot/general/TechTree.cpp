@@ -1,8 +1,8 @@
 #include "TechTree.h"
-#include "../Util.h"
+#include "../util/Util.h"
 #include "CCBot.h"
 #include "model/MetaType.h"
-#include "../Timer.hpp"
+#include "../util/Timer.hpp"
 
 TechTree::TechTree(CCBot & bot)
     : m_bot(bot)

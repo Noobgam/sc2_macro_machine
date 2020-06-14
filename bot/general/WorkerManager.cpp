@@ -1,7 +1,5 @@
 #include "WorkerManager.h"
-#include "general/CCBot.h"
-#include "Util.h"
-#include "Building.h"
+#include "CCBot.h"
 
 WorkerManager::WorkerManager(CCBot & bot)
     : m_bot         (bot)

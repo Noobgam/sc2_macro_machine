@@ -1,7 +1,7 @@
 #include "general/model/Common.h"
 #include "general/CCBot.h"
-#include "JSONTools.h"
-#include "Util.h"
+#include "util/JSONTools.h"
+#include "util/Util.h"
 
 #include <memory>
 

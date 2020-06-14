@@ -1,6 +1,6 @@
 #pragma once
-#include "general/model/Common.h"
-#include "general/model/Unit.h"
+#include "model/Common.h"
+#include "model/Unit.h"
 
 class CCBot;
 

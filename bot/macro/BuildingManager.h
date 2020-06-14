@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../general/model/Common.h"
-#include "BuildingPlacer.h"
+#include "buildings/BuildingPlacer.h"
+#include "buildings/Building.h"
 
 class CCBot;
 

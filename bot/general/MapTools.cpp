@@ -1,13 +1,10 @@
 #include "MapTools.h"
-#include "../Util.h"
+#include "../util/Util.h"
 #include "CCBot.h"
 
 #include <iostream>
-#include <sstream>
-#include <fstream>
 #include <array>
 
-#ifdef SC2API
 namespace {
 bool getBit(const sc2::ImageData& grid, int tileX, int tileY) {
     assert(grid.bits_per_pixel == 1);
@@ -22,8 +19,7 @@ bool getBit(const sc2::ImageData& grid, int tileX, int tileY) {
     return (grid.data[idx.quot] >> (7 - idx.rem)) & 1;
 }
 
-}  // namespace
-#endif
+}
 
 const size_t LegalActions = 4;
 const int actionX[LegalActions] ={1, -1, 0, 0};
@@ -33,11 +29,7 @@ typedef std::vector<std::vector<bool>> vvb;
 typedef std::vector<std::vector<int>>  vvi;
 typedef std::vector<std::vector<float>>  vvf;
 
-#ifdef SC2API
-    #define HALF_TILE 0.5f
-#else
-    #define HALF_TILE 0
-#endif
+#define HALF_TILE 0.5f
 
 // constructor for MapTools
 MapTools::MapTools(CCBot & bot)

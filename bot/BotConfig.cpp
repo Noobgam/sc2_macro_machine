@@ -1,5 +1,5 @@
 #include "BotConfig.h"
-#include "JSONTools.h"
+#include "util/JSONTools.h"
 #include <iostream>
 
 BotConfig::BotConfig()

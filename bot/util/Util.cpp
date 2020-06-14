@@ -1,20 +1,13 @@
 #include "Util.h"
-#include "general/CCBot.h"
+#include "../general/CCBot.h"
 #include <iostream>
 
 std::string Util::GetStringFromRace(const CCRace & race)
 {
-#ifdef SC2API
     if      (race == sc2::Race::Terran)  { return "Terran"; }
     else if (race == sc2::Race::Protoss) { return "Protoss"; }
     else if (race == sc2::Race::Zerg)    { return "Zerg"; }
     else if (race == sc2::Race::Random)  { return "Random"; }
-#else
-    if      (race == BWAPI::Races::Terran)  { return "Terran"; }
-    else if (race == BWAPI::Races::Protoss) { return "Protoss"; }
-    else if (race == BWAPI::Races::Zerg)    { return "Zerg"; }
-    else if (race == BWAPI::Races::Unknown) { return "Unknown"; }
-#endif
     BOT_ASSERT(false, "Unknown Race");
     return "Error";
 }

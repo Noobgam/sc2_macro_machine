@@ -1,7 +1,7 @@
 #pragma once
 
 #include "general/model/Common.h"
-#include "Timer.hpp"
+#include "util/Timer.hpp"
 #include "macro/MacroManager.h"
 #include "micro/ScoutManager.h"
 #include "micro/CombatCommander.h"

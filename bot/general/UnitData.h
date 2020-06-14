@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../util/Util.h"
 #include "model/Common.h"
-#include "../Util.h"
 #include "model/Unit.h"
 #include "model/UnitType.h"
 

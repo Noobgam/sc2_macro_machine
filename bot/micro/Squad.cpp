@@ -1,6 +1,6 @@
 #include "Squad.h"
 #include "../general/CCBot.h"
-#include "../Util.h"
+#include "../util/Util.h"
 
 Squad::Squad(CCBot & bot)
     : m_bot(bot)

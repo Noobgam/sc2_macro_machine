@@ -1,6 +1,6 @@
 #pragma once
 
-#include "general/model/Common.h"
+#include "../../general/model/Common.h"
 #include "Building.h"
 
 class BuildingData

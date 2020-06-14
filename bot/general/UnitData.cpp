@@ -1,5 +1,4 @@
 #include "UnitData.h"
-#include "../Util.h"
 
 UnitData::UnitData()
 {

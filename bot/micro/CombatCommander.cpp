@@ -1,6 +1,6 @@
-#include "CombatCommander.h"
-#include "../Util.h"
 #include "../general/CCBot.h"
+#include "../util/Util.h"
+#include "CombatCommander.h"
 
 const size_t IdlePriority = 0;
 const size_t AttackPriority = 1;
