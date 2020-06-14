@@ -92,8 +92,9 @@ static void ParseArguments(int argc, char* argv[], ConnectionOptions& connect_op
 		{ "-l", "--LadderServer", "Ladder server address", false },
 		{ "-c", "--ComputerOpponent", "If we set up a computer oppenent" },
 		{ "-a", "--ComputerRace", "Race of computer oppent"},
-		{ "-d", "--ComputerDifficulty", "Difficulty of computer oppenent"}
-		});
+		{ "-d", "--ComputerDifficulty", "Difficulty of computer oppenent"},
+		{ "-x", "--OpponentId", "A unique ID for each opponent."}
+	});
 	arg_parser.Parse(argc, argv);
 	std::string GamePortStr;
 	if (arg_parser.Get("GamePort", GamePortStr)) {

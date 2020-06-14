@@ -8,7 +8,6 @@
 #include "sc2utils/sc2_manage_process.h"
 #include "sc2api/sc2_api.h"
 
-#define _DEBUG
 #ifdef _DEBUG
 int main(int argc, char* argv[]) 
 {
