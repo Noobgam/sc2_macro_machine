@@ -10,7 +10,6 @@
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
     , m_buildingManager (bot)
-    , m_queue           (bot)
     , m_managers        ()
 {
     m_managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));

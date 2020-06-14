@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Common.h"
+#include "model/Common.h"
 
 #include "MapTools.h"
 #include "BaseLocationManager.h"
@@ -9,8 +9,8 @@
 #include "../BotConfig.h"
 #include "../GameCommander.h"
 #include "TechTree.h"
-#include "../MetaType.h"
-#include "../Unit.h"
+#include "model/MetaType.h"
+#include "model/Unit.h"
 
 class CCBot : public sc2::Agent 
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../BuildOrderQueue.h"
+#include "../BuildOrderItem.h"
 #include <optional>
 
 struct BuildManager

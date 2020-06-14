@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Common.h"
-#include "../DistanceMap.h"
-#include "../Unit.h"
+#include "model/Common.h"
+#include "DistanceMap.h"
+#include "model/Unit.h"
 #include <map>
 #include <vector>
 

@@ -2,10 +2,9 @@
 
 #include "memory"
 
-#include "../Common.h"
-#include "../BuildOrder.h"
-#include "../BuildingManager.h"
-#include "../BuildOrderQueue.h"
+#include "../general/model/Common.h"
+#include "BuildingManager.h"
+#include "BuildOrderItem.h"
 #include "build_managers/BuildManager.h"
 
 class CCBot;
@@ -16,7 +15,6 @@ class MacroManager
 
     std::vector<std::unique_ptr<BuildManager>> m_managers;
     BuildingManager m_buildingManager;
-    BuildOrderQueue m_queue;
 
     BuildOrderItem     getTopPriority();
 

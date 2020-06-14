@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Common.h"
-#include "../UnitType.h"
+#include "model/Common.h"
+#include "model/UnitType.h"
 
 class CCBot;
 class MetaType;

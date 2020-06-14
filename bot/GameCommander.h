@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Common.h"
+#include "general/model/Common.h"
 #include "Timer.hpp"
 #include "macro/MacroManager.h"
-#include "ScoutManager.h"
-#include "CombatCommander.h"
+#include "micro/ScoutManager.h"
+#include "micro/CombatCommander.h"
 
 class CCBot;
 
