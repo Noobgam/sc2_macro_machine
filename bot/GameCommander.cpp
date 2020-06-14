@@ -1,5 +1,5 @@
 #include "GameCommander.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "Util.h"
 
 GameCommander::GameCommander(CCBot & bot)

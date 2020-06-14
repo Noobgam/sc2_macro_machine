@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Common.h"
-#include "UnitData.h"
+#include "../Common.h"
+#include "../UnitData.h"
 #include "BaseLocation.h"
-#include "Unit.h"
+#include "../Unit.h"
 
 class CCBot;
 class UnitInfoManager 

@@ -1,11 +1,11 @@
 #include "MacroManager.h"
-#include "Util.h"
-#include "CCBot.h"
-#include "SupplyBuildManager.h"
-#include "WorkerBuildManager.h"
-#include "ProductionManager.h"
-#include "UnitHireManager.h"
-#include "BuildManager.h"
+#include "../Util.h"
+#include "../general/CCBot.h"
+#include "build_managers/SupplyBuildManager.h"
+#include "build_managers/WorkerBuildManager.h"
+#include "build_managers/ProductionManager.h"
+#include "build_managers/UnitHireManager.h"
+#include "build_managers/BuildManager.h"
 
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)

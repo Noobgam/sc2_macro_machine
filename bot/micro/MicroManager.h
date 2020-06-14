@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Common.h"
-#include "SquadOrder.h"
-#include "Unit.h"
+#include "../Common.h"
+#include "../SquadOrder.h"
+#include "../Unit.h"
 
 class CCBot;
 

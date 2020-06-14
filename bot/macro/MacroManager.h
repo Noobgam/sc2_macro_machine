@@ -2,11 +2,11 @@
 
 #include "memory"
 
-#include "Common.h"
-#include "BuildOrder.h"
-#include "BuildingManager.h"
-#include "BuildOrderQueue.h"
-#include "BuildManager.h"
+#include "../Common.h"
+#include "../BuildOrder.h"
+#include "../BuildingManager.h"
+#include "../BuildOrderQueue.h"
+#include "build_managers/BuildManager.h"
 
 class CCBot;
 

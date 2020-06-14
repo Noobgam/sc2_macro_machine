@@ -1,6 +1,6 @@
 #include "Common.h"
 #include "BuildingManager.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "Util.h"
 
 BuildingManager::BuildingManager(CCBot & bot)

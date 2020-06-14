@@ -1,6 +1,6 @@
 #include "MetaType.h"
 #include "Util.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 
 MetaType::MetaType()
     : m_bot         (nullptr)

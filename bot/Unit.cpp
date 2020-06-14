@@ -1,5 +1,5 @@
 #include "Unit.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 
 Unit::Unit()
     : m_bot(nullptr)

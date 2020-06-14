@@ -1,5 +1,5 @@
 #include "SquadData.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "Util.h"
 
 SquadData::SquadData(CCBot & bot)

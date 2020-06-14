@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "DistanceMap.h"
-#include "UnitType.h"
+#include "../DistanceMap.h"
+#include "../UnitType.h"
 
 class CCBot;
 

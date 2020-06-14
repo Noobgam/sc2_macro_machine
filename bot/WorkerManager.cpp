@@ -1,5 +1,5 @@
 #include "WorkerManager.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "Util.h"
 #include "Building.h"
 

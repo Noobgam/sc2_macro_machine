@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BotAssert.h"
+#include "util/BotAssert.h"
 #include <iostream>
 #include <vector>
 #include <cassert>

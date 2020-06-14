@@ -1,5 +1,5 @@
 #include "Common.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "JSONTools.h"
 #include "Util.h"
 

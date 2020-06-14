@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "MicroManager.h"
+#include "micro/MicroManager.h"
 
 class CCBot;
 

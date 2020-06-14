@@ -1,5 +1,5 @@
 #include "Util.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include <iostream>
 
 std::string Util::GetStringFromRace(const CCRace & race)

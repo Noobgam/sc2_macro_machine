@@ -1,5 +1,5 @@
 #include "Condition.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 
 Condition::Condition()
     : m_bot     (nullptr)

@@ -1,5 +1,5 @@
 #include "DistanceMap.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "Util.h"
 
 const size_t LegalActions = 4;

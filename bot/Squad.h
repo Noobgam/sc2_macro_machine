@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "MeleeManager.h"
+#include "micro/MeleeManager.h"
 #include "RangedManager.h"
 #include "SquadOrder.h"
 

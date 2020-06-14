@@ -1,6 +1,6 @@
 #include "WorkerData.h"
 #include "Util.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include <iostream>
 #include <sstream>
 

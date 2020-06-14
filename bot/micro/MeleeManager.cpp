@@ -1,6 +1,6 @@
 #include "MeleeManager.h"
-#include "Util.h"
-#include "CCBot.h"
+#include "../Util.h"
+#include "../general/CCBot.h"
 
 MeleeManager::MeleeManager(CCBot & bot)
     : MicroManager(bot)

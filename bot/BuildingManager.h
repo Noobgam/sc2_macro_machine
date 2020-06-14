@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "BuildingPlacer.h"
+#include "macro/BuildingPlacer.h"
 
 class CCBot;
 

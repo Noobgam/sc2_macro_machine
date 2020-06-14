@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common.h"
-#include "BuildingData.h"
+#include "../Common.h"
+#include "../BuildingData.h"
 
 class CCBot;
 class BaseLocation;

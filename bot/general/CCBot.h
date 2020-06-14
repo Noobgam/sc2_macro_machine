@@ -1,17 +1,16 @@
 #pragma once
 
-#include "Common.h"
+#include "../Common.h"
 
 #include "MapTools.h"
 #include "BaseLocationManager.h"
 #include "UnitInfoManager.h"
-#include "WorkerManager.h"
-#include "BotConfig.h"
-#include "GameCommander.h"
-#include "BuildingManager.h"
+#include "../WorkerManager.h"
+#include "../BotConfig.h"
+#include "../GameCommander.h"
 #include "TechTree.h"
-#include "MetaType.h"
-#include "Unit.h"
+#include "../MetaType.h"
+#include "../Unit.h"
 
 class CCBot : public sc2::Agent 
 {

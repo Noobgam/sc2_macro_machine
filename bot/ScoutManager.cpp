@@ -1,5 +1,5 @@
 #include "ScoutManager.h"
-#include "CCBot.h"
+#include "general/CCBot.h"
 #include "Util.h"
 
 ScoutManager::ScoutManager(CCBot & bot)

@@ -4,7 +4,7 @@ include_directories("../include")
 include_directories(SYSTEM "${PROJECT_BINARY_DIR}/generated")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/contrib/SDL-mirror/include")
 
-file (GLOB all_sources "*.h" "*.cpp" "*.hpp")
+file (GLOB_RECURSE all_sources "*.h" "*.cpp" "*.hpp")
 
 add_definitions("-DSC2API")
 add_executable(main_bot ${all_sources})

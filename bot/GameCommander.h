@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "Timer.hpp"
-#include "MacroManager.h"
+#include "macro/MacroManager.h"
 #include "ScoutManager.h"
 #include "CombatCommander.h"
 
