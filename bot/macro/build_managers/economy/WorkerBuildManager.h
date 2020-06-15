@@ -1,6 +1,6 @@
 #pragma once
-#include "BuildManager.h"
-#include "../../general/CCBot.h"
+#include "../BuildManager.h"
+#include "../../../general/CCBot.h"
 
 class WorkerBuildManager : public BuildManager
 {
