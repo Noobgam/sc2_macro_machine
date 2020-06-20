@@ -87,7 +87,6 @@ int main(int argc, char* argv[])
     return 0;
 }
 #else
-
 #include "LadderInterface.h"
 int main(int argc, char* argv[]) {
     std::unique_ptr<CCBot> bot = std::make_unique<CCBot>();

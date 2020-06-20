@@ -1,4 +1,5 @@
 #include "CCBot.h"
+#include "../util/LogInfo.h"
 
 CCBot::CCBot()
     : m_map(*this)
@@ -17,7 +18,7 @@ void CCBot::OnGameStart()
     {
         m_baseLocations.push_back(loc);
     }
-    m_baseLocations.push_back(Observation()->GetStartLocation());
+    m_baseLocations.emplace_back(Observation()->GetStartLocation());
     
     setUnits();
     m_techTree.onStart();
@@ -31,6 +32,7 @@ void CCBot::OnGameStart()
 
 void CCBot::OnStep()
 {
+    LOG_DEBUG << "Starting onStep()" << std::endl;
     setUnits();
     m_map.onFrame();
     m_unitInfo.onFrame();
@@ -38,6 +40,7 @@ void CCBot::OnStep()
     m_workers.onFrame();
 
     m_gameCommander.onFrame();
+    LOG_DEBUG << "Finished onStep()" << std::endl;
 
     Debug()->SendDebug();
 }
@@ -48,7 +51,7 @@ void CCBot::setUnits()
     Control()->GetObservation();
     for (auto & unit : Observation()->GetUnits())
     {
-        m_allUnits.push_back(Unit(unit, *this));    
+        m_allUnits.emplace_back(unit, *this);
     }
 }
 

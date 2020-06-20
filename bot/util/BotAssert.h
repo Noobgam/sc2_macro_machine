@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <sstream>
-#include <stdarg.h>
+#include <cstdarg>
 
 #include <ctime>
 #include <iomanip>
@@ -32,7 +32,7 @@ namespace Assert
 {
     extern std::string lastErrorMessage;
 
-    const std::string CurrentDateTime();
+    std::string CurrentDateTime();
 
     void ReportFailure(const char * condition, const char * file, int line, const char * msg, ...);
 }

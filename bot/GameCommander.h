@@ -13,7 +13,7 @@ class GameCommander
     CCBot &                 m_bot;
     Timer                   m_timer;
 
-    MacroManager       m_productionManager;
+    MacroManager       m_macroManager;
     ScoutManager            m_scoutManager;
     CombatCommander         m_combatCommander;
 

@@ -5,6 +5,9 @@
 #include "build_managers/ProductionManager.h"
 #include "build_managers/UnitHireManager.h"
 #include "build_managers/BuildManager.h"
+#include "../util/LogInfo.h"
+
+using std::endl;
 
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
@@ -32,7 +35,9 @@ void MacroManager::onFrame()
     // TODO: detect if there's a build order deadlock once per second
     // TODO: triggers for game things like cloaked units etc
 
+    LOG_DEBUG << "Getting top priority" << endl;
     BuildOrderItem item = getTopPriority();
+    LOG_DEBUG << "Top priority item is " << item.type.getName() << endl;
     produceIfPossible(item);
 
     m_buildingManager.onFrame();

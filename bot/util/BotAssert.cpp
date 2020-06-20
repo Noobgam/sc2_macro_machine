@@ -5,7 +5,7 @@ namespace Assert
 {
     std::string lastErrorMessage;
 
-    const std::string CurrentDateTime() 
+    std::string CurrentDateTime()
     {
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);

@@ -4,7 +4,7 @@
 
 GameCommander::GameCommander(CCBot & bot)
     : m_bot                 (bot)
-    , m_productionManager   (bot)
+    , m_macroManager   (bot)
     , m_scoutManager        (bot)
     , m_combatCommander     (bot)
     , m_initialScoutSet     (false)
@@ -14,7 +14,7 @@ GameCommander::GameCommander(CCBot & bot)
 
 void GameCommander::onStart()
 {
-    m_productionManager.onStart();
+    m_macroManager.onStart();
 //    m_scoutManager.onStart();
 //    m_combatCommander.onStart();
 }
@@ -25,7 +25,7 @@ void GameCommander::onFrame()
 
 //    handleUnitAssignments();
 
-    m_productionManager.onFrame();
+    m_macroManager.onFrame();
 //    m_scoutManager.onFrame();
 //    m_combatCommander.onFrame(m_combatUnits);
 

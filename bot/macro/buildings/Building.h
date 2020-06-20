@@ -30,5 +30,5 @@ public:
     Building(UnitType t, CCTilePosition desired);
 
     // equals operator
-    bool operator == (const Building & b);
+    bool operator == (const Building & b) const;
 };
