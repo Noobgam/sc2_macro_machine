@@ -33,7 +33,9 @@ public:
 
     CCBot();
 
+    void OnGameFullStart() override;
     void OnGameStart() override;
+    void OnGameEnd() override;
     void OnStep() override;
 
           WorkerManager & Workers();

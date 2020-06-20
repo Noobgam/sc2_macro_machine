@@ -14,11 +14,12 @@ CCBot::CCBot()
 
 void CCBot::OnGameStart() 
 {
+    LOG_DEBUG << "Starting OnGameStart()" << std::endl;
     for (auto & loc : Observation()->GetGameInfo().enemy_start_locations)
     {
         m_baseLocations.push_back(loc);
     }
-    m_baseLocations.emplace_back(Observation()->GetStartLocation());
+    m_baseLocations.push_back(Observation()->GetStartLocation());
     
     setUnits();
     m_techTree.onStart();
@@ -28,6 +29,17 @@ void CCBot::OnGameStart()
     m_workers.onStart();
 
     m_gameCommander.onStart();
+    LOG_DEBUG << "Finished OnGameStart()" << std::endl;
+}
+
+void CCBot::OnGameFullStart() {
+    LOG_DEBUG << "Starting OnGameFullStart()" << std::endl;
+    LOG_DEBUG << "Finished OnGameFullStart()" << std::endl;
+}
+
+void CCBot::OnGameEnd() {
+    LOG_DEBUG << "Starting OnGameEnd()" << std::endl;
+    LOG_DEBUG << "Finished OnGameEnd()" << std::endl;
 }
 
 void CCBot::OnStep()
@@ -157,7 +169,7 @@ const std::vector<CCPosition> & CCBot::GetStartLocations() const
 
 void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const std::vector<std::string> & protocol_errors)
 {
-    
+    LOG_DEBUG << "Some error happened. probably will crash now" << std::endl;
 }
 
 UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
