@@ -29,7 +29,7 @@ class MacroManager
 
 public:
 
-    MacroManager(CCBot & bot);
+    explicit MacroManager(CCBot & bot);
 
     void    onStart();
     void    onFrame();

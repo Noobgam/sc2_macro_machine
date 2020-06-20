@@ -19,7 +19,7 @@ void CCBot::OnGameStart()
     {
         m_baseLocations.push_back(loc);
     }
-    m_baseLocations.push_back(Observation()->GetStartLocation());
+    m_baseLocations.emplace_back(Observation()->GetStartLocation());
     
     setUnits();
     m_techTree.onStart();
