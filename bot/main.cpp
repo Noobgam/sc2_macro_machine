@@ -91,6 +91,8 @@ int main(int argc, char* argv[])
 int main(int argc, char* argv[]) {
     std::unique_ptr<CCBot> bot = std::make_unique<CCBot>();
     RunBot(argc, argv, bot.get(), sc2::Race::Protoss);
+    std::cerr << "Bot cycle finished";
+    return 0;
 }
 #endif
 

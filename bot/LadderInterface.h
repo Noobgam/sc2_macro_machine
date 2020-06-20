@@ -166,5 +166,7 @@ static void RunBot(int argc, char* argv[], sc2::Agent* Agent, sc2::Race race)
 	coordinator.SetTimeoutMS(10000);
 	std::cout << " Successfully joined game" << std::endl;
 	while (coordinator.Update()) {
+        std::cout << " Update" << std::endl;
 	}
+	return;
 }
