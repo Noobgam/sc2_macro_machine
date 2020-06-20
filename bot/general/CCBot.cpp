@@ -169,7 +169,21 @@ const std::vector<CCPosition> & CCBot::GetStartLocations() const
 
 void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const std::vector<std::string> & protocol_errors)
 {
-    LOG_DEBUG << "Some error happened. probably will crash now" << std::endl;
+    auto& logger = LOG_DEBUG;
+    if (client_errors.size() > 0) {
+        logger << "Critical client errors occured in sc2:" << std::endl;
+        logger << "\t";
+        for (const auto& clErr : client_errors) {
+             logger << static_cast<int>(clErr) << " ";
+        }
+        logger << std::endl;
+    }
+    if (protocol_errors.size() > 0) {
+        logger << "Critical protocol errors occured in sc2:" << std::endl;
+        for (const auto& clErr : protocol_errors) {
+            logger << "\t" << clErr << std::endl;
+        }
+    }
 }
 
 UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
