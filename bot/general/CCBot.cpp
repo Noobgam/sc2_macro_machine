@@ -54,7 +54,9 @@ void CCBot::OnStep()
     m_gameCommander.onFrame();
     LOG_DEBUG << "Finished onStep()" << std::endl;
 
+#ifdef _DEBUG
     Debug()->SendDebug();
+#endif
 }
 
 void CCBot::setUnits()
