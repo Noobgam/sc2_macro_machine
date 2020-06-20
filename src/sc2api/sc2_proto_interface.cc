@@ -145,6 +145,7 @@ GameResponsePtr ProtoInterface::WaitForResponseInternal() {
         else {
             SC2APIProtocol::Response::ResponseCase actual_response = response->response_case();
             if (response_pending_ != actual_response) {
+                std::cerr << "Response mismatch. Expected: " << response_pending_ << ". Recieved: " << actual_response << std::endl;
                 // This is bad, it means we did not get the response that matches the last request.
                 control_->Error(ClientError::ResponseMismatch);
             }
