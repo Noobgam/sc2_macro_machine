@@ -179,7 +179,7 @@ void BuildingManager::constructAssignedBuildings()
                 {
                     // first we find the geyser at the desired location
                     auto units = m_bot.GetUnits();
-                    auto geyser = std::find_if(units.begin(), units.end(), [&b](Unit unit){
+                    auto geyser = std::find_if(units.begin(), units.end(), [&b](const Unit& unit){
                         return unit.getType().isGeyser() && Util::Dist(Util::GetPosition(b.finalPosition), unit.getPosition()) < 3;
                     });
                     if (geyser != units.end())
