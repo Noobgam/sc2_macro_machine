@@ -21,7 +21,7 @@ class MacroManager
     void                     produceIfPossible(BuildOrderItem item);
     void                     produce(const Unit& producer, BuildOrderItem item);
 
-    Unit    getClosestUnitToPosition(const std::vector<Unit> & units, CCPosition closestTo);
+    std::optional<Unit>    getClosestUnitToPosition(const std::vector<Unit> & units, CCPosition closestTo);
     bool    meetsReservedResources(const MetaType & type);
     bool    canMakeNow(const Unit & producer, const MetaType & type);
     int     getFreeMinerals();
@@ -38,6 +38,6 @@ public:
     /**
         If you don't care about the position of trained / created unit you can use 1-arg func
     **/
-    Unit getProducer(const MetaType& type);
-    Unit getProducer(const MetaType & type, CCPosition closestTo);
+    std::optional<Unit> getProducer(const MetaType& type);
+    std::optional<Unit> getProducer(const MetaType & type, CCPosition closestTo);
 };

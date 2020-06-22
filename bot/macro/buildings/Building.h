@@ -17,8 +17,8 @@ public:
     CCTilePosition  finalPosition;
     CCTilePosition  position;
     UnitType        type;
-    Unit            buildingUnit;
-    Unit            builderUnit;
+    std::optional<Unit> buildingUnit;
+    std::optional<Unit> builderUnit;
     size_t          status;
     int             lastOrderFrame;
     bool            buildCommandGiven;

@@ -22,6 +22,7 @@ std::optional<BuildOrderItem> SupplyBuildManager::getTopPriority()
 int SupplyBuildManager::getExpectedExtraSupply()
 {
     auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
+//    int pylonsInProgress = m_bot.UnitInfo().getBuildingCount(Players::Self, pylonType, UnitStatus::IN_PROGRESS);
     int pylonsInProgress = 0;
     for (auto unit : m_bot.GetUnits()) {
         if (unit.isValid() && unit.getType() == pylonType && unit.getPlayer() == Players::Self) {

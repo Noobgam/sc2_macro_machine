@@ -235,28 +235,6 @@ CCPosition Squad::calcRegroupPosition() const
     }
 }
 
-Unit Squad::unitClosestToEnemy() const
-{
-    Unit closest;
-    float closestDist = std::numeric_limits<float>::max();
-
-    for (auto & unit : m_units)
-    {
-        BOT_ASSERT(unit.isValid(), "null unit");
-
-        // the distance to the order position
-        int dist = m_bot.Map().getGroundDistance(unit.getPosition(), m_order.getPosition());
-
-        if (dist != -1 && (!closest.isValid() || dist < closestDist))
-        {
-            closest = unit;
-            closestDist = (float)dist;
-        }
-    }
-
-    return closest;
-}
-
 int Squad::squadUnitsNear(const CCPosition & p) const
 {
     int numUnits = 0;

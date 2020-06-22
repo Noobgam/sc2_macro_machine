@@ -10,7 +10,6 @@ class WorkerManager
     CCBot & m_bot;
 
     mutable WorkerData  m_workerData;
-    Unit m_previousClosestWorker;
 
     void setMineralWorker(const Unit & unit);
     
@@ -31,8 +30,6 @@ public:
     void setScoutWorker(Unit worker);
     void setCombatWorker(Unit worker);
     void setBuildingWorker(Unit worker, Building & b);
-    void setRepairWorker(Unit worker,const Unit & unitToRepair);
-    void stopRepairing(Unit worker);
 
     int  getNumMineralWorkers();
     int  getNumGasWorkers();
@@ -41,9 +38,9 @@ public:
     bool isFree(Unit worker) const;
     bool isBuilder(Unit worker) const;
 
-    Unit getBuilder(Building & b,bool setJobAsBuilder = true) const;
-    Unit getClosestDepot(Unit worker) const;
-    Unit getGasWorker(Unit refinery) const;
-    Unit getClosestMineralWorkerTo(const CCPosition & pos) const;
+    std::optional<Unit> getBuilder(Building & b,bool setJobAsBuilder = true) const;
+    std::optional<Unit> getClosestDepot(Unit worker) const;
+    std::optional<Unit> getGasWorker(Unit refinery) const;
+    std::optional<Unit> getClosestMineralWorkerTo(const CCPosition & pos) const;
 };
 

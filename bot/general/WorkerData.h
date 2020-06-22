@@ -31,14 +31,15 @@ public:
     void    workerDestroyed(const Unit & unit);
     void    updateAllWorkerData();
     void    updateWorker(const Unit & unit);
-    void    setWorkerJob(const Unit & unit, int job, Unit jobUnit = Unit());
+    void    setHarvestJob(const Unit & unit, int job, Unit jobUnit);
+    void    setWorkerJob(const Unit & unit, int job);
     void    drawDepotDebugInfo();
     size_t  getNumWorkers() const;
     int     getWorkerJobCount(int job) const;
     int     getNumAssignedWorkers(const Unit & unit);
     int     getWorkerJob(const Unit & unit) const;
-    Unit    getMineralToMine(const Unit & unit) const;
-    Unit    getWorkerDepot(const Unit & unit) const;
+    std::optional<Unit>    getMineralToMine(const Unit & unit) const;
+
     const char * getJobCode(const Unit & unit);
     const std::set<Unit> & getWorkers() const;
 };

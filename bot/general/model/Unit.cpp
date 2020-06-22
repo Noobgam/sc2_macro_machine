@@ -9,7 +9,6 @@ Unit::Unit()
 
 }
 
-#ifdef SC2API
 Unit::Unit(const sc2::Unit * unit, CCBot & bot)
     : m_bot(&bot)
     , m_unit(unit)
@@ -30,28 +29,6 @@ const sc2::UnitTypeID & Unit::getAPIUnitType() const
     return m_unit->unit_type;
 }
 
-#else
-Unit::Unit(const BWAPI::Unit unit, CCBot & bot)
-    : m_bot(&bot)
-    , m_unit(unit)
-    , m_unitID(unit->getID())
-    , m_unitType(unit->getType(), bot)
-{
-    
-}
-
-const BWAPI::Unit Unit::getUnitPtr() const
-{
-    return m_unit;
-}
-
-const BWAPI::UnitType & Unit::getAPIUnitType() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-    return m_unit->getType();
-}
-
-#endif
 bool Unit::operator < (const Unit & rhs) const
 {
     return m_unit < rhs.m_unit;

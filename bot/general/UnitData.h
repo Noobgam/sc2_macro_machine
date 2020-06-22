@@ -19,12 +19,13 @@ struct UnitInfo
     UnitType        type;
     float           progress;
 
-    UnitInfo()
+    UnitInfo(Unit unit)
         : id(0)
         , lastHealth(0)
         , player(-1)
         , lastPosition(0, 0)
         , progress(1.0)
+        , unit(unit)
     {
 
     }

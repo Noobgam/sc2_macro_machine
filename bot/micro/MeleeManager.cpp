@@ -48,10 +48,10 @@ void MeleeManager::assignTargets(const std::vector<Unit> & targets)
             else if (!meleeUnitTargets.empty())
             {
                 // find the best target for this meleeUnit
-                Unit target = getTarget(meleeUnit, meleeUnitTargets);
+                std::optional<Unit> target = getTarget(meleeUnit, meleeUnitTargets);
 
                 // attack it
-                meleeUnit.attackUnit(target);
+                meleeUnit.attackUnit(target.value());
             }
             // if there are no targets
             else
@@ -74,7 +74,7 @@ Unit MeleeManager::getTarget(Unit meleeUnit, const std::vector<Unit> & targets)
 
     int highPriority = 0;
     double closestDist = std::numeric_limits<double>::max();
-    Unit closestTarget;
+    std::optional<Unit> closestTarget;
 
     // for each target possiblity
     for (auto & targetUnit : targets)
@@ -85,7 +85,7 @@ Unit MeleeManager::getTarget(Unit meleeUnit, const std::vector<Unit> & targets)
         float distance = Util::Dist(meleeUnit, targetUnit);
 
         // if it's a higher priority, or it's closer, set it
-        if (!closestTarget.isValid() || (priority > highPriority) || (priority == highPriority && distance < closestDist))
+        if (!closestTarget.has_value() || (priority > highPriority) || (priority == highPriority && distance < closestDist))
         {
             closestDist = distance;
             highPriority = priority;
@@ -93,7 +93,7 @@ Unit MeleeManager::getTarget(Unit meleeUnit, const std::vector<Unit> & targets)
         }
     }
 
-    return closestTarget;
+    return closestTarget.value();
 }
 
 // get the attack priority of a type in relation to a zergling

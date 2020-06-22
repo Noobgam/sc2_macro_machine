@@ -12,10 +12,10 @@ void UnitData::updateUnit(const Unit & unit)
     if (it == m_unitMap.end())
     {
         firstSeen = true;
-        m_unitMap[unit] = UnitInfo();
+        m_unitMap.insert({ unit, UnitInfo(unit) });
     }
 
-    UnitInfo & ui   = m_unitMap[unit];
+    UnitInfo & ui   = m_unitMap.find(unit)->second;
     ui.unit         = unit;
     ui.player       = unit.getPlayer();
     ui.lastPosition = unit.getPosition();
