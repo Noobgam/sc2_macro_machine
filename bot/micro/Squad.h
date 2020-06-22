@@ -24,8 +24,6 @@ class Squad
 
     std::map<Unit, bool> m_nearEnemy;
 
-    Unit unitClosestToEnemy() const;
-
     void updateUnits();
     void addUnitsToMicroManagers();
     void setNearEnemyUnits();

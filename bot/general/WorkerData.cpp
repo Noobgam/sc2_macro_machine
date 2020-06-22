@@ -69,59 +69,50 @@ void WorkerData::updateWorker(const Unit & unit)
     }
 }
 
-void WorkerData::setWorkerJob(const Unit & unit, int job, Unit jobUnit)
-{
-    clearPreviousJob(unit);
-    m_workerJobMap[unit] = job;
-    m_workerJobCount[job]++;
-
+void WorkerData::setHarvestJob(const Unit & unit, int job, Unit jobUnit) {
+    setWorkerJob(unit, job);
     if (job == WorkerJobs::Minerals)
     {
         // if we haven't assigned anything to this depot yet, set its worker count to 0
         if (m_depotWorkerCount.find(jobUnit) == m_depotWorkerCount.end())
         {
-            m_depotWorkerCount[jobUnit] = 0;
+            m_depotWorkerCount.insert({jobUnit, 0});
         }
 
         // add the depot to our set of depots
         m_depots.insert(jobUnit);
 
         // increase the worker count of this depot
-        m_workerDepotMap[unit] = jobUnit;
+        m_workerDepotMap.insert({unit, jobUnit});
         m_depotWorkerCount[jobUnit]++;
 
         // find the mineral to mine and mine it
-        Unit mineralToMine = getMineralToMine(unit);
-        
-        unit.rightClick(mineralToMine);
+        std::optional<Unit> mineralToMine = getMineralToMine(unit);
+        if (mineralToMine.has_value()) {
+            unit.rightClick(mineralToMine.value());
+        }
     }
     else if (job == WorkerJobs::Gas)
     {
         // if we haven't assigned any workers to this refinery yet set count to 0
         if (m_refineryWorkerCount.find(jobUnit) == m_refineryWorkerCount.end())
         {
-            m_refineryWorkerCount[jobUnit] = 0;
+            m_refineryWorkerCount.insert({jobUnit, 0});
         }
-
         // increase the count of workers assigned to this refinery
         m_refineryWorkerCount[jobUnit] += 1;
-        m_workerRefineryMap[unit] = jobUnit;
+        m_workerRefineryMap.insert({unit, jobUnit});
 
         // right click the refinery to start harvesting
         unit.rightClick(jobUnit);
     }
-    else if (job == WorkerJobs::Repair)
-    {
-        unit.rightClick(jobUnit);
-    }
-    else if (job == WorkerJobs::Scout)
-    {
+}
 
-    }
-    else if (job == WorkerJobs::Build)
-    {
-
-    }
+void WorkerData::setWorkerJob(const Unit & unit, int job)
+{
+    clearPreviousJob(unit);
+    m_workerJobMap[unit] = job;
+    m_workerJobCount[job]++;
 }
 
 void WorkerData::clearPreviousJob(const Unit & unit)
@@ -141,10 +132,6 @@ void WorkerData::clearPreviousJob(const Unit & unit)
         m_workerRefineryMap.erase(unit);
     }
     else if (previousJob == WorkerJobs::Build)
-    {
-
-    }
-    else if (previousJob == WorkerJobs::Repair)
     {
 
     }
@@ -178,9 +165,9 @@ int WorkerData::getWorkerJob(const Unit & unit) const
     return WorkerJobs::None;
 }
 
-Unit WorkerData::getMineralToMine(const Unit & unit) const
+std::optional<Unit> WorkerData::getMineralToMine(const Unit & unit) const
 {
-    Unit bestMineral;
+    std::optional<Unit> bestMineral;
     double bestDist = 100000;
 
     for (auto & mineral : m_bot.GetUnits())
@@ -197,18 +184,6 @@ Unit WorkerData::getMineralToMine(const Unit & unit) const
     }
 
     return bestMineral;
-}
-
-Unit WorkerData::getWorkerDepot(const Unit & unit) const
-{
-    auto it = m_workerDepotMap.find(unit);
-
-    if (it != m_workerDepotMap.end())
-    {
-        return it->second;
-    }
-
-    return Unit();
 }
 
 int WorkerData::getNumAssignedWorkers(const Unit & unit)
@@ -253,7 +228,6 @@ const char * WorkerData::getJobCode(const Unit & unit)
     if (j == WorkerJobs::Gas)       return "G";
     if (j == WorkerJobs::Idle)      return "I";
     if (j == WorkerJobs::Minerals)  return "M";
-    if (j == WorkerJobs::Repair)    return "R";
     if (j == WorkerJobs::Move)      return "O";
     if (j == WorkerJobs::Scout)     return "S";
     return "X";

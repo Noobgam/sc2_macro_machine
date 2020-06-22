@@ -21,8 +21,8 @@ class CombatCommander
     void            updateIdleSquad();
     bool            isSquadUpdateFrame();
 
-    Unit            findClosestDefender(const Squad & defenseSquad, const CCPosition & pos);
-    Unit            findClosestWorkerTo(std::vector<Unit> & unitsToAssign, const CCPosition & target);
+    std::optional<Unit> findClosestDefender(const Squad & defenseSquad, const CCPosition & pos);
+    std::optional<Unit> findClosestWorkerTo(std::vector<Unit> & unitsToAssign, const CCPosition & target);
 
     CCPosition      getMainAttackLocation();
 

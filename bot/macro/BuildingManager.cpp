@@ -74,7 +74,7 @@ void BuildingManager::validateWorkersAndBuildings()
         auto buildingUnit = b.buildingUnit;
 
         // TODO: || !b.buildingUnit->getType().isBuilding()
-        if (!buildingUnit.isValid())
+        if (!buildingUnit.has_value())
         {
             toRemove.push_back(b);
         }
@@ -96,7 +96,7 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
             continue;
         }
 
-        BOT_ASSERT(!b.builderUnit.isValid(), "Error: Tried to assign a builder to a building that already had one ");
+        BOT_ASSERT(!b.builderUnit.has_value(), "Error: Tried to assign a builder to a building that already had one ");
 
         if (m_debugMode) { printf("Assigning Worker To: %s\n", b.type.getName().c_str()); }
 
@@ -121,9 +121,9 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
         b.finalPosition = testLocation;
 
         // grab the worker unit from WorkerManager which is closest to this final position
-        Unit builderUnit = m_bot.Workers().getBuilder(b);
+        std::optional<Unit> builderUnit = m_bot.Workers().getBuilder(b);
         b.builderUnit = builderUnit;
-        if (!b.builderUnit.isValid())
+        if (!b.builderUnit.has_value())
         {
             continue;
         }
@@ -149,24 +149,13 @@ void BuildingManager::constructAssignedBuildings()
 
         // TODO: not sure if this is the correct way to tell if the building is constructing
         //sc2::AbilityID buildAbility = m_bot.Data(b.type).buildAbility;
-        Unit builderUnit = b.builderUnit;
+        std::optional<Unit> builderUnitOpt = b.builderUnit;
 
         bool isConstructing = false;
 
-        // if we're zerg and the builder unit is null, we assume it morphed into the building
-        if (Util::IsZerg(m_bot.GetPlayerRace(Players::Self)))
-        {
-            if (!builderUnit.isValid())
-            {
-                isConstructing = true;
-            }
-        }
-        else
-        {
-            BOT_ASSERT(builderUnit.isValid(), "null builder unit");
-
-            isConstructing = builderUnit.isConstructing(b.type);
-        }
+        BOT_ASSERT(builderUnitOpt.has_value(), "null builder unit");
+        Unit builderUnit = builderUnitOpt.value();
+        isConstructing = builderUnit.isConstructing(b.type);
 
         // if that worker is not currently constructing
         if (!isConstructing)
@@ -189,19 +178,13 @@ void BuildingManager::constructAssignedBuildings()
                 if (b.type.isRefinery())
                 {
                     // first we find the geyser at the desired location
-                    Unit geyser;
-                    for (auto unit : m_bot.GetUnits())
+                    auto units = m_bot.GetUnits();
+                    auto geyser = std::find_if(units.begin(), units.end(), [&b](Unit unit){
+                        return unit.getType().isGeyser() && Util::Dist(Util::GetPosition(b.finalPosition), unit.getPosition()) < 3;
+                    });
+                    if (geyser != units.end())
                     {
-                        if (unit.getType().isGeyser() && Util::Dist(Util::GetPosition(b.finalPosition), unit.getPosition()) < 3)
-                        {
-                            geyser = unit;
-                            break;
-                        }
-                    }
-
-                    if (geyser.isValid())
-                    {
-                        b.builderUnit.buildTarget(b.type, geyser);
+                        builderUnit.buildTarget(b.type, *geyser);
                     }
                     else
                     {
@@ -211,7 +194,7 @@ void BuildingManager::constructAssignedBuildings()
                 // if it's not a refinery, we build right on the position
                 else
                 {
-                    b.builderUnit.build(b.type, b.finalPosition);
+                    builderUnit.build(b.type, b.finalPosition);
                 }
 
                 // set the flag to true
@@ -248,7 +231,7 @@ void BuildingManager::checkForStartedConstruction()
 
             if (dx*dx + dy*dy < Util::TileToPosition(1.0f))
             {
-                if (b.buildingUnit.isValid())
+                if (b.buildingUnit.has_value())
                 {
                     std::cout << "Building mis-match somehow\n";
                 }
@@ -261,16 +244,10 @@ void BuildingManager::checkForStartedConstruction()
                 b.underConstruction = true;
                 b.buildingUnit = buildingStarted;
 
-                // if we are zerg, the buildingUnit now becomes nullptr since it's destroyed
-                if (Util::IsZerg(m_bot.GetPlayerRace(Players::Self)))
-                {
-                    b.builderUnit = Unit();
+                if (b.builderUnit.has_value()) {
+                    m_bot.Workers().finishedWithWorker(b.builderUnit.value());
                 }
-                else if (Util::IsProtoss(m_bot.GetPlayerRace(Players::Self)))
-                {
-                    m_bot.Workers().finishedWithWorker(b.builderUnit);
-                    b.builderUnit = Unit();
-                }
+                b.builderUnit = {};
 
                 // put it in the under construction vector
                 b.status = BuildingStatus::UnderConstruction;
@@ -302,14 +279,8 @@ void BuildingManager::checkForCompletedBuildings()
         }
 
         // if the unit has completed
-        if (b.buildingUnit.isCompleted())
+        if (b.buildingUnit.value().isCompleted())
         {
-            // if we are terran, give the worker back to worker manager
-            if (Util::IsTerran(m_bot.GetPlayerRace(Players::Self)))
-            {
-                m_bot.Workers().finishedWithWorker(b.builderUnit);
-            }
-
             // remove this unit from the under construction vector
             toRemove.push_back(b);
         }
@@ -339,7 +310,7 @@ bool BuildingManager::isBuildingPositionExplored(const Building & b) const
 
 char BuildingManager::getBuildingWorkerCode(const Building & b) const
 {
-    return b.builderUnit.isValid() ? 'W' : 'X';
+    return b.builderUnit.has_value() ? 'W' : 'X';
 }
 
 int BuildingManager::getReservedMinerals()
@@ -365,15 +336,15 @@ void BuildingManager::drawBuildingInformation()
     {
         std::stringstream dss;
 
-        if (b.builderUnit.isValid())
+        if (b.builderUnit.has_value())
         {
-            dss << "\n\nBuilder: " << b.builderUnit.getID() << "\n";
+            dss << "\n\nBuilder: " << b.builderUnit.value().getID() << "\n";
         }
 
-        if (b.buildingUnit.isValid())
+        if (b.buildingUnit.has_value())
         {
-            dss << "Building: " << b.buildingUnit.getID() << "\n" << b.buildingUnit.getBuildPercentage();
-            m_bot.Map().drawText(b.buildingUnit.getPosition(), dss.str());
+            dss << "Building: " << b.buildingUnit.value().getID() << "\n" << b.buildingUnit.value().getBuildPercentage();
+            m_bot.Map().drawText(b.buildingUnit.value().getPosition(), dss.str());
         }
         
         if (b.status == BuildingStatus::Unassigned)
@@ -382,7 +353,7 @@ void BuildingManager::drawBuildingInformation()
         }
         else if (b.status == BuildingStatus::Assigned)
         {
-            ss << "Assigned " << b.type.getName() << "    " << b.builderUnit.getID() << " " << getBuildingWorkerCode(b) << " (" << b.finalPosition.x << "," << b.finalPosition.y << ")\n";
+            ss << "Assigned " << b.type.getName() << "    " << b.builderUnit.value().getID() << " " << getBuildingWorkerCode(b) << " (" << b.finalPosition.x << "," << b.finalPosition.y << ")\n";
 
             int x1 = b.finalPosition.x;
             int y1 = b.finalPosition.y;

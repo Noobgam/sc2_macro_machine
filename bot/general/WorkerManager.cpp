@@ -27,16 +27,6 @@ void WorkerManager::onFrame()
     handleRepairWorkers();
 }
 
-void WorkerManager::setRepairWorker(Unit worker, const Unit & unitToRepair)
-{
-    m_workerData.setWorkerJob(worker, WorkerJobs::Repair, unitToRepair);
-}
-
-void WorkerManager::stopRepairing(Unit worker)
-{
-    m_workerData.setWorkerJob(worker, WorkerJobs::Idle);
-}
-
 void WorkerManager::handleGasWorkers()
 {
     // for each unit we have
@@ -52,9 +42,9 @@ void WorkerManager::handleGasWorkers()
             for (int i=0; i<(3-numAssigned); ++i)
             {
                 auto gasWorker = getGasWorker(unit);
-                if (gasWorker.isValid())
+                if (gasWorker.has_value())
                 {
-                    m_workerData.setWorkerJob(gasWorker, WorkerJobs::Gas, unit);
+                    m_workerData.setHarvestJob(gasWorker.value(), WorkerJobs::Gas, unit);
                 }
             }
         }
@@ -90,9 +80,9 @@ void WorkerManager::handleRepairWorkers()
     // TODO
 }
 
-Unit WorkerManager::getClosestMineralWorkerTo(const CCPosition & pos) const
+std::optional<Unit> WorkerManager::getClosestMineralWorkerTo(const CCPosition & pos) const
 {
-    Unit closestMineralWorker;
+    std::optional<Unit> closestMineralWorker;
     double closestDist = std::numeric_limits<double>::max();
 
     // for each of our workers
@@ -105,7 +95,7 @@ Unit WorkerManager::getClosestMineralWorkerTo(const CCPosition & pos) const
         {
             double dist = Util::DistSq(worker.getPosition(), pos);
 
-            if (!closestMineralWorker.isValid() || dist < closestDist)
+            if (!closestMineralWorker.has_value() || dist < closestDist)
             {
                 closestMineralWorker = worker;
                 closestDist = dist;
@@ -124,16 +114,16 @@ void WorkerManager::setMineralWorker(const Unit & unit)
     auto depot = getClosestDepot(unit);
 
     // if there is a valid mineral
-    if (depot.isValid())
+    if (depot.has_value())
     {
         // update m_workerData with the new job
-        m_workerData.setWorkerJob(unit, WorkerJobs::Minerals, depot);
+        m_workerData.setHarvestJob(unit, WorkerJobs::Minerals, depot.value());
     }
 }
 
-Unit WorkerManager::getClosestDepot(Unit worker) const
+std::optional<Unit> WorkerManager::getClosestDepot(Unit worker) const
 {
-    Unit closestDepot;
+    std::optional<Unit> closestDepot;
     double closestDistance = std::numeric_limits<double>::max();
 
     for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
@@ -143,7 +133,7 @@ Unit WorkerManager::getClosestDepot(Unit worker) const
         if (unit.getType().isResourceDepot() && unit.isCompleted())
         {
             double distance = Util::Dist(unit, worker);
-            if (!closestDepot.isValid() || distance < closestDistance)
+            if (!closestDepot.has_value() || distance < closestDistance)
             {
                 closestDepot = unit;
                 closestDistance = distance;
@@ -164,27 +154,27 @@ void WorkerManager::finishedWithWorker(const Unit & unit)
     }
 }
 
-Unit WorkerManager::getGasWorker(Unit refinery) const
+std::optional<Unit> WorkerManager::getGasWorker(Unit refinery) const
 {
     return getClosestMineralWorkerTo(refinery.getPosition());
 }
 
 void WorkerManager::setBuildingWorker(Unit worker, Building & b)
 {
-    m_workerData.setWorkerJob(worker, WorkerJobs::Build, b.buildingUnit);
+    m_workerData.setWorkerJob(worker, WorkerJobs::Build);
 }
 
 // gets a builder for BuildingManager to use
 // if setJobAsBuilder is true (default), it will be flagged as a builder unit
 // set 'setJobAsBuilder' to false if we just want to see which worker will build a building
-Unit WorkerManager::getBuilder(Building & b, bool setJobAsBuilder) const
+std::optional<Unit> WorkerManager::getBuilder(Building & b, bool setJobAsBuilder) const
 {
-    Unit builderWorker = getClosestMineralWorkerTo(Util::GetPosition(b.finalPosition));
+    std::optional<Unit> builderWorker = getClosestMineralWorkerTo(Util::GetPosition(b.finalPosition));
 
     // if the worker exists (one may not have been found in rare cases)
-    if (builderWorker.isValid() && setJobAsBuilder)
+    if (builderWorker.has_value() && setJobAsBuilder)
     {
-        m_workerData.setWorkerJob(builderWorker, WorkerJobs::Build, b.builderUnit);
+        m_workerData.setWorkerJob(builderWorker.value(), WorkerJobs::Build);
     }
 
     return builderWorker;
@@ -213,11 +203,11 @@ void WorkerManager::drawResourceDebugInfo()
             m_bot.Map().drawText(worker.getPosition(), m_workerData.getJobCode(worker));
         }
 
-        auto depot = m_workerData.getWorkerDepot(worker);
-        if (depot.isValid())
-        {
-            m_bot.Map().drawLine(worker.getPosition(), depot.getPosition());
-        }
+//        auto depot = m_workerData.getWorkerDepot(worker);
+//        if (depot.has_value())
+//        {
+//            m_bot.Map().drawLine(worker.getPosition(), depot.value().getPosition());
+//        }
     }
 }
 

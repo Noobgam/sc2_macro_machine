@@ -138,10 +138,11 @@ void CombatCommander::updateScoutDefenseSquad()
         BOT_ASSERT(enemyWorkerUnit.isValid(), "null enemy worker unit");
 
         // get our worker unit that is mining that is closest to it
-        Unit workerDefender = findClosestWorkerTo(m_combatUnits, enemyWorkerUnit.getPosition());
+        std::optional<Unit> workerDefenderOpt = findClosestWorkerTo(m_combatUnits, enemyWorkerUnit.getPosition());
 
-        if (enemyWorkerUnit.isValid() && workerDefender.isValid())
+        if (enemyWorkerUnit.isValid() && workerDefenderOpt.has_value())
         {
+            Unit workerDefender= workerDefenderOpt.value();
             // grab it from the worker manager and put it in the squad
             if (m_squadData.canAssignUnitToSquad(workerDefender, scoutDefenseSquad))
             {
@@ -325,11 +326,11 @@ void CombatCommander::updateDefenseSquadUnits(Squad & defenseSquad, const size_t
 
     while (defendersNeeded > defendersAdded)
     {
-        Unit defenderToAdd = findClosestDefender(defenseSquad, defenseSquad.getSquadOrder().getPosition());
+        std::optional<Unit> defenderToAdd = findClosestDefender(defenseSquad, defenseSquad.getSquadOrder().getPosition());
 
-        if (defenderToAdd.isValid())
+        if (defenderToAdd.has_value())
         {
-            m_squadData.assignUnitToSquad(defenderToAdd, defenseSquad);
+            m_squadData.assignUnitToSquad(defenderToAdd.value(), defenseSquad);
             defendersAdded++;
         }
         else
@@ -339,9 +340,9 @@ void CombatCommander::updateDefenseSquadUnits(Squad & defenseSquad, const size_t
     }
 }
 
-Unit CombatCommander::findClosestDefender(const Squad & defenseSquad, const CCPosition & pos)
+std::optional<Unit> CombatCommander::findClosestDefender(const Squad & defenseSquad, const CCPosition & pos)
 {
-    Unit closestDefender;
+    std::optional<Unit> closestDefender;
     float minDistance = std::numeric_limits<float>::max();
 
     // TODO: add back special case of zergling rush defense
@@ -356,7 +357,7 @@ Unit CombatCommander::findClosestDefender(const Squad & defenseSquad, const CCPo
         }
 
         float dist = Util::Dist(unit, pos);
-        if (!closestDefender.isValid() || (dist < minDistance))
+        if (!closestDefender.has_value() || (dist < minDistance))
         {
             closestDefender = unit;
             minDistance = dist;
@@ -423,9 +424,9 @@ CCPosition CombatCommander::getMainAttackLocation()
     return Util::GetPosition(m_bot.Map().getLeastRecentlySeenTile());
 }
 
-Unit CombatCommander::findClosestWorkerTo(std::vector<Unit> & unitsToAssign, const CCPosition & target)
+std::optional<Unit> CombatCommander::findClosestWorkerTo(std::vector<Unit> & unitsToAssign, const CCPosition & target)
 {
-    Unit closestMineralWorker;
+    std::optional<Unit> closestMineralWorker;
     float closestDist = std::numeric_limits<float>::max();
 
     // for each of our workers

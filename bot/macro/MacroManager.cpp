@@ -75,15 +75,14 @@ BuildOrderItem MacroManager::getTopPriority()
 }
 
 void MacroManager::produceIfPossible(BuildOrderItem item) {
-    Unit producer = getProducer(item.type);
-    bool canMake = canMakeNow(producer, item.type);
-    if (producer.isValid() && canMake)
+    std::optional<Unit> producer = getProducer(item.type);
+    if (producer.has_value() && canMakeNow(producer.value(), item.type))
     {
-        produce(producer, item);
+        produce(producer.value(), item);
     }
 }
 
-Unit MacroManager::getProducer(const MetaType& type)
+std::optional<Unit> MacroManager::getProducer(const MetaType& type)
 {
     // get all the types of units that caa build this type
     auto& producerTypes = m_bot.Data(type).whatBuilds;
@@ -102,10 +101,10 @@ Unit MacroManager::getProducer(const MetaType& type)
     }
     
     // some invalid unit
-    return Unit();
+    return {};
 }
 
-Unit MacroManager::getProducer(const MetaType & type, CCPosition closestTo)
+std::optional<Unit> MacroManager::getProducer(const MetaType & type, CCPosition closestTo)
 {
     // get all the types of units that cna build this type
     auto & producerTypes = m_bot.Data(type).whatBuilds;
@@ -131,11 +130,11 @@ Unit MacroManager::getProducer(const MetaType & type, CCPosition closestTo)
     return getClosestUnitToPosition(candidateProducers, closestTo);
 }
 
-Unit MacroManager::getClosestUnitToPosition(const std::vector<Unit> & units, CCPosition closestTo)
+std::optional<Unit> MacroManager::getClosestUnitToPosition(const std::vector<Unit> & units, CCPosition closestTo)
 {
     if (units.size() == 0)
     {
-        return Unit();
+        return {};
     }
 
     // if we don't care where the unit is return the first one we have
@@ -144,13 +143,13 @@ Unit MacroManager::getClosestUnitToPosition(const std::vector<Unit> & units, CCP
         return units[0];
     }
 
-    Unit closestUnit;
+    std::optional<Unit> closestUnit = {};
     double minDist = std::numeric_limits<double>::max();
 
     for (auto & unit : units)
     {
         double distance = Util::Dist(unit, closestTo);
-        if (!closestUnit.isValid() || distance < minDist)
+        if (!closestUnit.has_value() || distance < minDist)
         {
             closestUnit = unit;
             minDist = distance;
