@@ -11,14 +11,14 @@ public:
     SquadID unassignedSquadID;
 
     SquadManager();
-    std::map<SquadID, std::shared_ptr<Squad>> getSquads() const;
+    const std::map<SquadID, std::shared_ptr<Squad>> & getSquads() const;
 
-    Squad & getUnassignedSquad() const;
+    const Squad & getUnassignedSquad() const;
     std::optional<std::shared_ptr<Squad>> getSquad(SquadID) const;
 
     SquadID createNewSquad();
     SquadID mergeSquads(const std::vector<SquadID> & ids);
 
     void transferUnits(SquadID from, SquadID to);
-    void transferUnits(const std::set<Unit> & units, SquadID to);
+    void transferUnits(const std::set<std::shared_ptr<Unit>> & units, SquadID to);
 };

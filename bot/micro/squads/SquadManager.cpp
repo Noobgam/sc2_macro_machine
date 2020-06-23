@@ -8,11 +8,11 @@ SquadManager::SquadManager():
     m_squads.insert({SquadManager::currentSquadID++, std::make_shared<Squad>(unassignedSquadID)});
 }
 
-std::map<SquadID, std::shared_ptr<Squad>> SquadManager::getSquads() const {
+const std::map<SquadID, std::shared_ptr<Squad>> & SquadManager::getSquads() const {
     return m_squads;
 }
 
-Squad &SquadManager::getUnassignedSquad() const {
+const Squad &SquadManager::getUnassignedSquad() const {
     return *getSquad(SquadManager::unassignedSquadID).value();
 }
 
@@ -26,7 +26,7 @@ std::optional<std::shared_ptr<Squad>> SquadManager::getSquad(SquadID id) const {
 
 SquadID SquadManager::createNewSquad() {
     SquadID id = SquadManager::currentSquadID++;
-    m_squads.insert({SquadManager::currentSquadID++, std::make_shared<Squad>(id)});
+    m_squads.insert({id, std::make_shared<Squad>(id)});
     return currentSquadID;
 }
 
@@ -56,7 +56,7 @@ void SquadManager::transferUnits(SquadID from, SquadID to) {
     }
 }
 
-void SquadManager::transferUnits(const std::set<Unit> & units, SquadID to) {
+void SquadManager::transferUnits(const std::set<std::shared_ptr<Unit>> & units, SquadID to) {
     auto toOpt = getSquad(to);
     BOT_ASSERT(toOpt.has_value(), "From squad not found");
     std::shared_ptr<Squad> toSquad = toOpt.value();
