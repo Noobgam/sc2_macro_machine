@@ -8,20 +8,8 @@ std::optional<BuildOrderItem> TechBuildManager::getTopPriority()
 {
     auto cyberneticsType = UnitType(sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE, m_bot);
     auto gatewayType = UnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY, m_bot);
-    bool hasGate = false;
-    int cyberneticsNumber = 0;
-    for (auto unit : m_bot.GetUnits() ) {
-        if (unit.isValid() && unit.getPlayer() == Players::Self) {
-            if (unit.getType() == gatewayType && unit.isAlive() && !unit.isBeingConstructed()) {
-                hasGate = true;
-            }
-            if (unit.getType() == cyberneticsType) {
-                if (unit.isAlive() || unit.getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder) {
-                    cyberneticsNumber++;
-                }
-            }
-        }
-    }
+    bool hasGate = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::COMPLETED) > 0;
+    int cyberneticsNumber = m_bot.UnitInfo().getBuildingCount(Players::Self, cyberneticsType, UnitStatus::TOTAL);
     if (!hasGate || cyberneticsNumber >= 1) {
         return {};
     }

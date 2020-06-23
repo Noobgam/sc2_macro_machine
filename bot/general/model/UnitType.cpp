@@ -50,10 +50,16 @@ bool UnitType::operator < (const UnitType & rhs) const
     return m_type < rhs.m_type;
 }
 
+bool UnitType::operator != (const UnitType & rhs) const
+{
+    return m_type != rhs.m_type;
+}
+
 bool UnitType::operator == (const UnitType & rhs) const
 {
     return m_type == rhs.m_type;
 }
+
 
 bool UnitType::isValid() const
 {

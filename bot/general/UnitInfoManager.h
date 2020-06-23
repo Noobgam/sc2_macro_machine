@@ -5,6 +5,18 @@
 #include "BaseLocation.h"
 #include "model/Unit.h"
 
+enum UnitStatus {
+    COMPLETED   = 0x01,
+    CONSTRUCTING    = 0x02,
+    ORDERED     = 0x04,
+
+    NOT_TRAINING = 0x08,
+
+    IN_PROGRESS = CONSTRUCTING | ORDERED,
+    TOTAL = CONSTRUCTING | ORDERED | COMPLETED,
+    FREE = COMPLETED | NOT_TRAINING,
+};
+
 class CCBot;
 class UnitInfoManager 
 {
@@ -32,7 +44,7 @@ public:
 
     size_t                  getUnitTypeCount(CCPlayer player, UnitType type, bool completed = true) const;
 
-    int                     getBuildingCount(CCPlayer player, UnitType type, uint8_t status) const;
+    int                     getBuildingCount(CCPlayer player, UnitType type, UnitStatus status) const;
 
     void                    getNearbyForce(std::vector<UnitInfo> & unitInfo, CCPosition p, int player, float radius) const;
 
@@ -40,12 +52,4 @@ public:
 
     void                    drawUnitInformation(float x, float y) const;
 
-};
-
-struct UnitStatus {
-    static const uint8_t COMPLETED   = 0x01;
-    static const uint8_t BUILDING    = 0x02;
-    static const uint8_t ORDERED     = 0x04;
-
-    static const uint8_t IN_PROGRESS = BUILDING | ORDERED;
 };

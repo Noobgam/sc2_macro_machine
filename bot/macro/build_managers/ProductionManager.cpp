@@ -21,23 +21,8 @@ std::optional<BuildOrderItem> ProductionManager::getTopPriority()
 {
     auto gatewayType = m_bot.getUnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY);
     auto warpGateType = m_bot.getUnitType(sc2::UNIT_TYPEID::PROTOSS_WARPGATE);
-    auto& units = m_bot.GetUnits();
-    int gateWayCount = 0;
-    int warpGateCount = 0;
-    for (const auto& unit : m_bot.GetUnits()) {
-        if (unit.isValid() && (unit.getType() == gatewayType || unit.getType() == warpGateType) && unit.getPlayer() == Players::Self) {
-            // this is a heuristic, there are couple of frames lost between placeholder and construction
-            //  so workers will build more than one building.
-            if (unit.isAlive() || unit.isBeingConstructed() || unit.getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder) {
-                if (unit.getType() == gatewayType) {
-                    ++gateWayCount;
-                }
-                else {
-                    ++warpGateCount;
-                }
-            }
-        }
-    }
+    int gateWayCount = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::TOTAL);
+    int warpGateCount = m_bot.UnitInfo().getBuildingCount(Players::Self, warpGateType, UnitStatus::TOTAL);
     // production time: https://liquipedia.net/starcraft2/Warp_Gate_(Legacy_of_the_Void)#Description
     double potentialAdeptCount = gateWayCount * (1.0 / 27) + warpGateCount * (1.0 / 20);
     // ADEPT_COST = { 100, 25 }

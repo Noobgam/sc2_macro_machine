@@ -194,6 +194,34 @@ size_t UnitInfoManager::getUnitTypeCount(CCPlayer player, UnitType type, bool co
     return count;
 }
 
+int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus status) const {
+    int count;
+    for (auto & unit : getUnits(player)) {
+        if (type != unit.getType()) {
+            continue;
+        }
+        if (status & UnitStatus::COMPLETED && unit.isCompleted()) {
+            if (status & UnitStatus::NOT_TRAINING) {
+               if (!unit.isTraining()) {
+                   count++;
+               }
+            } else {
+                count++;
+            }
+            continue;
+        }
+        if (status & UnitStatus::CONSTRUCTING && unit.isBeingConstructed()) {
+            count++;
+            continue;
+        }
+        if (status & UnitStatus::ORDERED && unit.getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder) {
+            count++;
+            continue;
+        }
+    }
+    return count;
+}
+
 void UnitInfoManager::drawUnitInformation(float x,float y) const
 {
 

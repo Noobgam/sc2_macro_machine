@@ -8,14 +8,8 @@ WorkerBuildManager::WorkerBuildManager(CCBot& bot)
 std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority()
 {
     auto probeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
-    int freeNexuses = 0;
-    for (auto& unit : m_bot.GetUnits()) {
-        if (!unit.isValid()) continue;
-        if (!unit.isAlive()) continue;
-        if (!unit.isOfType(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) continue;
-        if (unit.isTraining()) continue;
-        ++freeNexuses;
-    }   
+    auto nexusType = UnitType(sc2::UNIT_TYPEID::PROTOSS_NEXUS, m_bot);
+    int freeNexuses = m_bot.UnitInfo().getBuildingCount(Players::Self, nexusType, UnitStatus::FREE);
     if (freeNexuses == 0) {
         return {};
     }
