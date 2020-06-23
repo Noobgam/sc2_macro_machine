@@ -3,7 +3,7 @@
 #include "general/model/Common.h"
 #include "util/Timer.hpp"
 #include "macro/MacroManager.h"
-#include "micro/CombatCommander.h"
+#include "micro/CombatManager.h"
 
 class CCBot;
 
@@ -13,6 +13,7 @@ class GameCommander
     Timer                   m_timer;
 
     MacroManager         m_macroManager;
+    CombatManager        m_combatManager;
 
 public:
 

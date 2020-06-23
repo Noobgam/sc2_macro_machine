@@ -20,7 +20,7 @@ void SquadData::clearSquadData()
     // give back workers who were in squads
     for (auto & kv : m_squads)
     {
-        Squad & squad = kv.second;
+        Squad_L & squad = kv.second;
         for (auto & unit : squad.getUnits())
         {
             BOT_ASSERT(unit.isValid(), "null unit");
@@ -58,7 +58,7 @@ void SquadData::removeSquad(const std::string & squadName)
     m_squads.erase(squadName);
 }
 
-const std::map<std::string, Squad> & SquadData::getSquads() const
+const std::map<std::string, Squad_L> & SquadData::getSquads() const
 {
     return m_squads;
 }
@@ -68,9 +68,9 @@ bool SquadData::squadExists(const std::string & squadName)
     return m_squads.find(squadName) != m_squads.end();
 }
 
-void SquadData::addSquad(const std::string & squadName, const Squad & squad)
+void SquadData::addSquad(const std::string & squadName, const Squad_L & squad)
 {
-    m_squads.insert(std::pair<std::string, Squad>(squadName, squad));
+    m_squads.insert(std::pair<std::string, Squad_L>(squadName, squad));
 }
 
 void SquadData::updateAllSquads()
@@ -89,7 +89,7 @@ void SquadData::drawSquadInformation()
 
     for (auto & kv : m_squads)
     {
-        const Squad & squad = kv.second;
+        const Squad_L & squad = kv.second;
 
         auto & units = squad.getUnits();
         const SquadOrder & order = squad.getSquadOrder();
@@ -134,7 +134,7 @@ bool SquadData::unitIsInSquad(const Unit & unit) const
     return getUnitSquad(unit) != nullptr;
 }
 
-const Squad * SquadData::getUnitSquad(const Unit & unit) const
+const Squad_L * SquadData::getUnitSquad(const Unit & unit) const
 {
     for (const auto & kv : m_squads)
     {
@@ -147,7 +147,7 @@ const Squad * SquadData::getUnitSquad(const Unit & unit) const
     return nullptr;
 }
 
-Squad * SquadData::getUnitSquad(const Unit & unit)
+Squad_L * SquadData::getUnitSquad(const Unit & unit)
 {
     for (auto & kv : m_squads)
     {
@@ -160,11 +160,11 @@ Squad * SquadData::getUnitSquad(const Unit & unit)
     return nullptr;
 }
 
-void SquadData::assignUnitToSquad(const Unit & unit, Squad & squad)
+void SquadData::assignUnitToSquad(const Unit & unit, Squad_L & squad)
 {
     BOT_ASSERT(canAssignUnitToSquad(unit, squad), "We shouldn't be re-assigning this unit!");
 
-    Squad * previousSquad = getUnitSquad(unit);
+    Squad_L * previousSquad = getUnitSquad(unit);
 
     if (previousSquad)
     {
@@ -174,15 +174,15 @@ void SquadData::assignUnitToSquad(const Unit & unit, Squad & squad)
     squad.addUnit(unit);
 }
 
-bool SquadData::canAssignUnitToSquad(const Unit & unit, const Squad & squad) const
+bool SquadData::canAssignUnitToSquad(const Unit & unit, const Squad_L & squad) const
 {
-    const Squad * unitSquad = getUnitSquad(unit);
+    const Squad_L * unitSquad = getUnitSquad(unit);
 
     // make sure strictly less than so we don't reassign to the same squad etc
     return !unitSquad || (unitSquad->getPriority() < squad.getPriority());
 }
 
-Squad & SquadData::getSquad(const std::string & squadName)
+Squad_L & SquadData::getSquad(const std::string & squadName)
 {
     BOT_ASSERT(squadExists(squadName), "Trying to access squad that doesn't exist: %s", squadName.c_str());
     if (!squadExists(squadName))
