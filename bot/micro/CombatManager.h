@@ -10,7 +10,7 @@ class CombatManager
     CCBot &         m_bot;
     SquadManager    m_squadManager;
 
-    Squad* mainSquadID;
+    Squad* mainSquad;
 
     void reformSquads();
 public:

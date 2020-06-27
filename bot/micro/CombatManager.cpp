@@ -1,11 +1,11 @@
 #include "CombatManager.h"
 
-CombatManager::CombatManager(CCBot & bot) : m_bot(bot) {
-
-}
+CombatManager::CombatManager(CCBot & bot) :
+    m_bot(bot),
+    mainSquad(m_squadManager.getUnassignedSquad()) { }
 
 void CombatManager::onStart() {
-    mainSquadID = m_squadManager.createNewSquad();
+    mainSquad = m_squadManager.createNewSquad();
 }
 
 void CombatManager::onFrame() {
@@ -13,8 +13,8 @@ void CombatManager::onFrame() {
 }
 
 void CombatManager::reformSquads() {
-    if (!m_squadManager.getUnassignedSquad().isEmpty()) {
-        m_squadManager.transferUnits(m_squadManager.unassignedSquadID, mainSquadID->getId());
+    if (!m_squadManager.getUnassignedSquad()->isEmpty()) {
+        m_squadManager.transferUnits(m_squadManager.getUnassignedSquad(), mainSquad);
     }
 }
 
