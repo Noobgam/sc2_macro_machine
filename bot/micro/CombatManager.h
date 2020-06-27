@@ -14,8 +14,9 @@ class CombatManager
 
     void reformSquads();
 public:
-
     explicit CombatManager(CCBot & bot);
+
+    SquadManager & getSquadManager();
 
     void onStart();
     void onFrame();

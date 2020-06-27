@@ -16,13 +16,11 @@ class GameCommander
     CombatManager        m_combatManager;
 
 public:
-
     explicit GameCommander(CCBot & bot);
+
+    MacroManager& getMacroManager();
+    CombatManager& getCombatManager();
 
     void onStart();
     void onFrame();
-
-    void drawDebugInterface();
-    void drawGameInformation(int x, int y);
-
 };

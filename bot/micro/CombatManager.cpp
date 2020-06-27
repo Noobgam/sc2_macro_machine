@@ -4,6 +4,10 @@ CombatManager::CombatManager(CCBot & bot) :
     m_bot(bot),
     mainSquad(m_squadManager.getUnassignedSquad()) { }
 
+SquadManager & CombatManager::getSquadManager() {
+    return m_squadManager;
+}
+
 void CombatManager::onStart() {
     mainSquad = m_squadManager.createNewSquad();
 }
