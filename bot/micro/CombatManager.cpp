@@ -14,7 +14,7 @@ void CombatManager::onFrame() {
 
 void CombatManager::reformSquads() {
     if (!m_squadManager.getUnassignedSquad().isEmpty()) {
-        m_squadManager.transferUnits(m_squadManager.unassignedSquadID, mainSquadID);
+        m_squadManager.transferUnits(m_squadManager.unassignedSquadID, mainSquadID->getId());
     }
 }
 

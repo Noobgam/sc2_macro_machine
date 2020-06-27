@@ -1,7 +1,5 @@
 #include "SquadManager.h"
 
-SquadID SquadManager::currentSquadID = 0;
-
 SquadManager::SquadManager():
     m_squads() {
     unassignedSquadID = SquadManager::currentSquadID++;
@@ -24,16 +22,18 @@ std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
     return iter->second.get();
 }
 
-SquadID SquadManager::createNewSquad() {
+Squad* SquadManager::createNewSquad() {
     SquadID id = SquadManager::currentSquadID++;
-    m_squads.insert({id, std::make_unique<Squad>(id)});
-    return currentSquadID;
+    std::unique_ptr<Squad> squad = std::make_unique<Squad>(id);
+    Squad* res = squad.get();
+    m_squads.insert({id, std::move(squad)});
+    return res;
 }
 
-SquadID SquadManager::mergeSquads(const std::vector<SquadID> & ids) {
-    SquadID merged = createNewSquad();
+Squad* SquadManager::mergeSquads(const std::vector<SquadID> & ids) {
+    Squad* merged = createNewSquad();
     for (SquadID squadId : ids) {
-        transferUnits(squadId, merged);
+        transferUnits(squadId, merged->getId());
     }
     return merged;
 }

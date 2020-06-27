@@ -5,7 +5,7 @@
 
 class SquadManager {
 private:
-    static SquadID currentSquadID;
+    SquadID currentSquadID = 0;
     std::map<SquadID, std::unique_ptr<Squad>> m_squads;
 public:
     SquadID unassignedSquadID;
@@ -16,8 +16,8 @@ public:
     const Squad & getUnassignedSquad() const;
     std::optional<Squad*> getSquad(SquadID) const;
 
-    SquadID createNewSquad();
-    SquadID mergeSquads(const std::vector<SquadID> & ids);
+    Squad* createNewSquad();
+    Squad* mergeSquads(const std::vector<SquadID> & ids);
 
     void transferUnits(SquadID from, SquadID to);
     void transferUnits(const std::set<Unit*> & units, SquadID to);
