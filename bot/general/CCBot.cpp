@@ -63,10 +63,30 @@ void CCBot::setUnits()
 {
     m_allUnits.clear();
     Control()->GetObservation();
+    ++observationId;
     for (auto & unit : Observation()->GetUnits())
     {
-        m_allUnits.push_back(std::make_unique<Unit>(unit, *this));
+        auto it = unitWrapperByTag.find(unit->tag);
+        if (it == unitWrapperByTag.end()) {
+            unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, *this, observationId)});
+        } else {
+            it->second->updateUnit(unit);
+        }
     }
+    // mostly cleanups dead units
+    std::vector<std::unique_ptr<Unit>> missingUnits;
+    for (auto it = unitWrapperByTag.cbegin(); it != unitWrapperByTag.cend(); ) {
+        if (it->second->getObservationId() != observationId) {
+            missingUnits.push_back(std::move(it->second));
+            it = unitWrapperByTag.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    // callback missingUnits before destruction
+
+    
 }
 
 CCRace CCBot::GetPlayerRace(int player) const

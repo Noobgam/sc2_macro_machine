@@ -5,15 +5,17 @@ Unit::Unit()
     : m_bot(nullptr)
     , m_unit(nullptr)
     , m_unitID(0)
+    , observationId(0)
 {
 
 }
 
-Unit::Unit(const sc2::Unit * unit, CCBot & bot)
+Unit::Unit(const sc2::Unit * unit, CCBot & bot, size_t observationId)
     : m_bot(&bot)
     , m_unit(unit)
     , m_unitID(unit->tag)
     , m_unitType(unit->unit_type, bot)
+    , observationId(observationId)
 {
     
 }
@@ -21,6 +23,17 @@ Unit::Unit(const sc2::Unit * unit, CCBot & bot)
 const sc2::Unit * Unit::getUnitPtr() const
 {
     return m_unit;
+}
+
+void Unit::updateUnit(const sc2::Unit * newUnit) {
+#ifdef _DEBUG
+    assert(m_unit->tag == newUnit->tag);
+#endif
+    m_unit = newUnit;
+}
+
+size_t Unit::getObservationId() {
+    return observationId;
 }
 
 const sc2::UnitTypeID & Unit::getAPIUnitType() const

@@ -21,8 +21,11 @@ class CCBot : public sc2::Agent
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
 
-    std::vector<std::unique_ptr<Unit>>       m_allUnits;
+    std::unordered_map<sc2::Tag, std::unique_ptr<Unit>> unitWrapperByTag;
+    std::vector<Unit*>                                  m_allUnits;
     std::vector<CCPosition> m_baseLocations;
+
+    size_t observationId = 0;
 
     void setUnits();
 
