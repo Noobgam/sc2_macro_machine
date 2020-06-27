@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../general/model/Common.h"
-#include "Squad_L.h"
-#include "SquadData.h"
 #include "squads/SquadManager.h"
 
 class CCBot;

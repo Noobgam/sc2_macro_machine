@@ -1,8 +1,6 @@
 #include "Squad.h"
 
-Squad::Squad(SquadID id): m_id(id) {
-
-}
+Squad::Squad(SquadID id): m_id(id) { }
 
 void Squad::addUnits(const std::set<Unit*> & units) {
     m_units.insert(units.begin(), units.end());

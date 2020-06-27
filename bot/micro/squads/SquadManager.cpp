@@ -6,12 +6,15 @@ SquadManager::SquadManager():
     m_squads.insert({unassignedSquadID, std::make_unique<Squad>(unassignedSquadID)});
 }
 
-//const std::map<SquadID, std::shared_ptr<Squad>> & SquadManager::getSquads() const {
-//    return m_squads;
-//}
+void SquadManager::removeUnitsFromSquad(const std::set<Unit *> &units, Squad *squad) {
+    squad->removeUnits(units);
+    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
+        m_squads.erase(squad->getId());
+    }
+}
 
-const Squad &SquadManager::getUnassignedSquad() const {
-    return *getSquad(SquadManager::unassignedSquadID).value();
+Squad* SquadManager::getUnassignedSquad() const {
+    return getSquad(SquadManager::unassignedSquadID).value();
 }
 
 std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
@@ -22,6 +25,22 @@ std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
     return iter->second.get();
 }
 
+Squad *SquadManager::getUnitSquad(Unit *unit) const {
+    auto squad = m_units.find(unit);
+    BOT_ASSERT(squad != m_units.end() && squad->second != nullptr, "Squad for unit not found");
+    return squad->second;
+}
+
+void SquadManager::addUnit(Unit *unit) {
+    m_units.insert({ unit, getUnassignedSquad() });
+}
+
+void SquadManager::removeUnit(Unit *unit) {
+    Squad* squad = getUnitSquad(unit);
+    m_units.erase(unit);
+    removeUnitsFromSquad({unit}, squad);
+}
+
 Squad* SquadManager::createNewSquad() {
     SquadID id = SquadManager::currentSquadID++;
     std::unique_ptr<Squad> squad = std::make_unique<Squad>(id);
@@ -30,36 +49,25 @@ Squad* SquadManager::createNewSquad() {
     return res;
 }
 
-Squad* SquadManager::mergeSquads(const std::vector<SquadID> & ids) {
+Squad* SquadManager::mergeSquads(std::vector<Squad*> & ids) {
     Squad* merged = createNewSquad();
-    for (SquadID squadId : ids) {
-        transferUnits(squadId, merged->getId());
+    for (auto id : ids) {
+        transferUnits(id, merged);
     }
     return merged;
 }
 
-void SquadManager::transferUnits(SquadID from, SquadID to) {
-    auto fromOpt = getSquad(from);
-    BOT_ASSERT(fromOpt.has_value(), "From squad not found");
-    Squad* fromSquad = fromOpt.value();
-
-    // temporary solution
-    auto toOpt = getSquad(from);
-    BOT_ASSERT(toOpt.has_value(), "From squad not found");
-    Squad* toSquad = toOpt.value();
-    toSquad->addUnits(fromSquad->units());
-    fromSquad->clear();
-
-    //    transferUnits(fromSquad->units(), to);
-    if (to != SquadManager::unassignedSquadID && toSquad->isEmpty()) {
-        m_squads.erase(to);
-    }
+void SquadManager::transferUnits(Squad* from, Squad* to) {
+    transferUnits(from->units(), to);
 }
 
-void SquadManager::transferUnits(const std::set<Unit*> & units, SquadID to) {
-    auto toOpt = getSquad(to);
-    BOT_ASSERT(toOpt.has_value(), "From squad not found");
-    Squad* toSquad = toOpt.value();
-    toSquad->addUnits(units);
-    // TODO remove units from map Unit -> Squad
+void SquadManager::transferUnits(const std::set<Unit*> & units, Squad* to) {
+    for (auto & unit : units) {
+        Squad* oldSquad = getUnitSquad(unit);
+        if (oldSquad != to) {
+            removeUnitsFromSquad({ unit }, oldSquad);
+        }
+        m_units.insert({ unit, to });
+    }
+    to->addUnits(units);
 }
