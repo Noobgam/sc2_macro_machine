@@ -6,7 +6,7 @@ SquadManager::SquadManager():
     m_squads.insert({unassignedSquadID, std::make_unique<Squad>(unassignedSquadID)});
 }
 
-void SquadManager::removeUnitsFromSquad(const std::set<Unit *> &units, Squad *squad) {
+void SquadManager::removeUnitsFromSquad(const std::set<const Unit *> &units, Squad *squad) {
     squad->removeUnits(units);
     if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
         m_squads.erase(squad->getId());
@@ -25,17 +25,19 @@ std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
     return iter->second.get();
 }
 
-Squad *SquadManager::getUnitSquad(Unit *unit) const {
+Squad *SquadManager::getUnitSquad(const Unit *unit) const {
     auto squad = m_units.find(unit);
     BOT_ASSERT(squad != m_units.end() && squad->second != nullptr, "Squad for unit not found");
     return squad->second;
 }
 
-void SquadManager::addUnit(Unit *unit) {
+void SquadManager::addUnit(const Unit *unit) {
+    Squad* unassignedSquad = getUnassignedSquad();
+    unassignedSquad->addUnits({ unit });
     m_units.insert({ unit, getUnassignedSquad() });
 }
 
-void SquadManager::removeUnit(Unit *unit) {
+void SquadManager::removeUnit(const Unit *unit) {
     Squad* squad = getUnitSquad(unit);
     m_units.erase(unit);
     removeUnitsFromSquad({unit}, squad);
@@ -61,13 +63,14 @@ void SquadManager::transferUnits(Squad* from, Squad* to) {
     transferUnits(from->units(), to);
 }
 
-void SquadManager::transferUnits(const std::set<Unit*> & units, Squad* to) {
-    for (auto & unit : units) {
+void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to) {
+    std::cerr << "Tranfering " << units.size() << std::endl;
+    to->addUnits(units);
+    for (auto unit : units) {
         Squad* oldSquad = getUnitSquad(unit);
         if (oldSquad != to) {
             removeUnitsFromSquad({ unit }, oldSquad);
         }
-        m_units.insert({ unit, to });
+        m_units.find(unit)->second = to;
     }
-    to->addUnits(units);
 }

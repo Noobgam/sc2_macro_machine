@@ -59,15 +59,16 @@ void CCBot::OnStep()
 #endif
 }
 
-void CCBot::setUnits()
-{
+void CCBot::setUnits() {
     Control()->GetObservation();
     ++observationId;
     for (auto & unit : Observation()->GetUnits())
     {
         auto it = unitWrapperByTag.find(unit->tag);
         if (it == unitWrapperByTag.end()) {
-            unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, *this, observationId)});
+            auto pair = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, *this, observationId)});
+            Unit* unit = pair.first->second.get();
+            processNewUnit(unit);
         } else {
             it->second->updateObservationId(observationId);
         }
@@ -80,9 +81,7 @@ void CCBot::setUnits()
         bool needToDelete = notObserved || dead;
         if (needToDelete) {
             std::cerr << "Unit is missing. [" << it->second->getType().getName() << "]" << std::endl;
-
-            std::unique_ptr<Unit> pt = std::move(it->second);
-            //missingUnits.push_back(std::move(it->second));
+            missingUnits.push_back(std::move(it->second));
             it = unitWrapperByTag.erase(it);
         } else {
             ++it;
@@ -93,12 +92,33 @@ void CCBot::setUnits()
     if (missingUnits.size() > 0) {
         std::cerr << missingUnits.size() << " < " << std::endl;
     }
+    for (auto & unit : missingUnits) {
+        processRemoveUnit(unit.get());
+    }
 
     m_allUnits.clear();
     m_allUnits.reserve(unitWrapperByTag.size());
     for (const auto & it : unitWrapperByTag) {
         m_allUnits.push_back(it.second.get());
     }
+}
+
+void CCBot::processNewUnit(Unit* unit) {
+    if (isSquadUnit(unit)) {
+        m_gameCommander.getCombatManager().getSquadManager().addUnit(unit);
+    }
+}
+
+void CCBot::processRemoveUnit(Unit* unit) {
+    if (isSquadUnit(unit)) {
+        m_gameCommander.getCombatManager().getSquadManager().removeUnit(unit);
+    }
+}
+
+bool CCBot::isSquadUnit(Unit* unit) {
+    UnitType probe = getUnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+    UnitType zealot = getUnitType(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+    return unit->getPlayer() == Players::Self && (unit->getType() == probe || unit->getType() == zealot);
 }
 
 CCRace CCBot::GetPlayerRace(int player) const

@@ -28,6 +28,9 @@ class CCBot : public sc2::Agent
     size_t observationId = 0;
 
     void setUnits();
+    void processNewUnit(Unit *unit);
+    void processRemoveUnit(Unit *unit);
+    bool isSquadUnit(Unit* unit);
 
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
