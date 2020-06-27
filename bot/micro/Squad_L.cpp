@@ -1,8 +1,8 @@
-#include "Squad.h"
+#include "Squad_L.h"
 #include "../general/CCBot.h"
 #include "../util/Util.h"
 
-Squad::Squad(CCBot & bot)
+Squad_L::Squad_L(CCBot & bot)
     : m_bot(bot)
     , m_lastRetreatSwitch(0)
     , m_lastRetreatSwitchVal(false)
@@ -14,7 +14,7 @@ Squad::Squad(CCBot & bot)
 
 }
 
-Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority, CCBot & bot)
+Squad_L::Squad_L(const std::string & name, const SquadOrder & order, size_t priority, CCBot & bot)
     : m_bot(bot)
     , m_name(name)
     , m_order(order)
@@ -26,7 +26,7 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
 {
 }
 
-void Squad::onFrame()
+void Squad_L::onFrame()
 {
     // update all necessary unit information within this squad
     updateUnits();
@@ -54,29 +54,29 @@ void Squad::onFrame()
     }
 }
 
-bool Squad::isEmpty() const
+bool Squad_L::isEmpty() const
 {
     return m_units.empty();
 }
 
-size_t Squad::getPriority() const
+size_t Squad_L::getPriority() const
 {
     return m_priority;
 }
 
-void Squad::setPriority(const size_t & priority)
+void Squad_L::setPriority(const size_t & priority)
 {
     m_priority = priority;
 }
 
-void Squad::updateUnits()
+void Squad_L::updateUnits()
 {
     setAllUnits();
     setNearEnemyUnits();
     addUnitsToMicroManagers();
 }
 
-void Squad::setAllUnits()
+void Squad_L::setAllUnits()
 {
     // clean up the _units vector just in case one of them died
     std::set<Unit> goodUnits;
@@ -91,7 +91,7 @@ void Squad::setAllUnits()
     m_units = goodUnits;
 }
 
-void Squad::setNearEnemyUnits()
+void Squad_L::setNearEnemyUnits()
 {
     m_nearEnemy.clear();
     for (auto unit : m_units)
@@ -103,7 +103,7 @@ void Squad::setNearEnemyUnits()
     }
 }
 
-void Squad::addUnitsToMicroManagers()
+void Squad_L::addUnitsToMicroManagers()
 {
     std::vector<Unit> meleeUnits;
     std::vector<Unit> rangedUnits;
@@ -144,22 +144,22 @@ void Squad::addUnitsToMicroManagers()
 }
 
 // TODO: calculates whether or not to regroup
-bool Squad::needsToRegroup() const
+bool Squad_L::needsToRegroup() const
 {
     return false;
 }
 
-void Squad::setSquadOrder(const SquadOrder & so)
+void Squad_L::setSquadOrder(const SquadOrder & so)
 {
     m_order = so;
 }
 
-bool Squad::containsUnit(const Unit & unit) const
+bool Squad_L::containsUnit(const Unit & unit) const
 {
     return std::find(m_units.begin(), m_units.end(), unit) != m_units.end();
 }
 
-void Squad::clear()
+void Squad_L::clear()
 {
     for (auto unit : getUnits())
     {
@@ -174,7 +174,7 @@ void Squad::clear()
     m_units.clear();
 }
 
-bool Squad::isUnitNearEnemy(const Unit & unit) const
+bool Squad_L::isUnitNearEnemy(const Unit & unit) const
 {
     BOT_ASSERT(unit.isValid(), "null unit in squad");
 
@@ -189,7 +189,7 @@ bool Squad::isUnitNearEnemy(const Unit & unit) const
     return false;
 }
 
-CCPosition Squad::calcCenter() const
+CCPosition Squad_L::calcCenter() const
 {
     if (m_units.empty())
     {
@@ -206,7 +206,7 @@ CCPosition Squad::calcCenter() const
     return CCPosition(sum.x / m_units.size(), sum.y / m_units.size());
 }
 
-CCPosition Squad::calcRegroupPosition() const
+CCPosition Squad_L::calcRegroupPosition() const
 {
     CCPosition regroup(0, 0);
 
@@ -235,7 +235,7 @@ CCPosition Squad::calcRegroupPosition() const
     }
 }
 
-int Squad::squadUnitsNear(const CCPosition & p) const
+int Squad_L::squadUnitsNear(const CCPosition & p) const
 {
     int numUnits = 0;
 
@@ -252,27 +252,27 @@ int Squad::squadUnitsNear(const CCPosition & p) const
     return numUnits;
 }
 
-const std::set<Unit> & Squad::getUnits() const
+const std::set<Unit> & Squad_L::getUnits() const
 {
     return m_units;
 }
 
-const SquadOrder & Squad::getSquadOrder()	const
+const SquadOrder & Squad_L::getSquadOrder()	const
 {
     return m_order;
 }
 
-void Squad::addUnit(const Unit & unit)
+void Squad_L::addUnit(const Unit & unit)
 {
     m_units.insert(unit);
 }
 
-void Squad::removeUnit(const Unit & unit)
+void Squad_L::removeUnit(const Unit & unit)
 {
     m_units.erase(unit);
 }
 
-const std::string & Squad::getName() const
+const std::string & Squad_L::getName() const
 {
     return m_name;
 }

@@ -7,7 +7,7 @@
 
 class CCBot;
 
-class Squad
+class Squad_L
 {
     CCBot &             m_bot;
 
@@ -35,8 +35,8 @@ class Squad
 
 public:
 
-    Squad(const std::string & name, const SquadOrder & order, size_t priority, CCBot & bot);
-    Squad(CCBot & bot);
+    Squad_L(const std::string & name, const SquadOrder & order, size_t priority, CCBot & bot);
+    Squad_L(CCBot & bot);
 
     void onFrame();
     void setSquadOrder(const SquadOrder & so);
