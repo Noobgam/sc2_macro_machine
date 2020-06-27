@@ -29,8 +29,11 @@ void UnitInfoManager::updateUnitInfo()
     m_units[Players::Enemy].clear();
     m_units[Players::Neutral].clear();
 
-    for (auto & unit : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.GetUnits())
     {
+
+        const auto& unit = *unitPtr;
+
         updateUnit(unit);
         m_units[unit.getPlayer()].push_back(unit);     
     }

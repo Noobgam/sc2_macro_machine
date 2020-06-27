@@ -71,12 +71,13 @@ void MapTools::onStart()
     }
 
     // set tiles that static resources are on as unbuildable
-    for (auto & resource : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.GetUnits())
     {
-        if (!resource.getType().isMineral() && !resource.getType().isGeyser())
+        if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser())
         {
             continue;
         }
+        auto& resource = *unitPtr;
 
         int width = resource.getType().tileWidth();
         int height = resource.getType().tileHeight();

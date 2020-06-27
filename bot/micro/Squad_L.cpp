@@ -178,8 +178,9 @@ bool Squad_L::isUnitNearEnemy(const Unit & unit) const
 {
     BOT_ASSERT(unit.isValid(), "null unit in squad");
 
-    for (auto & u : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.GetUnits())
     {
+        auto& u = *unitPtr;
         if ((u.getPlayer() == Players::Enemy) && (Util::Dist(unit, u) < 20))
         {
             return true;

@@ -21,7 +21,7 @@ class CCBot : public sc2::Agent
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
 
-    std::vector<Unit>       m_allUnits;
+    std::vector<std::unique_ptr<Unit>>       m_allUnits;
     std::vector<CCPosition> m_baseLocations;
 
     void setUnits();
@@ -56,6 +56,6 @@ public:
     int GetMaxSupply() const;
     int GetGas() const;
     Unit GetUnit(const CCUnitID & tag) const;
-    const std::vector<Unit> & GetUnits() const;
+    const std::vector<std::unique_ptr<Unit>> & GetUnits() const;
     const std::vector<CCPosition> & GetStartLocations() const;
 };

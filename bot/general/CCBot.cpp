@@ -65,7 +65,7 @@ void CCBot::setUnits()
     Control()->GetObservation();
     for (auto & unit : Observation()->GetUnits())
     {
-        m_allUnits.emplace_back(unit, *this);
+        m_allUnits.push_back(std::make_unique<Unit>(unit, *this));
     }
 }
 
@@ -154,7 +154,7 @@ Unit CCBot::GetUnit(const CCUnitID & tag) const
     return Unit(Observation()->GetUnit(tag), *(CCBot *)this);
 }
 
-const std::vector<Unit> & CCBot::GetUnits() const
+const std::vector<std::unique_ptr<Unit>>& CCBot::GetUnits() const
 {
     return m_allUnits;
 }

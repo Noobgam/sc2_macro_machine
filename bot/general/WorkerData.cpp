@@ -170,9 +170,10 @@ std::optional<Unit> WorkerData::getMineralToMine(const Unit & unit) const
     std::optional<Unit> bestMineral;
     double bestDist = 100000;
 
-    for (auto & mineral : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.GetUnits())
     {
-        if (!mineral.getType().isMineral()) continue;
+        if (!unitPtr->getType().isMineral()) continue;
+        auto& mineral = *unitPtr;
 
         double dist = Util::Dist(mineral, unit);
 
