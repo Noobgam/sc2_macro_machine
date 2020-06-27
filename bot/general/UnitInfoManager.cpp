@@ -198,7 +198,7 @@ size_t UnitInfoManager::getUnitTypeCount(CCPlayer player, UnitType type, bool co
 }
 
 int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus status) const {
-    int count;
+    int count = 0;
     for (auto & unit : getUnits(player)) {
         if (type != unit.getType()) {
             continue;

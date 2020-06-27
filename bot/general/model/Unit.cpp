@@ -25,13 +25,8 @@ const sc2::Unit * Unit::getUnitPtr() const
     return m_unit;
 }
 
-void Unit::updateUnit(const sc2::Unit * newUnit, size_t observationId) {
-#ifdef _DEBUG
-    assert(m_unit->tag == newUnit->tag);
-    assert(m_unit != newUnit);
-#endif
-    m_unit = newUnit;
-    observationId = observationId;
+void Unit::updateObservationId(size_t observationId) {
+    this->observationId = observationId;
 }
 
 size_t Unit::getObservationId() {

@@ -69,13 +69,18 @@ void CCBot::setUnits()
         if (it == unitWrapperByTag.end()) {
             unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, *this, observationId)});
         } else {
-            it->second->updateUnit(unit, observationId);
+            it->second->updateObservationId(observationId);
         }
     }
     // mostly cleanups dead units
     std::vector<std::unique_ptr<Unit>> missingUnits;
-    for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.end(); ) {
-        if (it->second->getObservationId() != observationId) {
+    for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.cend(); ) {
+        bool notObserved = it->second->getObservationId() != observationId;
+        bool dead = !it->second->isAlive();
+        bool needToDelete = notObserved || dead;
+        if (needToDelete) {
+            std::cerr << "Unit is missing. [" << it->second->getType().getName() << "]" << std::endl;
+
             std::unique_ptr<Unit> pt = std::move(it->second);
             //missingUnits.push_back(std::move(it->second));
             it = unitWrapperByTag.erase(it);
@@ -85,6 +90,9 @@ void CCBot::setUnits()
     }
 
     // callback missingUnits before destruction
+    if (missingUnits.size() > 0) {
+        std::cerr << missingUnits.size() << " < " << std::endl;
+    }
 
     m_allUnits.clear();
     m_allUnits.reserve(unitWrapperByTag.size());

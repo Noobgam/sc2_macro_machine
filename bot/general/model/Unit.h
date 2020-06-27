@@ -26,7 +26,7 @@ public:
     const sc2::UnitTypeID & getAPIUnitType() const;
 
     // replaces inner unit, make sure that you pass unit with same tag
-    void updateUnit      (const sc2::Unit * newUnit, size_t observationId);
+    void updateObservationId      (size_t observationId);
     size_t getObservationId();
 
     bool operator < (const Unit & rhs) const;
