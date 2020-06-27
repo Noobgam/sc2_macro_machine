@@ -231,8 +231,9 @@ CCTilePosition BuildingPlacer::getRefineryPosition()
 
     UnitType refinery = Util::GetRefinery(m_bot.GetPlayerRace(Players::Self), m_bot);
 
-    for (auto & unit : m_bot.GetUnits())
-    { 
+    for (auto & unitPtr : m_bot.GetUnits())
+    {
+        auto& unit = *unitPtr;
         // unit must be a geyser
         if (!unit.getType().isGeyser())
         {

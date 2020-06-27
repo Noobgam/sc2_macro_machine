@@ -11,15 +11,23 @@ class Unit
     CCUnitID    m_unitID;
     UnitType    m_unitType;
 
+    // id of the observation when the unit had been observed last time
+    // if it was not observed - it can be safely deleted, unit is considered dead anyway
+    size_t      observationId;
+
     const sc2::Unit * m_unit;
 
 public:
 
     Unit();
 
-    Unit(const sc2::Unit * unit, CCBot & bot);
+    Unit(const sc2::Unit * unit, CCBot & bot, size_t observationId);
     const sc2::Unit * getUnitPtr() const;
     const sc2::UnitTypeID & getAPIUnitType() const;
+
+    // replaces inner unit, make sure that you pass unit with same tag
+    void updateObservationId      (size_t observationId);
+    size_t getObservationId();
 
     bool operator < (const Unit & rhs) const;
     bool operator == (const Unit & rhs) const;

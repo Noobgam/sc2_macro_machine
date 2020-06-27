@@ -127,7 +127,6 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
         {
             continue;
         }
-
         // reserve this building's space
         m_buildingPlacer.reserveTiles((int)b.finalPosition.x, (int)b.finalPosition.y, b.type.tileWidth(), b.type.tileHeight());
 
@@ -178,13 +177,13 @@ void BuildingManager::constructAssignedBuildings()
                 if (b.type.isRefinery())
                 {
                     // first we find the geyser at the desired location
-                    auto units = m_bot.GetUnits();
-                    auto geyser = std::find_if(units.begin(), units.end(), [&b](const Unit& unit){
-                        return unit.getType().isGeyser() && Util::Dist(Util::GetPosition(b.finalPosition), unit.getPosition()) < 3;
+                    auto& units = m_bot.GetUnits();
+                    auto geyser = std::find_if(units.begin(), units.end(), [&b](Unit* const& unit){
+                        return unit->getType().isGeyser() && Util::Dist(Util::GetPosition(b.finalPosition), unit->getPosition()) < 3;
                     });
                     if (geyser != units.end())
                     {
-                        builderUnit.buildTarget(b.type, *geyser);
+                        builderUnit.buildTarget(b.type, **geyser);
                     }
                     else
                     {

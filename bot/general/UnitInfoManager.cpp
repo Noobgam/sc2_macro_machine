@@ -29,8 +29,11 @@ void UnitInfoManager::updateUnitInfo()
     m_units[Players::Enemy].clear();
     m_units[Players::Neutral].clear();
 
-    for (auto & unit : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.GetUnits())
     {
+
+        const auto& unit = *unitPtr;
+
         updateUnit(unit);
         m_units[unit.getPlayer()].push_back(unit);     
     }
@@ -195,7 +198,7 @@ size_t UnitInfoManager::getUnitTypeCount(CCPlayer player, UnitType type, bool co
 }
 
 int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus status) const {
-    int count;
+    int count = 0;
     for (auto & unit : getUnits(player)) {
         if (type != unit.getType()) {
             continue;
