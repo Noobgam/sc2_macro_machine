@@ -58,7 +58,6 @@ public:
     int GetCurrentSupply() const;
     int GetMaxSupply() const;
     int GetGas() const;
-    Unit GetUnit(const CCUnitID & tag) const;
-    const std::vector<std::unique_ptr<Unit>> & GetUnits() const;
+    const std::vector<Unit*> & GetUnits() const;
     const std::vector<CCPosition> & GetStartLocations() const;
 };

@@ -61,7 +61,6 @@ void CCBot::OnStep()
 
 void CCBot::setUnits()
 {
-    m_allUnits.clear();
     Control()->GetObservation();
     ++observationId;
     for (auto & unit : Observation()->GetUnits())
@@ -70,14 +69,15 @@ void CCBot::setUnits()
         if (it == unitWrapperByTag.end()) {
             unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, *this, observationId)});
         } else {
-            it->second->updateUnit(unit);
+            it->second->updateUnit(unit, observationId);
         }
     }
     // mostly cleanups dead units
     std::vector<std::unique_ptr<Unit>> missingUnits;
-    for (auto it = unitWrapperByTag.cbegin(); it != unitWrapperByTag.cend(); ) {
+    for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.end(); ) {
         if (it->second->getObservationId() != observationId) {
-            missingUnits.push_back(std::move(it->second));
+            std::unique_ptr<Unit> pt = std::move(it->second);
+            //missingUnits.push_back(std::move(it->second));
             it = unitWrapperByTag.erase(it);
         } else {
             ++it;
@@ -86,7 +86,11 @@ void CCBot::setUnits()
 
     // callback missingUnits before destruction
 
-    
+    m_allUnits.clear();
+    m_allUnits.reserve(unitWrapperByTag.size());
+    for (const auto & it : unitWrapperByTag) {
+        m_allUnits.push_back(it.second.get());
+    }
 }
 
 CCRace CCBot::GetPlayerRace(int player) const
@@ -169,12 +173,7 @@ int CCBot::GetGas() const
     return Observation()->GetVespene();
 }
 
-Unit CCBot::GetUnit(const CCUnitID & tag) const
-{
-    return Unit(Observation()->GetUnit(tag), *(CCBot *)this);
-}
-
-const std::vector<std::unique_ptr<Unit>>& CCBot::GetUnits() const
+const std::vector<Unit*>& CCBot::GetUnits() const
 {
     return m_allUnits;
 }
