@@ -42,6 +42,7 @@ void CCBot::OnGameEnd() {
 
 void CCBot::OnStep() {
     LOG_DEBUG << "Starting onStep()" << std::endl;
+    Control()->GetObservation();
     ++observationId;
     m_map.onFrame();
     m_unitInfo.onFrame();

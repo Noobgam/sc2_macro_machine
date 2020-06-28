@@ -1,4 +1,5 @@
 #include "SquadManager.h"
+#include "../../util/LogInfo.h"
 
 SquadManager::SquadManager():
     m_squads() {
@@ -60,8 +61,13 @@ Squad* SquadManager::mergeSquads(std::vector<Squad*> & ids) {
 }
 
 void SquadManager::transferUnits(Squad* from, Squad* to) {
-    std::cerr << "Transfering" << std::endl;
-    transferUnits(from->units(), to);
+    LOG_DEBUG << "Transferring units" << std::endl;
+    const std::set<const Unit*>& units = from->units();
+    to->addUnits(units);
+    for (auto unit : units) {
+        m_units.find(unit)->second = to;
+    }
+    from->clear();
 }
 
 void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to) {
