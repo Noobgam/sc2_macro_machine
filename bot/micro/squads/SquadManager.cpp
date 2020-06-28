@@ -60,11 +60,11 @@ Squad* SquadManager::mergeSquads(std::vector<Squad*> & ids) {
 }
 
 void SquadManager::transferUnits(Squad* from, Squad* to) {
+    std::cerr << "Transfering" << std::endl;
     transferUnits(from->units(), to);
 }
 
 void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to) {
-    std::cerr << "Tranfering " << units.size() << std::endl;
     to->addUnits(units);
     for (auto unit : units) {
         Squad* oldSquad = getUnitSquad(unit);

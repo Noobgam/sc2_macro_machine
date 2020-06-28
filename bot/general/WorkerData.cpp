@@ -16,10 +16,9 @@ WorkerData::WorkerData(CCBot & bot)
 void WorkerData::updateAllWorkerData()
 {
     // check all our units and add new workers if we find them
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
-        if (unit.getType().isWorker() && unit.isCompleted())
-        {
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit& unit = *unitPtr;
+        if (unit.getType().isWorker() && unit.isCompleted()) {
             updateWorker(unit);
         }
     }
@@ -170,7 +169,7 @@ std::optional<Unit> WorkerData::getMineralToMine(const Unit & unit) const
     std::optional<Unit> bestMineral;
     double bestDist = 100000;
 
-    for (auto & unitPtr : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral))
     {
         if (!unitPtr->getType().isMineral()) continue;
         auto& mineral = *unitPtr;

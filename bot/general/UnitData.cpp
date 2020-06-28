@@ -5,35 +5,34 @@ UnitData::UnitData()
 
 }
 
-void UnitData::updateUnit(const Unit & unit)
-{
-    bool firstSeen = false;
-    const auto & it = m_unitMap.find(unit);
-    if (it == m_unitMap.end())
-    {
-        firstSeen = true;
-        m_unitMap.insert({ unit, UnitInfo(unit) });
-    }
-
-    UnitInfo & ui   = m_unitMap.find(unit)->second;
-    ui.unit         = unit;
-    ui.player       = unit.getPlayer();
-    ui.lastPosition = unit.getPosition();
-    ui.lastHealth   = unit.getHitPoints();
-    ui.lastShields  = unit.getShields();
-    ui.type         = unit.getType();
-    ui.progress     = unit.getBuildPercentage();
-    ui.id           = unit.getID();
-
-    if (firstSeen)
-    {
-        if (m_numUnits.find(ui.type) == m_numUnits.end())
-        {
-            m_numUnits[ui.type] = 0;
-        }
-
-        m_numUnits[ui.type]++;
-    }
+void UnitData::updateUnit(const Unit* unit) {
+//    bool firstSeen = false;
+//    const auto & it = m_unitMap.find(unit);
+//    if (it == m_unitMap.end())
+//    {
+//        firstSeen = true;
+//        m_unitMap.insert({ unit, UnitInfo(unit) });
+//    }
+//
+//    UnitInfo & ui   = m_unitMap.find(unit)->second;
+//    ui.unit         = unit;
+//    ui.player       = unit.getPlayer();
+//    ui.lastPosition = unit.getPosition();
+//    ui.lastHealth   = unit.getHitPoints();
+//    ui.lastShields  = unit.getShields();
+//    ui.type         = unit.getType();
+//    ui.progress     = unit.getBuildPercentage();
+//    ui.id           = unit.getID();
+//
+//    if (firstSeen)
+//    {
+//        if (m_numUnits.find(ui.type) == m_numUnits.end())
+//        {
+//            m_numUnits[ui.type] = 0;
+//        }
+//
+//        m_numUnits[ui.type]++;
+//    }
 }
 
 void UnitData::killUnit(const Unit & unit)

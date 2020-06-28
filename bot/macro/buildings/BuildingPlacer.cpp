@@ -231,8 +231,7 @@ CCTilePosition BuildingPlacer::getRefineryPosition()
 
     UnitType refinery = Util::GetRefinery(m_bot.GetPlayerRace(Players::Self), m_bot);
 
-    for (auto & unitPtr : m_bot.GetUnits())
-    {
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral)) {
         auto& unit = *unitPtr;
         // unit must be a geyser
         if (!unit.getType().isGeyser())
@@ -250,8 +249,8 @@ CCTilePosition BuildingPlacer::getRefineryPosition()
 
         // check to see if it's next to one of our depots
         bool nearDepot = false;
-        for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
-        {
+        for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+            const Unit& unit = *unitPtr;
             if (unit.getType().isResourceDepot() && Util::Dist(unit, geyserPos) < 10)
             {
                 nearDepot = true;
