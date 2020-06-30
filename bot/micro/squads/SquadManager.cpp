@@ -62,21 +62,29 @@ Squad* SquadManager::mergeSquads(std::vector<Squad*> & ids) {
 
 void SquadManager::transferUnits(Squad* from, Squad* to) {
     LOG_DEBUG << "Transferring units" << std::endl;
+    if (from == to) {
+        return;
+    }
     const std::set<const Unit*>& units = from->units();
     to->addUnits(units);
     for (auto unit : units) {
         m_units.find(unit)->second = to;
     }
     from->clear();
+    if (from->getId() != SquadManager::unassignedSquadID) {
+        m_squads.erase(from->getId());
+    }
 }
 
 void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to) {
     to->addUnits(units);
-    for (auto unit : units) {
+    std::vector<const Unit*> unitsCopy;
+    unitsCopy.insert(unitsCopy.end(), units.begin(), units.end());
+    for (auto unit : unitsCopy) {
         Squad* oldSquad = getUnitSquad(unit);
         if (oldSquad != to) {
             removeUnitsFromSquad({ unit }, oldSquad);
+            m_units.find(unit)->second = to;
         }
-        m_units.find(unit)->second = to;
     }
 }
