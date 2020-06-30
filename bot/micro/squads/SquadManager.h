@@ -7,7 +7,7 @@ class SquadManager {
 private:
     SquadID currentSquadID = 0;
     std::map<SquadID, std::unique_ptr<Squad>> m_squads;
-    std::map<const Unit*, Squad*> m_units;
+    std::map<CCUnitID, Squad*> m_units;
 
     void removeUnitsFromSquad(const std::set<const Unit*> & units, Squad* squad);
 public:
@@ -23,7 +23,7 @@ public:
     void removeUnit(const Unit* unit);
 
     Squad* createNewSquad();
-    Squad* mergeSquads(std::vector<Squad*> & ids);
+    Squad* mergeSquads(std::vector<Squad*> & squads);
 
     void transferUnits(Squad* from, Squad* to);
     void transferUnits(const std::set<const Unit*> & units, Squad* to);
