@@ -26,7 +26,7 @@ std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
 }
 
 Squad *SquadManager::getUnitSquad(const Unit *unit) const {
-    auto squad = m_units.find(unit);
+    auto squad = m_units.find(unit->getID());
     BOT_ASSERT(squad != m_units.end() && squad->second != nullptr, "Squad for unit not found");
     return squad->second;
 }
@@ -34,12 +34,12 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
 void SquadManager::addUnit(const Unit *unit) {
     Squad* unassignedSquad = getUnassignedSquad();
     unassignedSquad->addUnits({ unit });
-    m_units.insert({ unit, getUnassignedSquad() });
+    m_units.insert({ unit->getID(), getUnassignedSquad() });
 }
 
 void SquadManager::removeUnit(const Unit *unit) {
     Squad* squad = getUnitSquad(unit);
-    m_units.erase(unit);
+    m_units.erase(unit->getID());
     removeUnitsFromSquad({unit}, squad);
 }
 
@@ -51,10 +51,10 @@ Squad* SquadManager::createNewSquad() {
     return res;
 }
 
-Squad* SquadManager::mergeSquads(std::vector<Squad*> & ids) {
+Squad* SquadManager::mergeSquads(std::vector<Squad*> & squads) {
     Squad* merged = createNewSquad();
-    for (auto id : ids) {
-        transferUnits(id, merged);
+    for (auto squad : squads) {
+        transferUnits(squad, merged);
     }
     return merged;
 }
@@ -71,6 +71,6 @@ void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to)
         if (oldSquad != to) {
             removeUnitsFromSquad({ unit }, oldSquad);
         }
-        m_units.find(unit)->second = to;
+        m_units.find(unit->getID())->second = to;
     }
 }
