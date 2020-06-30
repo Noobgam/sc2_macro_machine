@@ -2,8 +2,7 @@
 #include "BuildManager.h"
 #include "../../general/CCBot.h"
 
-class ProductionManager : public BuildManager
-{
+class ProductionManager : public BuildManager {
 private:
 	CCBot& m_bot;
 	// returns pair <minerals, gas>

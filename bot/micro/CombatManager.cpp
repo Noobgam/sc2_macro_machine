@@ -2,6 +2,7 @@
 
 CombatManager::CombatManager(CCBot & bot) :
     m_bot(bot),
+    m_squadManager(bot),
     mainSquad(m_squadManager.getUnassignedSquad()) { }
 
 SquadManager & CombatManager::getSquadManager() {
@@ -14,6 +15,8 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
+
+    m_squadManager.onFrame();
 }
 
 void CombatManager::reformSquads() {
