@@ -27,7 +27,7 @@ public:
 
     // replaces inner unit, make sure that you pass unit with same tag
     void updateObservationId      (size_t observationId);
-    size_t getObservationId();
+    size_t getObservationId() const;
 
     bool operator < (const Unit & rhs) const;
     bool operator == (const Unit & rhs) const;

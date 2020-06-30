@@ -29,7 +29,7 @@ void Unit::updateObservationId(size_t observationId) {
     this->observationId = observationId;
 }
 
-size_t Unit::getObservationId() {
+size_t Unit::getObservationId() const {
     return observationId;
 }
 

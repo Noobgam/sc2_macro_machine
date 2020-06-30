@@ -71,10 +71,8 @@ void MapTools::onStart()
     }
 
     // set tiles that static resources are on as unbuildable
-    for (auto & unitPtr : m_bot.GetUnits())
-    {
-        if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser())
-        {
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral)) {
+        if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
             continue;
         }
         auto& resource = *unitPtr;
@@ -84,9 +82,7 @@ void MapTools::onStart()
         int tileX = std::floor(resource.getPosition().x) - (width / 2);
         int tileY = std::floor(resource.getPosition().y) - (height / 2);
 
-        if (!isVisible(resource.getTilePosition().x, resource.getTilePosition().y))
-        {
-        }
+        if (!isVisible(resource.getTilePosition().x, resource.getTilePosition().y)) { }
 
         for (int x=tileX; x<tileX+width; ++x)
         {

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "model/Common.h"
+#include "../util/util.h"
 
 #include "../BotConfig.h"
 #include "../GameCommander.h"
 #include "MapTools.h"
 #include "BaseLocationManager.h"
-#include "UnitInfoManager.h"
+#include "units/UnitInfoManager.h"
 #include "WorkerManager.h"
 #include "TechTree.h"
 #include "model/MetaType.h"
@@ -21,13 +22,9 @@ class CCBot : public sc2::Agent
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
 
-    std::unordered_map<sc2::Tag, std::unique_ptr<Unit>> unitWrapperByTag;
-    std::vector<Unit*>                                  m_allUnits;
     std::vector<CCPosition> m_baseLocations;
 
     size_t observationId = 0;
-
-    void setUnits();
 
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
@@ -41,10 +38,14 @@ public:
     void OnGameEnd() override;
     void OnStep() override;
 
+    size_t getObservationId() const;
+
           WorkerManager & Workers();
     const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
     const UnitInfoManager & UnitInfo() const;
+          GameCommander & Commander();
+
     const TypeData & Data(const UnitType & type) const;
     const TypeData & Data(const CCUpgrade & type) const;
     const TypeData & Data(const MetaType & type) const;
@@ -58,6 +59,6 @@ public:
     int GetCurrentSupply() const;
     int GetMaxSupply() const;
     int GetGas() const;
-    const std::vector<Unit*> & GetUnits() const;
+    const std::vector<const sc2::Unit*> & GetUnits() const;
     const std::vector<CCPosition> & GetStartLocations() const;
 };

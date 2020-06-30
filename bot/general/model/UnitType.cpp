@@ -8,7 +8,6 @@ UnitType::UnitType()
 
 }
 
-#ifdef SC2API
 UnitType::UnitType(const sc2::UnitTypeID & type, CCBot & bot)
     : m_bot(&bot)
     , m_type(type)
@@ -26,25 +25,6 @@ bool UnitType::is(const sc2::UnitTypeID & type) const
     return m_type == type;
 }
 
-#else
-UnitType::UnitType(const BWAPI::UnitType & type, CCBot & bot)
-    : m_bot(&bot)
-    , m_type(type)
-{
-    
-}
-
-BWAPI::UnitType UnitType::getAPIUnitType() const
-{
-    return m_type;
-}
-
-bool UnitType::is(const BWAPI::UnitType & type) const
-{
-    return m_type == type;
-}
-
-#endif
 bool UnitType::operator < (const UnitType & rhs) const
 {
     return m_type < rhs.m_type;
@@ -61,27 +41,42 @@ bool UnitType::operator == (const UnitType & rhs) const
 }
 
 
-bool UnitType::isValid() const
-{
+bool UnitType::isValid() const {
     return m_type != 0;
 }
 
-std::string UnitType::getName() const
-{
-#ifdef SC2API
+std::string UnitType::getName() const {
     return sc2::UnitTypeToName(m_type);
-#else
-    return m_type.getName();
-#endif
 }
 
-CCRace UnitType::getRace() const
-{
-#ifdef SC2API
+CCRace UnitType::getRace() const {
     return m_bot->Observation()->GetUnitTypeData()[m_type].race;
-#else
-    return m_type.getRace();
-#endif
+}
+
+bool UnitType::isRegularUnit() const {
+    // only default protoss units for now
+    switch (m_type.ToType()) {
+        case sc2::UNIT_TYPEID::PROTOSS_PROBE                : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_MOTHERSHIP           : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_ZEALOT               : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_ADEPT                : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_STALKER              : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_SENTRY               : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_DARKTEMPLAR          : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_HIGHTEMPLAR          : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_ARCHON               : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_OBSERVER             : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_IMMORTAL             : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_WARPPRISM            : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_DISRUPTOR            : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_COLOSSUS             : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_PHOENIX              : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_VOIDRAY              : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_ORACLE               : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_CARRIER              : return true;
+        case sc2::UNIT_TYPEID::PROTOSS_TEMPEST              : return true;
+        default: return false;
+    }
 }
 
 bool UnitType::isCombatUnit() const
@@ -170,10 +165,8 @@ bool UnitType::isMineral() const
 #endif
 }
 
-bool UnitType::isWorker() const
-{
-#ifdef SC2API
-    switch (m_type.ToType()) 
+bool UnitType::isWorker() const {
+    switch (m_type.ToType())
     {
         case sc2::UNIT_TYPEID::TERRAN_SCV           : return true;
         case sc2::UNIT_TYPEID::PROTOSS_PROBE        : return true;
@@ -181,9 +174,6 @@ bool UnitType::isWorker() const
         case sc2::UNIT_TYPEID::ZERG_DRONEBURROWED   : return true;
         default: return false;
     }
-#else
-    return m_type.isWorker();
-#endif
 }
 
 CCPositionType UnitType::getAttackRange() const
@@ -353,7 +343,7 @@ bool UnitType::isTank() const
 bool UnitType::isMorphedBuilding() const
 {
 #ifdef SC2API
-    
+
     switch (m_type.ToType())
     {
         case sc2::UNIT_TYPEID::ZERG_LAIR:                   { return true;  }
@@ -361,7 +351,7 @@ bool UnitType::isMorphedBuilding() const
         case sc2::UNIT_TYPEID::ZERG_GREATERSPIRE:           { return true;  }
         case sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS:    { return true;  }
         case sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND:       { return true;  }
-        default:                                            { return false; }                                                            
+        default:                                            { return false; }
     }
 #else
     return  m_type == BWAPI::UnitTypes::Zerg_Sunken_Colony ||

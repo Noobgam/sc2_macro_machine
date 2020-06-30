@@ -1,22 +1,24 @@
 #include "Squad.h"
 
-Squad::Squad(SquadID id): m_id(id) {
+Squad::Squad(SquadID id): m_id(id) { }
 
+void Squad::addUnits(const std::set<const Unit*> & units) {
+    for (auto unit : units) {
+        m_units.insert(unit);
+    }
 }
 
-void Squad::addUnits(const std::set<Unit*> & units) {
-    m_units.insert(units.begin(), units.end());
-}
-
-void Squad::removeUnits(const std::set<Unit*> & units) {
-    m_units.erase(units.begin(), units.end());
+void Squad::removeUnits(const std::set<const Unit*> & units) {
+    for (auto unit : units) {
+        m_units.erase(unit);
+    }
 }
 
 void Squad::clear() {
     m_units.clear();
 }
 
-const std::set<Unit*> & Squad::units() const {
+const std::set<const Unit*> & Squad::units() const {
     return m_units;
 }
 

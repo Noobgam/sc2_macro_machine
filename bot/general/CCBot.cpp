@@ -12,8 +12,7 @@ CCBot::CCBot()
 
 }
 
-void CCBot::OnGameStart() 
-{
+void CCBot::OnGameStart() {
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
     for (auto & loc : Observation()->GetGameInfo().enemy_start_locations)
     {
@@ -21,7 +20,6 @@ void CCBot::OnGameStart()
     }
     m_baseLocations.emplace_back(Observation()->GetStartLocation());
     
-    setUnits();
     m_techTree.onStart();
     m_map.onStart();
     m_unitInfo.onStart();
@@ -42,10 +40,10 @@ void CCBot::OnGameEnd() {
     LOG_DEBUG << "Finished OnGameEnd()" << std::endl;
 }
 
-void CCBot::OnStep()
-{
+void CCBot::OnStep() {
     LOG_DEBUG << "Starting onStep()" << std::endl;
-    setUnits();
+    Control()->GetObservation();
+    ++observationId;
     m_map.onFrame();
     m_unitInfo.onFrame();
     m_bases.onFrame();
@@ -59,46 +57,8 @@ void CCBot::OnStep()
 #endif
 }
 
-void CCBot::setUnits()
-{
-    Control()->GetObservation();
-    ++observationId;
-    for (auto & unit : Observation()->GetUnits())
-    {
-        auto it = unitWrapperByTag.find(unit->tag);
-        if (it == unitWrapperByTag.end()) {
-            unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, *this, observationId)});
-        } else {
-            it->second->updateObservationId(observationId);
-        }
-    }
-    // mostly cleanups dead units
-    std::vector<std::unique_ptr<Unit>> missingUnits;
-    for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.cend(); ) {
-        bool notObserved = it->second->getObservationId() != observationId;
-        bool dead = !it->second->isAlive();
-        bool needToDelete = notObserved || dead;
-        if (needToDelete) {
-            std::cerr << "Unit is missing. [" << it->second->getType().getName() << "]" << std::endl;
-
-            std::unique_ptr<Unit> pt = std::move(it->second);
-            //missingUnits.push_back(std::move(it->second));
-            it = unitWrapperByTag.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
-    // callback missingUnits before destruction
-    if (missingUnits.size() > 0) {
-        std::cerr << missingUnits.size() << " < " << std::endl;
-    }
-
-    m_allUnits.clear();
-    m_allUnits.reserve(unitWrapperByTag.size());
-    for (const auto & it : unitWrapperByTag) {
-        m_allUnits.push_back(it.second.get());
-    }
+size_t CCBot::getObservationId() const {
+    return observationId;
 }
 
 CCRace CCBot::GetPlayerRace(int player) const
@@ -116,19 +76,20 @@ CCRace CCBot::GetPlayerRace(int player) const
     return sc2::Race::Random;
 }
 
-const MapTools & CCBot::Map() const
-{
+const MapTools & CCBot::Map() const {
     return m_map;
 }
 
-const BaseLocationManager & CCBot::Bases() const
-{
+const BaseLocationManager & CCBot::Bases() const {
     return m_bases;
 }
 
-const UnitInfoManager & CCBot::UnitInfo() const
-{
+const UnitInfoManager & CCBot::UnitInfo() const {
     return m_unitInfo;
+}
+
+GameCommander &CCBot::Commander() {
+    return m_gameCommander;
 }
 
 int CCBot::GetCurrentFrame() const
@@ -181,10 +142,9 @@ int CCBot::GetGas() const
     return Observation()->GetVespene();
 }
 
-const std::vector<Unit*>& CCBot::GetUnits() const
-{
-    return m_allUnits;
-}
+//const std::vector<const sc2::Unit*>& CCBot::GetUnits() const {
+//    return Observation()->GetUnits();
+//}
 
 CCPosition CCBot::GetStartLocation() const
 {
