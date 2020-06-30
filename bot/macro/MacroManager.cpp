@@ -89,8 +89,8 @@ std::optional<Unit> MacroManager::getProducer(const MetaType& type)
 
     // make a set of all candidate producers
     std::vector<Unit> candidateProducers;
-    for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit& unit = *unitPtr;
         // reasons a unit can not train the desired type
         if (std::find(producerTypes.begin(), producerTypes.end(), unit.getType()) == producerTypes.end()) { continue; }
         if (!unit.isCompleted()) { continue; }
@@ -111,8 +111,8 @@ std::optional<Unit> MacroManager::getProducer(const MetaType & type, CCPosition 
 
     // make a set of all candidate producers
     std::vector<Unit> candidateProducers;
-    for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit & unit = *unitPtr;
         // reasons a unit can not train the desired type
         if (std::find(producerTypes.begin(), producerTypes.end(), unit.getType()) == producerTypes.end()) { continue; }
         if (!unit.isCompleted()) { continue; }

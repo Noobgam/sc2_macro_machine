@@ -1,5 +1,6 @@
 #include "WorkerManager.h"
 #include "CCBot.h"
+#include "../util/Util.h"
 
 WorkerManager::WorkerManager(CCBot & bot)
     : m_bot         (bot)
@@ -30,8 +31,8 @@ void WorkerManager::onFrame()
 void WorkerManager::handleGasWorkers()
 {
     // for each unit we have
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit& unit = *unitPtr;
         // if that unit is a refinery
         if (unit.getType().isRefinery() && unit.isCompleted())
         {
@@ -126,8 +127,8 @@ std::optional<Unit> WorkerManager::getClosestDepot(Unit worker) const
     std::optional<Unit> closestDepot;
     double closestDistance = std::numeric_limits<double>::max();
 
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit& unit = *unitPtr;
         if (!unit.isValid()) { continue; }
 
         if (unit.getType().isResourceDepot() && unit.isCompleted())

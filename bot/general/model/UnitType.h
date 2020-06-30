@@ -25,6 +25,7 @@ public:
     CCRace getRace() const;
     
     bool isValid() const;
+    bool isRegularUnit() const;
     bool isBuilding() const;
     bool isCombatUnit() const;
     bool isSupplyProvider() const;

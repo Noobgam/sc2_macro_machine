@@ -1,7 +1,6 @@
 #include "../general/model/Common.h"
 #include "BuildingManager.h"
 #include "../general/CCBot.h"
-#include "../util/Util.h"
 
 BuildingManager::BuildingManager(CCBot & bot)
     : m_bot(bot)
@@ -21,11 +20,10 @@ void BuildingManager::onStart()
 // gets called every frame from GameCommander
 void BuildingManager::onFrame()
 {
-    for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit& unit = *unitPtr;
         // filter out units which aren't buildings under construction
-        if (m_bot.Data(unit).isBuilding)
-        {
+        if (m_bot.Data(unit).isBuilding) {
             std::stringstream ss;
             ss << unit.getID();
             m_bot.Map().drawText(unit.getPosition(), ss.str());
@@ -177,8 +175,8 @@ void BuildingManager::constructAssignedBuildings()
                 if (b.type.isRefinery())
                 {
                     // first we find the geyser at the desired location
-                    auto& units = m_bot.GetUnits();
-                    auto geyser = std::find_if(units.begin(), units.end(), [&b](Unit* const& unit){
+                    auto& units = m_bot.UnitInfo().getUnits(Players::Neutral);
+                    auto geyser = std::find_if(units.begin(), units.end(), [&b](const Unit* const& unit) {
                         return unit->getType().isGeyser() && Util::Dist(Util::GetPosition(b.finalPosition), unit->getPosition()) < 3;
                     });
                     if (geyser != units.end())
@@ -207,8 +205,8 @@ void BuildingManager::constructAssignedBuildings()
 void BuildingManager::checkForStartedConstruction()
 {
     // for each building unit which is being constructed
-    for (auto buildingStarted : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto buildingStartedPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
+        const Unit& buildingStarted = *buildingStartedPtr;
         // filter out units which aren't buildings under construction
         if (!buildingStarted.getType().isBuilding() || !buildingStarted.isBeingConstructed())
         {

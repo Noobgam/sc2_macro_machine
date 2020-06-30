@@ -21,7 +21,7 @@ void BaseLocationManager::onStart()
     
     // stores each cluster of resources based on some ground distance
     std::vector<std::vector<Unit>> resourceClusters;
-    for (auto & unitPtr : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral))
     {
         // skip minerals that don't have more than 100 starting minerals
         // these are probably stupid map-blocking minerals to confuse us
@@ -58,7 +58,7 @@ void BaseLocationManager::onStart()
     }
 
     // add geysers only to existing resource clusters
-    for (auto & unitPtr : m_bot.GetUnits())
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral))
     {
         if (!unitPtr->getType().isGeyser())
         {
@@ -148,39 +148,35 @@ void BaseLocationManager::onFrame()
     }
 
     // for each unit on the map, update which base location it may be occupying
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
+    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self)) {
         // we only care about buildings on the ground
-        if (!unit.getType().isBuilding() || unit.isFlying())
-        {
+        if (!unit->getType().isBuilding() || unit->isFlying()) {
             continue;
         }
 
-        BaseLocation * baseLocation = getBaseLocation(unit.getPosition());
-
-        if (baseLocation != nullptr)
-        {
-            baseLocation->setPlayerOccupying(unit.getPlayer(), true);
+        BaseLocation * baseLocation = getBaseLocation(unit->getPosition());
+        if (baseLocation != nullptr) {
+            baseLocation->setPlayerOccupying(unit->getPlayer(), true);
         }
     }
 
     // update enemy base occupations
-    for (const auto & kv : m_bot.UnitInfo().getUnitInfoMap(Players::Enemy))
-    {
-        const UnitInfo & ui = kv.second;
-
-        if (!m_bot.Data(ui.type).isBuilding)
-        {
-            continue;
-        }
-
-        BaseLocation * baseLocation = getBaseLocation(ui.lastPosition);
-
-        if (baseLocation != nullptr)
-        {
-            baseLocation->setPlayerOccupying(Players::Enemy, true);
-        }
-    }
+//    for (const auto & kv : m_bot.UnitInfo().getUnits(Players::Enemy))
+//    {
+//        const UnitInfo & ui = kv.second;
+//
+//        if (!m_bot.Data(ui.type).isBuilding)
+//        {
+//            continue;
+//        }
+//
+//        BaseLocation * baseLocation = getBaseLocation(ui.lastPosition);
+//
+//        if (baseLocation != nullptr)
+//        {
+//            baseLocation->setPlayerOccupying(Players::Enemy, true);
+//        }
+//    }
 
     // update the starting locations of the enemy player
     // this will happen one of two ways:
