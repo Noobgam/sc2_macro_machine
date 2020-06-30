@@ -68,7 +68,7 @@ void SquadManager::transferUnits(Squad* from, Squad* to) {
     const std::set<const Unit*>& units = from->units();
     to->addUnits(units);
     for (auto unit : units) {
-        m_units.find(unit)->second = to;
+        m_units.find(unit->getID())->second = to;
     }
     from->clear();
     if (from->getId() != SquadManager::unassignedSquadID) {
