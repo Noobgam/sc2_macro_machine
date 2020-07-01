@@ -1,9 +1,6 @@
 #include "ProductionManager.h"
 
-ProductionManager::ProductionManager(CCBot& bot)
-    : m_bot(bot)
-{
-}
+ProductionManager::ProductionManager(CCBot& bot) : m_bot(bot) { }
 
 std::pair<float, float> ProductionManager::approximateIncome() {
     // TODO: take oversaturation into account
@@ -17,8 +14,7 @@ std::pair<float, float> ProductionManager::approximateIncome() {
 }
 
 
-std::optional<BuildOrderItem> ProductionManager::getTopPriority()
-{
+std::optional<BuildOrderItem> ProductionManager::getTopPriority() {
     auto gatewayType = m_bot.getUnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY);
     auto warpGateType = m_bot.getUnitType(sc2::UNIT_TYPEID::PROTOSS_WARPGATE);
     int gateWayCount = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::TOTAL);

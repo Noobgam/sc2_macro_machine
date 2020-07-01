@@ -1,10 +1,19 @@
 #include "SquadManager.h"
 #include "../../util/LogInfo.h"
 
-SquadManager::SquadManager():
+SquadManager::SquadManager(CCBot & bot):
+    m_bot(bot),
     m_squads() {
     unassignedSquadID = SquadManager::currentSquadID++;
-    m_squads.insert({unassignedSquadID, std::make_unique<Squad>(unassignedSquadID)});
+    m_squads.insert({unassignedSquadID, std::make_unique<Squad>(bot, unassignedSquadID)});
+}
+
+void SquadManager::onFrame() {
+    for (auto & squad : m_squads) {
+        if (squad.first != SquadManager::unassignedSquadID) {
+            squad.second->act();
+        }
+    }
 }
 
 void SquadManager::removeUnitsFromSquad(const std::set<const Unit *> &units, Squad *squad) {
@@ -46,7 +55,7 @@ void SquadManager::removeUnit(const Unit *unit) {
 
 Squad* SquadManager::createNewSquad() {
     SquadID id = SquadManager::currentSquadID++;
-    std::unique_ptr<Squad> squad = std::make_unique<Squad>(id);
+    std::unique_ptr<Squad> squad = std::make_unique<Squad>(m_bot, id);
     Squad* res = squad.get();
     m_squads.insert({id, std::move(squad)});
     return res;
