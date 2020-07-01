@@ -36,13 +36,8 @@ CCRace Util::GetRaceFromString(const std::string & raceIn)
 #endif
 }
 
-CCPositionType Util::TileToPosition(float tile)
-{
-#ifdef SC2API
+CCPositionType Util::TileToPosition(float tile) {
     return tile;
-#else
-    return (int)(tile * 32);
-#endif
 }
 
 UnitType Util::GetSupplyProvider(const CCRace & race, CCBot & bot)
@@ -90,51 +85,31 @@ UnitType Util::GetRefinery(const CCRace & race, CCBot & bot)
 #endif
 }
 
-CCPosition Util::CalcCenter(const std::vector<Unit> & units)
-{
-    if (units.empty())
-    {
+CCPosition Util::CalcCenter(const std::vector<const Unit*> & units) {
+    if (units.empty()) {
         return CCPosition(0, 0);
     }
 
     CCPositionType cx = 0;
     CCPositionType cy = 0;
-
-    for (auto & unit : units)
-    {
-        BOT_ASSERT(unit.isValid(), "Unit pointer was null");
-        cx += unit.getPosition().x;
-        cy += unit.getPosition().y;
+    for (auto & unit : units) {
+        cx += unit->getPosition().x;
+        cy += unit->getPosition().y;
     }
 
     return CCPosition(cx / units.size(), cy / units.size());
 }
 
-bool Util::IsZerg(const CCRace & race)
-{
-#ifdef SC2API
+bool Util::IsZerg(const CCRace & race) {
     return race == sc2::Race::Zerg;
-#else
-    return race == BWAPI::Races::Zerg;
-#endif
 }
 
-bool Util::IsProtoss(const CCRace & race)
-{
-#ifdef SC2API
+bool Util::IsProtoss(const CCRace & race) {
     return race == sc2::Race::Protoss;
-#else
-    return race == BWAPI::Races::Protoss;
-#endif
 }
 
-bool Util::IsTerran(const CCRace & race)
-{
-#ifdef SC2API
+bool Util::IsTerran(const CCRace & race) {
     return race == sc2::Race::Terran;
-#else
-    return race == BWAPI::Races::Terran;
-#endif
 }
 
 CCTilePosition Util::GetTilePosition(const CCPosition & pos)
@@ -163,6 +138,10 @@ float Util::Dist(const CCPosition & p1, const CCPosition & p2)
 float Util::Dist(const Unit & unit, const CCPosition & p2)
 {
     return Dist(unit.getPosition(), p2);
+}
+
+float Util::Dist(const Unit* unit, const CCPosition & p2) {
+    return Dist(unit->getPosition(), p2);
 }
 
 float Util::Dist(const Unit & unit1, const Unit & unit2)

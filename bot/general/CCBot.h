@@ -6,23 +6,20 @@
 #include "../BotConfig.h"
 #include "../GameCommander.h"
 #include "MapTools.h"
-#include "BaseLocationManager.h"
+#include "bases/BaseLocationManager.h"
 #include "units/UnitInfoManager.h"
 #include "WorkerManager.h"
 #include "TechTree.h"
 #include "model/MetaType.h"
 #include "model/Unit.h"
 
-class CCBot : public sc2::Agent 
-{
+class CCBot : public sc2::Agent {
     MapTools                m_map;
     BaseLocationManager     m_bases;
     UnitInfoManager         m_unitInfo;
     WorkerManager           m_workers;
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
-
-    std::vector<CCPosition> m_baseLocations;
 
     size_t observationId = 0;
 
@@ -59,6 +56,4 @@ public:
     int GetCurrentSupply() const;
     int GetMaxSupply() const;
     int GetGas() const;
-    const std::vector<const sc2::Unit*> & GetUnits() const;
-    const std::vector<CCPosition> & GetStartLocations() const;
 };

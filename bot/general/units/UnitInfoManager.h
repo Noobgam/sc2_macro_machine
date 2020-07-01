@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../model/Common.h"
-#include "../BaseLocation.h"
+#include "../bases/BaseLocation.h"
 #include "../model/Unit.h"
 
 enum UnitStatus {
