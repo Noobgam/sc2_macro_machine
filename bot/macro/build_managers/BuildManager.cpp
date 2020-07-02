@@ -1,3 +1,3 @@
 #include "BuildManager.h"
 
-BuildManager::сBuildManager(CCBot &bot) : m_bot(bot) { }
+BuildManager::BuildManager(CCBot &bot) : m_bot(bot) { }
