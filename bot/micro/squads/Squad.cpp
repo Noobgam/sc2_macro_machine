@@ -1,5 +1,5 @@
 #include "Squad.h"
-#include "../order/default/EmptyOrder.h"
+#include "../order/Orders.h"
 
 Squad::Squad(CCBot & bot, SquadID id):
         m_bot(bot),
@@ -34,7 +34,7 @@ SquadID Squad::getId() const {
     return m_id;
 }
 
-void Squad::setOrder(std::shared_ptr<Order>& order) {
+void Squad::setOrder(std::shared_ptr<Order> order) {
     m_order = order;
     m_order->onStart(this);
 }

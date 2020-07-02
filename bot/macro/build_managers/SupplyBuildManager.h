@@ -1,15 +1,12 @@
 #pragma once
 #include "BuildManager.h"
-#include "../../general/CCBot.h"
 
-class SupplyBuildManager : public BuildManager
-{
-	CCBot & m_bot;
+class CCBot;
 
+class SupplyBuildManager : public BuildManager {
 	int getExpectedExtraSupply();
-
 public:
-	SupplyBuildManager(CCBot& bot);
-	virtual std::optional<BuildOrderItem> getTopPriority();
+	explicit SupplyBuildManager(CCBot& bot);
+	std::optional<BuildOrderItem> getTopPriority() override;
 };
 

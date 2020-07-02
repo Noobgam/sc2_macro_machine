@@ -28,6 +28,6 @@ public:
     bool isEmpty() const;
     const std::set<const Unit*> & units() const;
 
-    void setOrder(std::shared_ptr<Order>& order);
+    void setOrder(std::shared_ptr<Order> order);
     void act();
 };

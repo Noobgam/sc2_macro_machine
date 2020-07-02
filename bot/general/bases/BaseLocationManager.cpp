@@ -138,10 +138,6 @@ void BaseLocationManager::onFrame() {
             getBaseLocation(position)->setPlayerOccupying(Players::Enemy, true);
         }
     }
-    for (auto & location : m_baseLocationData) {
-        std::cerr << location.isOccupiedByPlayer(Players::Self) << " SELF" << std::endl;
-        std::cerr << location.isOccupiedByPlayer(Players::Enemy) << " ENEMY" << std::endl;
-    }
 
     // update the occupied base locations for each player
     m_occupiedBaseLocations[Players::Self].clear();

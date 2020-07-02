@@ -2,7 +2,12 @@
 #include "../BuildOrderItem.h"
 #include <optional>
 
-struct BuildManager {
+class BuildManager {
+protected:
+    CCBot & m_bot;
+public:
+    explicit BuildManager(CCBot & bot);
+
 	virtual std::optional<BuildOrderItem> getTopPriority() = 0;
 };
 

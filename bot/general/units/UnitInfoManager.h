@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../model/Common.h"
-#include "../bases/BaseLocation.h"
 #include "../model/Unit.h"
+
+class CCBot;
 
 enum UnitStatus {
     COMPLETED   = 0x01,
@@ -16,9 +17,7 @@ enum UnitStatus {
     FREE = COMPLETED | NOT_TRAINING,
 };
 
-class CCBot;
-class UnitInfoManager 
-{
+class UnitInfoManager {
     CCBot &           m_bot;
 
     std::unordered_map<sc2::Tag, std::unique_ptr<Unit>> unitWrapperByTag;

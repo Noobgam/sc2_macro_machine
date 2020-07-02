@@ -1,6 +1,7 @@
 #include "ProductionManager.h"
+#include "../../general/CCBot.h"
 
-ProductionManager::ProductionManager(CCBot& bot) : m_bot(bot) { }
+ProductionManager::ProductionManager(CCBot& bot) : BuildManager(bot) { }
 
 std::pair<float, float> ProductionManager::approximateIncome() {
     // TODO: take oversaturation into account

@@ -5,12 +5,13 @@
 
 class CCBot;
 
-class CombatManager
-{
+class CombatManager {
     CCBot &         m_bot;
     SquadManager    m_squadManager;
 
     Squad* mainSquad;
+
+    bool inAttack;
 
     void reformSquads();
 public:

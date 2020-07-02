@@ -3,6 +3,8 @@
 #include "Squad.h"
 #include "../../general/model/Common.h"
 
+class CCBot;
+
 class SquadManager {
 private:
     CCBot & m_bot;
