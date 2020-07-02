@@ -9,6 +9,6 @@ protected:
 public:
     explicit Order(CCBot & bot);
 
-    virtual void onStart(Squad* squad) = 0;
+    virtual void onStart(Squad* squad);
     virtual void onStep(Squad* squad) = 0;
 };
