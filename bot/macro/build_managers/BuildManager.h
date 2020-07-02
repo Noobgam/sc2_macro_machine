@@ -2,8 +2,7 @@
 #include "../BuildOrderItem.h"
 #include <optional>
 
-struct BuildManager
-{
+struct BuildManager {
 	virtual std::optional<BuildOrderItem> getTopPriority() = 0;
 };
 

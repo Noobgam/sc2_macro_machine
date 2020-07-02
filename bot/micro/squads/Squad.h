@@ -5,21 +5,29 @@
 typedef unsigned long long SquadID;
 
 class SquadManager;
+class Order;
 
 class Squad {
 private:
+    CCBot & m_bot;
+
     friend SquadManager;
     std::set<const Unit*> m_units;
     const SquadID m_id;
+
+    std::shared_ptr<Order> m_order;
 
     void addUnits(const std::set<const Unit*> & units);
     void removeUnits(const std::set<const Unit*> & units);
     void clear();
 public:
-    Squad(SquadID id);
+    Squad(CCBot & bot, SquadID id);
 
     SquadID getId() const;
 
     bool isEmpty() const;
     const std::set<const Unit*> & units() const;
+
+    void setOrder(std::shared_ptr<Order>& order);
+    void act();
 };

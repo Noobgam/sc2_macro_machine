@@ -5,6 +5,8 @@
 
 class SquadManager {
 private:
+    CCBot & m_bot;
+
     SquadID currentSquadID = 0;
     std::map<SquadID, std::unique_ptr<Squad>> m_squads;
     std::map<CCUnitID, Squad*> m_units;
@@ -13,7 +15,9 @@ private:
 public:
     SquadID unassignedSquadID;
 
-    SquadManager();
+    SquadManager(CCBot & bot);
+
+    void onFrame();
 
     Squad* getUnassignedSquad() const;
     Squad* getUnitSquad(const Unit* unit) const;
