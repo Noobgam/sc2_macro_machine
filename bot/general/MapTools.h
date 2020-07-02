@@ -79,8 +79,6 @@ public:
     bool    isBuildable(int tileX, int tileY) const;
     bool    isBuildable(const CCTilePosition & tile) const;
     bool    isDepotBuildableTile(int tileX, int tileY) const;
-    
-    CCTilePosition getLeastRecentlySeenTile() const;
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<CCTilePosition> & getClosestTilesTo(const CCTilePosition & pos) const;

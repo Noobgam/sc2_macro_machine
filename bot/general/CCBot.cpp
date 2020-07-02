@@ -8,18 +8,11 @@ CCBot::CCBot()
     , m_workers(*this)
     , m_gameCommander(*this)
     , m_techTree(*this)
-{
-
-}
+{ }
 
 void CCBot::OnGameStart() {
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
-    for (auto & loc : Observation()->GetGameInfo().enemy_start_locations)
-    {
-        m_baseLocations.push_back(loc);
-    }
-    m_baseLocations.emplace_back(Observation()->GetStartLocation());
-    
+
     m_techTree.onStart();
     m_map.onStart();
     m_unitInfo.onStart();
@@ -151,13 +144,7 @@ CCPosition CCBot::GetStartLocation() const
     return Observation()->GetStartLocation();
 }
 
-const std::vector<CCPosition> & CCBot::GetStartLocations() const
-{
-    return m_baseLocations;
-}
-
-void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const std::vector<std::string> & protocol_errors)
-{
+void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const std::vector<std::string> & protocol_errors) {
     auto& logger = LOG_DEBUG;
     if (client_errors.size() > 0) {
         logger << "Critical client errors occured in sc2:" << std::endl;

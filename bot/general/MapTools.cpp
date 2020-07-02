@@ -426,28 +426,7 @@ const std::vector<CCTilePosition> & MapTools::getClosestTilesTo(const CCTilePosi
     return getDistanceMap(pos).getSortedTiles();
 }
 
-CCTilePosition MapTools::getLeastRecentlySeenTile() const
-{
-    int minSeen = std::numeric_limits<int>::max();
-    CCTilePosition leastSeen;
-    const BaseLocation * baseLocation = m_bot.Bases().getPlayerStartingBaseLocation(Players::Self);
-
-    for (auto & tile : baseLocation->getClosestTiles())
-    {
-        BOT_ASSERT(isValidTile(tile), "How is this tile not valid?");
-
-        int lastSeen = m_lastSeen[tile.x][tile.y];
-        if (lastSeen < minSeen)
-        {
-            minSeen = lastSeen;
-            leastSeen = tile;
-        }
-    }
-
-    return leastSeen;
-}
-
-bool MapTools::canWalk(int tileX, int tileY) 
+bool MapTools::canWalk(int tileX, int tileY)
 {
     return getBit(m_bot.Observation()->GetGameInfo().pathing_grid, tileX, tileY);
 }
