@@ -16,7 +16,7 @@ namespace Util
     UnitType        GetTownHall(const CCRace & race, CCBot & bot);
     UnitType        GetRefinery(const CCRace & race, CCBot & bot);
     UnitType        GetSupplyProvider(const CCRace & race, CCBot & bot);
-    CCPosition      CalcCenter(const std::vector<Unit> & units);
+    CCPosition      CalcCenter(const std::vector<const Unit*> & units);
     bool            IsZerg(const CCRace & race);
     bool            IsProtoss(const CCRace & race);
     bool            IsTerran(const CCRace & race);
@@ -28,6 +28,7 @@ namespace Util
 #endif
 
     float Dist(const Unit & unit, const CCPosition & p2);
+    float Dist(const Unit* unit, const CCPosition & p2);
     float Dist(const Unit & unit1, const Unit & unit2);
     float Dist(const CCPosition & p1, const CCPosition & p2);
     CCPositionType DistSq(const CCPosition & p1, const CCPosition & p2);

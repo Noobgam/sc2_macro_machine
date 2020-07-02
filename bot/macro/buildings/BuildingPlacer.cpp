@@ -17,7 +17,12 @@ void BuildingPlacer::onStart()
 
 bool BuildingPlacer::isInResourceBox(int tileX, int tileY) const
 {
-    return m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->isInResourceBox(tileX, tileY);
+    for (auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
+        if (base->isInResourceBox(tileX, tileY)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // makes final checks to see if a building can be built at a certain location
