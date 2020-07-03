@@ -22,18 +22,17 @@ class BaseLocation {
 
     std::map<CCPlayer, bool>    m_isPlayerOccupying;
     std::map<CCPlayer, bool>    m_isPlayerStartLocation;
-        
+
     int                         m_baseID;
     CCPositionType              m_left;
     CCPositionType              m_right;
     CCPositionType              m_top;
     CCPositionType              m_bottom;
     bool                        m_isStartLocation;
-    
+
 public:
 
     BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit*> & resources);
-    
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;
 

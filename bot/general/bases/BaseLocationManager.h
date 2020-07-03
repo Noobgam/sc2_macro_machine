@@ -18,7 +18,7 @@ class BaseLocationManager {
 public:
 
     BaseLocationManager(CCBot & bot);
-    
+
     void onStart();
     void onFrame();
     void drawBaseLocations();

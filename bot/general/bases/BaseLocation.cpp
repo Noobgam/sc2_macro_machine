@@ -184,7 +184,7 @@ void BaseLocation::draw() {
         m_bot.Map().drawCircle(Util::GetPosition(m_depotPosition), radius, CCColor(255, 0, 0));
     }
 
-    m_bot.Map().drawTile(m_depotPosition.x, m_depotPosition.y, CCColor(0, 0, 255)); 
+    m_bot.Map().drawTile(m_depotPosition.x, m_depotPosition.y, CCColor(0, 0, 255));
 
     //m_distanceMap.draw(m_bot);
 }
