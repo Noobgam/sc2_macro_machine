@@ -6,7 +6,7 @@
 class CCBot;
 class BaseLocation;
 
-class BuildingPlacer
+class BuildingPlacer_L
 {
     CCBot & m_bot;
 
@@ -21,7 +21,7 @@ class BuildingPlacer
 
 public:
 
-    BuildingPlacer(CCBot & bot);
+    BuildingPlacer_L(CCBot & bot);
 
     void onStart();
 

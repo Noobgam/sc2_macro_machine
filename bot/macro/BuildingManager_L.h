@@ -1,16 +1,16 @@
 #pragma once
 
 #include "../general/model/Common.h"
-#include "buildings/BuildingPlacer.h"
+#include "buildings/BuildingPlacer_L.h"
 #include "buildings/Building.h"
 
 class CCBot;
 
-class BuildingManager
+class BuildingManager_L
 {
     CCBot &   m_bot;
 
-    BuildingPlacer  m_buildingPlacer;
+    BuildingPlacer_L  m_buildingPlacer;
     std::vector<Building> m_buildings;
 
     bool            m_debugMode;
@@ -31,7 +31,7 @@ class BuildingManager
 
 public:
 
-    BuildingManager(CCBot & bot);
+    BuildingManager_L(CCBot & bot);
 
     void                onStart();
     void                onFrame();

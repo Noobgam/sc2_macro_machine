@@ -1,8 +1,8 @@
 #include "../general/model/Common.h"
-#include "BuildingManager.h"
+#include "BuildingManager_L.h"
 #include "../general/CCBot.h"
 
-BuildingManager::BuildingManager(CCBot & bot)
+BuildingManager_L::BuildingManager_L(CCBot & bot)
     : m_bot(bot)
     , m_buildingPlacer(bot)
     , m_debugMode(false)
@@ -12,13 +12,13 @@ BuildingManager::BuildingManager(CCBot & bot)
 
 }
 
-void BuildingManager::onStart()
+void BuildingManager_L::onStart()
 {
     m_buildingPlacer.onStart();
 }
 
 // gets called every frame from GameCommander
-void BuildingManager::onFrame()
+void BuildingManager_L::onFrame()
 {
     for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
         const Unit& unit = *unitPtr;
@@ -40,7 +40,7 @@ void BuildingManager::onFrame()
     drawBuildingInformation();
 }
 
-bool BuildingManager::isBeingBuilt(UnitType type)
+bool BuildingManager_L::isBeingBuilt(UnitType type)
 {
     for (auto & b : m_buildings)
     {
@@ -54,7 +54,7 @@ bool BuildingManager::isBeingBuilt(UnitType type)
 }
 
 // STEP 1: DO BOOK KEEPING ON WORKERS WHICH MAY HAVE DIED
-void BuildingManager::validateWorkersAndBuildings()
+void BuildingManager_L::validateWorkersAndBuildings()
 {
     // TODO: if a terran worker dies while constructing and its building
     //       is under construction, place unit back into buildingsNeedingBuilders
@@ -82,7 +82,7 @@ void BuildingManager::validateWorkersAndBuildings()
 }
 
 // STEP 2: ASSIGN WORKERS TO BUILDINGS WITHOUT THEM
-void BuildingManager::assignWorkersToUnassignedBuildings()
+void BuildingManager_L::assignWorkersToUnassignedBuildings()
 {
     std::vector<Building> toRemove;
 
@@ -135,7 +135,7 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
 }
 
 // STEP 3: ISSUE CONSTRUCTION ORDERS TO ASSIGN BUILDINGS AS NEEDED
-void BuildingManager::constructAssignedBuildings()
+void BuildingManager_L::constructAssignedBuildings()
 {
     for (auto & b : m_buildings)
     {
@@ -202,7 +202,7 @@ void BuildingManager::constructAssignedBuildings()
 }
 
 // STEP 4: UPDATE DATA STRUCTURES FOR BUILDINGS STARTING CONSTRUCTION
-void BuildingManager::checkForStartedConstruction()
+void BuildingManager_L::checkForStartedConstruction()
 {
     // for each building unit which is being constructed
     for (auto buildingStartedPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
@@ -260,10 +260,10 @@ void BuildingManager::checkForStartedConstruction()
 }
 
 // STEP 5: IF WE ARE TERRAN, THIS MATTERS, SO: LOL
-void BuildingManager::checkForDeadTerranBuilders() {}
+void BuildingManager_L::checkForDeadTerranBuilders() {}
 
 // STEP 6: CHECK FOR COMPLETED BUILDINGS
-void BuildingManager::checkForCompletedBuildings()
+void BuildingManager_L::checkForCompletedBuildings()
 {
     std::vector<Building> toRemove;
 
@@ -287,7 +287,7 @@ void BuildingManager::checkForCompletedBuildings()
 }
 
 // add a new building to be constructed
-void BuildingManager::addBuildingTask(const UnitType & type, const CCTilePosition & desiredPosition)
+void BuildingManager_L::addBuildingTask(const UnitType & type, const CCTilePosition & desiredPosition)
 {
     m_reservedMinerals  += m_bot.Data(type).mineralCost;
     m_reservedGas	    += m_bot.Data(type).gasCost;
@@ -299,28 +299,28 @@ void BuildingManager::addBuildingTask(const UnitType & type, const CCTilePositio
 }
 
 // TODO: may need to iterate over all tiles of the building footprint
-bool BuildingManager::isBuildingPositionExplored(const Building & b) const
+bool BuildingManager_L::isBuildingPositionExplored(const Building & b) const
 {
     return m_bot.Map().isExplored(b.finalPosition);
 }
 
 
-char BuildingManager::getBuildingWorkerCode(const Building & b) const
+char BuildingManager_L::getBuildingWorkerCode(const Building & b) const
 {
     return b.builderUnit.has_value() ? 'W' : 'X';
 }
 
-int BuildingManager::getReservedMinerals()
+int BuildingManager_L::getReservedMinerals()
 {
     return m_reservedMinerals;
 }
 
-int BuildingManager::getReservedGas()
+int BuildingManager_L::getReservedGas()
 {
     return m_reservedGas;
 }
 
-void BuildingManager::drawBuildingInformation()
+void BuildingManager_L::drawBuildingInformation()
 {
     m_buildingPlacer.drawReservedTiles();
 
@@ -369,7 +369,7 @@ void BuildingManager::drawBuildingInformation()
     m_bot.Map().drawTextScreen(0.3f, 0.05f, ss.str());
 }
 
-std::vector<UnitType> BuildingManager::buildingsQueued() const
+std::vector<UnitType> BuildingManager_L::buildingsQueued() const
 {
     std::vector<UnitType> buildingsQueued;
 
@@ -384,7 +384,7 @@ std::vector<UnitType> BuildingManager::buildingsQueued() const
     return buildingsQueued;
 }
 
-CCTilePosition BuildingManager::getBuildingLocation(const Building & b)
+CCTilePosition BuildingManager_L::getBuildingLocation(const Building & b)
 {
     if (b.type.isRefinery())
     {
@@ -412,7 +412,7 @@ CCTilePosition BuildingManager::getBuildingLocation(const Building & b)
     return m_buildingPlacer.getBuildLocationNear(b, 0);
 }
 
-void BuildingManager::removeBuildings(const std::vector<Building> & toRemove)
+void BuildingManager_L::removeBuildings(const std::vector<Building> & toRemove)
 
 {
     for (auto & b : toRemove)

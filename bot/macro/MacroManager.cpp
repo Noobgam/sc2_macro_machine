@@ -22,21 +22,11 @@ MacroManager::MacroManager(CCBot & bot)
     m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
 }
 
-void MacroManager::onStart()
-{
+void MacroManager::onStart() {
       m_buildingManager.onStart();
-//    setBuildOrder(m_bot.Strategy().getOpeningBookBuildOrder());
 }
 
-void MacroManager::onFrame()
-{
-//    fixBuildOrderDeadlock();
-//    manageBuildOrderQueue();
-
-    // TODO: if nothing is currently building, get a new goal from the strategy manager
-    // TODO: detect if there's a build order deadlock once per second
-    // TODO: triggers for game things like cloaked units etc
-
+void MacroManager::onFrame(){
     LOG_DEBUG << "Getting top priority" << endl;
     BuildOrderItem item = getTopPriority();
     LOG_DEBUG << "Top priority item is " << item.type.getName() << endl;
@@ -46,8 +36,7 @@ void MacroManager::onFrame()
     drawProductionInformation();
 }
 
-BuildOrderItem MacroManager::getTopPriority()
-{
+BuildOrderItem MacroManager::getTopPriority() {
     std::vector<BuildOrderItem> items;
     for (const auto& manager : m_managers) {
         const auto& prio = manager->getTopPriority();
@@ -59,8 +48,7 @@ BuildOrderItem MacroManager::getTopPriority()
     std::stringstream ss;
     ss << "Production Information\n\n";
 
-    for (auto& item : items)
-    {
+    for (auto& item : items) {
         ss << item.type.getName() << " : " << item.priority << '\n';
     }
 
@@ -76,8 +64,7 @@ BuildOrderItem MacroManager::getTopPriority()
 
 void MacroManager::produceIfPossible(BuildOrderItem item) {
     std::optional<Unit> producer = getProducer(item.type);
-    if (producer.has_value() && canMakeNow(producer.value(), item.type))
-    {
+    if (producer.has_value() && canMakeNow(producer.value(), item.type)) {
         produce(producer.value(), item);
     }
 }
@@ -160,16 +147,13 @@ std::optional<Unit> MacroManager::getClosestUnitToPosition(const std::vector<Uni
 }
 
 // this function will check to see if all preconditions are met and then create a unit
-void MacroManager::produce(const Unit & producer, BuildOrderItem item)
-{
-    if (!producer.isValid())
-    {
+void MacroManager::produce(const Unit & producer, BuildOrderItem item) {
+    if (!producer.isValid()) {
         return;
     }
 
     // if we're dealing with a building
-    if (item.type.isBuilding())
-    {
+    if (item.type.isBuilding()) {
         m_buildingManager.addBuildingTask(item.type.getUnitType(), Util::GetTilePosition(m_bot.GetStartLocation()));
     }
     // if we're dealing with a non-building unit

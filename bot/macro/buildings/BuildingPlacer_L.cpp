@@ -1,21 +1,21 @@
 #include "../../general/model/Common.h"
 #include "../../general/CCBot.h"
 #include "../../util/Util.h"
-#include "BuildingPlacer.h"
+#include "BuildingPlacer_L.h"
 #include "Building.h"
 
-BuildingPlacer::BuildingPlacer(CCBot & bot)
+BuildingPlacer_L::BuildingPlacer_L(CCBot & bot)
     : m_bot(bot)
 {
 
 }
 
-void BuildingPlacer::onStart()
+void BuildingPlacer_L::onStart()
 {
     m_reserveMap = std::vector< std::vector<bool> >(m_bot.Map().width(), std::vector<bool>(m_bot.Map().height(), false));
 }
 
-bool BuildingPlacer::isInResourceBox(int tileX, int tileY) const
+bool BuildingPlacer_L::isInResourceBox(int tileX, int tileY) const
 {
     for (auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
         if (base->isInResourceBox(tileX, tileY)) {
@@ -26,7 +26,7 @@ bool BuildingPlacer::isInResourceBox(int tileX, int tileY) const
 }
 
 // makes final checks to see if a building can be built at a certain location
-bool BuildingPlacer::canBuildHere(int bx, int by, const Building & b) const
+bool BuildingPlacer_L::canBuildHere(int bx, int by, const Building & b) const
 {
     if (isInResourceBox(bx, by))
     {
@@ -55,7 +55,7 @@ bool BuildingPlacer::canBuildHere(int bx, int by, const Building & b) const
 }
 
 //returns true if we can build this type of unit here with the specified amount of space.
-bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, int buildDist) const
+bool BuildingPlacer_L::canBuildHereWithSpace(int bx, int by, const Building & b, int buildDist) const
 {
     UnitType type = b.type;
 
@@ -103,7 +103,7 @@ bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, i
     return true;
 }
 
-CCTilePosition BuildingPlacer::getBuildLocationNear(const Building & b, int buildDist) const
+CCTilePosition BuildingPlacer_L::getBuildLocationNear(const Building & b, int buildDist) const
 {
     Timer t;
     t.start();
@@ -133,7 +133,7 @@ CCTilePosition BuildingPlacer::getBuildLocationNear(const Building & b, int buil
     return CCTilePosition(0, 0);
 }
 
-bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
+bool BuildingPlacer_L::tileOverlapsBaseLocation(int x, int y, UnitType type) const
 {
     // if it's a resource depot we don't care if it overlaps
     if (type.isResourceDepot())
@@ -170,7 +170,7 @@ bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
     return false;
 }
 
-bool BuildingPlacer::buildable(const Building & b, int x, int y) const
+bool BuildingPlacer_L::buildable(const Building & b, int x, int y) const
 {
     // TODO: does this take units on the map into account?
     if (!m_bot.Map().isValidTile(x, y) || !m_bot.Map().canBuildTypeAtPosition(x, y, b.type))
@@ -183,7 +183,7 @@ bool BuildingPlacer::buildable(const Building & b, int x, int y) const
     return true;
 }
 
-void BuildingPlacer::reserveTiles(int bx, int by, int width, int height)
+void BuildingPlacer_L::reserveTiles(int bx, int by, int width, int height)
 {
     int rwidth = (int)m_reserveMap.size();
     int rheight = (int)m_reserveMap[0].size();
@@ -196,7 +196,7 @@ void BuildingPlacer::reserveTiles(int bx, int by, int width, int height)
     }
 }
 
-void BuildingPlacer::drawReservedTiles()
+void BuildingPlacer_L::drawReservedTiles()
 {
 
     int rwidth = (int)m_reserveMap.size();
@@ -214,7 +214,7 @@ void BuildingPlacer::drawReservedTiles()
     }
 }
 
-void BuildingPlacer::freeTiles(int bx, int by, int width, int height)
+void BuildingPlacer_L::freeTiles(int bx, int by, int width, int height)
 {
     int rwidth = (int)m_reserveMap.size();
     int rheight = (int)m_reserveMap[0].size();
@@ -228,7 +228,7 @@ void BuildingPlacer::freeTiles(int bx, int by, int width, int height)
     }
 }
 
-CCTilePosition BuildingPlacer::getRefineryPosition()
+CCTilePosition BuildingPlacer_L::getRefineryPosition()
 {
     CCPosition closestGeyser(0, 0);
     double minGeyserDistanceFromHome = std::numeric_limits<double>::max();
@@ -281,7 +281,7 @@ CCTilePosition BuildingPlacer::getRefineryPosition()
 #endif
 }
 
-bool BuildingPlacer::isReserved(int x, int y) const
+bool BuildingPlacer_L::isReserved(int x, int y) const
 {
     int rwidth = (int)m_reserveMap.size();
     int rheight = (int)m_reserveMap[0].size();

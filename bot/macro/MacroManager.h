@@ -3,9 +3,9 @@
 #include "memory"
 
 #include "../general/model/Common.h"
-#include "BuildingManager.h"
 #include "BuildOrderItem.h"
 #include "build_managers/BuildManager.h"
+#include "buildings/BuildingManager.h"
 
 class CCBot;
 
