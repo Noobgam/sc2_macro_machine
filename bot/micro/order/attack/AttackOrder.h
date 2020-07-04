@@ -6,8 +6,7 @@ class AttackOrder : public Order {
 private:
     CCPosition m_target_position;
 public:
-    AttackOrder(CCBot & bot, CCPosition position);
+    AttackOrder(CCBot & bot, Squad* squad, CCPosition position);
 
-    void onStart(Squad* squad) override;
-    void onStep(Squad* squad) override;
+    void onStep() override;
 };

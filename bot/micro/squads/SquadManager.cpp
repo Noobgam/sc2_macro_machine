@@ -19,9 +19,9 @@ void SquadManager::onFrame() {
 
 void SquadManager::removeUnitsFromSquad(const std::set<const Unit *> &units, Squad *squad) {
     squad->removeUnits(units);
-    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
-        m_squads.erase(squad->getId());
-    }
+//    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
+//        m_squads.erase(squad->getId());
+//    }
 }
 
 Squad* SquadManager::getUnassignedSquad() const {

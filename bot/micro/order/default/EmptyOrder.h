@@ -4,7 +4,7 @@
 
 class EmptyOrder : public Order {
 public:
-    explicit EmptyOrder(CCBot & bot);
+    explicit EmptyOrder(CCBot & bot, Squad* squad);
 
-    void onStep(Squad* squad) override;
+    void onStep() override;
 };
