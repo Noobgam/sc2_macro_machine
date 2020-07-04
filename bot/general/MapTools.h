@@ -1,10 +1,8 @@
 #pragma once
 
-#include <vector>
+#include "model/Common.h"
 #include "DistanceMap.h"
 #include "model/UnitType.h"
-
-class CCBot;
 
 class MapTools
 {

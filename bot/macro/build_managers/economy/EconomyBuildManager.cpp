@@ -1,12 +1,11 @@
 #include "EconomyBuildManager.h"
-#include "GasBuildManager.h"
+#include "../../../general/CCBot.h"
 
 EconomyBuildManager::EconomyBuildManager(CCBot& bot)
-        : m_bot(bot),
+        : BuildManager(bot),
           m_worker_manager(WorkerBuildManager(bot)),
           m_gas_manager(GasBuildManager(bot))
-{
-}
+{ }
 
 std::optional<BuildOrderItem> EconomyBuildManager::getTopPriority() {
     auto workerBuildItem = m_worker_manager.getTopPriority();

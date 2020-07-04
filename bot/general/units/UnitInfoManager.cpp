@@ -1,7 +1,5 @@
 #include "UnitInfoManager.h"
-#include "../../util/Util.h"
 #include "../CCBot.h"
-#include "../model/Unit.h"
 
 #include <sstream>
 

@@ -1,5 +1,6 @@
 #include "SquadManager.h"
 #include "../../util/LogInfo.h"
+#include "../../general/CCBot.h"
 
 SquadManager::SquadManager(CCBot & bot):
     m_bot(bot),

@@ -33,7 +33,6 @@ class BaseLocation {
 public:
 
     BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit*> & resources);
-
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;
 

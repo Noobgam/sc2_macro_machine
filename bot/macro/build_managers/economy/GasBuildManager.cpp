@@ -1,12 +1,9 @@
 #include "GasBuildManager.h"
+#include "../../../general/CCBot.h"
 
-GasBuildManager::GasBuildManager(CCBot& bot)
-        : m_bot(bot)
-{
-}
+GasBuildManager::GasBuildManager(CCBot& bot) : BuildManager(bot) { }
 
-std::optional<BuildOrderItem> GasBuildManager::getTopPriority()
-{
+std::optional<BuildOrderItem> GasBuildManager::getTopPriority() {
 //    TODO Rich gas
     auto assimilatorType = UnitType(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR, m_bot);
     auto probeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);

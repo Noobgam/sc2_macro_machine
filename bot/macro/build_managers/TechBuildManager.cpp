@@ -1,11 +1,10 @@
 #include "TechBuildManager.h"
 
-TechBuildManager::TechBuildManager(CCBot & bot)
-        : m_bot(bot)
-{ }
+#include "../../general/CCBot.h"
 
-std::optional<BuildOrderItem> TechBuildManager::getTopPriority()
-{
+TechBuildManager::TechBuildManager(CCBot & bot) : BuildManager(bot) { }
+
+std::optional<BuildOrderItem> TechBuildManager::getTopPriority() {
     auto cyberneticsType = UnitType(sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE, m_bot);
     auto gatewayType = UnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY, m_bot);
     bool hasGate = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::COMPLETED) > 0;

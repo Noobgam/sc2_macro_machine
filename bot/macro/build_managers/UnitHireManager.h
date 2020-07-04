@@ -1,11 +1,10 @@
 #pragma once
 #include "BuildManager.h"
-#include "../../general/CCBot.h"
 
-class UnitHireManager : public BuildManager
-{
-	CCBot& m_bot;
+class CCBot;
+
+class UnitHireManager : public BuildManager {
 public:
-	UnitHireManager(CCBot& bot);
-	virtual std::optional<BuildOrderItem> getTopPriority();
+	explicit UnitHireManager(CCBot& bot);
+	std::optional<BuildOrderItem> getTopPriority() override;
 };
