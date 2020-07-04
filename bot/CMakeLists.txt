@@ -13,3 +13,7 @@ add_definitions("-DDEBUG_LOGGING")
 add_executable(main_bot ${all_sources})
 target_link_libraries(main_bot sc2api sc2lib sc2utils sc2protocol)
 
+add_executable(main_bot_debug ${all_sources})
+target_compile_definitions(main_bot_debug PUBLIC -D_DEBUG)
+target_link_libraries(main_bot_debug sc2api sc2lib sc2utils sc2protocol)
+
