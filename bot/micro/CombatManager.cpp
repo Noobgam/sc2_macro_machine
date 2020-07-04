@@ -19,13 +19,6 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
-    static int frameId = 0;
-    ++frameId;
-    if (frameId == 10) {
-        Squad* squad = m_squadManager.createNewSquad();
-        auto& myBase = *m_bot.Bases().getOccupiedBaseLocations(Players::Self).begin();
-        squad->setOrder(std::make_shared<ScoutAroundOrder>(m_bot, squad, myBase->getPosition()));
-    }
     if (mainSquad->units().size() > 22 && !inAttack) {
         auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
         mainSquad->setOrder(std::make_shared<AttackOrder>(m_bot, mainSquad, base->getPosition()));

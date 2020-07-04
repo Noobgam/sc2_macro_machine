@@ -300,6 +300,12 @@ void Unit::move(const CCTilePosition & targetPosition) const
 #endif
 }
 
+void Unit::queueMove(const CCPosition & targetPosition) const
+{
+    BOT_ASSERT(isValid(), "Unit is not valid");
+    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition, true);
+}
+
 void Unit::rightClick(const Unit & target) const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
