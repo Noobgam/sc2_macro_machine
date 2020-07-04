@@ -1,5 +1,6 @@
 #include "UnitInfoManager.h"
 #include "../CCBot.h"
+#include "../../util/LogInfo.h"
 
 #include <sstream>
 
@@ -30,7 +31,7 @@ void UnitInfoManager::updateUnits() {
     }
 
     std::vector<std::unique_ptr<Unit>> missingUnits;
-    for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.cend(); ) {
+    for (auto it = unitWrapperByTag.cbegin(); it != unitWrapperByTag.cend(); ) {
         bool notObserved = it->second->getObservationId() != observationId;
         bool dead = !it->second->isAlive();
         bool needToDelete = notObserved || dead;
@@ -57,7 +58,13 @@ void UnitInfoManager::updateUnits() {
     m_units.find(Players::Neutral)->second.clear();
     for (const auto & it : unitWrapperByTag) {
         Unit* unit = it.second.get();
-        m_units.find(unit->getPlayer())->second.push_back(unit);
+        CCPlayer owner = unit->getPlayer();
+        if (owner == Players::Neutral) {
+            if (!unit->getType().isMineral() && !unit->getType().isGeyser()) {
+                LOG_DEBUG << unit->getType().getName() << endl;
+            }
+        }
+        m_units.find(owner)->second.push_back(unit);
     }
 }
 
