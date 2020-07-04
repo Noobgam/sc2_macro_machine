@@ -11,15 +11,9 @@ private:
 public:
     ScoutAroundOrder(CCBot & bot, Squad* squad, CCPosition position);
 
-    void onStart() {
-        emp = new ExactDistanceMap{m_bot, m_target_position, 100};
-    }
+    void onStart();
 
-    void onStep() {
-        for (auto&& lr : emp->m_dist) {
-            m_bot.Map().drawTile(lr.first.first, lr.first.second);
-        }
-    }
+    void onStep();
 };
 
 
