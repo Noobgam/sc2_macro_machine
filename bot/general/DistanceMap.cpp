@@ -53,6 +53,7 @@ void DistanceMap::computeDistanceMap(CCBot & m_bot, const CCTilePosition & start
     for (size_t fringeIndex=0; fringeIndex<fringe.size(); ++fringeIndex)
     {
         auto & tile = fringe[fringeIndex];
+        int curDist = m_dist[(int)tile.x][(int)tile.y];
 
         // check every possible child of this tile
         for (size_t a=0; a<LegalActions; ++a)
@@ -62,7 +63,7 @@ void DistanceMap::computeDistanceMap(CCBot & m_bot, const CCTilePosition & start
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (m_bot.Map().isWalkable(nextTile) && getDistance(nextTile) == -1)
             {
-                m_dist[(int)nextTile.x][(int)nextTile.y] = m_dist[(int)tile.x][(int)tile.y] + 1;
+                m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
                 fringe.push_back(nextTile);
                 m_sortedTiles.push_back(nextTile);
             }
