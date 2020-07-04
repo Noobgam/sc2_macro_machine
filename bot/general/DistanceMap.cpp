@@ -43,16 +43,13 @@ void DistanceMap::computeDistanceMap(CCBot & m_bot, const CCTilePosition & start
     m_sortedTiles.reserve(m_width * m_height);
 
     // the fringe for the BFS we will perform to calculate distances
-    std::vector<CCTilePosition> fringe;
-    fringe.reserve(m_width * m_height);
-    fringe.push_back(startTile);
     m_sortedTiles.push_back(startTile);
 
     m_dist[(int)startTile.x][(int)startTile.y] = 0;
 
-    for (size_t fringeIndex=0; fringeIndex<fringe.size(); ++fringeIndex)
+    for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
-        auto & tile = fringe[fringeIndex];
+        auto & tile = m_sortedTiles[fringeIndex];
         int curDist = m_dist[(int)tile.x][(int)tile.y];
 
         // check every possible child of this tile
@@ -64,7 +61,6 @@ void DistanceMap::computeDistanceMap(CCBot & m_bot, const CCTilePosition & start
             if (m_bot.Map().isWalkable(nextTile) && getDistance(nextTile) == -1)
             {
                 m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
-                fringe.push_back(nextTile);
                 m_sortedTiles.push_back(nextTile);
             }
         }
