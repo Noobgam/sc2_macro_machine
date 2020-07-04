@@ -31,7 +31,7 @@ void UnitInfoManager::updateUnits() {
     }
 
     std::vector<std::unique_ptr<Unit>> missingUnits;
-    for (auto it = unitWrapperByTag.cbegin(); it != unitWrapperByTag.cend(); ) {
+    for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.end(); ) {
         bool notObserved = it->second->getObservationId() != observationId;
         bool dead = !it->second->isAlive();
         bool needToDelete = notObserved || dead;
