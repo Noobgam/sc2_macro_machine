@@ -456,3 +456,14 @@ float MapTools::terrainHeight(const CCPosition & point) const
 void MapTools::draw() const
 {
 }
+
+bool MapTools::isVisible(const CCPosition &from, const CCPosition &to, UnitType type) {
+    float fromHeight = terrainHeight(from);
+    float toHeight = terrainHeight(to);
+    // could there be a case where there is a highground between two points?
+    if (toHeight > fromHeight) {
+        return false;
+    }
+    CCPosition v = from - to;
+    return (v.x * v.x + v.y * v.y) < type.visionRange() * type.visionRange();
+}

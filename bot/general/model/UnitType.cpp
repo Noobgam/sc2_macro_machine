@@ -342,8 +342,6 @@ bool UnitType::isTank() const
 
 bool UnitType::isMorphedBuilding() const
 {
-#ifdef SC2API
-
     switch (m_type.ToType())
     {
         case sc2::UNIT_TYPEID::ZERG_LAIR:                   { return true;  }
@@ -353,11 +351,12 @@ bool UnitType::isMorphedBuilding() const
         case sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND:       { return true;  }
         default:                                            { return false; }
     }
-#else
-    return  m_type == BWAPI::UnitTypes::Zerg_Sunken_Colony ||
-            m_type == BWAPI::UnitTypes::Zerg_Spore_Colony ||
-            m_type == BWAPI::UnitTypes::Zerg_Lair ||
-            m_type == BWAPI::UnitTypes::Zerg_Hive ||
-            m_type == BWAPI::UnitTypes::Zerg_Greater_Spire;
-#endif
+}
+
+float UnitType::visionRange() const {
+    switch (m_type.ToType()) {
+        case sc2::UNIT_TYPEID::PROTOSS_PROBE: { return 8; }
+        case sc2::UNIT_TYPEID::PROTOSS_ZEALOT: { return 9; }
+        default: { return 9.0; }
+    }
 }

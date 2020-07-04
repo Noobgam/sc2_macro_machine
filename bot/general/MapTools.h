@@ -32,6 +32,7 @@ class MapTools
     float   terrainHeight(const CCPosition & point) const;
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
+    bool    isVisible(const CCPosition& from, const CCPosition& to, UnitType type);
 
 public:
 

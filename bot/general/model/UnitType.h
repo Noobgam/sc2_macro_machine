@@ -44,6 +44,7 @@ public:
     int supplyRequired() const;
     int mineralPrice() const;
     int gasPrice() const;
+    float visionRange() const;
 
     const std::vector<UnitType> & whatBuilds() const;
 

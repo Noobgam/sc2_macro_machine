@@ -5,7 +5,6 @@
 #include "build_managers/ProductionManager.h"
 #include "build_managers/UnitHireManager.h"
 #include "build_managers/TechBuildManager.h"
-#include "build_managers/BuildManager.h"
 #include "../util/LogInfo.h"
 #include "../util/Util.h"
 

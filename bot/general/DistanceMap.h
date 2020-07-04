@@ -5,6 +5,7 @@
 
 class CCBot;
 
+// heuristic class, which can be used when distance does not have to be exact
 class DistanceMap 
 {
     int m_width;
