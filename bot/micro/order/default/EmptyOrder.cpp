@@ -1,8 +1,8 @@
 #include "EmptyOrder.h"
 #include "../../../util/LogInfo.h"
 
-EmptyOrder::EmptyOrder(CCBot &bot) : Order(bot) { }
+EmptyOrder::EmptyOrder(CCBot &bot, Squad* squad) : Order(bot, squad) { }
 
-void EmptyOrder::onStep(Squad* squad) {
+void EmptyOrder::onStep() {
     LOG_DEBUG << "Executing empty order" << std::endl;
 }

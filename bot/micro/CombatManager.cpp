@@ -21,7 +21,7 @@ void CombatManager::onFrame() {
     reformSquads();
     if (mainSquad->units().size() > 22 && !inAttack) {
         auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
-        mainSquad->setOrder(std::make_shared<AttackOrder>(m_bot, base->getPosition()));
+        mainSquad->setOrder(std::make_shared<AttackOrder>(m_bot, mainSquad, base->getPosition()));
         inAttack = true;
     }
 

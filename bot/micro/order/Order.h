@@ -5,10 +5,15 @@
 class Order {
 protected:
     CCBot & m_bot;
+    Squad* m_squad;
+    bool m_completed = false;
 
+    virtual void onEnd();
 public:
-    explicit Order(CCBot & bot);
+    explicit Order(CCBot & bot, Squad* squad);
 
-    virtual void onStart(Squad* squad);
-    virtual void onStep(Squad* squad) = 0;
+    virtual void onStart();
+    virtual void onStep() = 0;
+
+    bool isCompleted() const;
 };
