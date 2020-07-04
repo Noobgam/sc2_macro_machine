@@ -34,7 +34,7 @@ SquadID Squad::getId() const {
     return m_id;
 }
 
-void Squad::setOrder(std::shared_ptr<Order> order) {
+void Squad::setOrder(const std::shared_ptr<Order>& order) {
     m_order = order;
     m_order->onStart(this);
 }
