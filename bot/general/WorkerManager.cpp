@@ -16,16 +16,16 @@ void WorkerManager::onStart()
 
 void WorkerManager::onFrame()
 {
-    m_workerData.updateAllWorkerData();
-    handleGasWorkers();
-    handleIdleWorkers();
-
-    drawResourceDebugInfo();
-    drawWorkerInformation();
-
-    m_workerData.drawDepotDebugInfo();
-
-    handleRepairWorkers();
+//    m_workerData.updateAllWorkerData();
+//    handleGasWorkers();
+//    handleIdleWorkers();
+//
+//    drawResourceDebugInfo();
+//    drawWorkerInformation();
+//
+//    m_workerData.drawDepotDebugInfo();
+//
+//    handleRepairWorkers();
 }
 
 void WorkerManager::handleGasWorkers()
