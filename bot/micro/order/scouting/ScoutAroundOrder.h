@@ -9,6 +9,10 @@ private:
     ExactDistanceMap* emp;
     std::vector<CCTilePosition> m_keyPoints;
 
+    std::vector <CCTilePosition> orderTilesPerfectly(
+            CCTilePosition start, std::vector<CCTilePosition> tilesToVisit
+    );
+
 public:
     ScoutAroundOrder(CCBot & bot, Squad* squad, CCTilePosition position);
     ScoutAroundOrder(CCBot & bot, Squad* squad, CCPosition position);

@@ -355,7 +355,7 @@ bool UnitType::isMorphedBuilding() const
 
 float UnitType::visionRange() const {
     switch (m_type.ToType()) {
-        case sc2::UNIT_TYPEID::PROTOSS_PROBE: { return 11; }
+        case sc2::UNIT_TYPEID::PROTOSS_PROBE: { return 8; }
         case sc2::UNIT_TYPEID::PROTOSS_ZEALOT: { return 9; }
         default: { return 9.0; }
     }
