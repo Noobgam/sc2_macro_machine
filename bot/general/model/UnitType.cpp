@@ -152,12 +152,14 @@ bool UnitType::isMineral() const
 #ifdef SC2API
     switch (m_type.ToType()) 
     {
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD         : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750      : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD     : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750  : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		: return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD            : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750         : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD        : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750     : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD750 : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
         default: return false;
     }
 #else
