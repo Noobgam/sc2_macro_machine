@@ -13,7 +13,6 @@ private:
     std::map<SquadID, std::unique_ptr<Squad>> m_squads;
     std::map<CCUnitID, Squad*> m_units;
 
-    void removeUnitsFromSquad(const std::set<const Unit*> & units, Squad* squad);
 public:
     SquadID unassignedSquadID;
 
@@ -33,4 +32,6 @@ public:
 
     void transferUnits(Squad* from, Squad* to);
     void transferUnits(const std::set<const Unit*> & units, Squad* to);
+
+    void deformSquad(Squad* squad);
 };
