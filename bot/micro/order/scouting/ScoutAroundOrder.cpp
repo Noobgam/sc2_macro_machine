@@ -14,7 +14,7 @@ void ScoutAroundOrder::onStart() {
     // TODO: handle more than one unit?
     auto& firstUnit = *m_squad->units().begin();
     auto& type = (*m_squad->units().begin())->getType();
-    emp = new ExactDistanceMap{m_bot, m_target_position, 70};
+    emp = new ExactDistanceMap{m_bot, m_target_position, 100};
     vector <CCTilePosition> positions;
     positions.reserve(emp->m_dist.size());
     for (auto& lr : emp->m_dist) {
@@ -37,6 +37,9 @@ void ScoutAroundOrder::onStart() {
             return a.first < b.first;
         });
         auto bestPosition = it->second;
+        if (it->first <= 7) {
+            break;
+        }
         positionsLeft.erase(std::remove_if(positionsLeft.begin(), positionsLeft.end(), [this, &bestPosition, &type](const CCTilePosition& position) {
             return m_bot.Map().isVisible(bestPosition, position, type);
         }), positionsLeft.end());
