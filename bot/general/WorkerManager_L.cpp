@@ -1,20 +1,20 @@
-#include "WorkerManager.h"
+#include "WorkerManager_L.h"
 #include "CCBot.h"
 #include "../util/Util.h"
 
-WorkerManager::WorkerManager(CCBot & bot)
+WorkerManager_L::WorkerManager_L(CCBot & bot)
     : m_bot         (bot)
     , m_workerData  (bot)
 {
 
 }
 
-void WorkerManager::onStart()
+void WorkerManager_L::onStart()
 {
 
 }
 
-void WorkerManager::onFrame()
+void WorkerManager_L::onFrame()
 {
     m_workerData.updateAllWorkerData();
     handleGasWorkers();
@@ -28,7 +28,7 @@ void WorkerManager::onFrame()
     handleRepairWorkers();
 }
 
-void WorkerManager::handleGasWorkers()
+void WorkerManager_L::handleGasWorkers()
 {
     // for each unit we have
     for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
@@ -52,7 +52,7 @@ void WorkerManager::handleGasWorkers()
     }
 }
 
-void WorkerManager::handleIdleWorkers()
+void WorkerManager_L::handleIdleWorkers()
 {
     // for each of our workers
     for (auto & worker : m_workerData.getWorkers())
@@ -76,12 +76,12 @@ void WorkerManager::handleIdleWorkers()
     }
 }
 
-void WorkerManager::handleRepairWorkers()
+void WorkerManager_L::handleRepairWorkers()
 {
     // TODO
 }
 
-std::optional<Unit> WorkerManager::getClosestMineralWorkerTo(const CCPosition & pos) const
+std::optional<Unit> WorkerManager_L::getClosestMineralWorkerTo(const CCPosition & pos) const
 {
     std::optional<Unit> closestMineralWorker;
     double closestDist = std::numeric_limits<double>::max();
@@ -109,7 +109,7 @@ std::optional<Unit> WorkerManager::getClosestMineralWorkerTo(const CCPosition & 
 
 
 // set a worker to mine minerals
-void WorkerManager::setMineralWorker(const Unit & unit)
+void WorkerManager_L::setMineralWorker(const Unit & unit)
 {
     // check if there is a mineral available to send the worker to
     auto depot = getClosestDepot(unit);
@@ -122,7 +122,7 @@ void WorkerManager::setMineralWorker(const Unit & unit)
     }
 }
 
-std::optional<Unit> WorkerManager::getClosestDepot(Unit worker) const
+std::optional<Unit> WorkerManager_L::getClosestDepot(Unit worker) const
 {
     std::optional<Unit> closestDepot;
     double closestDistance = std::numeric_limits<double>::max();
@@ -147,7 +147,7 @@ std::optional<Unit> WorkerManager::getClosestDepot(Unit worker) const
 
 
 // other managers that need workers call this when they're done with a unit
-void WorkerManager::finishedWithWorker(const Unit & unit)
+void WorkerManager_L::finishedWithWorker(const Unit & unit)
 {
     if (m_workerData.getWorkerJob(unit) != WorkerJobs::Scout)
     {
@@ -155,12 +155,12 @@ void WorkerManager::finishedWithWorker(const Unit & unit)
     }
 }
 
-std::optional<Unit> WorkerManager::getGasWorker(Unit refinery) const
+std::optional<Unit> WorkerManager_L::getGasWorker(Unit refinery) const
 {
     return getClosestMineralWorkerTo(refinery.getPosition());
 }
 
-void WorkerManager::setBuildingWorker(Unit worker, Building & b)
+void WorkerManager_L::setBuildingWorker(Unit worker, Building & b)
 {
     m_workerData.setWorkerJob(worker, WorkerJobs::Build);
 }
@@ -168,7 +168,7 @@ void WorkerManager::setBuildingWorker(Unit worker, Building & b)
 // gets a builder for BuildingManager to use
 // if setJobAsBuilder is true (default), it will be flagged as a builder unit
 // set 'setJobAsBuilder' to false if we just want to see which worker will build a building
-std::optional<Unit> WorkerManager::getBuilder(Building & b, bool setJobAsBuilder) const
+std::optional<Unit> WorkerManager_L::getBuilder(Building & b, bool setJobAsBuilder) const
 {
     std::optional<Unit> builderWorker = getClosestMineralWorkerTo(Util::GetPosition(b.finalPosition));
 
@@ -182,17 +182,17 @@ std::optional<Unit> WorkerManager::getBuilder(Building & b, bool setJobAsBuilder
 }
 
 // sets a worker as a scout
-void WorkerManager::setScoutWorker(Unit workerTag)
+void WorkerManager_L::setScoutWorker(Unit workerTag)
 {
     m_workerData.setWorkerJob(workerTag, WorkerJobs::Scout);
 }
 
-void WorkerManager::setCombatWorker(Unit workerTag)
+void WorkerManager_L::setCombatWorker(Unit workerTag)
 {
     m_workerData.setWorkerJob(workerTag, WorkerJobs::Combat);
 }
 
-void WorkerManager::drawResourceDebugInfo()
+void WorkerManager_L::drawResourceDebugInfo()
 {
 
     for (auto & worker : m_workerData.getWorkers())
@@ -212,7 +212,7 @@ void WorkerManager::drawResourceDebugInfo()
     }
 }
 
-void WorkerManager::drawWorkerInformation()
+void WorkerManager_L::drawWorkerInformation()
 {
 
     std::stringstream ss;
@@ -230,32 +230,32 @@ void WorkerManager::drawWorkerInformation()
     m_bot.Map().drawTextScreen(0.75f, 0.2f, ss.str());
 }
 
-bool WorkerManager::isFree(Unit worker) const
+bool WorkerManager_L::isFree(Unit worker) const
 {
     return m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals || m_workerData.getWorkerJob(worker) == WorkerJobs::Idle;
 }
 
-bool WorkerManager::isWorkerScout(Unit worker) const
+bool WorkerManager_L::isWorkerScout(Unit worker) const
 {
     return (m_workerData.getWorkerJob(worker) == WorkerJobs::Scout);
 }
 
-bool WorkerManager::isBuilder(Unit worker) const
+bool WorkerManager_L::isBuilder(Unit worker) const
 {
     return (m_workerData.getWorkerJob(worker) == WorkerJobs::Build);
 }
 
-int WorkerManager::getNumMineralWorkers()
+int WorkerManager_L::getNumMineralWorkers()
 {
     return m_workerData.getWorkerJobCount(WorkerJobs::Minerals);
 }
 
-int WorkerManager::getNumGasWorkers()
+int WorkerManager_L::getNumGasWorkers()
 {
     return m_workerData.getWorkerJobCount(WorkerJobs::Gas);
 
 }
 
-int WorkerManager::getTotalWorkerCount() {
+int WorkerManager_L::getTotalWorkerCount() {
     return (int)m_workerData.getWorkers().size();
 }

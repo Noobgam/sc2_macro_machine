@@ -11,3 +11,7 @@ bool Order::isCompleted() const {
 void Order::onEnd() {
     m_completed = true;
 }
+
+void Order::onUnitAdded(const Unit *unit) { }
+
+void Order::onUnitRemoved(const Unit *unit) { }

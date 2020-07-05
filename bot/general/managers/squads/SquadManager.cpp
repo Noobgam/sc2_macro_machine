@@ -1,6 +1,6 @@
 #include "SquadManager.h"
-#include "../../util/LogInfo.h"
-#include "../../general/CCBot.h"
+#include "../../../util/LogInfo.h"
+#include "../../CCBot.h"
 
 SquadManager::SquadManager(CCBot & bot):
     m_bot(bot),
@@ -42,13 +42,13 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
     return squad->second;
 }
 
-void SquadManager::addUnit(const Unit *unit) {
+void SquadManager::addUnitCallback(const Unit *unit) {
     Squad* unassignedSquad = getUnassignedSquad();
     unassignedSquad->addUnits({ unit });
     m_units.insert({ unit->getID(), getUnassignedSquad() });
 }
 
-void SquadManager::removeUnit(const Unit *unit) {
+void SquadManager::removeUnitCallback(const Unit *unit) {
     Squad* squad = getUnitSquad(unit);
     m_units.erase(unit->getID());
     removeUnitsFromSquad({unit}, squad);

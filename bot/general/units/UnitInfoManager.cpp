@@ -74,7 +74,7 @@ void UnitInfoManager::processNewUnit(const Unit* unit) {
 
 void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
     if (unit->getPlayer() == Players::Self && unit->getType().isRegularUnit()) {
-        m_bot.Commander().getCombatManager().getSquadManager().addUnit(unit);
+        m_bot.getManagers().getSquadManager().addUnitCallback(unit);
     }
 }
 
@@ -84,7 +84,7 @@ void UnitInfoManager::processRemoveUnit(const Unit* unit) {
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {
     if (unit->getPlayer() == Players::Self && unit->getType().isRegularUnit()) {
-        m_bot.Commander().getCombatManager().getSquadManager().removeUnit(unit);
+        m_bot.getManagers().getSquadManager().removeUnitCallback(unit);
     }
 }
 

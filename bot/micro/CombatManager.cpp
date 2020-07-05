@@ -3,18 +3,10 @@
 #include "../general/CCBot.h"
 #include "order/Orders.h"
 
-CombatManager::CombatManager(CCBot & bot) :
-    m_bot(bot),
-    m_squadManager(bot),
-    mainSquad(m_squadManager.getUnassignedSquad()),
-    inAttack(false) { }
-
-SquadManager & CombatManager::getSquadManager() {
-    return m_squadManager;
-}
+CombatManager::CombatManager(CCBot & bot) : m_bot(bot) { }
 
 void CombatManager::onStart() {
-    mainSquad = m_squadManager.createNewSquad();
+    mainSquad = m_bot.getManagers().getSquadManager().createNewSquad();
 }
 
 void CombatManager::onFrame() {
@@ -24,13 +16,16 @@ void CombatManager::onFrame() {
         mainSquad->setOrder(std::make_shared<AttackOrder>(m_bot, mainSquad, base->getPosition()));
         inAttack = true;
     }
-
-    m_squadManager.onFrame();
 }
 
 void CombatManager::reformSquads() {
-    if (!m_squadManager.getUnassignedSquad()->isEmpty()) {
-        m_squadManager.transferUnits(m_squadManager.getUnassignedSquad(), mainSquad);
+    auto& squadManager = m_bot.getManagers().getSquadManager();
+    std::set<const Unit*> toTransfer;
+    for (auto unit : squadManager.getUnassignedSquad()->units()) {
+        if (unit->getType().isRegularUnit() && !unit->getType().isWorker()) {
+            toTransfer.insert(unit);
+        }
     }
+    squadManager.transferUnits(toTransfer, mainSquad);
 }
 

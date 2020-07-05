@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Squad.h"
-#include "../../general/model/Common.h"
+#include "../../../micro/squads/Squad.h"
+#include "../../model/Common.h"
 
 class CCBot;
 
@@ -17,7 +17,7 @@ private:
 public:
     SquadID unassignedSquadID;
 
-    SquadManager(CCBot & bot);
+    explicit SquadManager(CCBot & bot);
 
     void onFrame();
 
@@ -25,8 +25,8 @@ public:
     Squad* getUnitSquad(const Unit* unit) const;
     std::optional<Squad*> getSquad(SquadID id) const;
 
-    void addUnit(const Unit* unit);
-    void removeUnit(const Unit* unit);
+    void addUnitCallback(const Unit* unit);
+    void removeUnitCallback(const Unit* unit);
 
     Squad* createNewSquad();
     Squad* mergeSquads(std::vector<Squad*> & squads);

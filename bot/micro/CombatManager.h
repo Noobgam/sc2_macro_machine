@@ -1,23 +1,19 @@
 #pragma once
 
 #include "../general/model/Common.h"
-#include "squads/SquadManager.h"
+#include "../general/managers/squads/SquadManager.h"
 
 class CCBot;
 
 class CombatManager {
     CCBot &         m_bot;
-    SquadManager    m_squadManager;
 
-    Squad* mainSquad;
-
-    bool inAttack;
+    Squad* mainSquad = nullptr;
+    bool inAttack = false;
 
     void reformSquads();
 public:
     explicit CombatManager(CCBot & bot);
-
-    SquadManager & getSquadManager();
 
     void onStart();
     void onFrame();
