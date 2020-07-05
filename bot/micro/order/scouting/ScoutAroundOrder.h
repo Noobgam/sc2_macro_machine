@@ -11,6 +11,7 @@ private:
 
 public:
     ScoutAroundOrder(CCBot & bot, Squad* squad, CCTilePosition position);
+    ScoutAroundOrder(CCBot & bot, Squad* squad, CCPosition position);
 
     void onStart();
 

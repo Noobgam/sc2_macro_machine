@@ -6,12 +6,15 @@ using std::vector;
 
 ScoutAroundOrder::ScoutAroundOrder(CCBot &bot, Squad* squad, CCTilePosition position) : Order(bot, squad), m_target_position(position) { }
 
+ScoutAroundOrder::ScoutAroundOrder(CCBot &bot, Squad* squad, CCPosition position)
+    : Order(bot, squad)
+    , m_target_position(CCTilePosition(position.x, position.y)) { }
 
 void ScoutAroundOrder::onStart() {
     // TODO: handle more than one unit?
     auto& firstUnit = *m_squad->units().begin();
     auto& type = (*m_squad->units().begin())->getType();
-    emp = new ExactDistanceMap{m_bot, m_target_position, 100};
+    emp = new ExactDistanceMap{m_bot, m_target_position, 70};
     vector <CCTilePosition> positions;
     positions.reserve(emp->m_dist.size());
     for (auto& lr : emp->m_dist) {
@@ -41,12 +44,19 @@ void ScoutAroundOrder::onStart() {
         LOG_DEBUG << positionsLeft.size() << endl;
     }
 
+    // proximity ordering
+    auto curpos = CCTilePosition(firstUnit->getPosition().x + .5, firstUnit->getPosition().y + .5);
+    while (!keyPoints.empty()) {
+        auto& map = m_bot.Map().getDistanceMap(curpos);
+        auto it = std::min_element(keyPoints.begin(), keyPoints.end(), [&map](const CCTilePosition& lhs, const CCTilePosition& rhs) {
+            return map.getDistance(lhs) < map.getDistance(rhs);
+        });
+        curpos = *it;
+        m_keyPoints.push_back(curpos);
+        keyPoints.erase(it);
+    }
     // traveling salesman instead of proximity ordering
     LOG_DEBUG << "KeyPoint count is " << keyPoints.size() << endl;
-    sort(keyPoints.begin(), keyPoints.end(), [this](const CCTilePosition& lhs, const CCTilePosition& rhs) {
-        return emp->m_dist[{lhs.x, lhs.y}] < emp->m_dist[{rhs.x, rhs.y}];
-    });
-    m_keyPoints = std::move(keyPoints);
     for (auto& x : m_keyPoints) {
         firstUnit->queueMove(CCPosition(x.x + .5, x.y + .5));
     }
