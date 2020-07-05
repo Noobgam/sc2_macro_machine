@@ -71,18 +71,21 @@ ExactDistanceMap::ExactDistanceMap(CCBot &m_bot, const CCTilePosition &startTile
                 int tox = dx + x;
                 int toy = dy + y;
                 if (!m_bot.Map().isWalkable(tox, toy)) {
-                    int is = step(dx);
-                    int js = step(dy);
-                    for (int i = roundD(dx); ; i += is) {
-                        for (int j = roundD(dy); ; j += js) {
-                            blocked[i + D][j + D] = true;
-                            if (j == dy) {
-                                break;
-                            }
-                        }
-                        if (i == dx) {
-                            break;
-                        }
+                    blocked[dx + D][dy + D] = true;
+                }
+            }
+        }
+        for (int sx : {-1, 1}) {
+            for (int sy : {-1, 1}) {
+                int Dx = roundD(sx);
+                int Dy = roundD(sy);
+                for (int dx = 0; dx != Dx; dx += sx) {
+                    bool nowBlocked = false;
+                    for (int dy = 0; dy != Dy; dy += sy) {
+                        int tox = dx + D;
+                        int toy = dy + D;
+                        nowBlocked |= blocked[tox][toy];
+                        blocked[tox][toy] = nowBlocked;
                     }
                 }
             }
