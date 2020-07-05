@@ -1,6 +1,7 @@
 #include "ScoutAroundOrder.h"
 #include <algorithm>
 #include "../../../util/LogInfo.h"
+#include "../../../util/Util.h"
 
 using std::vector;
 
@@ -74,4 +75,24 @@ void ScoutAroundOrder::onStep() {
             m_bot.Map().drawLine(CCPosition(lr.x + .5, lr.y + .5), CCPosition(lr2.x + .5, lr2.y + .5));
         }
     }
+    auto& enemyUnits = m_bot.UnitInfo().getUnits(Players::Enemy);
+    for (auto& unit : m_squad->units()) {
+        std::optional<const Unit*> unitToAttack;
+        for (auto& enemyUnit : enemyUnits) {
+            if (Util::Dist(*unit, *enemyUnit) < 15) {
+                if (!unitToAttack.has_value()) {
+                    unitToAttack = enemyUnit;
+                } else {
+                    if (unitToAttack.value()->getType().isBuilding()) {
+                        // buildings lowest prio
+                        unitToAttack = enemyUnit;
+                    }
+                }
+            }
+        }
+        if (unitToAttack.has_value()) {
+            unit->attackUnit(*unitToAttack.value());
+        }
+    }
+
 }
