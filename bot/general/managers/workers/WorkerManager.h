@@ -10,6 +10,8 @@ class WorkerManager {
     CCBot & m_bot;
     Squad* m_mainSquad = nullptr;
     std::vector<Squad*> m_additionalSquads = {};
+
+    Squad *formSquad(const std::set<const Unit *> &workers);
 public:
     explicit WorkerManager(CCBot & bot);
 
@@ -17,4 +19,5 @@ public:
     void onFrame();
 
     void build(Unit* unit, UnitType type, CCPosition position);
+    std::optional<Squad*> formSquad(int targetSquadSize);
 };
