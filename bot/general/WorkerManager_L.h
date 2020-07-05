@@ -5,7 +5,7 @@
 class Building;
 class CCBot;
 
-class WorkerManager
+class WorkerManager_L
 {
     CCBot & m_bot;
 
@@ -19,7 +19,7 @@ class WorkerManager
 
 public:
 
-    WorkerManager(CCBot & bot);
+    WorkerManager_L(CCBot & bot);
 
     void onStart();
     void onFrame();

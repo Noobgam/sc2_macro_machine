@@ -5,8 +5,6 @@
 #include "macro/MacroManager.h"
 #include "micro/CombatManager.h"
 
-class CCBot;
-
 class GameCommander
 {
     CCBot &                 m_bot;

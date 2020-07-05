@@ -1,12 +1,11 @@
 #pragma once
 
-#include "../../../general/CCBot.h"
+#include "../BuildManager.h"
 
-class GasBuildManager : public BuildManager
-{
-private:
-    CCBot& m_bot;
+class CCBot;
+
+class GasBuildManager : public BuildManager {
 public:
-    GasBuildManager(CCBot& bot);
-    virtual std::optional<BuildOrderItem> getTopPriority();
+    explicit GasBuildManager(CCBot& bot);
+    std::optional<BuildOrderItem> getTopPriority() override;
 };

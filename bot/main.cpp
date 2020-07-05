@@ -1,15 +1,11 @@
-#include "general/model/Common.h"
 #include "general/CCBot.h"
 #include "util/JSONTools.h"
 #include "util/Util.h"
 
 #include <memory>
 
-#include "sc2utils/sc2_manage_process.h"
-#include "sc2api/sc2_api.h"
-
 #ifdef _DEBUG
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
     sc2::Coordinator coordinator;
     if (!coordinator.LoadSettings(argc, argv)) 
@@ -79,10 +75,7 @@ int main(int argc, char* argv[])
     coordinator.StartGame(mapString);
         
     // Step forward the game simulation.
-    while (true) 
-    {
-        coordinator.Update();
-    }
+    while (coordinator.Update());
 
     return 0;
 }

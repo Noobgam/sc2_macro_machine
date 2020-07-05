@@ -1,28 +1,31 @@
 #include "CombatManager.h"
 
-CombatManager::CombatManager(CCBot & bot) :
-    m_bot(bot),
-    m_squadManager(bot),
-    mainSquad(m_squadManager.getUnassignedSquad()) { }
+#include "../general/CCBot.h"
+#include "order/Orders.h"
 
-SquadManager & CombatManager::getSquadManager() {
-    return m_squadManager;
-}
+CombatManager::CombatManager(CCBot & bot) : m_bot(bot) { }
 
 void CombatManager::onStart() {
-    mainSquad = m_squadManager.createNewSquad();
+    mainSquad = m_bot.getManagers().getSquadManager().createNewSquad();
 }
 
 void CombatManager::onFrame() {
     reformSquads();
-
-    m_squadManager.onFrame();
+    if (mainSquad->units().size() > 22 && !inAttack) {
+        auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
+        mainSquad->setOrder(std::make_shared<AttackOrder>(m_bot, mainSquad, base->getPosition()));
+        inAttack = true;
+    }
 }
 
 void CombatManager::reformSquads() {
-    if (!m_squadManager.getUnassignedSquad()->isEmpty()) {
-        m_squadManager.transferUnits(m_squadManager.getUnassignedSquad(), mainSquad);
-        std::cerr << "Transfered units. New size: " << mainSquad->units().size() << std::endl;
+    auto& squadManager = m_bot.getManagers().getSquadManager();
+    std::set<const Unit*> toTransfer;
+    for (auto unit : squadManager.getUnassignedSquad()->units()) {
+        if (unit->getType().isRegularUnit() && !unit->getType().isWorker()) {
+            toTransfer.insert(unit);
+        }
     }
+    squadManager.transferUnits(toTransfer, mainSquad);
 }
 

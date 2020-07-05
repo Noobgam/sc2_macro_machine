@@ -27,7 +27,8 @@ public:
 
     bool isEmpty() const;
     const std::set<const Unit*> & units() const;
+    const std::shared_ptr<Order>& getOrder() const;
 
-    void setOrder(std::shared_ptr<Order>& order);
+    void setOrder(const std::shared_ptr<Order>& order);
     void act();
 };

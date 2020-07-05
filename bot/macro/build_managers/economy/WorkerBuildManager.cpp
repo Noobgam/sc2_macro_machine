@@ -1,12 +1,10 @@
 #include "WorkerBuildManager.h"
 
-WorkerBuildManager::WorkerBuildManager(CCBot& bot)
-    : m_bot(bot)
-{
-}
+#include "../../../general/CCBot.h"
 
-std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority()
-{
+WorkerBuildManager::WorkerBuildManager(CCBot& bot) : BuildManager(bot) { }
+
+std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority() {
     auto probeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
     auto nexusType = UnitType(sc2::UNIT_TYPEID::PROTOSS_NEXUS, m_bot);
     int freeNexuses = m_bot.UnitInfo().getBuildingCount(Players::Self, nexusType, UnitStatus::FREE);

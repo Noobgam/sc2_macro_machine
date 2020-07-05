@@ -1,6 +1,7 @@
 #include "../general/model/Common.h"
 #include "BuildingManager_L.h"
 #include "../general/CCBot.h"
+#include "../util/Util.h"
 
 BuildingManager_L::BuildingManager_L(CCBot & bot)
     : m_bot(bot)

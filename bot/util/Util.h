@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../general/model/Common.h"
-#include "../general/model/UnitType.h"
 
 class CCBot;
 class Unit;
+class UnitType;
 
 namespace Util
 {

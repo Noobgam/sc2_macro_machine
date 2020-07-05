@@ -106,8 +106,8 @@ void BaseLocationManager::onStart() {
     }
 
     // construct the sets of occupied base locations
-    m_occupiedBaseLocations[Players::Self] = std::set<const BaseLocation *>();
-    m_occupiedBaseLocations[Players::Enemy] = std::set<const BaseLocation *>();
+    m_occupiedBaseLocations[Players::Self] = { m_playerStartingBaseLocations[Players::Self] };
+    m_occupiedBaseLocations[Players::Enemy] = { m_playerStartingBaseLocations[Players::Enemy] };
 }
 
 void BaseLocationManager::onFrame() {
@@ -137,10 +137,6 @@ void BaseLocationManager::onFrame() {
             auto position = m_playerStartingBaseLocations.find(Players::Enemy)->second->getPosition();
             getBaseLocation(position)->setPlayerOccupying(Players::Enemy, true);
         }
-    }
-    for (auto & location : m_baseLocationData) {
-        std::cerr << location.isOccupiedByPlayer(Players::Self) << " SELF" << std::endl;
-        std::cerr << location.isOccupiedByPlayer(Players::Enemy) << " ENEMY" << std::endl;
     }
 
     // update the occupied base locations for each player

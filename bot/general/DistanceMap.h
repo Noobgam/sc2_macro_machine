@@ -5,7 +5,6 @@
 
 class CCBot;
 
-
 class DistanceMap 
 {
     int m_width;

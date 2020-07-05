@@ -1,5 +1,6 @@
 #include "SquadManager.h"
-#include "../../util/LogInfo.h"
+#include "../../../util/LogInfo.h"
+#include "../../CCBot.h"
 
 SquadManager::SquadManager(CCBot & bot):
     m_bot(bot),
@@ -18,9 +19,9 @@ void SquadManager::onFrame() {
 
 void SquadManager::removeUnitsFromSquad(const std::set<const Unit *> &units, Squad *squad) {
     squad->removeUnits(units);
-    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
-        m_squads.erase(squad->getId());
-    }
+//    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
+//        m_squads.erase(squad->getId());
+//    }
 }
 
 Squad* SquadManager::getUnassignedSquad() const {
@@ -41,13 +42,13 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
     return squad->second;
 }
 
-void SquadManager::addUnit(const Unit *unit) {
+void SquadManager::addUnitCallback(const Unit *unit) {
     Squad* unassignedSquad = getUnassignedSquad();
     unassignedSquad->addUnits({ unit });
     m_units.insert({ unit->getID(), getUnassignedSquad() });
 }
 
-void SquadManager::removeUnit(const Unit *unit) {
+void SquadManager::removeUnitCallback(const Unit *unit) {
     Squad* squad = getUnitSquad(unit);
     m_units.erase(unit->getID());
     removeUnitsFromSquad({unit}, squad);

@@ -1,25 +1,23 @@
 #pragma once
 
-#include "model/Common.h"
-#include "../util/util.h"
-
-#include "../BotConfig.h"
-#include "../GameCommander.h"
+#include <sc2api/sc2_api.h>
 #include "MapTools.h"
 #include "bases/BaseLocationManager.h"
 #include "units/UnitInfoManager.h"
-#include "WorkerManager.h"
+#include "WorkerManager_L.h"
 #include "TechTree.h"
-#include "model/MetaType.h"
-#include "model/Unit.h"
+#include "../GameCommander.h"
+#include "managers/Managers.h"
 
 class CCBot : public sc2::Agent {
     MapTools                m_map;
     BaseLocationManager     m_bases;
     UnitInfoManager         m_unitInfo;
-    WorkerManager           m_workers;
+    WorkerManager_L           m_workers;
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
+    Managers                m_managers;
+
 
     size_t observationId = 0;
 
@@ -37,11 +35,12 @@ public:
 
     size_t getObservationId() const;
 
-          WorkerManager & Workers();
+          WorkerManager_L & Workers();
     const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
+          Managers & getManagers();
 
     const TypeData & Data(const UnitType & type) const;
     const TypeData & Data(const CCUpgrade & type) const;

@@ -1,13 +1,10 @@
 #pragma once
-
 #include "BuildManager.h"
-#include "../../general/CCBot.h"
 
-class TechBuildManager : public BuildManager
-{
-    CCBot & m_bot;
+class CCBot;
 
+class TechBuildManager : public BuildManager {
 public:
-    TechBuildManager(CCBot& bot);
-    virtual std::optional<BuildOrderItem> getTopPriority();
+    explicit TechBuildManager(CCBot& bot);
+    std::optional<BuildOrderItem> getTopPriority() override;
 };
