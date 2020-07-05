@@ -140,23 +140,26 @@ std::string ScoutAroundOrder::getFileName() {
 std::vector<CCTilePosition> ScoutAroundOrder::computeKeyPoints() {
     auto& firstUnit = *m_squad->units().begin();
     auto& type = (*m_squad->units().begin())->getType();
-    emp = new ExactDistanceMap{m_bot, m_target_position, 85};
+    emp = new ExactDistanceMap{m_bot, m_target_position, 75};
     vector <CCTilePosition> positions;
     positions.reserve(emp->m_dist.size());
     for (auto& lr : emp->m_dist) {
-        if (lr.second > 15 && m_bot.Map().isBuildable(lr.first.first, lr.first.second)) {
+        if (lr.second > 35 && m_bot.Map().isBuildable(lr.first.first, lr.first.second)) {
             // no reason to scout our main base
             positions.push_back(CCTilePosition(lr.first.first, lr.first.second));
         }
     }
     vector <CCTilePosition> keyPoints;
     vector <CCTilePosition> positionsLeft = positions;
+    auto is_visible = [this, &type](const CCTilePosition& l, const CCTilePosition r) {
+        return m_bot.Map().isVisible(l, r, type, 3);
+    };
     while (!positionsLeft.empty()) {
         vector<pair<int, CCTilePosition>> vv;
         for (auto& pos : positions) {
             vv.push_back({0, pos});
             for (auto&& pL : positionsLeft) {
-                if (m_bot.Map().isVisible(pos, pL, type, 3.5)) {
+                if (is_visible(pos, pL)) {
                     vv.back().first++;
                 }
             }
@@ -169,8 +172,8 @@ std::vector<CCTilePosition> ScoutAroundOrder::computeKeyPoints() {
         if (it->first <= 7) {
             break;
         }
-        positionsLeft.erase(std::remove_if(positionsLeft.begin(), positionsLeft.end(), [this, &bestPosition, &type](const CCTilePosition& position) {
-            return m_bot.Map().isVisible(bestPosition, position, type);
+        positionsLeft.erase(std::remove_if(positionsLeft.begin(), positionsLeft.end(), [this, &bestPosition, &is_visible](const CCTilePosition& position) {
+            return is_visible(bestPosition, position);
         }), positionsLeft.end());
         keyPoints.push_back(bestPosition);
         LOG_DEBUG << positionsLeft.size() << endl;
