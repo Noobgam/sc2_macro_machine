@@ -13,6 +13,12 @@ private:
             CCTilePosition start, std::vector<CCTilePosition> tilesToVisit
     );
 
+    std::string getFileName();
+
+    void saveKeyPointsToFile(const std::vector<std::pair<CCTilePosition, std::vector<CCTilePosition>>>& keypoints);
+    std::vector<std::pair<CCTilePosition, std::vector<CCTilePosition>>> loadKeyPointsFromFile();
+    std::vector<CCTilePosition> computeKeyPoints();
+
 public:
     ScoutAroundOrder(CCBot & bot, Squad* squad, CCTilePosition position);
     ScoutAroundOrder(CCBot & bot, Squad* squad, CCPosition position);
