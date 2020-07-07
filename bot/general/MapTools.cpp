@@ -486,5 +486,5 @@ bool MapTools::isVisible(const CCTilePosition &from, const CCTilePosition &to, U
             return false;
         }
     }
-    return (dx * dx + dy * dy) < type.visionRange() * type.visionRange();
+    return true;
 }
