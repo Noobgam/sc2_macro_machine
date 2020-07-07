@@ -106,8 +106,8 @@ void BaseLocationManager::onStart() {
     }
 
     // construct the sets of occupied base locations
-    m_occupiedBaseLocations[Players::Self] = std::set<const BaseLocation *>();
-    m_occupiedBaseLocations[Players::Enemy] = std::set<const BaseLocation *>();
+    m_occupiedBaseLocations[Players::Self] = { m_playerStartingBaseLocations[Players::Self] };
+    m_occupiedBaseLocations[Players::Enemy] = { m_playerStartingBaseLocations[Players::Enemy] };
 }
 
 void BaseLocationManager::onFrame() {
