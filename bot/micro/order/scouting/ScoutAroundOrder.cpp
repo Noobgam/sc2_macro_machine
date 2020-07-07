@@ -4,6 +4,8 @@
 #include "../../../util/Util.h"
 #include "../../../util/FileUtils.h"
 
+#include <limits>
+
 using std::vector;
 
 ScoutAroundOrder::ScoutAroundOrder(CCBot &bot, Squad* squad, CCTilePosition position) : Order(bot, squad), m_target_position(position) { }
@@ -21,7 +23,7 @@ vector <CCTilePosition> ScoutAroundOrder::orderTilesPerfectly(CCTilePosition sta
         return lhs.y < rhs.y;
     };
     std::sort(tilesToVisit.begin(), tilesToVisit.end(), cmp);
-    int bestHeuristic = 100000;
+    int bestHeuristic = std::numeric_limits<int>::max();
     vector <CCTilePosition> best;
     vector <vector <int>> dp(n, vector<int>(1<<n));
     while (true) {
