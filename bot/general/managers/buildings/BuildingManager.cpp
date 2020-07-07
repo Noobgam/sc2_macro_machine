@@ -19,7 +19,7 @@ void BuildingManager::onFrame() {
     }
 }
 
-BuildingTask *BuildingManager::newTask(UnitType &type, Unit *unit, CCPosition position) {
+BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, CCTilePosition position) {
     BuildingTaskID id = currentBuildingTaskID++;
     auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(id, type, unit, position)});
     BuildingTask* ptr = iter.first->second.get();
@@ -31,7 +31,10 @@ std::vector<BuildingTask *> BuildingManager::getTasks() {
     return m_tasksPtr;
 }
 
-void BuildingManager::newUnitCallback(Unit *unit) {
+void BuildingManager::newUnitCallback(const Unit *unit) {
+    if (unit->getPlayer() != Players::Self) {
+        return;
+    }
     if (unit->getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder || !unit->getType().isBuilding()) {
         return;
     }
@@ -46,7 +49,13 @@ void BuildingManager::newUnitCallback(Unit *unit) {
     }
 }
 
-void BuildingManager::unitDiedCallback(Unit *unit) {
+void BuildingManager::unitDiedCallback(const Unit *unit) {
+    if (unit->getPlayer() != Players::Self) {
+        return;
+    }
+    if (unit->getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder) {
+        return;
+    }
     for (auto task : m_tasksPtr) {
         if (
                 task->getStatus() == BuildingStatus::IN_PROGRESS &&

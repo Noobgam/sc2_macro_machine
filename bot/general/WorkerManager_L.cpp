@@ -170,15 +170,16 @@ void WorkerManager_L::setBuildingWorker(Unit worker, Building & b)
 // set 'setJobAsBuilder' to false if we just want to see which worker will build a building
 std::optional<Unit> WorkerManager_L::getBuilder(Building & b, bool setJobAsBuilder) const
 {
-    std::optional<Unit> builderWorker = getClosestMineralWorkerTo(Util::GetPosition(b.finalPosition));
-
-    // if the worker exists (one may not have been found in rare cases)
-    if (builderWorker.has_value() && setJobAsBuilder)
-    {
-        m_workerData.setWorkerJob(builderWorker.value(), WorkerJobs::Build);
-    }
-
-    return builderWorker;
+    return {};
+//    std::optional<Unit> builderWorker = getClosestMineralWorkerTo(Util::GetPosition(b.finalPosition));
+//
+//    // if the worker exists (one may not have been found in rare cases)
+//    if (builderWorker.has_value() && setJobAsBuilder)
+//    {
+//        m_workerData.setWorkerJob(builderWorker.value(), WorkerJobs::Build);
+//    }
+//
+//    return builderWorker;
 }
 
 // sets a worker as a scout

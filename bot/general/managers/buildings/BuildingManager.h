@@ -1,4 +1,6 @@
-#include "BuildingTask.h"
+#pragma once
+
+#include "../../../macro/buildings/BuildingTask.h"
 
 class CCBot;
 
@@ -14,9 +16,9 @@ public:
 
     void onFrame();
 
-    BuildingTask* newTask(UnitType& type, Unit* unit, CCPosition position);
+    BuildingTask* newTask(const UnitType& type, const Unit* unit, CCTilePosition position);
     std::vector<BuildingTask*> getTasks();
 
-    void newUnitCallback(Unit* unit);
-    void unitDiedCallback(Unit* unit);
+    void newUnitCallback(const Unit* unit);
+    void unitDiedCallback(const Unit* unit);
 };

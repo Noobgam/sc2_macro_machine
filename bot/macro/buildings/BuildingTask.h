@@ -6,7 +6,7 @@
 
 typedef unsigned long long BuildingTaskID;
 
-enum BuildingStatus {
+enum class BuildingStatus {
     NEW = 0,
     IN_PROGRESS = 1,
     FAILED = 2,
@@ -16,22 +16,22 @@ enum BuildingStatus {
 class BuildingTask {
     BuildingTaskID m_id;
     UnitType m_type;
-    std::optional<Unit*> m_worker;
-    CCPosition m_position;
+    std::optional<const Unit*> m_worker;
+    CCTilePosition m_position;
     BuildingStatus m_status;
-    std::optional<Unit*> m_building;
+    std::optional<const Unit*> m_building;
 public:
-    BuildingTask(BuildingTaskID id, UnitType type, Unit* builder, CCPosition position);
+    BuildingTask(BuildingTaskID id, UnitType type, const Unit* builder, CCTilePosition position);
 
     BuildingTaskID getId() const;
     UnitType getType() const;
-    std::optional<Unit*> getWorker() const;
-    CCPosition getPosition() const;
-    std::optional<Unit*> getBuilding() const;
+    std::optional<const Unit*> getWorker() const;
+    CCTilePosition getPosition() const;
+    std::optional<const Unit*> getBuilding() const;
     BuildingStatus getStatus() const;
 
     void completed();
-    void buildingPlaced(Unit* building);
+    void buildingPlaced(const Unit* building);
     void workerDied();
     void buildingDied();
 };

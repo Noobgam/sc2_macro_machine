@@ -11,14 +11,14 @@ SquadManager::SquadManager(CCBot & bot):
 
 void SquadManager::onFrame() {
     for (auto & squad : m_squads) {
-        if (squad.first != SquadManager::unassignedSquadID) {
+        if (squad.first != unassignedSquadID) {
             squad.second->act();
         }
     }
 }
 
 Squad* SquadManager::getUnassignedSquad() const {
-    return getSquad(SquadManager::unassignedSquadID).value();
+    return getSquad(unassignedSquadID).value();
 }
 
 std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
@@ -70,13 +70,10 @@ void SquadManager::transferUnits(Squad* from, Squad* to) {
     }
     const std::set<const Unit*>& units = from->units();
     to->addUnits(units);
-    for (auto unit : units) {
+    for (auto& unit : units) {
         m_units.find(unit->getID())->second = to;
     }
     from->clear();
-    if (from->getId() != SquadManager::unassignedSquadID) {
-        m_squads.erase(from->getId());
-    }
 }
 
 void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to) {
@@ -94,7 +91,7 @@ void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to)
 
 void SquadManager::deformSquad(Squad* squad) {
     transferUnits(squad, getUnassignedSquad());
-    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
+    if (squad->getId() != unassignedSquadID) {
         m_squads.erase(squad->getId());
     }
 }

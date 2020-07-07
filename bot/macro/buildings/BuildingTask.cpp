@@ -1,6 +1,6 @@
 #include "BuildingTask.h"
 
-BuildingTask::BuildingTask(BuildingTaskID id, UnitType type, Unit *builder, CCPosition position) :
+BuildingTask::BuildingTask(BuildingTaskID id, UnitType type, const Unit *builder, CCTilePosition position) :
         m_id(id),
         m_type(type),
         m_worker(builder),
@@ -16,15 +16,15 @@ UnitType BuildingTask::getType() const {
     return m_type;
 }
 
-std::optional<Unit *> BuildingTask::getWorker() const {
+std::optional<const Unit *> BuildingTask::getWorker() const {
     return m_worker;
 }
 
-CCPosition BuildingTask::getPosition() const {
+CCTilePosition BuildingTask::getPosition() const {
     return m_position;
 }
 
-std::optional<Unit *> BuildingTask::getBuilding() const {
+std::optional<const Unit *> BuildingTask::getBuilding() const {
     return m_building;
 }
 
@@ -37,7 +37,7 @@ void BuildingTask::completed() {
     m_building = {};
 }
 
-void BuildingTask::buildingPlaced(Unit *building) {
+void BuildingTask::buildingPlaced(const Unit *building) {
     m_status = BuildingStatus::IN_PROGRESS;
     m_building = building;
     m_worker = {};

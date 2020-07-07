@@ -3,6 +3,7 @@
 #include "../../model/Unit.h"
 #include "../../model/Common.h"
 #include "../../../micro/squads/Squad.h"
+#include "../../../macro/buildings/BuildingTask.h"
 
 class CCBot;
 
@@ -18,6 +19,6 @@ public:
     void onStart();
     void onFrame();
 
-    void build(Unit* unit, UnitType type, CCPosition position);
+    void build(const BuildingTask* buildingTask);
     std::optional<Squad*> formSquad(int targetSquadSize);
 };
