@@ -259,6 +259,7 @@ CCTilePosition BuildingPlacer::getRefineryPosition()
             if (unit.getType().isResourceDepot() && Util::Dist(unit, geyserPos) < 10)
             {
                 nearDepot = true;
+                break;
             }
         }
 
