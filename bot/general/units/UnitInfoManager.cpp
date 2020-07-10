@@ -59,11 +59,6 @@ void UnitInfoManager::updateUnits() {
     for (const auto & it : unitWrapperByTag) {
         Unit* unit = it.second.get();
         CCPlayer owner = unit->getPlayer();
-        if (owner == Players::Neutral) {
-            if (!unit->getType().isMineral() && !unit->getType().isGeyser()) {
-                LOG_DEBUG << unit->getType().getName() << endl;
-            }
-        }
         m_units.find(owner)->second.push_back(unit);
     }
 }
