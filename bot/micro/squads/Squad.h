@@ -30,5 +30,6 @@ public:
     const std::shared_ptr<Order>& getOrder() const;
 
     void setOrder(const std::shared_ptr<Order>& order);
+    void setOrder(std::shared_ptr<Order>&& order);
     void act();
 };
