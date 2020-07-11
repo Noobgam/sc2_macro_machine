@@ -52,7 +52,7 @@ void MapTools::onStart()
     m_lastSeen       = vvi(m_width, std::vector<int>(m_height, 0));
     m_sectorNumber   = vvi(m_width, std::vector<int>(m_height, 0));
     m_terrainHeight  = vvf(m_width, std::vector<float>(m_height, 0.0f));
-    m_powerMap       = vvb(m_width, std::vector<bool>(m_height, false));
+    m_powerMap       = vvi(m_width, std::vector<int>(m_height, 0));
 
     // Set the boolean grid data from the Map
     for (int x(0); x < m_width; ++x)
@@ -203,9 +203,9 @@ bool MapTools::isVisible(int tileX, int tileY) const
     return m_bot.Observation()->GetVisibility(CCPosition(tileX + HALF_TILE, tileY + HALF_TILE)) == sc2::Visibility::Visible;
 }
 
-bool MapTools::isPowered(int tileX, int tileY) const
+bool MapTools::isPowered(float x, float y) const
 {
-    return m_powerMap[tileX][tileY];
+    return m_powerMap[(x * 2) + .5][(y * 2) + .5];
 }
 
 float MapTools::terrainHeight(float x, float y) const
@@ -268,7 +268,7 @@ bool MapTools::isValidPosition(const CCPosition & pos) const
 
 void MapTools::drawLine(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color) const
 {
-    m_bot.Debug()->DebugLineOut(sc2::Point3D(x1, y1, terrainHeight(x1, y1) + 0.2f), sc2::Point3D(x2, y2, terrainHeight(x2, y2) + 0.2f), color);
+    m_bot.Debug()->DebugLineOut(sc2::Point3D(x1, y1, terrainHeight(x1, y1) + 0.05f), sc2::Point3D(x2, y2, terrainHeight(x2, y2) + 0.05f), color);
 }
 
 void MapTools::drawLine(const CCPosition & p1, const CCPosition & p2, const CCColor & color) const
@@ -286,6 +286,12 @@ void MapTools::drawTile(int tileX, int tileY, const CCColor & color) const
     drawLine(px + d, py,     px + d, py + d, color);
     drawLine(px + d, py + d, px,     py + d, color);
     drawLine(px,     py + d, px,     py,     color);
+}
+
+void MapTools::drawHalfTile(float x, float y, const CCColor & color) const
+{
+    float d  = 0.05f;
+    drawGroundCircle({x, y}, d, color);
 }
 
 void MapTools::drawBox(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color) const
@@ -456,16 +462,48 @@ void MapTools::draw() const
 {
 }
 
-void MapTools::updatePowerMap() {
-    m_powerMap.assign(m_width, std::vector<bool>(m_height, false));
-    for (auto & powerSource : m_bot.Observation()->GetPowerSources())
-    {
-        for (int i = 0; i < m_width; ++i) {
-            for (int j = 0; j < m_height; ++j) {
-                if (m_powerMap[i][j]) continue;
-                m_powerMap[i][j] =
-                        Util::Dist(CCPosition(i + .5, j + .5), powerSource.position) < powerSource.radius;
+bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) {
+    float h1 = terrainHeight(pylonPos);
+    float h2 = terrainHeight(candidate);
+    if (h1 < h2) {
+        return false;
+    }
+    return Util::Dist(pylonPos, candidate) < radius;
+
+}
+
+void MapTools::powerPylon(const CCPosition & pos, float r) {
+    float x = pos.x;
+    float y = pos.y;
+    for (float i = (int)(x - r); i <= x + r; i += .5) {
+        for (float j = (int)(y - r); j <= y + r; j += .5) {
+            int idI = (2 * i + .5);
+            int idJ = (2 * j + .5);
+            if (pylonPowers(pos, r, {i, j})) {
+                ++m_powerMap[idI][idJ];
             }
         }
+    }
+}
+
+void MapTools::depowerPylon(const CCPosition & pos, float r) {
+    float x = pos.x;
+    float y = pos.y;
+    for (float i = (int)(x - r); i <= x + r; i += .5) {
+        for (float j = (int)(y - r); j <= y + r; j += .5) {
+            int idI = (2 * i + .5);
+            int idJ = (2 * j + .5);
+            if (pylonPowers(pos, r, {i, j})) {
+                --m_powerMap[idI][idJ];
+            }
+        }
+    }
+}
+
+void MapTools::updatePowerMap() {
+    m_powerMap.assign(2 * m_width, std::vector<int>(2 * m_height, 0));
+    for (auto & powerSource : m_bot.Observation()->GetPowerSources())
+    {
+        powerPylon(powerSource.position, powerSource.radius);
     }
 }

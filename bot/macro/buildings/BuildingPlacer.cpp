@@ -210,10 +210,14 @@ void BuildingPlacer::drawReservedTiles()
             if (m_reserveMap[x][y] || isInResourceBox(x, y))
             {
                 m_bot.Map().drawTile(x, y, CCColor(255, 255, 0));
-            } else {
-                if (m_bot.Map().isPowered(x, y)) {
-                    m_bot.Map().drawTile(x, y, CCColor(0, 200, 0));
-                }
+            }
+        }
+    }
+    for (int x = 0; x < 2 * rwidth; ++x) {
+        for (int y = 0; y < 2 * rheight; ++y) {
+            if (x % 2 != y % 2) continue;
+            if (m_bot.Map().isPowered(x * .5, y * .5)) {
+                m_bot.Map().drawHalfTile(x * .5, y * .5, CCColor(0, 200, 0));
             }
         }
     }
