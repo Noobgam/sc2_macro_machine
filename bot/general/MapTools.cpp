@@ -52,6 +52,7 @@ void MapTools::onStart()
     m_lastSeen       = vvi(m_width, std::vector<int>(m_height, 0));
     m_sectorNumber   = vvi(m_width, std::vector<int>(m_height, 0));
     m_terrainHeight  = vvf(m_width, std::vector<float>(m_height, 0.0f));
+    m_powerMap       = vvb(m_width, std::vector<bool>(m_height, false));
 
     // Set the boolean grid data from the Map
     for (int x(0); x < m_width; ++x)
@@ -112,6 +113,7 @@ void MapTools::onStart()
 void MapTools::onFrame()
 {
     m_frame++;
+    updatePowerMap();
 
     for (int x=0; x<m_width; ++x)
     {
@@ -203,15 +205,7 @@ bool MapTools::isVisible(int tileX, int tileY) const
 
 bool MapTools::isPowered(int tileX, int tileY) const
 {
-    for (auto & powerSource : m_bot.Observation()->GetPowerSources())
-    {
-        if (Util::Dist(CCPosition(tileX + HALF_TILE, tileY + HALF_TILE), powerSource.position) < powerSource.radius)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return m_powerMap[tileX][tileY];
 }
 
 float MapTools::terrainHeight(float x, float y) const
@@ -307,6 +301,11 @@ void MapTools::drawBox(const CCPosition & tl, const CCPosition & br, const CCCol
 void MapTools::drawCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color) const
 {
     m_bot.Debug()->DebugSphereOut(sc2::Point3D(pos.x, pos.y, m_maxZ), radius, color);
+}
+
+void MapTools::drawGroundCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color) const
+{
+    m_bot.Debug()->DebugSphereOut(sc2::Point3D(pos.x, pos.y, terrainHeight(pos)), radius, color);
 }
 
 void MapTools::drawCircle(CCPositionType x, CCPositionType y, CCPositionType radius, const CCColor & color) const
@@ -455,4 +454,18 @@ float MapTools::terrainHeight(const CCPosition & point) const
 
 void MapTools::draw() const
 {
+}
+
+void MapTools::updatePowerMap() {
+    m_powerMap.assign(m_width, std::vector<bool>(m_height, false));
+    for (auto & powerSource : m_bot.Observation()->GetPowerSources())
+    {
+        for (int i = 0; i < m_width; ++i) {
+            for (int j = 0; j < m_height; ++j) {
+                if (m_powerMap[i][j]) continue;
+                m_powerMap[i][j] =
+                        Util::Dist(CCPosition(i + .5, j + .5), powerSource.position) < powerSource.radius;
+            }
+        }
+    }
 }

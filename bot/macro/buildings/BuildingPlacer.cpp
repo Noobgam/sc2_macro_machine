@@ -66,8 +66,8 @@ bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, i
     }
 
     // height and width of the building
-    int width  = b.type.tileWidth();
-    int height = b.type.tileHeight();
+    int width  = type.tileWidth();
+    int height = type.tileHeight();
 
     // TODO: make sure we leave space for add-ons. These types of units can have addons:
 
@@ -90,7 +90,7 @@ bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, i
     {
         for (int y = starty; y < endy; y++)
         {
-            if (!b.type.isRefinery())
+            if (!type.isRefinery())
             {
                 if (!buildable(b, x, y) || m_reserveMap[x][y])
                 {
@@ -103,7 +103,7 @@ bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, i
     return true;
 }
 
-CCTilePosition BuildingPlacer::getBuildLocationNear(const Building & b, int buildDist) const
+CCPosition BuildingPlacer::getBuildLocationNear(const Building & b, int buildDist) const
 {
     Timer t;
     t.start();
@@ -123,14 +123,14 @@ CCTilePosition BuildingPlacer::getBuildLocationNear(const Building & b, int buil
             double ms = t.getElapsedTimeInMilliSec();
             //printf("Building Placer Took %d iterations, lasting %lf ms @ %lf iterations/ms, %lf setup ms\n", (int)i, ms, (i / ms), ms1);
 
-            return pos;
+            return Util::GetPosition(pos);
         }
     }
 
     double ms = t.getElapsedTimeInMilliSec();
     //printf("Building Placer Failure: %s - Took %lf ms\n", b.type.getName().c_str(), ms);
 
-    return CCTilePosition(0, 0);
+    return CCPosition(0, 0);
 }
 
 bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
@@ -151,10 +151,11 @@ bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
     for (const BaseLocation * base : m_bot.Bases().getBaseLocations())
     {
         // dimensions of the base location
-        int bx1 = (int)base->getDepotPosition().x;
-        int by1 = (int)base->getDepotPosition().y;
-        int bx2 = bx1 + Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot).tileWidth();
-        int by2 = by1 + Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot).tileHeight();
+        int bx1 = (int)base->getDepotActualPosition().x;
+        int by1 = (int)base->getDepotActualPosition().y;
+        auto&& xx = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot);
+        int bx2 = bx1 + xx.tileWidth();
+        int by2 = by1 + xx.tileHeight();
 
         // conditions for non-overlap are easy
         bool noOverlap = (tx2 < bx1) || (tx1 > bx2) || (ty2 < by1) || (ty1 > by2);
@@ -209,6 +210,10 @@ void BuildingPlacer::drawReservedTiles()
             if (m_reserveMap[x][y] || isInResourceBox(x, y))
             {
                 m_bot.Map().drawTile(x, y, CCColor(255, 255, 0));
+            } else {
+                if (m_bot.Map().isPowered(x, y)) {
+                    m_bot.Map().drawTile(x, y, CCColor(0, 200, 0));
+                }
             }
         }
     }
@@ -228,7 +233,7 @@ void BuildingPlacer::freeTiles(int bx, int by, int width, int height)
     }
 }
 
-CCTilePosition BuildingPlacer::getRefineryPosition()
+CCPosition BuildingPlacer::getRefineryPosition()
 {
     CCPosition closestGeyser(0, 0);
     double minGeyserDistanceFromHome = std::numeric_limits<double>::max();
@@ -275,11 +280,7 @@ CCTilePosition BuildingPlacer::getRefineryPosition()
         }
     }
 
-#ifdef SC2API
-    return CCTilePosition((int)closestGeyser.x, (int)closestGeyser.y);
-#else
-    return CCTilePosition(closestGeyser);
-#endif
+    return CCPosition (closestGeyser.x, closestGeyser.y);
 }
 
 bool BuildingPlacer::isReserved(int x, int y) const

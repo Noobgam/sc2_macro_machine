@@ -21,7 +21,8 @@ class MapTools
     std::vector<std::vector<bool>>  m_depotBuildable;   // whether a depot is buildable on a tile (illegal within 3 tiles of static resource)
     std::vector<std::vector<int>>   m_lastSeen;         // the last time any of our units has seen this position on the map
     std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
-    std::vector<std::vector<float>> m_terrainHeight;        // height of the map at x+0.5, y+0.5
+    std::vector<std::vector<float>> m_terrainHeight;    // height of the map at x+0.5, y+0.5
+    std::vector<std::vector<bool>>  m_powerMap;         // boolean map whether specific tile is powered by our pylons
     
     void computeConnectivity();
 
@@ -32,6 +33,7 @@ class MapTools
     float   terrainHeight(const CCPosition & point) const;
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
+    void    updatePowerMap();
 
 public:
 
@@ -52,6 +54,7 @@ public:
     void    drawBox(const CCPosition & tl, const CCPosition & br, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawCircle(CCPositionType x1, CCPositionType x2, CCPositionType radius, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color = CCColor(255, 255, 255)) const;
+    void    drawGroundCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawText(const CCPosition & pos, const std::string & str, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawTextScreen(float xPerc, float yPerc, const std::string & str, const CCColor & color = CCColor(255, 255, 255)) const;
     

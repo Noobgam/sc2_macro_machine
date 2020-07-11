@@ -157,7 +157,6 @@ CCPositionType Util::DistSq(const CCPosition & p1, const CCPosition & p2)
     return dx*dx + dy*dy;
 }
 
-#ifdef SC2API
 sc2::BuffID Util::GetBuffFromName(const std::string & name, CCBot & bot)
 {
     for (const sc2::BuffData & data : bot.Observation()->GetBuffData())
@@ -183,13 +182,11 @@ sc2::AbilityID Util::GetAbilityFromName(const std::string & name, CCBot & bot)
 
     return 0;
 }
-#endif
 
 // checks where a given unit can make a given unit type now
 // this is done by iterating its legal abilities for the build command to make the unit
 bool Util::UnitCanMetaTypeNow(const Unit & unit, const UnitType & type, CCBot & m_bot)
 {
-#ifdef SC2API
     BOT_ASSERT(unit.isValid(), "Unit pointer was null");
     sc2::AvailableAbilities available_abilities = m_bot.Query()->GetAbilitiesForUnit(unit.getUnitPtr());
     
@@ -210,8 +207,5 @@ bool Util::UnitCanMetaTypeNow(const Unit & unit, const UnitType & type, CCBot & 
             }
         }
     }
-#else
-
-#endif
     return false;
 }
