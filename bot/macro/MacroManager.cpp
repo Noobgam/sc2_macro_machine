@@ -39,15 +39,19 @@ void MacroManager::onFrame()
     // TODO: triggers for game things like cloaked units etc
 
     LOG_DEBUG << "Getting top priority" << endl;
-    BuildOrderItem item = getTopPriority();
-    LOG_DEBUG << "Top priority item is " << item.type.getName() << endl;
-    produceIfPossible(item);
+    std::optional<BuildOrderItem> item = getTopPriority();
+    if (item.has_value()) {
+        LOG_DEBUG << "Top priority item is " << item->type.getName() << endl;
+        produceIfPossible(item.value());
+    } else {
+        LOG_DEBUG << "No candidates to build" << endl;
+    }
 
     m_buildingManager.onFrame();
     drawProductionInformation();
 }
 
-BuildOrderItem MacroManager::getTopPriority()
+std::optional<BuildOrderItem> MacroManager::getTopPriority()
 {
     std::vector<BuildOrderItem> items;
     for (const auto& manager : m_managers) {
@@ -69,8 +73,7 @@ BuildOrderItem MacroManager::getTopPriority()
 
     auto item_ptr = std::max_element(items.begin(), items.end());
     if (item_ptr == items.end()) {
-        auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
-        return BuildOrderItem(MetaType(pylonType, m_bot), 0, false);
+        return {};
     }
     return *item_ptr;
 }
