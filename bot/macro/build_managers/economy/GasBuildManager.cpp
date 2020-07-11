@@ -15,8 +15,8 @@ std::optional<BuildOrderItem> GasBuildManager::getTopPriority() {
             geysers += location->getGeysers().size();
         }
     }
-    if (geysers - assimilatorsCount > 0 && probeCount >= 16) {
-        int priority = 11 + (probeCount - 16) / 3;
+    if (geysers - assimilatorsCount > 0 && probeCount >= 0) {
+        int priority = 11 + (probeCount - 0) / 3;
         return BuildOrderItem(MetaType(assimilatorType, m_bot), priority, false);
     }
     return {};
