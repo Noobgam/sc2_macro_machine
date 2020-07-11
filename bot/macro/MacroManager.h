@@ -15,7 +15,7 @@ class MacroManager
 
     std::vector<std::unique_ptr<BuildManager>> m_managers;
 
-    BuildOrderItem     getTopPriority();
+    std::optional<BuildOrderItem>     getTopPriority();
 
     void                     produceIfPossible(BuildOrderItem item);
     void                     produce(const Unit* producer, BuildOrderItem item);

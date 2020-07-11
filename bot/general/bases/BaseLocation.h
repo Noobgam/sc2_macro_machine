@@ -12,7 +12,7 @@ class BaseLocation {
     CCBot &                     m_bot;
     DistanceMap                 m_distanceMap;
 
-    CCTilePosition              m_depotPosition;
+    CCPosition                  m_depotActualPosition;
     CCPosition                  m_centerOfResources;
     std::vector<const Unit*>    m_geysers;
     std::vector<const Unit*>    m_minerals;
@@ -29,7 +29,6 @@ class BaseLocation {
     CCPositionType              m_top;
     CCPositionType              m_bottom;
     bool                        m_isStartLocation;
-
 public:
 
     BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit*> & resources);
@@ -39,7 +38,7 @@ public:
     bool isPlayerStartLocation(CCPlayer player) const;
     bool isMineralOnly() const;
     bool containsPosition(const CCPosition & pos) const;
-    const CCTilePosition & getDepotPosition() const;
+    const CCPosition & getDepotActualPosition() const;
     const CCPosition & getPosition() const;
     const std::vector<const Unit*> & getGeysers() const;
     const std::vector<const Unit*> & getMinerals() const;
@@ -49,8 +48,6 @@ public:
 
     void setStartLocation(CCPlayer player);
     void setPlayerOccupying(CCPlayer player, bool occupying);
-
-    const std::vector<CCTilePosition> & getClosestTiles() const;
 
     void draw();
 };

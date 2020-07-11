@@ -140,29 +140,32 @@ bool UnitType::isGeyser() const
 {
     switch (m_type.ToType()) 
     {
-        case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER        : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER  : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER         : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER  : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_SHAKURASVESPENEGEYSER : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHVESPENEGEYSER     : return true;
         default: return false;
     }
 }
 
 bool UnitType::isMineral() const
 {
-#ifdef SC2API
     switch (m_type.ToType()) 
     {
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD         : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750      : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD     : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750  : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		: return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD            : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750         : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD        : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750     : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD750 : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD750: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD450         : return true;
         default: return false;
     }
-#else
-    return m_type.isMineralField();
-#endif
 }
 
 bool UnitType::isWorker() const {
@@ -200,6 +203,10 @@ CCPositionType UnitType::getAttackRange() const
     // TODO: this is ground weapon range right now
     return m_type.groundWeapon().maxRange();
 #endif
+}
+
+float UnitType::getFootPrintRadius() const {
+    return m_bot->Observation()->GetAbilityData()[m_bot->Data(*this).buildAbility].footprint_radius;
 }
 
 int UnitType::tileWidth() const

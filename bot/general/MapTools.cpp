@@ -52,6 +52,7 @@ void MapTools::onStart()
     m_lastSeen       = vvi(m_width, std::vector<int>(m_height, 0));
     m_sectorNumber   = vvi(m_width, std::vector<int>(m_height, 0));
     m_terrainHeight  = vvf(m_width, std::vector<float>(m_height, 0.0f));
+    m_powerMap       = vvi(m_width, std::vector<int>(m_height, 0));
 
     // Set the boolean grid data from the Map
     for (int x(0); x < m_width; ++x)
@@ -112,6 +113,7 @@ void MapTools::onStart()
 void MapTools::onFrame()
 {
     m_frame++;
+    updatePowerMap();
 
     for (int x=0; x<m_width; ++x)
     {
@@ -139,7 +141,7 @@ void MapTools::computeConnectivity()
     {
         for (int y=0; y<m_height; ++y)
         {
-            // if the sector is not currently 0, or the map isn't walkable here, then we can skip this tile
+            // if the sector is `not currently 0, or the map isn't walkable here, then we can skip this tile
             if (getSectorNumber(x, y) != 0 || !isWalkable(x, y))
             {
                 continue;
@@ -201,17 +203,9 @@ bool MapTools::isVisible(int tileX, int tileY) const
     return m_bot.Observation()->GetVisibility(CCPosition(tileX + HALF_TILE, tileY + HALF_TILE)) == sc2::Visibility::Visible;
 }
 
-bool MapTools::isPowered(int tileX, int tileY) const
+bool MapTools::isPowered(float x, float y) const
 {
-    for (auto & powerSource : m_bot.Observation()->GetPowerSources())
-    {
-        if (Util::Dist(CCPosition(tileX + HALF_TILE, tileY + HALF_TILE), powerSource.position) < powerSource.radius)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return m_powerMap[(x * 2) + .5][(y * 2) + .5];
 }
 
 float MapTools::terrainHeight(float x, float y) const
@@ -226,7 +220,7 @@ int MapTools::getGroundDistance(const CCPosition & src, const CCPosition & dest)
         m_allMaps.clear();
     }
 
-    return getDistanceMap(dest).getDistance(src);
+    return getDistanceMap(src).getDistance(dest);
 }
 
 const DistanceMap & MapTools::getDistanceMap(const CCPosition & pos) const
@@ -274,7 +268,7 @@ bool MapTools::isValidPosition(const CCPosition & pos) const
 
 void MapTools::drawLine(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color) const
 {
-    m_bot.Debug()->DebugLineOut(sc2::Point3D(x1, y1, terrainHeight(x1, y1) + 0.2f), sc2::Point3D(x2, y2, terrainHeight(x2, y2) + 0.2f), color);
+    m_bot.Debug()->DebugLineOut(sc2::Point3D(x1, y1, terrainHeight(x1, y1) + 0.05f), sc2::Point3D(x2, y2, terrainHeight(x2, y2) + 0.05f), color);
 }
 
 void MapTools::drawLine(const CCPosition & p1, const CCPosition & p2, const CCColor & color) const
@@ -294,6 +288,12 @@ void MapTools::drawTile(int tileX, int tileY, const CCColor & color) const
     drawLine(px,     py + d, px,     py,     color);
 }
 
+void MapTools::drawHalfTile(float x, float y, const CCColor & color) const
+{
+    float d  = 0.05f;
+    drawGroundCircle({x, y}, d, color);
+}
+
 void MapTools::drawBox(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color) const
 {
     m_bot.Debug()->DebugBoxOut(sc2::Point3D(x1, y1, m_maxZ + 2.0f), sc2::Point3D(x2, y2, m_maxZ-5.0f), color);
@@ -307,6 +307,11 @@ void MapTools::drawBox(const CCPosition & tl, const CCPosition & br, const CCCol
 void MapTools::drawCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color) const
 {
     m_bot.Debug()->DebugSphereOut(sc2::Point3D(pos.x, pos.y, m_maxZ), radius, color);
+}
+
+void MapTools::drawGroundCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color) const
+{
+    m_bot.Debug()->DebugSphereOut(sc2::Point3D(pos.x, pos.y, terrainHeight(pos)), radius, color);
 }
 
 void MapTools::drawCircle(CCPositionType x, CCPositionType y, CCPositionType radius, const CCColor & color) const
@@ -358,9 +363,9 @@ bool MapTools::isBuildable(int tileX, int tileY) const
     return m_buildable[tileX][tileY];
 }
 
-bool MapTools::canBuildTypeAtPosition(int tileX, int tileY, const UnitType & type) const
+bool MapTools::canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const
 {
-    return m_bot.Query()->Placement(m_bot.Data(type).buildAbility, CCPosition((float)tileX, (float)tileY));
+    return m_bot.Query()->Placement(m_bot.Data(type).buildAbility, CCPosition(tileX, tileY));
 }
 
 bool MapTools::isBuildable(const CCTilePosition & tile) const
@@ -455,4 +460,69 @@ float MapTools::terrainHeight(const CCPosition & point) const
 
 void MapTools::draw() const
 {
+}
+
+bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const {
+    float h1 = terrainHeight(pylonPos);
+    float h2 = terrainHeight(candidate);
+    if (h1 < h2) {
+        return false;
+    }
+    return Util::Dist(pylonPos, candidate) < radius;
+
+}
+
+void MapTools::powerPylon(const CCPosition & pos, float r) {
+    changePowering(pos, r, 1);
+}
+
+void MapTools::depowerPylon(const CCPosition & pos, float r) {
+    changePowering(pos, r, -1);
+}
+
+void MapTools::updatePowerMap() {
+    // TODO: remove this, use callbacks, depower dead pylons, power live pylons
+    m_powerMap.assign(2 * m_width, std::vector<int>(2 * m_height, 0));
+    for (auto & powerSource : m_bot.Observation()->GetPowerSources())
+    {
+        powerPylon(powerSource.position, powerSource.radius);
+    }
+}
+
+void MapTools::changePowering(const CCPosition &pos, float radius, int d) {
+    float x = pos.x;
+    float y = pos.y;
+    for (float i = (int)(x - radius); i <= x + radius; i += .5) {
+        for (float j = (int)(y - radius); j <= y + radius; j += .5) {
+            int idI = (2 * i + .5);
+            int idJ = (2 * j + .5);
+
+            if (pylonPowers(pos, radius, {i, j})) {
+                m_powerMap[idI][idJ] += d;
+            }
+        }
+    }
+}
+
+std::pair<int, int> MapTools::assumePylonBuilt(const CCPosition& pos, float radius) const {
+    float x = pos.x;
+    float y = pos.y;
+    int freshlyPowered = 0;
+    int poweredOnce    = 0;
+    for (float i = (int)(x - radius); i <= x + radius; i += .5) {
+        for (float j = (int)(y - radius); j <= y + radius; j += .5) {
+            int idI = (2 * i + .5);
+            int idJ = (2 * j + .5);
+
+            if (pylonPowers(pos, radius, {i, j})) {
+                int cnt = m_powerMap[idI][idJ];
+                if (cnt == 0) {
+                    freshlyPowered++;
+                } else if (cnt == 1) {
+                    poweredOnce++;
+                }
+            }
+        }
+    }
+    return {freshlyPowered, poweredOnce};
 }
