@@ -5,15 +5,13 @@
 #include "build_managers/ProductionManager.h"
 #include "build_managers/UnitHireManager.h"
 #include "build_managers/TechBuildManager.h"
-#include "build_managers/BuildManager.h"
 #include "../util/LogInfo.h"
-#include "../util/Util.h"
 
 using std::endl;
 
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
-    , m_buildingManager (bot)
+    , m_buildingPlacer (bot)
     , m_managers        ()
 {
     m_managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));
@@ -23,7 +21,9 @@ MacroManager::MacroManager(CCBot & bot)
     m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
 }
 
-void MacroManager::onStart() { }
+void MacroManager::onStart() {
+    m_buildingPlacer.onStart();
+}
 
 void MacroManager::onFrame(){
     LOG_DEBUG << "Getting top priority" << endl;
@@ -94,7 +94,11 @@ std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
 void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     // if we're dealing with a building
     if (item.type.isBuilding()) {
-        CCTilePosition position = m_bot.Bases().getNextExpansion(Players::Self);
+        std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(item.type.getUnitType());
+        if (!positionOpt.has_value()) {
+            return;
+        }
+        CCPosition position = positionOpt.value();
         const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(item.type.getUnitType(), producer, position);
         m_bot.getManagers().getWorkerManager().build(task);
     }

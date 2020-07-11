@@ -17,16 +17,16 @@ class BuildingTask {
     BuildingTaskID m_id;
     UnitType m_type;
     std::optional<const Unit*> m_worker;
-    CCTilePosition m_position;
+    CCPosition m_position;
     BuildingStatus m_status;
     std::optional<const Unit*> m_building;
 public:
-    BuildingTask(BuildingTaskID id, UnitType type, const Unit* builder, CCTilePosition position);
+    BuildingTask(BuildingTaskID id, UnitType type, const Unit* builder, CCPosition position);
 
     BuildingTaskID getId() const;
     UnitType getType() const;
     std::optional<const Unit*> getWorker() const;
-    CCTilePosition getPosition() const;
+    CCPosition getPosition() const;
     std::optional<const Unit*> getBuilding() const;
     BuildingStatus getStatus() const;
 

@@ -6,12 +6,14 @@
 #include "BuildOrderItem.h"
 #include "build_managers/BuildManager.h"
 #include "../general/managers/buildings/BuildingManager.h"
+#include "buildings/BuildingPlacer.h"
 
 class CCBot;
 
 class MacroManager
 {
     CCBot &       m_bot;
+    BuildingPlacer       m_buildingPlacer;
 
     std::vector<std::unique_ptr<BuildManager>> m_managers;
 

@@ -16,7 +16,7 @@ public:
 
     void onFrame();
 
-    BuildingTask* newTask(const UnitType& type, const Unit* unit, CCTilePosition position);
+    BuildingTask* newTask(const UnitType& type, const Unit* unit, CCPosition position);
     std::vector<BuildingTask*> getTasks();
 
     void newUnitCallback(const Unit* unit);

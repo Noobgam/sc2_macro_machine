@@ -19,7 +19,7 @@ void BuildingManager::onFrame() {
     }
 }
 
-BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, CCTilePosition position) {
+BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, CCPosition position) {
     BuildingTaskID id = currentBuildingTaskID++;
     auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(id, type, unit, position)});
     BuildingTask* ptr = iter.first->second.get();
