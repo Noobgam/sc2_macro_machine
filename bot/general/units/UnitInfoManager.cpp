@@ -70,6 +70,7 @@ void UnitInfoManager::updateUnits() {
 
 void UnitInfoManager::processNewUnit(const Unit* unit) {
     updateSquadsWithNewUnit(unit);
+    m_bot.getManagers().getBuildingManager().newUnitCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
@@ -80,6 +81,7 @@ void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
 
 void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     updateSquadsWithRemovedUnit(unit);
+    m_bot.getManagers().getBuildingManager().unitDiedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {

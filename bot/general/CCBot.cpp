@@ -5,7 +5,6 @@ CCBot::CCBot()
     : m_map(*this)
     , m_bases(*this)
     , m_unitInfo(*this)
-    , m_workers(*this)
     , m_managers(*this)
     , m_gameCommander(*this)
     , m_techTree(*this)
@@ -18,7 +17,6 @@ void CCBot::OnGameStart() {
     m_map.onStart();
     m_unitInfo.onStart();
     m_bases.onStart();
-    m_workers.onStart();
 
     m_managers.onStart();
 
@@ -43,7 +41,6 @@ void CCBot::OnStep() {
     m_map.onFrame();
     m_unitInfo.onFrame();
     m_bases.onFrame();
-//    m_workers.onFrame();
 
     m_managers.onFrame();
 
@@ -117,11 +114,6 @@ const TypeData & CCBot::Data(const CCUpgrade & type) const
 const TypeData & CCBot::Data(const MetaType & type) const
 {
     return m_techTree.getData(type);
-}
-
-WorkerManager_L & CCBot::Workers()
-{
-    return m_workers;
 }
 
 int CCBot::GetCurrentSupply() const

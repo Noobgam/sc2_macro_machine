@@ -74,8 +74,6 @@ std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
     // get all the types of units that caa build this type
     auto& producerTypes = m_bot.Data(type).whatBuilds;
 
-    // make a set of all candidate producers
-    std::vector<Unit> candidateProducers;
     for (auto unit : m_bot.UnitInfo().getUnits(Players::Self)) {
         // reasons a unit can not train the desired type
         if (std::find(producerTypes.begin(), producerTypes.end(), unit->getType()) == producerTypes.end()) { continue; }
