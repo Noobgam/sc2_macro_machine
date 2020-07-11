@@ -4,7 +4,7 @@ include_directories("../include")
 include_directories(SYSTEM "${PROJECT_BINARY_DIR}/generated")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/contrib/SDL-mirror/include")
 
-
+include_directories(include)
 include_directories("./")
 
 add_definitions("-DSC2API")

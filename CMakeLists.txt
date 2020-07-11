@@ -30,6 +30,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${PROJECT_BINARY_DIR}/bin)
 # Build with c++14 support.
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(bot/include)
+
 # Disable default libraries in visual studio
 if (MSVC)
     # Default to statically-linked runtime.
