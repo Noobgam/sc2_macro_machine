@@ -40,6 +40,10 @@ CCPositionType Util::TileToPosition(float tile) {
     return tile;
 }
 
+bool Util::isRound(float f) {
+    return (f - (int)f) < 0.001f;
+}
+
 UnitType Util::GetSupplyProvider(const CCRace & race, CCBot & bot)
 {
 #ifdef SC2API

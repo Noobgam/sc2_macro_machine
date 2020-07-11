@@ -37,7 +37,7 @@ public:
     void                onFrame();
     void                addBuildingTask(const UnitType & type, const CCTilePosition & desiredPosition);
     void                drawBuildingInformation();
-    CCPosition      getBuildingLocation(const Building & b);
+    std::optional<CCPosition>      getBuildingLocation(const UnitType & b);
 
     int                 getReservedMinerals();
     int                 getReservedGas();

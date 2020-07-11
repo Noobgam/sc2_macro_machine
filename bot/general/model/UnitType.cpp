@@ -161,6 +161,9 @@ bool UnitType::isMineral() const
         case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	   : return true;
         case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD750 : return true;
         case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD750: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD450         : return true;
         default: return false;
     }
 }
@@ -200,6 +203,10 @@ CCPositionType UnitType::getAttackRange() const
     // TODO: this is ground weapon range right now
     return m_type.groundWeapon().maxRange();
 #endif
+}
+
+float UnitType::getFootPrintRadius() const {
+    return m_bot->Observation()->GetAbilityData()[m_bot->Data(*this).buildAbility].footprint_radius;
 }
 
 int UnitType::tileWidth() const
