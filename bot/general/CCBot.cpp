@@ -165,3 +165,8 @@ void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const s
 UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
     return UnitType{ typeId, *this };
 }
+
+bool CCBot::NeedWall() const {
+    // TODO: return true if wall is actually needed
+    return false;
+}

@@ -51,4 +51,5 @@ public:
     int GetCurrentSupply() const;
     int GetMaxSupply() const;
     int GetGas() const;
+    bool NeedWall() const;
 };

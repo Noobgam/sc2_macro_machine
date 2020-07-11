@@ -3,6 +3,7 @@
 #include "../../util/Util.h"
 #include "BuildingPlacer.h"
 #include "Building.h"
+#include "../../util/LogInfo.h"
 
 BuildingPlacer::BuildingPlacer(CCBot & bot)
     : m_bot(bot)
@@ -26,111 +27,89 @@ bool BuildingPlacer::isInResourceBox(int tileX, int tileY) const
 }
 
 // makes final checks to see if a building can be built at a certain location
-bool BuildingPlacer::canBuildHere(int bx, int by, const Building & b) const
+bool BuildingPlacer::canBuildHere(float x, float y, const UnitType & type) const
 {
-    if (isInResourceBox(bx, by))
-    {
+    if (isInResourceBox(x, y)) {
         return false;
     }
 
     // check the reserve map
-    for (int x = bx; x < bx + b.type.tileWidth(); x++)
-    {
-        for (int y = by; y < by + b.type.tileHeight(); y++)
-        {
-            if (!m_bot.Map().isValidTile(x, y) || m_reserveMap[x][y])
-            {
+    int lx = x - type.getFootPrintRadius() + .5;
+    int ly = y - type.getFootPrintRadius() + .5;
+    for (int cx = lx; cx < lx + type.tileWidth(); cx++) {
+        for (int cy = ly; cy < ly + type.tileHeight(); cy++) {
+
+            if (!m_bot.Map().isValidTile(cx, cy) || m_reserveMap[cx][cy]) {
+                return false;
+            }
+            if (!m_bot.Map().isBuildable(cx, cy)) {
                 return false;
             }
         }
     }
+    return buildable(type, x, y);
 
-    // if it overlaps a base location return false
-    if (tileOverlapsBaseLocation(bx, by, b.type))
-    {
-        return false;
-    }
-
-    return true;
 }
 
-//returns true if we can build this type of unit here with the specified amount of space.
-bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, int buildDist) const
+static inline double heuristic(int newlyPowered, [[maybe_unused]] int doublePowered, double distFromBase) {
+    // as dist increases, power should decrease.
+    // when distance is no longer required - double powering should come into place
+    return newlyPowered - 5 * distFromBase;
+}
+
+std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) const
 {
-    UnitType type = b.type;
+    double bestHeuristic = std::numeric_limits<double>::min();
+    std::optional<CCPosition> bestPosO;
+    auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
+    BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
+    auto& firstBase = *myBases.begin();
+    if (m_bot.NeedWall()) {
+        // TODO: implement walling
+    } else {
+        if (b.isSupplyProvider()) {
+            // perhaps moving this logic to some sort of 'PylonPlacer' would be better
+            // copy is intended here
+            auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
+            // pylons are built in corners of tiles.
+            for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
+                const auto & pos = closestToStart[i];
+                if (canBuildHere(pos.x, pos.y, b)) {
+                    auto&& lr = m_bot.Map().assumePylonBuilt(Util::GetPosition(pos), 6.5f);
+                    int dist = m_bot.Map().getGroundDistance(firstBase->getDepotActualPosition(), Util::GetPosition(pos));
+                    double curHeuristic = heuristic(
+                            lr.first,
+                            lr.second,
+                            dist
+                            );
 
-    //if we can't build here, we of course can't build here with space
-    if (!canBuildHere(bx, by, b))
-    {
-        return false;
-    }
+                    LOG_DEBUG << pos.x << " " << pos.y << " : " << curHeuristic << " >> " << dist << endl;
+                    if (curHeuristic > bestHeuristic) {
+                        bestPosO = Util::GetPosition(pos);
+                        bestHeuristic = curHeuristic;
+                    }
+                    // if there aint no good pylons or there is a very good one it doesnt really matter
+                    if (bestHeuristic > 400) break;
+                }
+            }
+            return bestPosO;
+        } else {
+            auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
 
-    // height and width of the building
-    int width  = type.tileWidth();
-    int height = type.tileHeight();
-
-    // TODO: make sure we leave space for add-ons. These types of units can have addons:
-
-    // define the rectangle of the building spot
-    int startx = bx - buildDist;
-    int starty = by - buildDist;
-    int endx   = bx + width + buildDist - 1;
-    int endy   = by + height + buildDist - 1;
-
-    // TODO: recalculate start and end positions for addons
-
-    // if this rectangle doesn't fit on the map we can't build here
-    if (startx < 0 || starty < 0 || endx > m_bot.Map().width() || endx < bx + width - 1 || endy > m_bot.Map().height() || endy < by + height - 1)
-    {
-        return false;
-    }
-
-    // if we can't build here, or space is reserved, or it's in the resource box, we can't build here
-    for (int x = startx; x < endx; x++)
-    {
-        for (int y = starty; y < endy; y++)
-        {
-            if (!type.isRefinery())
-            {
-                if (!buildable(b, x, y) || m_reserveMap[x][y])
-                {
-                    return false;
+            bool isRound = Util::isRound(b.getFootPrintRadius());
+            for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
+                auto & pos = closestToStart[i];
+                CCPosition cand = isRound
+                        ? CCPosition(pos.x, pos.y)
+                        : CCPosition(pos.x + .5, pos.y + .5);
+                if (canBuildHere(cand.x, cand.y, b)) {
+                    return cand;
                 }
             }
         }
     }
 
-    return true;
-}
-
-CCPosition BuildingPlacer::getBuildLocationNear(const Building & b, int buildDist) const
-{
-    Timer t;
-    t.start();
-
-    // get the precomputed vector of tile positions which are sorted closes to this location
-    auto & closestToBuilding = m_bot.Map().getClosestTilesTo(b.desiredPosition);
-
-    double ms1 = t.getElapsedTimeInMilliSec();
-
-    // iterate through the list until we've found a suitable location
-    for (size_t i(0); i < closestToBuilding.size() && i < 1000; ++i)
-    {
-        auto & pos = closestToBuilding[i];
-
-        if (canBuildHereWithSpace(pos.x, pos.y, b, buildDist))
-        {
-            double ms = t.getElapsedTimeInMilliSec();
-            //printf("Building Placer Took %d iterations, lasting %lf ms @ %lf iterations/ms, %lf setup ms\n", (int)i, ms, (i / ms), ms1);
-
-            return Util::GetPosition(pos);
-        }
-    }
-
-    double ms = t.getElapsedTimeInMilliSec();
-    //printf("Building Placer Failure: %s - Took %lf ms\n", b.type.getName().c_str(), ms);
-
-    return CCPosition(0, 0);
+    return {};
 }
 
 bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
@@ -171,10 +150,10 @@ bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
     return false;
 }
 
-bool BuildingPlacer::buildable(const Building & b, int x, int y) const
+bool BuildingPlacer::buildable(const UnitType & type, float x, float y) const
 {
     // TODO: does this take units on the map into account?
-    if (!m_bot.Map().isValidTile(x, y) || !m_bot.Map().canBuildTypeAtPosition(x, y, b.type))
+    if (!m_bot.Map().isValidTile(x, y) || !m_bot.Map().canBuildTypeAtPosition(x, y, type))
     {
         return false;
     }
@@ -257,7 +236,7 @@ CCPosition BuildingPlacer::getRefineryPosition()
         CCPosition geyserPos(unit.getPosition());
         
         // can't build a refinery on top of another
-        if (!m_bot.Map().canBuildTypeAtPosition((int)geyserPos.x, (int)geyserPos.y, refinery))
+        if (!m_bot.Map().canBuildTypeAtPosition(geyserPos.x, geyserPos.y, refinery))
         {
             continue;
         }

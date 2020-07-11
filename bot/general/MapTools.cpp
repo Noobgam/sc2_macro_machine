@@ -141,7 +141,7 @@ void MapTools::computeConnectivity()
     {
         for (int y=0; y<m_height; ++y)
         {
-            // if the sector is not currently 0, or the map isn't walkable here, then we can skip this tile
+            // if the sector is `not currently 0, or the map isn't walkable here, then we can skip this tile
             if (getSectorNumber(x, y) != 0 || !isWalkable(x, y))
             {
                 continue;
@@ -220,7 +220,7 @@ int MapTools::getGroundDistance(const CCPosition & src, const CCPosition & dest)
         m_allMaps.clear();
     }
 
-    return getDistanceMap(dest).getDistance(src);
+    return getDistanceMap(src).getDistance(dest);
 }
 
 const DistanceMap & MapTools::getDistanceMap(const CCPosition & pos) const
@@ -363,9 +363,9 @@ bool MapTools::isBuildable(int tileX, int tileY) const
     return m_buildable[tileX][tileY];
 }
 
-bool MapTools::canBuildTypeAtPosition(int tileX, int tileY, const UnitType & type) const
+bool MapTools::canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const
 {
-    return m_bot.Query()->Placement(m_bot.Data(type).buildAbility, CCPosition((float)tileX, (float)tileY));
+    return m_bot.Query()->Placement(m_bot.Data(type).buildAbility, CCPosition(tileX, tileY));
 }
 
 bool MapTools::isBuildable(const CCTilePosition & tile) const
@@ -462,7 +462,7 @@ void MapTools::draw() const
 {
 }
 
-bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) {
+bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const {
     float h1 = terrainHeight(pylonPos);
     float h2 = terrainHeight(candidate);
     if (h1 < h2) {
@@ -496,9 +496,33 @@ void MapTools::changePowering(const CCPosition &pos, float radius, int d) {
         for (float j = (int)(y - radius); j <= y + radius; j += .5) {
             int idI = (2 * i + .5);
             int idJ = (2 * j + .5);
+
             if (pylonPowers(pos, radius, {i, j})) {
                 m_powerMap[idI][idJ] += d;
             }
         }
     }
+}
+
+std::pair<int, int> MapTools::assumePylonBuilt(const CCPosition& pos, float radius) const {
+    float x = pos.x;
+    float y = pos.y;
+    int freshlyPowered = 0;
+    int poweredOnce    = 0;
+    for (float i = (int)(x - radius); i <= x + radius; i += .5) {
+        for (float j = (int)(y - radius); j <= y + radius; j += .5) {
+            int idI = (2 * i + .5);
+            int idJ = (2 * j + .5);
+
+            if (pylonPowers(pos, radius, {i, j})) {
+                int cnt = m_powerMap[idI][idJ];
+                if (cnt == 0) {
+                    freshlyPowered++;
+                } else if (cnt == 1) {
+                    poweredOnce++;
+                }
+            }
+        }
+    }
+    return {freshlyPowered, poweredOnce};
 }

@@ -31,11 +31,12 @@ class MapTools
     void printMap();
 
     float   terrainHeight(const CCPosition & point) const;
+    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
+
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
     void    updatePowerMap();
     void    changePowering(const CCPosition& pylonPos, float radius, int d);
-    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate);
     void    powerPylon(const CCPosition& pylonPos, float r);
     void    depowerPylon(const CCPosition& pylonPos, float r);
 
@@ -72,7 +73,7 @@ public:
     bool    isExplored(const CCPosition & pos) const;
     bool    isExplored(const CCTilePosition & pos) const;
     bool    isVisible(int tileX, int tileY) const;
-    bool    canBuildTypeAtPosition(int tileX, int tileY, const UnitType & type) const;
+    bool    canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const;
 
     const   DistanceMap & getDistanceMap(const CCTilePosition & tile) const;
     const   DistanceMap & getDistanceMap(const CCPosition & tile) const;
@@ -86,6 +87,11 @@ public:
     bool    isBuildable(int tileX, int tileY) const;
     bool    isBuildable(const CCTilePosition & tile) const;
     bool    isDepotBuildableTile(int tileX, int tileY) const;
+
+    // returns
+    // @first  number of new spots that would be powered
+    // @second number of spots that would be double powered
+    std::pair<int, int> assumePylonBuilt(const CCPosition& pos, float radius) const;
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<CCTilePosition> & getClosestTilesTo(const CCTilePosition & pos) const;
