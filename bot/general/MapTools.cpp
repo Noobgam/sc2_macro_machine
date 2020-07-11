@@ -473,37 +473,32 @@ bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPos
 }
 
 void MapTools::powerPylon(const CCPosition & pos, float r) {
-    float x = pos.x;
-    float y = pos.y;
-    for (float i = (int)(x - r); i <= x + r; i += .5) {
-        for (float j = (int)(y - r); j <= y + r; j += .5) {
-            int idI = (2 * i + .5);
-            int idJ = (2 * j + .5);
-            if (pylonPowers(pos, r, {i, j})) {
-                ++m_powerMap[idI][idJ];
-            }
-        }
-    }
+    changePowering(pos, r, 1);
 }
 
 void MapTools::depowerPylon(const CCPosition & pos, float r) {
-    float x = pos.x;
-    float y = pos.y;
-    for (float i = (int)(x - r); i <= x + r; i += .5) {
-        for (float j = (int)(y - r); j <= y + r; j += .5) {
-            int idI = (2 * i + .5);
-            int idJ = (2 * j + .5);
-            if (pylonPowers(pos, r, {i, j})) {
-                --m_powerMap[idI][idJ];
-            }
-        }
-    }
+    changePowering(pos, r, -1);
 }
 
 void MapTools::updatePowerMap() {
+    // TODO: remove this, use callbacks, depower dead pylons, power live pylons
     m_powerMap.assign(2 * m_width, std::vector<int>(2 * m_height, 0));
     for (auto & powerSource : m_bot.Observation()->GetPowerSources())
     {
         powerPylon(powerSource.position, powerSource.radius);
+    }
+}
+
+void MapTools::changePowering(const CCPosition &pos, float radius, int d) {
+    float x = pos.x;
+    float y = pos.y;
+    for (float i = (int)(x - radius); i <= x + radius; i += .5) {
+        for (float j = (int)(y - radius); j <= y + radius; j += .5) {
+            int idI = (2 * i + .5);
+            int idJ = (2 * j + .5);
+            if (pylonPowers(pos, radius, {i, j})) {
+                m_powerMap[idI][idJ] += d;
+            }
+        }
     }
 }

@@ -199,7 +199,7 @@ void BuildingPlacer::reserveTiles(int bx, int by, int width, int height)
 
 void BuildingPlacer::drawReservedTiles()
 {
-
+#ifdef _DEBUG
     int rwidth = (int)m_reserveMap.size();
     int rheight = (int)m_reserveMap[0].size();
 
@@ -213,14 +213,15 @@ void BuildingPlacer::drawReservedTiles()
             }
         }
     }
-    for (int x = 0; x < 2 * rwidth; ++x) {
-        for (int y = 0; y < 2 * rheight; ++y) {
-            if (x % 2 != y % 2) continue;
-            if (m_bot.Map().isPowered(x * .5, y * .5)) {
-                m_bot.Map().drawHalfTile(x * .5, y * .5, CCColor(0, 200, 0));
-            }
-        }
-    }
+//    for (int x = 0; x < 2 * rwidth; ++x) {
+//        for (int y = 0; y < 2 * rheight; ++y) {
+//            if (x % 2 != y % 2) continue;
+//            if (m_bot.Map().isPowered(x * .5, y * .5)) {
+//                m_bot.Map().drawHalfTile(x * .5, y * .5, CCColor(0, 200, 0));
+//            }
+//        }
+//    }
+#endif
 }
 
 void BuildingPlacer::freeTiles(int bx, int by, int width, int height)

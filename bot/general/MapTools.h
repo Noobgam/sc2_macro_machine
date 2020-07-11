@@ -34,6 +34,7 @@ class MapTools
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
     void    updatePowerMap();
+    void    changePowering(const CCPosition& pylonPos, float radius, int d);
     bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate);
     void    powerPylon(const CCPosition& pylonPos, float r);
     void    depowerPylon(const CCPosition& pylonPos, float r);
