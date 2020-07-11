@@ -1,6 +1,6 @@
 #include "CombatManager.h"
 
-#include "../general/CCBot.h"
+#include "general/CCBot.h"
 #include "order/Orders.h"
 
 CombatManager::CombatManager(CCBot & bot) :
