@@ -21,6 +21,7 @@ namespace Util
     bool            IsProtoss(const CCRace & race);
     bool            IsTerran(const CCRace & race);
     CCPositionType  TileToPosition(float tile);
+    bool            isRound(float f);
 
 #ifdef SC2API
     sc2::BuffID     GetBuffFromName(const std::string & name, CCBot & bot);

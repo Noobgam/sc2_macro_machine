@@ -38,6 +38,7 @@ public:
     bool isMorphedBuilding() const;
     bool isAddon() const;
     CCPositionType getAttackRange() const;
+    float getFootPrintRadius() const;
     int tileWidth() const;
     int tileHeight() const;
     int supplyProvided() const;

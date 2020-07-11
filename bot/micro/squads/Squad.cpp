@@ -48,6 +48,11 @@ void Squad::setOrder(const std::shared_ptr<Order>& order) {
     m_order->onStart();
 }
 
+void Squad::setOrder(std::shared_ptr<Order>&& order) {
+    m_order = order;
+    m_order->onStart();
+}
+
 void Squad::act() {
     if (!m_order->isCompleted()) {
         m_order->onStep();

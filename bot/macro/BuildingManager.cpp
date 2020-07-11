@@ -100,7 +100,13 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
         if (m_debugMode) { printf("Assigning Worker To: %s\n", b.type.getName().c_str()); }
 
         // grab a worker unit from WorkerManager which is closest to this final position
-        CCTilePosition testLocation = getBuildingLocation(b);
+        std::optional<CCPosition> testLocationO = getBuildingLocation(b.type);
+        if (!testLocationO.has_value()) {
+            continue;
+        }
+
+        auto&& testLocation = testLocationO.value();
+
         if (!m_bot.Map().isValidTile(testLocation))
         {
             continue;
@@ -127,7 +133,12 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
             continue;
         }
         // reserve this building's space
-        m_buildingPlacer.reserveTiles((int)b.finalPosition.x, (int)b.finalPosition.y, b.type.tileWidth(), b.type.tileHeight());
+        m_buildingPlacer.reserveTiles(
+                b.finalPosition.x - b.type.getFootPrintRadius() + .5,
+                b.finalPosition.y - b.type.getFootPrintRadius() + .5,
+                b.type.tileWidth(),
+                b.type.tileHeight()
+        );
 
         b.status = BuildingStatus::Assigned;
     }
@@ -251,7 +262,12 @@ void BuildingManager::checkForStartedConstruction()
                 b.status = BuildingStatus::UnderConstruction;
 
                 // free this space
-                m_buildingPlacer.freeTiles((int)b.finalPosition.x, (int)b.finalPosition.y, b.type.tileWidth(), b.type.tileHeight());
+                m_buildingPlacer.freeTiles(
+                        b.finalPosition.x - b.type.getFootPrintRadius() + .5,
+                        b.finalPosition.y - b.type.getFootPrintRadius() + .5,
+                        b.type.tileWidth(),
+                        b.type.tileHeight()
+                );
 
                 // only one building will match
                 break;
@@ -385,14 +401,14 @@ std::vector<UnitType> BuildingManager::buildingsQueued() const
     return buildingsQueued;
 }
 
-CCTilePosition BuildingManager::getBuildingLocation(const Building & b)
+std::optional<CCPosition> BuildingManager::getBuildingLocation(const UnitType & type)
 {
-    if (b.type.isRefinery())
+    if (type.isRefinery())
     {
         return m_buildingPlacer.getRefineryPosition();
     }
 
-    if (b.type.isResourceDepot())
+    if (type.isResourceDepot())
     {
         return m_bot.Bases().getNextExpansion(Players::Self);
     }
@@ -401,16 +417,16 @@ CCTilePosition BuildingManager::getBuildingLocation(const Building & b)
     if (Util::IsProtoss(m_bot.GetPlayerRace(Players::Self)))
     {
         size_t numPylons = m_bot.UnitInfo().getUnitTypeCount(Players::Self, Util::GetSupplyProvider(m_bot.GetPlayerRace(Players::Self), m_bot), true);
-        if (numPylons == 0 && !b.type.isSupplyProvider())
+        if (numPylons == 0 && !type.isSupplyProvider())
         {
-            return CCTilePosition(-1, -1);
+            return {};
         }
     }
     
 
     // get a position within our region
     // TODO: put back in special pylon / cannon spacing
-    return m_buildingPlacer.getBuildLocationNear(b, 0);
+    return m_buildingPlacer.getBuildLocation(type);
 }
 
 void BuildingManager::removeBuildings(const std::vector<Building> & toRemove)

@@ -13,7 +13,7 @@ class BuildingPlacer
     std::vector< std::vector<bool> > m_reserveMap;
 
     // queries for various BuildingPlacer data
-    bool buildable(const Building & b, int x, int y) const;
+    bool buildable(const UnitType & b, float x, float y) const;
     bool isReserved(int x, int y) const;
     bool isInResourceBox(int x, int y) const;
     bool tileOverlapsBaseLocation(int x, int y, UnitType type) const;
@@ -26,15 +26,14 @@ public:
     void onStart();
 
     // determines whether we can build at a given location
-    bool canBuildHere(int bx, int by, const Building & b) const;
-    bool canBuildHereWithSpace(int bx, int by, const Building & b, int buildDist) const;
+    bool canBuildHere(float x, float y, const UnitType & b) const;
 
     // returns a build location near a building's desired location
-    CCTilePosition getBuildLocationNear(const Building & b, int buildDist) const;
+    std::optional<CCPosition> getBuildLocation(const UnitType & b) const;
 
     void drawReservedTiles();
 
     void reserveTiles(int x, int y, int width, int height);
     void freeTiles(int x, int y, int width, int height);
-    CCTilePosition getRefineryPosition();
+    CCPosition getRefineryPosition();
 };
