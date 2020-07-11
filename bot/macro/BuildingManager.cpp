@@ -100,7 +100,7 @@ void BuildingManager::assignWorkersToUnassignedBuildings()
         if (m_debugMode) { printf("Assigning Worker To: %s\n", b.type.getName().c_str()); }
 
         // grab a worker unit from WorkerManager which is closest to this final position
-        CCTilePosition testLocation = getBuildingLocation(b);
+        CCPosition testLocation = getBuildingLocation(b);
         if (!m_bot.Map().isValidTile(testLocation))
         {
             continue;
@@ -385,7 +385,7 @@ std::vector<UnitType> BuildingManager::buildingsQueued() const
     return buildingsQueued;
 }
 
-CCTilePosition BuildingManager::getBuildingLocation(const Building & b)
+CCPosition BuildingManager::getBuildingLocation(const Building & b)
 {
     if (b.type.isRefinery())
     {
@@ -403,7 +403,7 @@ CCTilePosition BuildingManager::getBuildingLocation(const Building & b)
         size_t numPylons = m_bot.UnitInfo().getUnitTypeCount(Players::Self, Util::GetSupplyProvider(m_bot.GetPlayerRace(Players::Self), m_bot), true);
         if (numPylons == 0 && !b.type.isSupplyProvider())
         {
-            return CCTilePosition(-1, -1);
+            return CCPosition(-1, -1);
         }
     }
     

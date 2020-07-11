@@ -26,6 +26,6 @@ public:
     const std::vector<const BaseLocation *> & getBaseLocations() const;
     const std::set<const BaseLocation *> & getOccupiedBaseLocations(int player) const;
 
-    CCTilePosition getNextExpansion(int player) const;
+    CCPosition getNextExpansion(int player) const;
 
 };

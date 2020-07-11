@@ -163,7 +163,7 @@ void BaseLocationManager::drawBaseLocations() {
     }
 
     // draw a purple sphere at the next expansion location
-    CCTilePosition nextExpansionPosition = getNextExpansion(Players::Self);
+    CCPosition nextExpansionPosition = getNextExpansion(Players::Self);
 
     m_bot.Map().drawCircle(Util::GetPosition(nextExpansionPosition), 1, CCColor(255, 0, 255));
     m_bot.Map().drawText(Util::GetPosition(nextExpansionPosition), "Next Expansion Location", CCColor(255, 0, 255));
@@ -178,7 +178,7 @@ const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocat
 }
 
 
-CCTilePosition BaseLocationManager::getNextExpansion(int player) const {
+CCPosition BaseLocationManager::getNextExpansion(int player) const {
     const BaseLocation * homeBase =  m_playerStartingBaseLocations.at(player);
     const BaseLocation * closestBase = nullptr;
     int minDistance = std::numeric_limits<int>::max();
@@ -190,7 +190,7 @@ CCTilePosition BaseLocationManager::getNextExpansion(int player) const {
         }
 
         // get the tile position of the base
-        auto tile = base->getDepotPosition();
+        auto tile = base->getDepotActualPosition();
 
         bool buildingInTheWay = false; // TODO: check if there are any units on the tile
 
@@ -214,5 +214,5 @@ CCTilePosition BaseLocationManager::getNextExpansion(int player) const {
         }
     }
 
-    return closestBase ? closestBase->getDepotPosition() : CCTilePosition(0, 0);
+    return closestBase ? closestBase->getDepotActualPosition() : CCPosition(0, 0);
 }

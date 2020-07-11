@@ -140,16 +140,17 @@ bool UnitType::isGeyser() const
 {
     switch (m_type.ToType()) 
     {
-        case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER        : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER  : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER         : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER  : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_SHAKURASVESPENEGEYSER : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHVESPENEGEYSER     : return true;
         default: return false;
     }
 }
 
 bool UnitType::isMineral() const
 {
-#ifdef SC2API
     switch (m_type.ToType()) 
     {
         case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD            : return true;
@@ -162,9 +163,6 @@ bool UnitType::isMineral() const
         case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
         default: return false;
     }
-#else
-    return m_type.isMineralField();
-#endif
 }
 
 bool UnitType::isWorker() const {

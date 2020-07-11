@@ -21,7 +21,8 @@ class MapTools
     std::vector<std::vector<bool>>  m_depotBuildable;   // whether a depot is buildable on a tile (illegal within 3 tiles of static resource)
     std::vector<std::vector<int>>   m_lastSeen;         // the last time any of our units has seen this position on the map
     std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
-    std::vector<std::vector<float>> m_terrainHeight;        // height of the map at x+0.5, y+0.5
+    std::vector<std::vector<float>> m_terrainHeight;    // height of the map at x+0.5, y+0.5
+    std::vector<std::vector<int>>  m_powerMap;           // boolean map whether specific halftile is powered by our pylons
     
     void computeConnectivity();
 
@@ -32,6 +33,11 @@ class MapTools
     float   terrainHeight(const CCPosition & point) const;
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
+    void    updatePowerMap();
+    void    changePowering(const CCPosition& pylonPos, float radius, int d);
+    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate);
+    void    powerPylon(const CCPosition& pylonPos, float r);
+    void    depowerPylon(const CCPosition& pylonPos, float r);
 
 public:
 
@@ -48,17 +54,20 @@ public:
     void    drawLine(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawLine(const CCPosition & p1, const CCPosition & p2, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawTile(int tileX, int tileY, const CCColor & color = CCColor(255, 255, 255)) const;
+    void    drawHalfTile(float x, float y, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawBox(CCPositionType x1, CCPositionType y1, CCPositionType x2, CCPositionType y2, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawBox(const CCPosition & tl, const CCPosition & br, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawCircle(CCPositionType x1, CCPositionType x2, CCPositionType radius, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color = CCColor(255, 255, 255)) const;
+    void    drawGroundCircle(const CCPosition & pos, CCPositionType radius, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawText(const CCPosition & pos, const std::string & str, const CCColor & color = CCColor(255, 255, 255)) const;
     void    drawTextScreen(float xPerc, float yPerc, const std::string & str, const CCColor & color = CCColor(255, 255, 255)) const;
     
     bool    isValidTile(int tileX, int tileY) const;
     bool    isValidTile(const CCTilePosition & tile) const;
     bool    isValidPosition(const CCPosition & pos) const;
-    bool    isPowered(int tileX, int tileY) const;
+    // tile or halftile
+    bool    isPowered(float x, float y) const;
     bool    isExplored(int tileX, int tileY) const;
     bool    isExplored(const CCPosition & pos) const;
     bool    isExplored(const CCTilePosition & pos) const;
