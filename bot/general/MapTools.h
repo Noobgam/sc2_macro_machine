@@ -3,6 +3,7 @@
 #include "model/Common.h"
 #include "DistanceMap.h"
 #include "model/UnitType.h"
+#include "MapMeta.h"
 
 class MapTools
 {
@@ -22,7 +23,9 @@ class MapTools
     std::vector<std::vector<int>>   m_lastSeen;         // the last time any of our units has seen this position on the map
     std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
     std::vector<std::vector<float>> m_terrainHeight;    // height of the map at x+0.5, y+0.5
-    std::vector<std::vector<int>>  m_powerMap;           // boolean map whether specific halftile is powered by our pylons
+    std::vector<std::vector<int>>   m_powerMap;         // boolean map whether specific halftile is powered by our pylons
+
+    std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
     
     void computeConnectivity();
 
