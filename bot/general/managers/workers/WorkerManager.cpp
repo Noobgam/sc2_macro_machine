@@ -26,7 +26,7 @@ void WorkerManager::onFrame() {
         auto& squad = *it;
         if (squad->getOrder()->isCompleted()) {
             squadManager.deformSquad(squad);
-            m_additionalSquads.erase(it);
+            it = m_additionalSquads.erase(it);
         } else {
             it++;
         }
