@@ -15,5 +15,8 @@ public:
     virtual void onStart();
     virtual void onStep() = 0;
 
+    virtual void onUnitAdded(const Unit* unit);
+    virtual void onUnitRemoved(const Unit* unit);
+
     bool isCompleted() const;
 };

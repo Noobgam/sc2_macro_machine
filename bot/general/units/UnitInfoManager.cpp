@@ -59,32 +59,29 @@ void UnitInfoManager::updateUnits() {
     for (const auto & it : unitWrapperByTag) {
         Unit* unit = it.second.get();
         CCPlayer owner = unit->getPlayer();
-        if (owner == Players::Neutral) {
-            if (!unit->getType().isMineral() && !unit->getType().isGeyser()) {
-                LOG_DEBUG << unit->getType().getName() << endl;
-            }
-        }
         m_units.find(owner)->second.push_back(unit);
     }
 }
 
 void UnitInfoManager::processNewUnit(const Unit* unit) {
     updateSquadsWithNewUnit(unit);
+    m_bot.getManagers().getBuildingManager().newUnitCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
     if (unit->getPlayer() == Players::Self && unit->getType().isRegularUnit()) {
-        m_bot.Commander().getCombatManager().getSquadManager().addUnit(unit);
+        m_bot.getManagers().getSquadManager().addUnitCallback(unit);
     }
 }
 
 void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     updateSquadsWithRemovedUnit(unit);
+    m_bot.getManagers().getBuildingManager().unitDiedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {
     if (unit->getPlayer() == Players::Self && unit->getType().isRegularUnit()) {
-        m_bot.Commander().getCombatManager().getSquadManager().removeUnit(unit);
+        m_bot.getManagers().getSquadManager().removeUnitCallback(unit);
     }
 }
 
@@ -122,13 +119,17 @@ int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus
             }
             continue;
         }
-        if (status & UnitStatus::CONSTRUCTING && unit->isBeingConstructed()) {
-            count++;
-            continue;
-        }
-        if (status & UnitStatus::ORDERED && unit->getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder) {
-            count++;
-            continue;
+    }
+    for (const auto & task : m_bot.getManagers().getBuildingManager().getTasks()) {
+        if (task->getType() == type) {
+            if (status & UnitStatus::ORDERED && task->getStatus() == BuildingStatus::NEW) {
+                count++;
+                continue;
+            }
+            if (status & UnitStatus::CONSTRUCTING && task->getStatus() == BuildingStatus::IN_PROGRESS) {
+                count++;
+                continue;
+            }
         }
     }
     return count;

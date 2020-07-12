@@ -4,17 +4,18 @@
 #include "MapTools.h"
 #include "bases/BaseLocationManager.h"
 #include "units/UnitInfoManager.h"
-#include "WorkerManager.h"
 #include "TechTree.h"
 #include "../GameCommander.h"
+#include "managers/Managers.h"
 
 class CCBot : public sc2::Agent {
     MapTools                m_map;
     BaseLocationManager     m_bases;
     UnitInfoManager         m_unitInfo;
-    WorkerManager           m_workers;
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
+    Managers                m_managers;
+
 
     size_t observationId = 0;
 
@@ -32,11 +33,11 @@ public:
 
     size_t getObservationId() const;
 
-          WorkerManager & Workers();
     const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
+          Managers & getManagers();
 
     const TypeData & Data(const UnitType & type) const;
     const TypeData & Data(const CCUpgrade & type) const;

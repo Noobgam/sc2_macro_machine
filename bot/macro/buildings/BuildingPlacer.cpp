@@ -2,7 +2,6 @@
 #include "../../general/CCBot.h"
 #include "../../util/Util.h"
 #include "BuildingPlacer.h"
-#include "Building.h"
 #include "../../util/LogInfo.h"
 
 BuildingPlacer::BuildingPlacer(CCBot & bot)
@@ -57,8 +56,10 @@ static inline double heuristic(int newlyPowered, [[maybe_unused]] int doublePowe
     return newlyPowered - 5 * distFromBase;
 }
 
-std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) const
-{
+std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) const {
+    if (b.isRefinery()) {
+        return getRefineryPosition();
+    }
     double bestHeuristic = std::numeric_limits<double>::min();
     std::optional<CCPosition> bestPosO;
     auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
@@ -82,8 +83,6 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
                             lr.second,
                             dist
                             );
-
-                    LOG_DEBUG << pos.x << " " << pos.y << " : " << curHeuristic << " >> " << dist << endl;
                     if (curHeuristic > bestHeuristic) {
                         bestPosO = Util::GetPosition(pos);
                         bestHeuristic = curHeuristic;
@@ -217,8 +216,7 @@ void BuildingPlacer::freeTiles(int bx, int by, int width, int height)
     }
 }
 
-CCPosition BuildingPlacer::getRefineryPosition()
-{
+std::optional<CCPosition> BuildingPlacer::getRefineryPosition() const {
     CCPosition closestGeyser(0, 0);
     double minGeyserDistanceFromHome = std::numeric_limits<double>::max();
     CCPosition homePosition = m_bot.GetStartLocation();
