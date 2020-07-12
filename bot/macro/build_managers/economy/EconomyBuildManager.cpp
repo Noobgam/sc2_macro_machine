@@ -4,7 +4,8 @@
 EconomyBuildManager::EconomyBuildManager(CCBot& bot)
         : BuildManager(bot),
           m_worker_manager(WorkerBuildManager(bot)),
-          m_gas_manager(GasBuildManager(bot))
+          m_gas_manager(GasBuildManager(bot)),
+          m_expand_manager(ExpandBuildManager(bot))
 { }
 
 std::optional<BuildOrderItem> EconomyBuildManager::getTopPriority() {

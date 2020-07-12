@@ -3,6 +3,7 @@
 #include "../../model/Unit.h"
 #include "../../model/Common.h"
 #include "../../../micro/squads/Squad.h"
+#include "../../../macro/buildings/BuildingTask.h"
 
 class CCBot;
 
@@ -18,6 +19,9 @@ public:
     void onStart();
     void onFrame();
 
-    void build(Unit* unit, UnitType type, CCPosition position);
+    // Gives a new build task to a worker.
+    void build(UnitType type, CCPosition position);
+
+    // Forms new worker squad for the task. Do not forget to call onEnd for the order.
     std::optional<Squad*> formSquad(int targetSquadSize);
 };

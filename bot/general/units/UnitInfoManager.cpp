@@ -65,6 +65,7 @@ void UnitInfoManager::updateUnits() {
 
 void UnitInfoManager::processNewUnit(const Unit* unit) {
     updateSquadsWithNewUnit(unit);
+    m_bot.getManagers().getBuildingManager().newUnitCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
@@ -75,6 +76,7 @@ void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
 
 void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     updateSquadsWithRemovedUnit(unit);
+    m_bot.getManagers().getBuildingManager().unitDiedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {
@@ -117,13 +119,17 @@ int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus
             }
             continue;
         }
-        if (status & UnitStatus::CONSTRUCTING && unit->isBeingConstructed()) {
-            count++;
-            continue;
-        }
-        if (status & UnitStatus::ORDERED && unit->getUnitPtr()->display_type == sc2::Unit::DisplayType::Placeholder) {
-            count++;
-            continue;
+    }
+    for (const auto & task : m_bot.getManagers().getBuildingManager().getTasks()) {
+        if (task->getType() == type) {
+            if (status & UnitStatus::ORDERED && task->getStatus() == BuildingStatus::NEW) {
+                count++;
+                continue;
+            }
+            if (status & UnitStatus::CONSTRUCTING && task->getStatus() == BuildingStatus::IN_PROGRESS) {
+                count++;
+                continue;
+            }
         }
     }
     return count;

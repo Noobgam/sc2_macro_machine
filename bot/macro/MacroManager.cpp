@@ -5,15 +5,13 @@
 #include "build_managers/ProductionManager.h"
 #include "build_managers/UnitHireManager.h"
 #include "build_managers/TechBuildManager.h"
-#include "build_managers/BuildManager.h"
 #include "../util/LogInfo.h"
-#include "../util/Util.h"
 
 using std::endl;
 
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
-    , m_buildingManager (bot)
+    , m_buildingPlacer (bot)
     , m_managers        ()
 {
     m_managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));
@@ -23,21 +21,11 @@ MacroManager::MacroManager(CCBot & bot)
     m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
 }
 
-void MacroManager::onStart()
-{
-      m_buildingManager.onStart();
-//    setBuildOrder(m_bot.Strategy().getOpeningBookBuildOrder());
+void MacroManager::onStart() {
+    m_buildingPlacer.onStart();
 }
 
-void MacroManager::onFrame()
-{
-//    fixBuildOrderDeadlock();
-//    manageBuildOrderQueue();
-
-    // TODO: if nothing is currently building, get a new goal from the strategy manager
-    // TODO: detect if there's a build order deadlock once per second
-    // TODO: triggers for game things like cloaked units etc
-
+void MacroManager::onFrame(){
     LOG_DEBUG << "Getting top priority" << endl;
     std::optional<BuildOrderItem> item = getTopPriority();
     if (item.has_value()) {
@@ -47,12 +35,10 @@ void MacroManager::onFrame()
         LOG_DEBUG << "No candidates to build" << endl;
     }
 
-    m_buildingManager.onFrame();
     drawProductionInformation();
 }
 
-std::optional<BuildOrderItem> MacroManager::getTopPriority()
-{
+std::optional<BuildOrderItem> MacroManager::getTopPriority() {
     std::vector<BuildOrderItem> items;
     for (const auto& manager : m_managers) {
         const auto& prio = manager->getTopPriority();
@@ -64,8 +50,7 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority()
     std::stringstream ss;
     ss << "Production Information\n\n";
 
-    for (auto& item : items)
-    {
+    for (auto& item : items) {
         ss << item.type.getName() << " : " << item.priority << '\n';
     }
 
@@ -79,27 +64,22 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority()
 }
 
 void MacroManager::produceIfPossible(BuildOrderItem item) {
-    std::optional<Unit> producer = getProducer(item.type);
-    if (producer.has_value() && canMakeNow(producer.value(), item.type))
-    {
+    std::optional<const Unit*> producer = getProducer(item.type);
+    if (producer.has_value() && canMakeNow(producer.value(), item.type)) {
         produce(producer.value(), item);
     }
 }
 
-std::optional<Unit> MacroManager::getProducer(const MetaType& type)
-{
+std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
     // get all the types of units that caa build this type
     auto& producerTypes = m_bot.Data(type).whatBuilds;
 
-    // make a set of all candidate producers
-    std::vector<Unit> candidateProducers;
-    for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
-        const Unit& unit = *unitPtr;
+    for (auto unit : m_bot.UnitInfo().getUnits(Players::Self)) {
         // reasons a unit can not train the desired type
-        if (std::find(producerTypes.begin(), producerTypes.end(), unit.getType()) == producerTypes.end()) { continue; }
-        if (!unit.isCompleted()) { continue; }
-        if (m_bot.Data(unit).isBuilding && unit.isTraining()) { continue; }
-        if (unit.isFlying()) { continue; }
+        if (std::find(producerTypes.begin(), producerTypes.end(), unit->getType()) == producerTypes.end()) { continue; }
+        if (!unit->isCompleted()) { continue; }
+        if (m_bot.Data(*unit).isBuilding && unit->isTraining()) { continue; }
+        if (unit->isFlying()) { continue; }
 
         return unit;
     }
@@ -108,78 +88,21 @@ std::optional<Unit> MacroManager::getProducer(const MetaType& type)
     return {};
 }
 
-std::optional<Unit> MacroManager::getProducer(const MetaType & type, CCPosition closestTo)
-{
-    // get all the types of units that cna build this type
-    auto & producerTypes = m_bot.Data(type).whatBuilds;
-
-    // make a set of all candidate producers
-    std::vector<Unit> candidateProducers;
-    for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
-        const Unit & unit = *unitPtr;
-        // reasons a unit can not train the desired type
-        if (std::find(producerTypes.begin(), producerTypes.end(), unit.getType()) == producerTypes.end()) { continue; }
-        if (!unit.isCompleted()) { continue; }
-        if (m_bot.Data(unit).isBuilding && unit.isTraining()) { continue; }
-        if (unit.isFlying()) { continue; }
-
-        // TODO: if unit is not powered continue
-        // TODO: if the type is an addon, some special cases
-        // TODO: if the type requires an addon and the producer doesn't have one
-
-        // if we haven't cut it, add it to the set of candidates
-        candidateProducers.push_back(unit);
-    }
-
-    return getClosestUnitToPosition(candidateProducers, closestTo);
-}
-
-std::optional<Unit> MacroManager::getClosestUnitToPosition(const std::vector<Unit> & units, CCPosition closestTo)
-{
-    if (units.size() == 0)
-    {
-        return {};
-    }
-
-    // if we don't care where the unit is return the first one we have
-    if (closestTo.x == 0 && closestTo.y == 0)
-    {
-        return units[0];
-    }
-
-    std::optional<Unit> closestUnit = {};
-    double minDist = std::numeric_limits<double>::max();
-
-    for (auto & unit : units)
-    {
-        double distance = Util::Dist(unit, closestTo);
-        if (!closestUnit.has_value() || distance < minDist)
-        {
-            closestUnit = unit;
-            minDist = distance;
-        }
-    }
-
-    return closestUnit;
-}
-
 // this function will check to see if all preconditions are met and then create a unit
-void MacroManager::produce(const Unit & producer, BuildOrderItem item)
-{
-    if (!producer.isValid())
-    {
-        return;
-    }
-
+void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     // if we're dealing with a building
-    if (item.type.isBuilding())
-    {
-        m_buildingManager.addBuildingTask(item.type.getUnitType(), Util::GetTilePosition(m_bot.GetStartLocation()));
+    if (item.type.isBuilding()) {
+        std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(item.type.getUnitType());
+        if (!positionOpt.has_value()) {
+            return;
+        }
+        CCPosition position = positionOpt.value();
+        m_bot.getManagers().getWorkerManager().build(item.type.getUnitType(), position);
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
     {
-        producer.train(item.type.getUnitType());
+        producer->train(item.type.getUnitType());
     }
     else if (item.type.isUpgrade())
     {
@@ -188,14 +111,13 @@ void MacroManager::produce(const Unit & producer, BuildOrderItem item)
     }
 }
 
-bool MacroManager::canMakeNow(const Unit & producer, const MetaType & type)
+bool MacroManager::canMakeNow(const Unit* producer, const MetaType & type)
 {
-    if (!producer.isValid() || !meetsReservedResources(type))
-    {
+    if (!meetsReservedResources(type)) {
         return false;
     }
 
-    sc2::AvailableAbilities available_abilities = m_bot.Query()->GetAbilitiesForUnit(producer.getUnitPtr());
+    sc2::AvailableAbilities available_abilities = m_bot.Query()->GetAbilitiesForUnit(producer->getUnitPtr());
 
     // quick check if the unit can't do anything it certainly can't build the thing we want
     if (available_abilities.abilities.empty())
@@ -220,12 +142,12 @@ bool MacroManager::canMakeNow(const Unit & producer, const MetaType & type)
 
 int MacroManager::getFreeMinerals()
 {
-    return m_bot.GetMinerals() - m_buildingManager.getReservedMinerals();
+    return m_bot.GetMinerals();
 }
 
 int MacroManager::getFreeGas()
 {
-    return m_bot.GetGas() - m_buildingManager.getReservedGas();
+    return m_bot.GetGas();
 }
 
 // return whether or not we meet resources, including building reserves
@@ -238,6 +160,4 @@ bool MacroManager::meetsReservedResources(const MetaType & type)
     return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
 }
 
-void MacroManager::drawProductionInformation()
-{
-}
+void MacroManager::drawProductionInformation() { }

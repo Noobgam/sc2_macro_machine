@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../general/model/Common.h"
-#include "BuildingData.h"
 
 class CCBot;
 class BaseLocation;
@@ -18,6 +17,7 @@ class BuildingPlacer
     bool isInResourceBox(int x, int y) const;
     bool tileOverlapsBaseLocation(int x, int y, UnitType type) const;
 
+    std::optional<CCPosition> getRefineryPosition() const;
 
 public:
 
@@ -32,8 +32,6 @@ public:
     std::optional<CCPosition> getBuildLocation(const UnitType & b) const;
 
     void drawReservedTiles();
-
     void reserveTiles(int x, int y, int width, int height);
     void freeTiles(int x, int y, int width, int height);
-    CCPosition getRefineryPosition();
 };

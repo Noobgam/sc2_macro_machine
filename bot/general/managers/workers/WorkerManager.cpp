@@ -22,20 +22,23 @@ void WorkerManager::onFrame() {
         m_mainSquad->setOrder(std::make_shared<CollectMineralsOrder>(m_bot, m_mainSquad, base));
     }
     // process completed tasks
-    std::vector<Squad*> completedSquads;
-    for (auto& squad: m_additionalSquads) {
+    for (auto it = m_additionalSquads.begin(); it < m_additionalSquads.end();) {
+        auto& squad = *it;
         if (squad->getOrder()->isCompleted()) {
-            completedSquads.emplace_back(squad);
+            squadManager.deformSquad(squad);
+            it = m_additionalSquads.erase(it);
+        } else {
+            it++;
         }
-    }
-    for (auto& squad: completedSquads) {
-        squadManager.deformSquad(squad);
     }
 }
 
-void WorkerManager::build(Unit *unit, UnitType type, CCPosition position) {
-    Squad* squad = formSquad({unit});
-    const auto& buildOrder = std::make_shared<EmptyOrder>(m_bot, squad);
+void WorkerManager::build(UnitType type, CCPosition position) {
+    BOT_ASSERT(!m_mainSquad->units().empty(), "No worker for task.");
+    const auto & worker = *m_mainSquad->units().begin();
+    const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
+    Squad* squad = formSquad({worker});
+    const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
     squad->setOrder(buildOrder);
 }
 
