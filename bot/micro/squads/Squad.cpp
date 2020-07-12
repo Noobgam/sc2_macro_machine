@@ -9,16 +9,21 @@ Squad::Squad(CCBot & bot, SquadID id):
 void Squad::addUnits(const std::set<const Unit*> & units) {
     for (auto unit : units) {
         m_units.insert(unit);
+        m_order->onUnitAdded(unit);
     }
 }
 
 void Squad::removeUnits(const std::set<const Unit*> & units) {
     for (auto unit : units) {
         m_units.erase(unit);
+        m_order->onUnitRemoved(unit);
     }
 }
 
 void Squad::clear() {
+    for (auto & unit : m_units) {
+        m_order->onUnitRemoved(unit);
+    }
     m_units.clear();
 }
 

@@ -280,34 +280,19 @@ void Unit::attackMove(const CCPosition & targetPosition) const
 #endif
 }
 
-void Unit::move(const CCPosition & targetPosition) const
-{
+void Unit::move(const CCPosition & targetPosition) const {
     BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
     m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
-#else
-    m_unit->move(targetPosition);
-#endif
 }
 
-void Unit::move(const CCTilePosition & targetPosition) const
-{
+void Unit::move(const CCTilePosition & targetPosition) const {
     BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
     m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, CCPosition((float)targetPosition.x, (float)targetPosition.y));
-#else
-    m_unit->move(CCPosition(targetPosition));
-#endif
 }
 
-void Unit::rightClick(const Unit & target) const
-{
+void Unit::rightClick(const Unit & target) const {
     BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
     m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::SMART, target.getUnitPtr());
-#else
-    m_unit->rightClick(target.getUnitPtr());
-#endif
 }
 
 void Unit::repair(const Unit & target) const
@@ -315,15 +300,10 @@ void Unit::repair(const Unit & target) const
     rightClick(target);
 }
 
-void Unit::build(const UnitType & buildingType, CCTilePosition pos) const
-{
+void Unit::build(const UnitType & buildingType, CCPosition pos) const {
     BOT_ASSERT(m_bot->Map().isConnected(getTilePosition(), pos), "Error: Build Position is not connected to worker");
     BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, Util::GetPosition(pos));
-#else
-    m_unit->build(buildingType.getAPIUnitType(), pos);
-#endif
+    m_bot->Actions()->UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
 }
 
 void Unit::buildTarget(const UnitType & buildingType, const Unit & target) const

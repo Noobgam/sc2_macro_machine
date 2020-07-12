@@ -1,6 +1,6 @@
 #include "SquadManager.h"
-#include "../../util/LogInfo.h"
-#include "../../general/CCBot.h"
+#include "../../../util/LogInfo.h"
+#include "../../CCBot.h"
 
 SquadManager::SquadManager(CCBot & bot):
     m_bot(bot),
@@ -11,21 +11,14 @@ SquadManager::SquadManager(CCBot & bot):
 
 void SquadManager::onFrame() {
     for (auto & squad : m_squads) {
-        if (squad.first != SquadManager::unassignedSquadID) {
+        if (squad.first != unassignedSquadID) {
             squad.second->act();
         }
     }
 }
 
-void SquadManager::removeUnitsFromSquad(const std::set<const Unit *> &units, Squad *squad) {
-    squad->removeUnits(units);
-//    if (squad->getId() != SquadManager::unassignedSquadID && squad->isEmpty()) {
-//        m_squads.erase(squad->getId());
-//    }
-}
-
 Squad* SquadManager::getUnassignedSquad() const {
-    return getSquad(SquadManager::unassignedSquadID).value();
+    return getSquad(unassignedSquadID).value();
 }
 
 std::optional<Squad*> SquadManager::getSquad(SquadID id) const {
@@ -42,16 +35,16 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
     return squad->second;
 }
 
-void SquadManager::addUnit(const Unit *unit) {
+void SquadManager::addUnitCallback(const Unit *unit) {
     Squad* unassignedSquad = getUnassignedSquad();
     unassignedSquad->addUnits({ unit });
     m_units.insert({ unit->getID(), getUnassignedSquad() });
 }
 
-void SquadManager::removeUnit(const Unit *unit) {
+void SquadManager::removeUnitCallback(const Unit *unit) {
     Squad* squad = getUnitSquad(unit);
     m_units.erase(unit->getID());
-    removeUnitsFromSquad({unit}, squad);
+    squad->removeUnits({unit});
 }
 
 Squad* SquadManager::createNewSquad() {
@@ -77,13 +70,10 @@ void SquadManager::transferUnits(Squad* from, Squad* to) {
     }
     const std::set<const Unit*>& units = from->units();
     to->addUnits(units);
-    for (auto unit : units) {
+    for (auto& unit : units) {
         m_units.find(unit->getID())->second = to;
     }
     from->clear();
-    if (from->getId() != SquadManager::unassignedSquadID) {
-        m_squads.erase(from->getId());
-    }
 }
 
 void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to) {
@@ -93,8 +83,15 @@ void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to)
     for (auto unit : unitsCopy) {
         Squad* oldSquad = getUnitSquad(unit);
         if (oldSquad != to) {
-            removeUnitsFromSquad({ unit }, oldSquad);
+            oldSquad->removeUnits({unit});
             m_units.find(unit->getID())->second = to;
         }
+    }
+}
+
+void SquadManager::deformSquad(Squad* squad) {
+    transferUnits(squad, getUnassignedSquad());
+    if (squad->getId() != unassignedSquadID) {
+        m_squads.erase(squad->getId());
     }
 }

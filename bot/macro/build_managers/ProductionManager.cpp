@@ -5,13 +5,13 @@ ProductionManager::ProductionManager(CCBot& bot) : BuildManager(bot) { }
 
 std::pair<float, float> ProductionManager::approximateIncome() {
     // TODO: take oversaturation into account
-    auto& workers = m_bot.Workers();
+//    auto& workers = m_bot.Workers();
     // Data extracted from graph https://liquipedia.net/starcraft2/Mining_Minerals#Chart_Realization.2FMethodology
-    int mineralIncome = workers.getNumMineralWorkers() * 12.5;
+//    int mineralIncome = workers.getNumMineralWorkers() * 12.5;
 
     // Ideal mining is 2.82 /s https://liquipedia.net/starcraft2/Resources#Vespene_Gas_2
-    int gasIncome = workers.getNumGasWorkers() * 2.7;
-    return { mineralIncome, gasIncome };
+//    int gasIncome = workers.getNumGasWorkers() * 2.7;
+    return { 12, 0 };
 }
 
 
