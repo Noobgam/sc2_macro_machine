@@ -19,6 +19,9 @@ public:
     void onStart();
     void onFrame();
 
-    void build(const BuildingTask* buildingTask);
+    // Gives a new build task to a worker.
+    void build(UnitType type, CCPosition position);
+
+    // Forms new worker squad for the task. Do not forget to call onEnd for the order.
     std::optional<Squad*> formSquad(int targetSquadSize);
 };

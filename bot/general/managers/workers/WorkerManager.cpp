@@ -33,9 +33,11 @@ void WorkerManager::onFrame() {
     }
 }
 
-void WorkerManager::build(const BuildingTask* task) {
-    BOT_ASSERT(task->getWorker().has_value(), "No worker for task.");
-    Squad* squad = formSquad({task->getWorker().value()});
+void WorkerManager::build(UnitType type, CCPosition position) {
+    BOT_ASSERT(!m_mainSquad->units().empty(), "No worker for task.");
+    const auto & worker = *m_mainSquad->units().begin();
+    const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
+    Squad* squad = formSquad({worker});
     const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
     squad->setOrder(buildOrder);
 }

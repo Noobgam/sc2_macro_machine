@@ -13,8 +13,7 @@ void BuildingOrder::onStart() {
         auto geyser = std::find_if(units.begin(), units.end(), [&geyserPos](const Unit* const& unit) {
             return unit->getType().isGeyser() && Util::Dist(Util::GetPosition(geyserPos), unit->getPosition()) < 1;
         });
-        if (geyser != units.end())
-        {
+        if (geyser != units.end()) {
             worker->buildTarget(m_task->getType(), **geyser);
         }
     } else {

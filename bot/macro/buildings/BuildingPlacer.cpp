@@ -83,8 +83,6 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
                             lr.second,
                             dist
                             );
-
-                    LOG_DEBUG << pos.x << " " << pos.y << " : " << curHeuristic << " >> " << dist << endl;
                     if (curHeuristic > bestHeuristic) {
                         bestPosO = Util::GetPosition(pos);
                         bestHeuristic = curHeuristic;

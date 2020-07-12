@@ -97,8 +97,7 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
             return;
         }
         CCPosition position = positionOpt.value();
-        const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(item.type.getUnitType(), producer, position);
-        m_bot.getManagers().getWorkerManager().build(task);
+        m_bot.getManagers().getWorkerManager().build(item.type.getUnitType(), position);
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
