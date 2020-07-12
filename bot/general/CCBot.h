@@ -9,12 +9,14 @@
 #include "../GameCommander.h"
 
 class CCBot : public sc2::Agent {
-    MapTools                m_map;
-    BaseLocationManager     m_bases;
-    UnitInfoManager         m_unitInfo;
-    WorkerManager           m_workers;
-    TechTree                m_techTree;
-    GameCommander           m_gameCommander;
+    MapTools                        m_map;
+    BaseLocationManager             m_bases;
+    UnitInfoManager                 m_unitInfo;
+    WorkerManager                   m_workers;
+    TechTree                        m_techTree;
+    GameCommander                   m_gameCommander;
+
+    std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
 
     size_t observationId = 0;
 

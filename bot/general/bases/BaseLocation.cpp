@@ -108,6 +108,10 @@ bool BaseLocation::isExplored() const {
     return m_bot.Map().isExplored(m_centerOfResources);
 }
 
+int BaseLocation::getBaseId() const {
+    return m_baseID;
+}
+
 bool BaseLocation::isPlayerStartLocation(CCPlayer player) const {
     return m_isPlayerStartLocation.at(player);
 }

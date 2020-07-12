@@ -23,6 +23,7 @@ class BaseLocation {
     std::map<CCPlayer, bool>    m_isPlayerOccupying;
     std::map<CCPlayer, bool>    m_isPlayerStartLocation;
 
+    // keep in mind that this ID has to be consistent between runs and should not depend on our start location
     int                         m_baseID;
     CCPositionType              m_left;
     CCPositionType              m_right;
@@ -44,6 +45,7 @@ public:
     const std::vector<const Unit*> & getMinerals() const;
     bool isOccupiedByPlayer(CCPlayer player) const;
     bool isExplored() const;
+    int  getBaseId() const;
     bool isInResourceBox(int x, int y) const;
 
     void setStartLocation(CCPlayer player);

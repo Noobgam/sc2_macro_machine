@@ -1,5 +1,6 @@
+#include <general/map_meta/WallPlacement.h>
+#include <util/LogInfo.h>
 #include "CCBot.h"
-#include "../util/LogInfo.h"
 
 CCBot::CCBot()
     : m_map(*this)
@@ -20,6 +21,15 @@ void CCBot::OnGameStart() {
     m_workers.onStart();
 
     m_gameCommander.onStart();
+    m_mapMeta = MapMeta::getMeta(*this);
+    int myBaseId = (*m_bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
+    int enemyBaseId = (*m_bases.getOccupiedBaseLocations(Players::Enemy).begin())->getBaseId();
+    auto&& placements = WallPlacement::getWallsForBaseLocation(
+            *this,
+            myBaseId,
+            myBaseId,
+            enemyBaseId
+    );
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
 }
 

@@ -4,7 +4,9 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
 #include <fstream>
+#include <vector>
 
 #include "util/FileUtils.h"
 

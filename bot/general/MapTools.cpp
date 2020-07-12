@@ -107,7 +107,6 @@ void MapTools::onStart()
         }
     }
 
-    m_mapMeta = MapMeta::getMeta(m_bot);
     computeConnectivity();
 }
 

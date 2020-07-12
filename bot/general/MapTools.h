@@ -3,7 +3,7 @@
 #include "model/Common.h"
 #include "DistanceMap.h"
 #include "model/UnitType.h"
-#include "MapMeta.h"
+#include "general/map_meta/MapMeta.h"
 
 class MapTools
 {
@@ -24,8 +24,6 @@ class MapTools
     std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
     std::vector<std::vector<float>> m_terrainHeight;    // height of the map at x+0.5, y+0.5
     std::vector<std::vector<int>>   m_powerMap;         // boolean map whether specific halftile is powered by our pylons
-
-    std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
     
     void computeConnectivity();
 
@@ -34,7 +32,6 @@ class MapTools
     void printMap();
 
     float   terrainHeight(const CCPosition & point) const;
-    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
 
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
@@ -46,6 +43,7 @@ class MapTools
 public:
 
     MapTools(CCBot & bot);
+    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
 
     void    onStart();
     void    onFrame();

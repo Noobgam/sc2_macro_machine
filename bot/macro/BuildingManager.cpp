@@ -24,11 +24,11 @@ void BuildingManager::onFrame()
     for (auto unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
         const Unit& unit = *unitPtr;
         // filter out units which aren't buildings under construction
-        if (m_bot.Data(unit).isBuilding) {
-            std::stringstream ss;
-            ss << unit.getID();
-            m_bot.Map().drawText(unit.getPosition(), ss.str());
-        }
+//        if (m_bot.Data(unit).isBuilding) {
+//            std::stringstream ss;
+//            ss << unit.getID();
+//            m_bot.Map().drawText(unit.getPosition(), ss.str());
+//        }
     }
 
     validateWorkersAndBuildings();          // check to see if assigned workers have died en route or while constructing
