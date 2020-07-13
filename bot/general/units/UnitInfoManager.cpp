@@ -23,7 +23,15 @@ void UnitInfoManager::updateUnits() {
     for (auto & unit : m_bot.Observation()->GetUnits()) {
         auto it = unitWrapperByTag.find(unit->tag);
         if (it == unitWrapperByTag.end()) {
+            if (unit->display_type == sc2::Unit::DisplayType::Placeholder) {
+                BOT_ASSERT(unit->tag == 0, "Placeholder has id not equal to 0");
+            }
+            if (unit->tag == 0) {
+                LOG_DEBUG << "Zero tag" << std::endl;
+                continue;
+            }
             auto inserted = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, m_bot, observationId)});
+            LOG_DEBUG << "Inserted. [" << (*(inserted.first)).second->getType().getName() << unit->tag << "]" << unit->display_type << std::endl;
             processNewUnit(inserted.first->second.get());
         } else {
             it->second->updateObservationId(observationId);
@@ -36,7 +44,8 @@ void UnitInfoManager::updateUnits() {
         bool dead = !it->second->isAlive();
         bool needToDelete = notObserved || dead;
         if (needToDelete) {
-            std::cerr << "Unit is missing. [" << it->second->getType().getName() << "]" << std::endl;
+            auto& unit = it->second;
+            LOG_DEBUG << "Unit is missing. [" << it->second->getType().getName() << "]" <<  it->second.get()->getUnitPtr()->tag << " " << std::endl;
             missingUnits.push_back(std::move(it->second));
             it = unitWrapperByTag.erase(it);
         } else {
@@ -77,6 +86,7 @@ void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
 void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     updateSquadsWithRemovedUnit(unit);
     m_bot.getManagers().getBuildingManager().unitDiedCallback(unit);
+    m_bot.Bases().onUnitDiedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {

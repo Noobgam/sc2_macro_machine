@@ -33,7 +33,7 @@ public:
 
     size_t getObservationId() const;
 
-    const BaseLocationManager & Bases() const;
+    BaseLocationManager & Bases();
     const MapTools & Map() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();

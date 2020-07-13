@@ -16,9 +16,9 @@ MacroManager::MacroManager(CCBot & bot)
 {
     m_managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));
     m_managers.emplace_back(std::make_unique<EconomyBuildManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<ProductionManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<UnitHireManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
+//    m_managers.emplace_back(std::make_unique<ProductionManager>(m_bot));
+//    m_managers.emplace_back(std::make_unique<UnitHireManager>(m_bot));
+//    m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
 }
 
 void MacroManager::onStart() {

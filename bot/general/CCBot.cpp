@@ -75,7 +75,7 @@ const MapTools & CCBot::Map() const {
     return m_map;
 }
 
-const BaseLocationManager & CCBot::Bases() const {
+BaseLocationManager & CCBot::Bases() {
     return m_bases;
 }
 

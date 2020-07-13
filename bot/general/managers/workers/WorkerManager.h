@@ -1,5 +1,6 @@
 #pragma once
 
+#include <general/bases/BaseLocation.h>
 #include "../../model/Unit.h"
 #include "../../model/Common.h"
 #include "../../../micro/squads/Squad.h"
@@ -9,8 +10,14 @@ class CCBot;
 
 class WorkerManager {
     CCBot & m_bot;
-    Squad* m_mainSquad = nullptr;
+    std::map<BaseLocationID, Squad*> m_mineralSquads = {};
     std::vector<Squad*> m_additionalSquads = {};
+
+    std::vector<const Unit*> getFreeWorkers();
+
+    void assignFreeUnits();
+    void assignUnit(const Unit * unit);
+    void updateBasesSquads();
 
     Squad *formSquad(const std::set<const Unit *> &workers);
 public:
