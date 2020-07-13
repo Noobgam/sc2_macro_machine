@@ -22,7 +22,7 @@ public:
     void onStart();
     void onFrame();
 
-    void mineralExpiredCallback(const Mineral* mineral);
+    void resourceExpiredCallback(const Resource* resource);
 
     const std::vector<const BaseLocation *> & getBaseLocations() const;
     const std::set<const BaseLocation *> & getOccupiedBaseLocations(int player) const;

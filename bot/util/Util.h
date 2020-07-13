@@ -4,7 +4,7 @@
 
 class CCBot;
 class Unit;
-class Mineral;
+class Resource;
 class UnitType;
 
 namespace Util
@@ -17,7 +17,7 @@ namespace Util
     UnitType        GetTownHall(const CCRace & race, CCBot & bot);
     UnitType        GetRefinery(const CCRace & race, CCBot & bot);
     UnitType        GetSupplyProvider(const CCRace & race, CCBot & bot);
-    CCPosition      CalcCenter(const std::vector<const Mineral*> & minerals);
+    CCPosition      CalcCenter(const std::vector<const Resource*> & minerals);
     bool            IsZerg(const CCRace & race);
     bool            IsProtoss(const CCRace & race);
     bool            IsTerran(const CCRace & race);

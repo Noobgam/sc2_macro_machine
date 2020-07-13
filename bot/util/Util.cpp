@@ -89,7 +89,7 @@ UnitType Util::GetRefinery(const CCRace & race, CCBot & bot)
 #endif
 }
 
-CCPosition Util::CalcCenter(const std::vector<const Mineral*> & minerals) {
+CCPosition Util::CalcCenter(const std::vector<const Resource*> & minerals) {
     if (minerals.empty()) {
         return CCPosition(0, 0);
     }

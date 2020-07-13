@@ -6,10 +6,9 @@
 
 const int NearBaseLocationTileDistance = 20;
 
-BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Mineral*> & minerals)
+BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Resource*> & resources)
     : m_bot(bot)
     , m_baseID               (baseID)
-    , m_minerals             (minerals)
     , m_isStartLocation      (false)
     , m_left                 (std::numeric_limits<CCPositionType>::max())
     , m_right                (std::numeric_limits<CCPositionType>::lowest())
@@ -25,28 +24,22 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Mine
     CCPositionType resourceCenterY = 0;
 
     // add each of the resources to its corresponding container
-    std::vector<const Unit*> resources;
-    for (const auto& mineral : minerals) {
-        resources.emplace_back(mineral->getUnit());
-    }
      for (auto & resource : resources) {
-//        if (resource->getType().isMineral()) {
-//            m_minerals.push_back(resource);
-//            m_mineralPositions.push_back(resource->getPosition());
-//
-//            // add the position of the minerals to the center
-//            resourceCenterX += resource->getPosition().x;
-//            resourceCenterY += resource->getPosition().y;
-//        } else if (resource->getType().isGeyser()) {
-//            m_geysers.push_back(resource);
-//            m_geyserPositions.push_back(resource->getPosition());
-//
-//            // pull the resource center toward the geyser if it exists
-//            resourceCenterX += resource->getPosition().x;
-//            resourceCenterY += resource->getPosition().y;
-//        } else {
-//            // if there is existing nexus - we probably need to recalc something
-//        }
+        if (resource->getResourceType() == ResourceType::MINERAL) {
+            m_minerals.push_back(resource);
+
+            // add the position of the minerals to the center
+            resourceCenterX += resource->getPosition().x;
+            resourceCenterY += resource->getPosition().y;
+        } else if (resource->getResourceType() == ResourceType::GEYSER) {
+            m_geysers.push_back(resource);
+
+            // pull the resource center toward the geyser if it exists
+            resourceCenterX += resource->getPosition().x;
+            resourceCenterY += resource->getPosition().y;
+        } else {
+            // if there is existing nexus - we probably need to recalc something
+        }
 
         // set the limits of the base location bounding box
         CCPositionType resWidth = Util::TileToPosition(1);
@@ -125,11 +118,11 @@ bool BaseLocation::containsPosition(const CCPosition & pos) const {
     return getGroundDistance(pos) < NearBaseLocationTileDistance;
 }
 
-const std::vector<const Unit*> & BaseLocation::getGeysers() const {
+const std::vector<const Resource*> & BaseLocation::getGeysers() const {
     return m_geysers;
 }
 
-const std::vector<const Mineral*> & BaseLocation::getMinerals() const {
+const std::vector<const Resource*> & BaseLocation::getMinerals() const {
     return m_minerals;
 }
 
@@ -155,7 +148,7 @@ void BaseLocation::draw() {
     ss << "BaseLocation: " << m_baseID << "\n";
     ss << "Start Loc:    " << (m_isStartLocation ? "true" : "false") << "\n";
     ss << "Minerals:     " << m_minerals.size() << "\n";
-    ss << "Geysers:      " << m_geyserPositions.size() << "\n";
+    ss << "Geysers:      " << m_geysers.size() << "\n";
     ss << "Occupied By:  ";
 
     if (isOccupiedByPlayer(Players::Self)) {
@@ -181,12 +174,13 @@ void BaseLocation::draw() {
     }
 
     for (auto & mineral : m_minerals) {
-            m_bot.Map().drawCircle(mineral->getPosition(), radius, CCColor(0, 128, 128));
+        m_bot.Map().drawCircle(mineral->getPosition(), radius, CCColor(0, 128, 128));
         m_bot.Map().drawText(mineral->getPosition(), std::to_string(mineral->getID()));
     }
 
-    for (auto & geyserPos : m_geyserPositions) {
-        m_bot.Map().drawCircle(geyserPos, radius, CCColor(0, 255, 0));
+    for (auto & geyser : m_geysers) {
+        m_bot.Map().drawCircle(geyser->getPosition(), radius, CCColor(0, 255, 0));
+        m_bot.Map().drawText(geyser->getPosition(), std::to_string(geyser->getID()));
     }
 
     m_bot.Map().drawGroundCircle(m_depotActualPosition, radius, CCColor(255, 0, 0));
@@ -201,6 +195,10 @@ bool BaseLocation::isMineralOnly() const {
     return getGeysers().empty();
 }
 
-void BaseLocation::mineralExpiredCallback(const Mineral *mineral) {
-    m_minerals.erase(std::find(m_minerals.begin(), m_minerals.end(), mineral));
+void BaseLocation::resourceExpiredCallback(const Resource *resource) {
+    if (resource->getResourceType() == ResourceType::MINERAL) {
+        m_minerals.erase(std::find(m_minerals.begin(), m_minerals.end(), resource));
+    } else {
+        m_geysers.erase(std::find(m_geysers.begin(), m_geysers.end(), resource));
+    }
 }
