@@ -149,7 +149,7 @@ std::vector<std::vector<const Resource *>> BaseLocationManager::findResourceClus
     }
 
     // add geysers only to existing resource clusters
-    for (auto & geyser : m_bot.getManagers().getResourceManager().getMinerals()) {
+    for (auto & geyser : m_bot.getManagers().getResourceManager().getGeysers()) {
         for (auto & cluster : resourceClusters) {
             //int groundDist = m_bot.Map().getGroundDistance(geyser.pos, Util::CalcCenter(cluster));
             float groundDist = Util::Dist(geyser->getPosition(), Util::CalcCenter(cluster));

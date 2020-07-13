@@ -20,7 +20,7 @@ std::optional<BuildOrderItem> EconomyBuildManager::getTopPriority() {
     }
     auto expandBuildItem = m_expand_manager.getTopPriority();
     if (expandBuildItem.has_value()){
-//        items.emplace_back(expandBuildItem.value());
+        items.emplace_back(expandBuildItem.value());
     }
     auto item_ptr = std::max_element(items.begin(), items.end());
     if (item_ptr == items.end()) {
