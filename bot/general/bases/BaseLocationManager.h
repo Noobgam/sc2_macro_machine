@@ -21,7 +21,8 @@ public:
 
     void onStart();
     void onFrame();
-    void drawBaseLocations();
+
+    void resourceExpiredCallback(const Resource* resource);
 
     void onNewUnitCallback(const Unit* unit);
     void onUnitDiedCallback(const Unit* unit);
@@ -32,4 +33,5 @@ public:
 
 
     CCPosition getNextExpansion(int player) const;
+    void drawBaseLocations();
 };

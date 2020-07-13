@@ -6,7 +6,7 @@
 class CollectMineralsOrder: public Order {
 private:
     const BaseLocation* m_baseLocation;
-    std::map<CCUnitID, std::vector<const Unit*>> m_mineralToWorker;
+    std::map<MineralID, std::vector<const Unit*>> m_mineralToWorker;
 
     void assignWorkers(const  std::set<const Unit*>& workers);
 public:

@@ -249,3 +249,8 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
 
     return closestBase ? closestBase->getDepotActualPosition() : CCPosition(0, 0);
 }
+
+void BaseLocationManager::resourceExpiredCallback(const Resource* resource) {
+    BaseLocation *baseLocation = getBaseLocation(resource->getPosition());
+    baseLocation->resourceExpiredCallback(resource);
+}

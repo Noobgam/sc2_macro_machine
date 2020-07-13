@@ -16,7 +16,6 @@ void CCBot::OnGameStart() {
     m_techTree.onStart();
     m_map.onStart();
     m_unitInfo.onStart();
-    m_bases.onStart();
 
     m_managers.onStart();
 
