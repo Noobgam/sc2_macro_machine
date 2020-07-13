@@ -5,6 +5,7 @@
 #include "../model/Unit.h"
 #include <map>
 #include <vector>
+#include <general/managers/resources/Mineral.h>
 
 class CCBot;
 
@@ -15,7 +16,7 @@ class BaseLocation {
     CCPosition                  m_depotActualPosition;
     CCPosition                  m_centerOfResources;
     std::vector<const Unit*>    m_geysers;
-    std::vector<const Unit*>    m_minerals;
+    std::vector<const Mineral*>    m_minerals;
 
     std::vector<CCPosition>     m_mineralPositions;
     std::vector<CCPosition>     m_geyserPositions;
@@ -31,7 +32,7 @@ class BaseLocation {
     bool                        m_isStartLocation;
 public:
 
-    BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit*> & resources);
+    BaseLocation(CCBot & bot, int baseID, const std::vector<const Mineral*> & minerals);
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;
 
@@ -41,13 +42,15 @@ public:
     const CCPosition & getDepotActualPosition() const;
     const CCPosition & getPosition() const;
     const std::vector<const Unit*> & getGeysers() const;
-    const std::vector<const Unit*> & getMinerals() const;
+    const std::vector<const Mineral*> & getMinerals() const;
     bool isOccupiedByPlayer(CCPlayer player) const;
     bool isExplored() const;
     bool isInResourceBox(int x, int y) const;
 
     void setStartLocation(CCPlayer player);
     void setPlayerOccupying(CCPlayer player, bool occupying);
+
+    void mineralExpiredCallback(const Mineral* mineral);
 
     void draw();
 };

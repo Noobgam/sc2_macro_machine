@@ -16,7 +16,6 @@ void CCBot::OnGameStart() {
     m_techTree.onStart();
     m_map.onStart();
     m_unitInfo.onStart();
-    m_bases.onStart();
 
     m_managers.onStart();
 
@@ -75,7 +74,7 @@ const MapTools & CCBot::Map() const {
     return m_map;
 }
 
-const BaseLocationManager & CCBot::Bases() const {
+BaseLocationManager & CCBot::Bases() {
     return m_bases;
 }
 

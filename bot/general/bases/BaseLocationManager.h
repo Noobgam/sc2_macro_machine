@@ -21,11 +21,12 @@ public:
 
     void onStart();
     void onFrame();
-    void drawBaseLocations();
+
+    void mineralExpiredCallback(const Mineral* mineral);
 
     const std::vector<const BaseLocation *> & getBaseLocations() const;
     const std::set<const BaseLocation *> & getOccupiedBaseLocations(int player) const;
 
     CCPosition getNextExpansion(int player) const;
-
+    void drawBaseLocations();
 };

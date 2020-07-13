@@ -77,6 +77,6 @@ void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) 
             }
         );
         BOT_ASSERT(mineralIt != minerals.end(), "Mineral was not found on base");
-        worker->rightClick(**mineralIt);
+        worker->rightClick(*(*mineralIt)->getUnit());
     }
 }

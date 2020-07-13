@@ -6,7 +6,7 @@
 #include "units/UnitInfoManager.h"
 #include "TechTree.h"
 #include "../GameCommander.h"
-#include "managers/Managers.h"
+#include <general/managers/Managers.h>
 
 class CCBot : public sc2::Agent {
     MapTools                m_map;
@@ -33,7 +33,7 @@ public:
 
     size_t getObservationId() const;
 
-    const BaseLocationManager & Bases() const;
+          BaseLocationManager & Bases();
     const MapTools & Map() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
