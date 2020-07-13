@@ -10,7 +10,7 @@ void BaseLocationManager::onStart() {
     m_playerStartingBaseLocations[Players::Self]  = nullptr;
     m_playerStartingBaseLocations[Players::Enemy] = nullptr;
 
-    std::vector<std::vector<const Unit *>> resourceClusters = findResourceClusters();
+    std::vector<std::vector<const Resource*>> resourceClusters = findResourceClusters();
     // add the base locations if there are more than 4 resouces in the cluster
     BaseLocationID baseID = 0;
     for (auto & cluster : resourceClusters) {
@@ -116,24 +116,19 @@ BaseLocation * BaseLocationManager::getBaseLocation(const CCPosition & pos) cons
     return m_tileBaseLocations[(int)pos.x][(int)pos.y];
 }
 
-std::vector<std::vector<const Unit *>> BaseLocationManager::findResourceClusters() const {
+std::vector<std::vector<const Resource *>> BaseLocationManager::findResourceClusters() const {
     // a BaseLocation will be anything where there are minerals to mine
     // so we will first look over all minerals and cluster them based on some distance
     const CCPositionType clusterDistance = Util::TileToPosition(12);
 
     // stores each cluster of resources based on some ground distance
-    std::vector<std::vector<const Unit*>> resourceClusters;
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Neutral)) {
+    std::vector<std::vector<const Resource*>> resourceClusters;
+    for (auto & mineral : m_bot.getManagers().getResourceManager().getMinerals()) {
         // skip minerals that don't have more than 100 starting minerals
         // these are probably stupid map-blocking minerals to confuse us
-        if (!unit->getType().isMineral()) {
-            continue;
-        }
-
-        const Unit* mineral = unit;
         bool foundCluster = false;
         for (auto & cluster : resourceClusters) {
-            float dist = Util::Dist(mineral, Util::CalcCenter(cluster));
+            float dist = Util::Dist(mineral->getPosition(), Util::CalcCenter(cluster));
 
             // quick initial air distance check to eliminate most resources
             if (dist < clusterDistance) {
@@ -154,15 +149,10 @@ std::vector<std::vector<const Unit *>> BaseLocationManager::findResourceClusters
     }
 
     // add geysers only to existing resource clusters
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Neutral)) {
-        if (!unit->getType().isGeyser()) {
-            continue;
-        }
-
-        const Unit* geyser = unit;
+    for (auto & geyser : m_bot.getManagers().getResourceManager().getMinerals()) {
         for (auto & cluster : resourceClusters) {
             //int groundDist = m_bot.Map().getGroundDistance(geyser.pos, Util::CalcCenter(cluster));
-            float groundDist = Util::Dist(geyser, Util::CalcCenter(cluster));
+            float groundDist = Util::Dist(geyser->getPosition(), Util::CalcCenter(cluster));
             if (groundDist >= 0 && groundDist < clusterDistance) {
                 cluster.push_back(geyser);
                 break;
@@ -197,18 +187,6 @@ const BaseLocation *BaseLocationManager::getBaseLocation(BaseLocationID id) cons
 
 const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocations(int player) const {
     return m_occupiedBaseLocations.at(player);
-}
-
-void BaseLocationManager::onNewUnitCallback(const Unit *unit) { }
-
-void BaseLocationManager::onUnitDiedCallback(const Unit *unit) {
-    if (!unit->getType().isMineral()) {
-        return;
-    }
-//    BaseLocation *baseLocation = getBaseLocation(unit->getPosition());
-//    if (baseLocation != nullptr) {
-//        baseLocation->onMineralExhausted(unit);
-//    }
 }
 
 CCPosition BaseLocationManager::getNextExpansion(int player) const {

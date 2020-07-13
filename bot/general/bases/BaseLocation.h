@@ -58,5 +58,5 @@ public:
 
     void resourceExpiredCallback(const Resource* resource);
 
-    void draw();
+    void draw() const;
 };

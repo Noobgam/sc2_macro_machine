@@ -13,7 +13,7 @@ class BaseLocationManager {
     std::map<int, std::set<const BaseLocation *>>           m_occupiedBaseLocations;
     std::vector<std::vector<BaseLocation *>>                m_tileBaseLocations;
 
-    std::vector<std::vector<const Unit *>> findResourceClusters() const;
+    std::vector<std::vector<const Resource *>> findResourceClusters() const;
     BaseLocation * getBaseLocation(const CCPosition & pos) const;
 
 public:
@@ -23,9 +23,6 @@ public:
     void onFrame();
 
     void resourceExpiredCallback(const Resource* resource);
-
-    void onNewUnitCallback(const Unit* unit);
-    void onUnitDiedCallback(const Unit* unit);
 
     const BaseLocation* getBaseLocation(BaseLocationID id) const;
     const std::vector<const BaseLocation *> & getBaseLocations() const;
