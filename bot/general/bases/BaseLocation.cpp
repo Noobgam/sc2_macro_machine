@@ -60,15 +60,18 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Reso
     // calculate the depot position
     UnitType depot = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot);
 
-    // this doesnt work for starting location, probably we need to pass existing nexus into this method
 
     // the position of the depot will be the closest spot we can build one from the resource center
-    for (auto & tile : m_distanceMap.getSortedTiles()) {
-        // nexus is 5x5 so build position is the middle of the tile
-        CCPosition buildPos(tile.x + .5, tile.y + .5);
-        if (m_bot.Map().canBuildTypeAtPosition(buildPos.x, buildPos.y, depot)) {
-            m_depotActualPosition = buildPos;
-            break;
+    if (containsPosition(m_bot.Observation()->GetStartLocation())) {
+        m_depotActualPosition = m_bot.Observation()->GetStartLocation();
+    } else {
+        for (auto & tile : m_distanceMap.getSortedTiles()) {
+            // nexus is 5x5 so build position is the middle of the tile
+            CCPosition buildPos(tile.x + .5, tile.y + .5);
+            if (m_bot.Map().canBuildTypeAtPosition(buildPos.x, buildPos.y, depot)) {
+                m_depotActualPosition = buildPos;
+                break;
+            }
         }
     }
 

@@ -24,4 +24,9 @@ public:
     SquadManager & getSquadManager();
     BuildingManager & getBuildingManager();
     ResourceManager & getResourceManager();
+
+    const WorkerManager & getWorkerManager() const;
+    const SquadManager & getSquadManager() const;
+    const BuildingManager & getBuildingManager() const;
+    const ResourceManager & getResourceManager() const;
 };

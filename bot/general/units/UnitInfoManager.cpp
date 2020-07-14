@@ -58,13 +58,6 @@ void UnitInfoManager::updateUnits() {
         CCPlayer owner = unit->getPlayer();
         m_units.find(owner)->second.push_back(unit);
     }
-    int n = 0;
-    for (const auto& unit : m_units.at(Players::Neutral)) {
-        if (unit->getType().isMineral()) {
-            n++;
-        }
-    }
-    LOG_DEBUG << "Minerals number " << n << endl;
 }
 
 void UnitInfoManager::processNewUnit(const Unit* unit) {
