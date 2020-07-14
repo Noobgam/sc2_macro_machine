@@ -2,6 +2,7 @@
 #include "WallVerifier.h"
 #include "general/CCBot.h"
 #include "util/Util.h"
+#include "WallCandidateVerifier.h"
 #include <util/LogInfo.h>
 
 #include <algorithm>
@@ -42,6 +43,7 @@ struct cmp {
 
 void recursion(
         const CCBot& bot,
+        const WallCandidateVerifier& verifier,
         std::set<CCTilePosition, cmp>& candidates,
         // {{lx, ly}, type} - position of a left-bottom most tile, and building size
         std::vector<std::pair<std::pair<int,int>, BuildingType>>& alreadyPlaced,
@@ -51,6 +53,9 @@ void recursion(
 ) {
     if (buildings.empty()) {
         container.push_back(alreadyPlaced);
+        return;
+    }
+    if (!verifier.verifyPlacement(alreadyPlaced, buildings)) {
         return;
     }
     BuildingType building = buildings.back();
@@ -95,6 +100,7 @@ void recursion(
                 }
                 recursion(
                         bot,
+                        verifier,
                         almostPoweredCandidates,
                         alreadyPlaced,
                         buildings,
@@ -138,6 +144,7 @@ void recursion(
                 }
                 recursion(
                         bot,
+                        verifier,
                         candidatesLeft,
                         alreadyPlaced,
                         buildings,
@@ -202,8 +209,8 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     // tiles is a full list of tiles that could potentially be covered by wall.
     // Make sure to check for buildability via api later.
     vector<CCTilePosition> tiles = mp.getSortedTiles();
-    // only first 350 tiles around the base loc are candidates for building the wall
-    constexpr size_t SZ = 350;
+    // only first 500 tiles around the base loc are candidates for building the wall
+    constexpr size_t SZ = 500;
     tiles.resize(std::min(tiles.size(), SZ));
     tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [&basePos, &bot, &mp](const CCTilePosition& pos) {
         if (!bot.Map().isBuildable(pos)) {
@@ -225,8 +232,15 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     std::vector<BuildingType> buildings = {BuildingType::ThreeByThree, BuildingType::ThreeByThree, BuildingType::PoweringPylon};
     std::vector<std::vector<std::pair<std::pair<int,int>, BuildingType>>> container;
 
+    WallCandidateVerifier candidateVerifier{
+            bot,
+            baseLocationId,
+            startBaseLocationId,
+            enemyStartBaseLocationId
+    };
     recursion(
             bot,
+            candidateVerifier,
             tileCandidates,
             alreadyPlaced,
             buildings,

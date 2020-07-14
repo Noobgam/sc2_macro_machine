@@ -8,6 +8,8 @@
 
 class CCBot;
 
+static const int NearBaseLocationTileDistance = 20;
+
 class BaseLocation {
     CCBot &                     m_bot;
     DistanceMap                 m_distanceMap;
@@ -38,7 +40,7 @@ public:
 
     bool isPlayerStartLocation(CCPlayer player) const;
     bool isMineralOnly() const;
-    bool containsPosition(const CCPosition & pos) const;
+    bool containsPosition(const CCPosition & pos, int distance = NearBaseLocationTileDistance) const;
     const CCPosition & getDepotActualPosition() const;
     const CCPosition & getPosition() const;
     const std::vector<const Unit*> & getGeysers() const;
