@@ -1,9 +1,8 @@
-#include <general/map_meta/WallPlacement.h>
+#include <general/map_meta/wall/WallPlacement.h>
 #include <util/LogInfo.h>
 #include "CCBot.h"
 #include <random>
 #include <ctime>
-#include <general/map_meta/WallVerifier.h>
 
 CCBot::CCBot()
     : m_map(*this)
@@ -33,13 +32,6 @@ void CCBot::OnGameStart() {
     srand(time(NULL));
     if (m_wallPlacements.size() != 0) {
         chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
-        WallVerifier verifier{
-                *this,
-                myBaseId,
-                myBaseId,
-                enemyBaseId
-        };
-        auto&& wallPlacement = verifier.verifyPlacement(chosenPlacement.value().buildings);
     } else {
         m_wallCandidates = WallPlacement::getTileCandidates(*this,
                 myBaseId,

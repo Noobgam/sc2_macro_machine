@@ -10,7 +10,7 @@
 #include <map>
 
 #include "util/FileUtils.h"
-#include "WallPlacement.h"
+#include "general/map_meta/wall/WallPlacement.h"
 
 class CCBot;
 

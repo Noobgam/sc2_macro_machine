@@ -7,7 +7,7 @@
 #include "TechTree.h"
 #include "../GameCommander.h"
 #include "managers/Managers.h"
-#include "general/map_meta/WallPlacement.h"
+#include "general/map_meta/wall/WallPlacement.h"
 
 class CCBot : public sc2::Agent {
     MapTools                m_map;
