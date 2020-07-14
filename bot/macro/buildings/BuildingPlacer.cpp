@@ -61,10 +61,10 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         return getRefineryPosition();
     }
     static int id = 0;
-    static WallPlacement& wallPlacement = m_bot.chosenPlacement;
-    if (m_bot.NeedWall() && id < 3) {
+    static auto& wallPlacement = m_bot.chosenPlacement;
+    if (m_bot.NeedWall() && id < 3 && wallPlacement.has_value()) {
         auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
-        auto& lr = wallPlacement.buildings[id].first;
+        auto& lr = wallPlacement.value().buildings[id].first;
         if (b.isSupplyProvider()) {
             return CCPosition(lr.first + 1, lr.second + 1);
         } else {

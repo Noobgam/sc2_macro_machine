@@ -29,7 +29,8 @@ class CCBot : public sc2::Agent {
 public:
     // TODO: move to mapMeta
     std::vector<WallPlacement>      m_wallPlacements;
-    WallPlacement chosenPlacement;
+    std::optional<WallPlacement> chosenPlacement;
+    std::vector<CCTilePosition> m_wallCandidates;
 
     CCBot();
 

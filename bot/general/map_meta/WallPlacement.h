@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <boost/serialization/utility.hpp>
+#include <general/model/Common.h>
 
 class CCBot;
 
@@ -49,12 +50,17 @@ struct WallPlacement {
             std::vector<std::pair<std::pair<int,int>, GapType>>      gaps
             );
 
+    static std::vector<CCTilePosition> getTileCandidates(
+            const CCBot &bot,
+            int baseLocationId
+    );
     static std::vector<WallPlacement> getWallsForBaseLocation(
             const CCBot& bot,
             int baseLocationId,
             int startBaseLocationId,
             int enemyStartBaseLocationId
     );
+
 
     static WallPlacement fullWall(int startLocationId, std::vector<std::pair<std::pair<int,int>, BuildingType>>);
 };

@@ -157,6 +157,34 @@ void recursion(
     buildings.push_back(building);
 }
 
+std::vector<CCTilePosition> WallPlacement::getTileCandidates(
+        const CCBot &bot,
+        int baseLocationId
+) {
+    auto&& bases = bot.Bases().getBaseLocations();
+    auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](const BaseLocation* const loc) {
+        return loc->getBaseId() == baseLocationId;
+    });
+    auto basePos = (*it)->getDepotActualPosition();
+    auto mp = bot.Map().getDistanceMap(basePos);
+    vector<CCTilePosition> tiles = mp.getSortedTiles();
+    // only first 500 tiles around the base loc are candidates for building the wall
+    constexpr size_t SZ = 500;
+    tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [&basePos, &bot, &mp](const CCTilePosition& pos) {
+        if (!bot.Map().isBuildable(pos)) {
+            return true;
+        }
+        float dx = abs(pos.x - basePos.x);
+        float dy = abs(pos.y - basePos.y);
+        if (dx <= 2 && dy <= 2) {
+            return true;
+        }
+        return false;
+    }), tiles.end());
+    tiles.resize(std::min(tiles.size(), SZ));
+    return tiles;
+}
+
 std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         const CCBot &bot,
         int baseLocationId,

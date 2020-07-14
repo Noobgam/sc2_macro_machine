@@ -35,14 +35,18 @@ void CCBot::OnGameStart() {
             enemyBaseId
     );
     srand(time(NULL));
-    chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
-    WallVerifier verifier{
-        *this,
-        myBaseId,
-        myBaseId,
-        enemyBaseId
-    };
-    auto&& wallPlacement = verifier.verifyPlacement(chosenPlacement.buildings);
+    if (m_wallPlacements.size() != 0) {
+        chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
+        WallVerifier verifier{
+                *this,
+                myBaseId,
+                myBaseId,
+                enemyBaseId
+        };
+        auto&& wallPlacement = verifier.verifyPlacement(chosenPlacement.value().buildings);
+    } else {
+        m_wallCandidates = WallPlacement::getTileCandidates(*this, myBaseId);
+    }
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
 }
 
@@ -70,16 +74,22 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Finished onStep()" << std::endl;
 
 #ifdef _DEBUG
-    for (auto x : chosenPlacement.buildings) {
-        int sz = 3;
-        if (x.second == BuildingType::PoweringPylon) {
-            sz = 2;
-        }
-        Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
-        for (int i = 0; i < sz; ++i) {
-            for (int j = 0; j < sz; ++j) {
-                Map().drawTile(i + x.first.first, j + x.first.second);
+    if (chosenPlacement.has_value()) {
+        for (auto x : chosenPlacement->buildings) {
+            int sz = 3;
+            if (x.second == BuildingType::PoweringPylon) {
+                sz = 2;
             }
+            Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
+            for (int i = 0; i < sz; ++i) {
+                for (int j = 0; j < sz; ++j) {
+                    Map().drawTile(i + x.first.first, j + x.first.second);
+                }
+            }
+        }
+    } else {
+        for (auto x : m_wallCandidates) {
+            Map().drawTile(x.x, x.y);
         }
     }
     Debug()->SendDebug();
