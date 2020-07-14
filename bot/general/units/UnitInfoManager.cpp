@@ -25,13 +25,9 @@ void UnitInfoManager::updateUnits() {
         if (it == unitWrapperByTag.end()) {
             if (unit->display_type == sc2::Unit::DisplayType::Placeholder) {
                 BOT_ASSERT(unit->tag == 0, "Placeholder has id not equal to 0");
-            }
-            if (unit->tag == 0) {
-                LOG_DEBUG << "Zero tag" << std::endl;
                 continue;
             }
             auto inserted = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, m_bot, observationId)});
-            LOG_DEBUG << "Inserted. [" << (*(inserted.first)).second->getType().getName() << unit->tag << "]" << unit->display_type << std::endl;
             processNewUnit(inserted.first->second.get());
         } else {
             it->second->updateObservationId(observationId);

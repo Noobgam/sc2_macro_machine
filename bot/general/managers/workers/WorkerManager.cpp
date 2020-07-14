@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "WorkerManager.h"
 #include "../../CCBot.h"
 #include "../../../micro/order/Orders.h"
@@ -9,6 +10,7 @@ void WorkerManager::onStart() { }
 void WorkerManager::onFrame() {
     updateBasesSquads();
     assignFreeUnits();
+    fixMineralLines();
     auto& squadManager = m_bot.getManagers().getSquadManager();
     // process completed tasks
     for (auto it = m_additionalSquads.begin(); it < m_additionalSquads.end();) {
@@ -20,6 +22,7 @@ void WorkerManager::onFrame() {
             it++;
         }
     }
+    draw();
 }
 
 void WorkerManager::build(UnitType type, CCPosition position) {
@@ -58,20 +61,23 @@ Squad *WorkerManager::formSquad(const std::set<const Unit *> &workers) {
 }
 
 void WorkerManager::updateBasesSquads() {
-    for (auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
+    for (const auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
         if (base->hasPlayerDepot(Players::Self)) {
-            const auto& squad = m_bot.getManagers().getSquadManager().createNewSquad();
-            squad->setOrder(std::make_shared<CollectMineralsOrder>(m_bot, squad, base));
-            m_mineralSquads.insert({base->getID(), squad});
+            const auto& it = std::find_if(m_baseWorkersPtrs.begin(), m_baseWorkersPtrs.end(), [base](const auto& bw) {
+                return bw->getBaseLocation()->getID() == base->getID();
+            });
+            if (it == m_baseWorkersPtrs.end()) {
+                const auto& value = m_baseWorkers.emplace_back(std::make_unique<BaseWorkers>(m_bot, base));
+                m_baseWorkersPtrs.emplace_back(value.get());
+            }
         }
     }
     std::vector<const Unit*> toTransfer;
-    for (auto it = m_mineralSquads.begin(); it != m_mineralSquads.end();) {
-        const auto & baseId = it->first;
-        if (!m_bot.Bases().getBaseLocation(baseId)->hasPlayerDepot(Players::Self)) {
-            const auto& squad = it->second;
-            m_bot.getManagers().getSquadManager().deformSquad(squad);
-            it = m_mineralSquads.erase(it);
+    for (auto it = m_baseWorkers.begin(); it != m_baseWorkers.end();) {
+        if (!(*it)->getBaseLocation()->hasPlayerDepot(Players::Self)) {
+            (*it)->deform();
+            m_baseWorkersPtrs.erase(std::find(m_baseWorkersPtrs.begin(), m_baseWorkersPtrs.end(), it->get()));
+            it = m_baseWorkers.erase(it);
         } else {
             it++;
         }
@@ -91,18 +97,73 @@ void WorkerManager::assignFreeUnits() {
 }
 
 void WorkerManager::assignUnit(const Unit* unit) {
-    const auto & squad = std::min_element(m_mineralSquads.begin(), m_mineralSquads.end(), [](auto & s1, auto & s2) {
-       return s1.second->units().size() - s2.second->units().size();
-    });
-    m_bot.getManagers().getSquadManager().transferUnits({unit}, squad->second);
+    BOT_ASSERT(!m_baseWorkersPtrs.empty(), "No active bases found");
+    for (auto& baseWorkers : m_baseWorkersPtrs) {
+        if (baseWorkers->getIdealMineralWorkersNumber() > baseWorkers->getMineralSquad()->units().size()) {
+            baseWorkers->assignToMineral(unit);
+            return;
+        }
+    }
+    for (auto& baseWorkers : m_baseWorkersPtrs) {
+        if (baseWorkers->getMaximumMineralWorkersNumber() > baseWorkers->getMineralSquad()->units().size()) {
+            baseWorkers->assignToMineral(unit);
+            return;
+        }
+    }
+    m_baseWorkersPtrs[0]->assignToMineral(unit);
 }
 
 std::vector<const Unit*> WorkerManager::getFreeWorkers() {
     std::vector<const Unit*> freeWorkers;
-    for (auto & squadPair : m_mineralSquads) {
-        auto units = squadPair.second->units();
-        freeWorkers.insert(freeWorkers.end(), units.begin(), units.end());
+    for (auto & baseWorker : m_baseWorkers) {
+        auto mineralUnits = baseWorker->getMineralSquad()->units();
+        freeWorkers.insert(freeWorkers.end(), mineralUnits.begin(), mineralUnits.end());
     }
     return freeWorkers;
+}
+
+void WorkerManager::fixMineralLines() {
+    int availableWorkerPositions = 0;
+    for (const auto& baseWorkers : m_baseWorkersPtrs) {
+        if (baseWorkers->getIdealMineralWorkersNumber() > baseWorkers->getActiveMineralWorkersNumber()) {
+            availableWorkerPositions += baseWorkers->getIdealMineralWorkersNumber() - baseWorkers->getActiveMineralWorkersNumber();
+        }
+    }
+    for (const auto& baseWorkers : m_baseWorkersPtrs) {
+        while (baseWorkers->getIdealMineralWorkersNumber() < baseWorkers->getActiveMineralWorkersNumber() && availableWorkerPositions > 0) {
+            const Unit* worker = *(baseWorkers->getMineralSquad()->units().begin());
+            assignUnit(worker);
+            availableWorkerPositions--;
+        }
+    }
+
+    availableWorkerPositions = 0;
+    for (const auto& baseWorkers : m_baseWorkersPtrs) {
+        if (baseWorkers->getMaximumMineralWorkersNumber() > baseWorkers->getActiveMineralWorkersNumber()) {
+            availableWorkerPositions += baseWorkers->getMaximumMineralWorkersNumber() - baseWorkers->getActiveMineralWorkersNumber();
+        }
+    }
+    for (const auto& baseWorkers : m_baseWorkersPtrs) {
+        while (baseWorkers->getMaximumMineralWorkersNumber() < baseWorkers->getActiveMineralWorkersNumber() && availableWorkerPositions > 0) {
+            const Unit* worker = *(baseWorkers->getMineralSquad()->units().begin());
+            assignUnit(worker);
+            availableWorkerPositions--;
+        }
+    }
+}
+
+void WorkerManager::draw() {
+#ifdef _DEBUG
+    std::stringstream ss;
+    ss << "Bases: " << m_baseWorkers.size() << "\n";
+    if (!m_baseWorkers.empty()) {
+        ss << "Sizes: ";
+        for (const auto & bw: m_baseWorkers) {
+            ss << bw->getMineralSquad()->units().size() << "/" << bw->getIdealMineralWorkersNumber() << ", ";
+        }
+        ss << "\n";
+    }
+    m_bot.Map().drawTextScreen(0.6f, 0.01f, ss.str(), CCColor(255, 255, 0));
+#endif
 }
 
