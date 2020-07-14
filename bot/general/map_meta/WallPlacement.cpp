@@ -81,9 +81,9 @@ void recursion(
                 CCPosition pylonCenter{it->x + 1.0f, it->y + 1.0f};
                 for (auto it2 = beginCandidate; it2 != endCandidate; ++it2) {
                     // remove candidates used by this building
-                    int dx = abs(it2->x - it->x);
-                    int dy = abs(it2->y - it->y);
-                    if (dx <= 1 && dy <= 1) {
+                    int dx = it2->x - it->x;
+                    int dy = it2->y - it->y;
+                    if ((dx == 0 || dx == 1) && (dy == 0 || dy == 1)) {
                         continue;
                     }
                     // only one powering pylon by design.
@@ -197,7 +197,7 @@ std::vector<CCTilePosition> WallPlacement::getTileCandidates(
         }
         float dx = abs(pos.x - myBasePos.x);
         float dy = abs(pos.y - myBasePos.y);
-        if (dx <= 2.5 && dy <= 2.5) {
+        if (dx <= 2 && dy <= 2) {
             return true;
         }
         if (mp_enemy.getDistance(pos) > dist) {

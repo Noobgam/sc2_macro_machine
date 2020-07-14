@@ -118,7 +118,11 @@ bool BaseLocation::containsPosition(const CCPosition & pos, int distance) const 
     if (!m_bot.Map().isValidPosition(pos) || (pos.x == 0 && pos.y == 0)) {
         return false;
     }
-    return getGroundDistance(pos) < distance;
+    int dist = getGroundDistance(pos);
+    if (dist == -1) {
+        return false;
+    }
+    return dist < distance;
 }
 
 const std::vector<const Unit*> & BaseLocation::getGeysers() const {
