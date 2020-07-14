@@ -166,26 +166,44 @@ void recursion(
 
 std::vector<CCTilePosition> WallPlacement::getTileCandidates(
         const CCBot &bot,
-        int baseLocationId
+        int baseLocationId,
+        int enemyLocationId
 ) {
     auto&& bases = bot.Bases().getBaseLocations();
     auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](const BaseLocation* const loc) {
         return loc->getBaseId() == baseLocationId;
     });
-    auto basePos = (*it)->getDepotActualPosition();
-    auto mp = bot.Map().getDistanceMap(basePos);
-    vector<CCTilePosition> tiles = mp.getSortedTiles();
-    // only first 500 tiles around the base loc are candidates for building the wall
-    constexpr size_t SZ = 500;
-    tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [&basePos, &bot, &mp](const CCTilePosition& pos) {
+    auto myBase = (*it);
+    it = std::find_if(bases.begin(), bases.end(), [enemyLocationId](const BaseLocation* const loc) {
+        return loc->getBaseId() == enemyLocationId;
+    });
+    auto enemyBase = (*it);
+    auto myBasePos = myBase->getDepotActualPosition();
+    auto mp_self = bot.Map().getDistanceMap(myBasePos);
+    auto mp_enemy = bot.Map().getDistanceMap(enemyBase->getDepotActualPosition());
+    int dist = mp_enemy.getDistance(myBasePos);
+    vector<CCTilePosition> tiles = mp_self.getSortedTiles();
+    // only first 600 tiles around the base loc are candidates for building the wall
+    constexpr size_t SZ = 600;
+    tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [
+            &myBase,
+            &bot,
+            &myBasePos,
+            &mp_enemy,
+            dist
+            ](const CCTilePosition& pos) {
         if (!bot.Map().isBuildable(pos)) {
             return true;
         }
-        float dx = abs(pos.x - basePos.x);
-        float dy = abs(pos.y - basePos.y);
-        if (dx <= 2 && dy <= 2) {
+        float dx = abs(pos.x - myBasePos.x);
+        float dy = abs(pos.y - myBasePos.y);
+        if (dx <= 2.5 && dy <= 2.5) {
             return true;
         }
+        if (mp_enemy.getDistance(pos) > dist) {
+            return true;
+        }
+
         return false;
     }), tiles.end());
     tiles.resize(std::min(tiles.size(), SZ));
@@ -208,21 +226,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
 
     // tiles is a full list of tiles that could potentially be covered by wall.
     // Make sure to check for buildability via api later.
-    vector<CCTilePosition> tiles = mp.getSortedTiles();
-    // only first 500 tiles around the base loc are candidates for building the wall
-    constexpr size_t SZ = 500;
-    tiles.resize(std::min(tiles.size(), SZ));
-    tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [&basePos, &bot, &mp](const CCTilePosition& pos) {
-        if (!bot.Map().isBuildable(pos)) {
-            return true;
-        }
-        float dx = abs(pos.x - basePos.x);
-        float dy = abs(pos.y - basePos.y);
-        if (dx <= 2 && dy <= 2) {
-            return true;
-        }
-        return false;
-    }), tiles.end());
+    vector<CCTilePosition> tiles = getTileCandidates(bot, baseLocationId, enemyStartBaseLocationId);
     std::set<CCTilePosition, cmp> tileCandidates;
     for (auto x : tiles) {
         tileCandidates.insert(x);

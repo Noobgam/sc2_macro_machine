@@ -24,6 +24,8 @@ class MapTools
     std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
     std::vector<std::vector<float>> m_terrainHeight;    // height of the map at x+0.5, y+0.5
     std::vector<std::vector<int>>   m_powerMap;         // boolean map whether specific halftile is powered by our pylons
+    std::vector<std::vector<bool>>  m_unbuildableNeutral;        // unbuildable rocks and plates
+    std::vector<std::vector<bool>>  m_unwalkableNeutral;         // unbuildable rocks
     
     void computeConnectivity();
 

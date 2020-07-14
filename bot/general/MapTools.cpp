@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <array>
+#include <util/LogInfo.h>
 
 namespace {
 bool getBit(const sc2::ImageData& grid, int tileX, int tileY) {
@@ -53,6 +54,8 @@ void MapTools::onStart()
     m_sectorNumber   = vvi(m_width, std::vector<int>(m_height, 0));
     m_terrainHeight  = vvf(m_width, std::vector<float>(m_height, 0.0f));
     m_powerMap       = vvi(m_width, std::vector<int>(m_height, 0));
+    m_unbuildableNeutral = vvb(m_width, std::vector<bool>(m_height, false));
+    m_unwalkableNeutral = vvb(m_width, std::vector<bool>(m_height, false));
 
     // Set the boolean grid data from the Map
     for (int x(0); x < m_width; ++x)
@@ -72,25 +75,34 @@ void MapTools::onStart()
     }
 
     // set tiles that static resources are on as unbuildable
-    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral)) {
-        if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
-            continue;
+    auto&& neutrals = m_bot.UnitInfo().getUnits(Players::Neutral);
+    for (auto & unitPtr : neutrals) {
+
+        int width;
+        int height;
+        LOG_DEBUG << unitPtr->getType().getName() << endl;
+        if (unitPtr->getType().isMineral() || unitPtr->getType().isGeyser()) {
+            width = unitPtr->getType().tileWidth();
+            height = unitPtr->getType().tileHeight();
+        } else {
+            // otherwise there's no data in tech tree to find from
+            width =  unitPtr->getUnitPtr()->radius * 2;
+            height = unitPtr->getUnitPtr()->radius * 2;
         }
-        auto& resource = *unitPtr;
+        int tileX = std::floor(unitPtr->getPosition().x) - (width / 2);
+        int tileY = std::floor(unitPtr->getPosition().y) - (height / 2);
 
-        int width = resource.getType().tileWidth();
-        int height = resource.getType().tileHeight();
-        int tileX = std::floor(resource.getPosition().x) - (width / 2);
-        int tileY = std::floor(resource.getPosition().y) - (height / 2);
-
-        if (!isVisible(resource.getTilePosition().x, resource.getTilePosition().y)) { }
 
         for (int x=tileX; x<tileX+width; ++x)
         {
             for (int y=tileY; y<tileY+height; ++y)
             {
-                m_buildable[x][y] = false;
-
+                m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit (unitPtr->getType());
+                m_unwalkableNeutral [x][y] = m_unwalkableNeutral[x][y]  || !Util::canWalkOverUnit(unitPtr->getType());
+                LOG_DEBUG << m_unbuildableNeutral[x][y] << " : " << m_unwalkableNeutral [x][y] << endl;
+                if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
+                    continue;
+                }
                 // depots can't be built within 3 tiles of any resource
                 for (int rx=-3; rx<=3; rx++)
                 {
@@ -360,7 +372,7 @@ bool MapTools::isBuildable(int tileX, int tileY) const
         return false;
     }
 
-    return m_buildable[tileX][tileY];
+    return m_buildable[tileX][tileY] && !m_unbuildableNeutral[tileX][tileY];
 }
 
 bool MapTools::canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const
@@ -408,7 +420,7 @@ bool MapTools::isWalkable(int tileX, int tileY) const
         return false;
     }
 
-    return m_walkable[tileX][tileY];
+    return m_walkable[tileX][tileY] && !m_unwalkableNeutral[tileX][tileY];
 }
 
 bool MapTools::isWalkable(const CCTilePosition & tile) const

@@ -9,7 +9,8 @@ class CCBot;
 enum class WallType {
     FullWall = 1,
     WallWithUnitGaps = 2,
-    WallWithPylonGap = 3,
+    WallWithPylonGap = 4,
+    WallWithUnitAndPylonGap = WallWithPylonGap | WallWithUnitGaps
 };
 
 enum class BuildingType {
@@ -52,7 +53,8 @@ struct WallPlacement {
 
     static std::vector<CCTilePosition> getTileCandidates(
             const CCBot &bot,
-            int baseLocationId
+            int baseLocationId,
+            int enemyLocationID
     );
     static std::vector<WallPlacement> getWallsForBaseLocation(
             const CCBot& bot,
