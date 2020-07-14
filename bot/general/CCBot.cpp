@@ -1,6 +1,9 @@
 #include <general/map_meta/WallPlacement.h>
 #include <util/LogInfo.h>
 #include "CCBot.h"
+#include <random>
+#include <ctime>
+#include <general/map_meta/WallVerifier.h>
 
 CCBot::CCBot()
     : m_map(*this)
@@ -25,12 +28,21 @@ void CCBot::OnGameStart() {
     m_mapMeta = MapMeta::getMeta(*this);
     int myBaseId = (*m_bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
     int enemyBaseId = (*m_bases.getOccupiedBaseLocations(Players::Enemy).begin())->getBaseId();
-    auto&& placements = WallPlacement::getWallsForBaseLocation(
+    m_wallPlacements = WallPlacement::getWallsForBaseLocation(
             *this,
             myBaseId,
             myBaseId,
             enemyBaseId
     );
+    srand(time(NULL));
+    chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
+    WallVerifier verifier{
+        *this,
+        myBaseId,
+        myBaseId,
+        enemyBaseId
+    };
+    auto&& wallPlacement = verifier.verifyPlacement(chosenPlacement.buildings);
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
 }
 
@@ -58,6 +70,18 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Finished onStep()" << std::endl;
 
 #ifdef _DEBUG
+    for (auto x : chosenPlacement.buildings) {
+        int sz = 3;
+        if (x.second == BuildingType::PoweringPylon) {
+            sz = 2;
+        }
+        Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
+        for (int i = 0; i < sz; ++i) {
+            for (int j = 0; j < sz; ++j) {
+                Map().drawTile(i + x.first.first, j + x.first.second);
+            }
+        }
+    }
     Debug()->SendDebug();
 #endif
 }
@@ -179,5 +203,5 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 
 bool CCBot::NeedWall() const {
     // TODO: return true if wall is actually needed
-    return false;
+    return true;
 }

@@ -45,6 +45,7 @@ void recursion(
         std::set<CCTilePosition, cmp>& candidates,
         // {{lx, ly}, type} - position of a left-bottom most tile, and building size
         std::vector<std::pair<std::pair<int,int>, BuildingType>>& alreadyPlaced,
+        // implied contract: buildings are ordered by enum ordering
         std::vector<BuildingType>& buildings,
         std::vector<std::vector<std::pair<std::pair<int,int>, BuildingType>>>& container
 ) {
@@ -121,7 +122,15 @@ void recursion(
 
                 // three by three has to be powered by pylon always.
                 if (!bot.Map().pylonPowers(pylonCenter, 6.5, gateCenter)) break;
-                std::set<CCTilePosition, cmp> candidatesLeft = candidates;
+
+                // three by three always come up last in list of buildings
+                //  so we fix ordering of candidates because why not
+                std::set<CCTilePosition, cmp> candidatesLeft;
+                auto it2 = it;
+                ++it2;
+                for (; it2 != endCandidate; ++it2) {
+                    candidatesLeft.insert(*it2);
+                }
                 for (int i = 0; i < 3; ++i) {
                     for (int j = 0; j < 3; ++j) {
                         candidatesLeft.erase(CCTilePosition{x + i, y + j});
@@ -165,7 +174,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     // tiles is a full list of tiles that could potentially be covered by wall.
     // Make sure to check for buildability via api later.
     vector<CCTilePosition> tiles = mp.getSortedTiles();
-    // only first 300 tiles around the base loc are candidates for building the wall
+    // only first 350 tiles around the base loc are candidates for building the wall
     constexpr size_t SZ = 350;
     tiles.resize(std::min(tiles.size(), SZ));
     tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [&basePos, &bot, &mp](const CCTilePosition& pos) {
@@ -174,6 +183,9 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         }
         float dx = abs(pos.x - basePos.x);
         float dy = abs(pos.y - basePos.y);
+        if (dx <= 2 && dy <= 2) {
+            return true;
+        }
         return false;
     }), tiles.end());
     std::set<CCTilePosition, cmp> tileCandidates;

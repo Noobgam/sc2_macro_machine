@@ -25,8 +25,8 @@ WallVerifier::WallVerifier(
 {}
 
 const static int LEGAL_ACTIONS = 8;
-const static int actionX[LEGAL_ACTIONS] = {-1, -1 , -1, 0, 1, 1, 1, 0};
-const static int actionY[LEGAL_ACTIONS] = {-1, 0 , 1, 1, 1, 1, 0, -1};
+const static int actionX[LEGAL_ACTIONS] = {-1, -1, -1, 0, 1, 1,  1,  0};
+const static int actionY[LEGAL_ACTIONS] = {-1,  0,  1, 1, 1, 0, -1, -1};
 
 std::optional<WallPlacement>
 WallVerifier::verifyPlacement(

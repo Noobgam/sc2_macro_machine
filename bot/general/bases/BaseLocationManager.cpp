@@ -73,22 +73,36 @@ void BaseLocationManager::onStart() {
 
     // set start locations
     CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
-    auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
-    BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
-    CCPosition enemyStartLocation = potentialLocations[0];
-
-    // construct the vectors of base location pointers, this is safe since they will never change
     for (auto & baseLocation : m_baseLocationData) {
         m_baseLocationPtrs.push_back(&baseLocation);
         if (baseLocation.containsPosition(selfStartLocation)) {
             baseLocation.setStartLocation(Players::Self);
             m_playerStartingBaseLocations[Players::Self] = &baseLocation;
         }
-        if (baseLocation.containsPosition(enemyStartLocation)) {
-            baseLocation.setStartLocation(Players::Enemy);
-            m_playerStartingBaseLocations[Players::Enemy] = &baseLocation;
+    }
+
+    auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
+    if (m_bot.Observation()->GetGameInfo().map_name.rfind("Test", 0) == 0) {
+        // cruth for test maps, so they could be played 1x0.
+        for (auto& baseLocation : m_baseLocationData) {
+            if (!baseLocation.isPlayerStartLocation(Players::Self)) {
+                baseLocation.setStartLocation(Players::Enemy);
+                m_playerStartingBaseLocations[Players::Enemy] = &baseLocation;
+                break;
+            }
+        }
+    } else {
+        BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
+        CCPosition enemyStartLocation = potentialLocations[0];
+        // construct the vectors of base location pointers, this is safe since they will never change
+        for (auto &baseLocation : m_baseLocationData) {
+            if (baseLocation.containsPosition(enemyStartLocation)) {
+                baseLocation.setStartLocation(Players::Enemy);
+                m_playerStartingBaseLocations[Players::Enemy] = &baseLocation;
+            }
         }
     }
+
     BOT_ASSERT(m_playerStartingBaseLocations[Players::Self] != nullptr, "Self start location was not found");
     BOT_ASSERT(m_playerStartingBaseLocations[Players::Enemy] != nullptr, "Enemy start location was not found");
 

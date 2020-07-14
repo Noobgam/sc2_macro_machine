@@ -60,14 +60,28 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     if (b.isRefinery()) {
         return getRefineryPosition();
     }
-    double bestHeuristic = std::numeric_limits<double>::min();
-    std::optional<CCPosition> bestPosO;
-    auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
-    BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
-    auto& firstBase = *myBases.begin();
-    if (m_bot.NeedWall()) {
-        // TODO: implement walling
+    static int id = 0;
+    static WallPlacement& wallPlacement = m_bot.chosenPlacement;
+    if (m_bot.NeedWall() && id < 3) {
+        auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
+        auto& lr = wallPlacement.buildings[id].first;
+        if (b.isSupplyProvider()) {
+            return CCPosition(lr.first + 1, lr.second + 1);
+        } else {
+            int pylons = m_bot.UnitInfo().getUnitTypeCount(Players::Self, pylonType);
+            if (pylons == 0) {
+                // cant build gate if pylons were not built
+                return {};
+            }
+            ++id;
+            return CCPosition(lr.first + 1.5, lr.second + 1.5);
+        }
     } else {
+        double bestHeuristic = std::numeric_limits<double>::min();
+        std::optional<CCPosition> bestPosO;
+        auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
+        BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
+        auto& firstBase = *myBases.begin();
         if (b.isSupplyProvider()) {
             // perhaps moving this logic to some sort of 'PylonPlacer' would be better
             // copy is intended here

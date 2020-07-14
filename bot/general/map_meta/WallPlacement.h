@@ -12,9 +12,9 @@ enum class WallType {
 };
 
 enum class BuildingType {
-    ThreeByThree  = 0,
+    PoweringPylon = 0,
     TwoByTwo      = 1,
-    PoweringPylon = 2
+    ThreeByThree  = 2
 };
 
 enum class GapType {
