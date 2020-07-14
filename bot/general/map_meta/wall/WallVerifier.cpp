@@ -2,6 +2,10 @@
 #include "WallVerifier.h"
 #include <general/CCBot.h>
 #include <util/Util.h>
+#include <vector>
+#include "GraphChecker.h"
+
+using std::vector;
 
 struct cmp {
     bool operator()(const CCTilePosition& lhs, const CCTilePosition& rhs) const {
@@ -85,7 +89,7 @@ WallVerifier::verifyPlacement(
     m_sortedTiles.push_back(startTile);
 
     m_dist[(int)startTile.x][(int)startTile.y] = 0;
-
+    GraphChecker checker;
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
         auto & tile = m_sortedTiles[fringeIndex];
@@ -94,11 +98,20 @@ WallVerifier::verifyPlacement(
         // check every possible child of this tile
         for (size_t a=0; a < LEGAL_ACTIONS; ++a)
         {
-            CCTilePosition nextTile(tile.x + actionX[a], tile.y + actionY[a]);
+            int dx = actionX[a];
+            int dy = actionY[a];
+            CCTilePosition nextTile(tile.x + dx, tile.y + dy);
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (m_bot.Map().isWalkable(nextTile) && m_dist[(int)nextTile.x][(int)nextTile.y] == -1)
             {
                 if (blockedByWall.count(nextTile)) continue;
+                if (abs(dx + dy) % 2 == 0) {
+                    // diagonal edges are counted once, straight edges are counted twice.
+                    checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
+                } else {
+                    checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
+                    checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
+                }
                 m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
                 m_sortedTiles.push_back(nextTile);
             }
@@ -110,9 +123,26 @@ WallVerifier::verifyPlacement(
     if (m_dist[dest.x][dest.y] == -1) {
         return WallPlacement::fullWall(m_startBaseLocationId, m_baseLocationId, buildings);
     } else {
-        // this is not a full wall, could be a wall with 1-unit gap. 2-unit (blocked by pylon/battery)
-        // walls are computed
-
+        // this is not a full wall, could be a wall with 1-unit gap.
+        // 2-unit (blocked by pylon/battery)
+        auto res = checker.getResult(startTile.x, startTile.y, dest.x, dest.y);
+        if (res.articulationPoints.empty()) {
+            // no articulation points - not a relevant wall. Could be a diagonal wall with two spots
+            return {};
+        }
+        if (!res.bridges.empty()) {
+            // if there are bridges present - this is not a wall.
+            // Bridges in the middle of the map probably do not exist
+            return {};
+        }
+        WallPlacement result;
+        result.wallType = WallType::WallWithUnitGaps;
+        for (auto x : res.articulationPoints) {
+            result.gaps.push_back({x, GapType::OneByOne});
+        }
+        result.startLocationId = m_startBaseLocationId;
+        result.baseLocationId = m_baseLocationId;
+        result.buildings = buildings;
+        return result;
     }
-    return {};
 }
