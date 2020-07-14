@@ -80,7 +80,6 @@ void MapTools::onStart()
 
         int width;
         int height;
-        LOG_DEBUG << unitPtr->getType().getName() << endl;
         if (unitPtr->getType().isMineral() || unitPtr->getType().isGeyser()) {
             width = unitPtr->getType().tileWidth();
             height = unitPtr->getType().tileHeight();
@@ -99,7 +98,6 @@ void MapTools::onStart()
             {
                 m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit (unitPtr->getType());
                 m_unwalkableNeutral [x][y] = m_unwalkableNeutral[x][y]  || !Util::canWalkOverUnit(unitPtr->getType());
-                LOG_DEBUG << m_unbuildableNeutral[x][y] << " : " << m_unwalkableNeutral [x][y] << endl;
                 if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
                     continue;
                 }

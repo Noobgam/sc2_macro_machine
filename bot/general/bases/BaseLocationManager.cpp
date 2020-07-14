@@ -191,7 +191,6 @@ const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocat
     return m_occupiedBaseLocations.at(player);
 }
 
-
 CCPosition BaseLocationManager::getNextExpansion(int player) const {
     const BaseLocation * homeBase =  m_playerStartingBaseLocations.at(player);
     const BaseLocation * closestBase = nullptr;
@@ -229,4 +228,8 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
     }
 
     return closestBase ? closestBase->getDepotActualPosition() : CCPosition(0, 0);
+}
+
+const BaseLocation * BaseLocationManager::getPlayerStartLocation(CCPlayer player) const {
+    return m_playerStartingBaseLocations.at(player);
 }

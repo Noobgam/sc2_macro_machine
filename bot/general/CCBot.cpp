@@ -29,12 +29,7 @@ void CCBot::OnGameStart() {
     m_mapMeta = MapMeta::getMeta(*this);
     int myBaseId = (*m_bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
     int enemyBaseId = (*m_bases.getOccupiedBaseLocations(Players::Enemy).begin())->getBaseId();
-    m_wallPlacements = WallPlacement::getWallsForBaseLocation(
-            *this,
-            myBaseId,
-            myBaseId,
-            enemyBaseId
-    );
+    m_wallPlacements = m_mapMeta->getWallPlacements(myBaseId, myBaseId);
     srand(time(NULL));
     if (m_wallPlacements.size() != 0) {
         chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
