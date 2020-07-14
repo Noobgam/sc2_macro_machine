@@ -30,12 +30,12 @@ struct MapMeta {
     MapMeta(const CCBot& bot);
     static std::unique_ptr<MapMeta> getMeta(const CCBot& bot);
 
-    const std::vector<WallPlacement>& getWallPlacements(int startLocationId, int baseLocationId) const;
+    std::vector<WallPlacement> getWallPlacements(int startLocationId, int baseLocationId) const;
 private:
     std::string mapName;
     // [startLocationId][locationId] -> wallPlacements
     // enemy location id is implied from startLocationId
-    std::map<int, std::map<int, std::vector<WallPlacement>>> wallPlacements;
+    std::vector<WallPlacement> wallPlacements;
 };
 
 BOOST_CLASS_VERSION(MapMeta, 1)

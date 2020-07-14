@@ -108,7 +108,11 @@ WallVerifier::verifyPlacement(
         return loc->getBaseId() == m_enemyStartBaseLocationId;
     }))->getDepotActualPosition());
     if (m_dist[dest.x][dest.y] == -1) {
-        return WallPlacement::fullWall(m_startBaseLocationId, buildings);
+        return WallPlacement::fullWall(m_startBaseLocationId, m_baseLocationId, buildings);
+    } else {
+        // this is not a full wall, could be a wall with 1-unit gap. 2-unit (blocked by pylon/battery)
+        // walls are computed
+
     }
     return {};
 }

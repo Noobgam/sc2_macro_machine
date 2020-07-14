@@ -179,6 +179,9 @@ bool Util::canWalkOverUnit(const UnitType& type) {
     switch (typeId) {
         case sc2::UNIT_TYPEID::UNBUILDABLEPLATESUNIT:                     return true;
         case sc2::UNIT_TYPEID::UNBUILDABLEPLATESSMALLUNIT:                return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSUNIT:                     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSSMALLUNIT:                return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEBRICKSDESTRUCTIBLE:     return true;
         case sc2::UNIT_TYPEID::UNBUILDABLEROCKSDESTRUCTIBLE:              return true;
         case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEPLATESDESTRUCTIBLE:     return true;
         case sc2::UNIT_TYPEID::NEUTRAL_KARAKFEMALE:                       return true;

@@ -25,8 +25,8 @@ enum class GapType {
 };
 
 struct WallPlacement {
-    // because wall orientation and placement depends on start location id
-    int startBaseLocationId;
+    int startLocationId;
+    int baseLocationId;
     WallType wallType;
 
     // {{lx, ly}, type} - position of a left-bottom most tile, and building size
@@ -39,13 +39,14 @@ struct WallPlacement {
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version) {
-        ar & wallType & buildings & gaps;
+        ar & startLocationId & baseLocationId & wallType & buildings & gaps;
     }
 
     // needed for boost
     WallPlacement();
     WallPlacement(
-            int startBaseLocationId,
+            int startLocationId,
+            int baseLocationId,
             WallType wallType,
             std::vector<std::pair<std::pair<int,int>, BuildingType>> buildings,
             std::vector<std::pair<std::pair<int,int>, GapType>>      gaps
@@ -64,7 +65,11 @@ struct WallPlacement {
     );
 
 
-    static WallPlacement fullWall(int startLocationId, std::vector<std::pair<std::pair<int,int>, BuildingType>>);
+    static WallPlacement fullWall(
+            int startLocationId,
+            int baseLocationId,
+            std::vector<std::pair<std::pair<int,int>, BuildingType>>
+    );
 };
 
 

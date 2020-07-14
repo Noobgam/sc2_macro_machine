@@ -203,5 +203,5 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 }
 
 bool CCBot::NeedWall() const {
-    return false;
+    return true;
 }

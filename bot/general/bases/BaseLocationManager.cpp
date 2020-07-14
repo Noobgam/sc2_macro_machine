@@ -65,6 +65,12 @@ void BaseLocationManager::onStart() {
 
     // add the base locations if there are more than 4 resouces in the cluster
     int baseID = 0;
+    sort(resourceClusters.begin(), resourceClusters.end(), [](const auto& lhs, const auto& rhs) {
+       auto&& lpos = Util::CalcCenter(lhs);
+       auto&& rpos = Util::CalcCenter(rhs);
+       if (lpos.x != rpos.x) return lpos.x < rpos.x;
+       return lpos.y < rpos.y;
+    });
     for (auto & cluster : resourceClusters) {
         if (cluster.size() > 4) {
             m_baseLocationData.emplace_back(m_bot, baseID++, cluster);

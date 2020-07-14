@@ -15,11 +15,13 @@ using std::vector;
 WallPlacement::WallPlacement() {}
 
 WallPlacement::WallPlacement(
-        int startBaseLocationId,
+        int baseLocationId,
+        int startLocationId,
         WallType wallType,
         std::vector<std::pair<std::pair<int,int>, BuildingType>> buildings,
         std::vector<std::pair<std::pair<int,int>, GapType>>      gaps
-) : startBaseLocationId(startBaseLocationId)
+) : baseLocationId(baseLocationId)
+  , startLocationId(startLocationId)
   , wallType(wallType)
   , buildings(buildings)
   , gaps(gaps)
@@ -27,9 +29,10 @@ WallPlacement::WallPlacement(
 
 WallPlacement WallPlacement::fullWall(
         int startLocationId,
+        int baseLocationId,
         std::vector<std::pair<std::pair<int,int>, BuildingType>> buildings
 ) {
-    return WallPlacement{startLocationId, WallType::FullWall, buildings, {}};
+    return WallPlacement{startLocationId, baseLocationId, WallType::FullWall, buildings, {}};
 }
 
 struct cmp {

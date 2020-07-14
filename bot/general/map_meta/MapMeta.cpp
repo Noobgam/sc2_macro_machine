@@ -18,14 +18,18 @@ MapMeta::MapMeta(const CCBot &bot)
             myStart,
             enemyStart
     );
-    wallPlacements[myStart][myStart] = std::move(vwp);
+    for (auto& x : vwp) {
+        wallPlacements.push_back(x);
+    }
     vwp = WallPlacement::getWallsForBaseLocation(
             bot,
             enemyStart,
             enemyStart,
             myStart
     );
-    wallPlacements[enemyStart][enemyStart] = std::move(vwp);
+    for (auto& x : vwp) {
+        wallPlacements.push_back(x);
+    }
 }
 
 std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
@@ -50,6 +54,12 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
 
 MapMeta::MapMeta() {}
 
-const std::vector<WallPlacement> &MapMeta::getWallPlacements(int startLocationId, int baseLocationId) const {
-    return wallPlacements.at(startLocationId).at(baseLocationId);
+std::vector<WallPlacement> MapMeta::getWallPlacements(int startLocationId, int baseLocationId) const {
+    std::vector<WallPlacement> walls;
+    for (auto& x : wallPlacements) {
+        if (x.startLocationId == startLocationId && x.baseLocationId == baseLocationId) {
+            walls.push_back(x);
+        }
+    }
+    return walls;
 }
