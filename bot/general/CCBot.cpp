@@ -211,6 +211,5 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 }
 
 bool CCBot::NeedWall() const {
-    // TODO: return true if wall is actually needed
-    return true;
+    return false;
 }
