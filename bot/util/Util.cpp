@@ -89,19 +89,19 @@ UnitType Util::GetRefinery(const CCRace & race, CCBot & bot)
 #endif
 }
 
-CCPosition Util::CalcCenter(const std::vector<const Unit*> & units) {
-    if (units.empty()) {
+CCPosition Util::CalcCenter(const std::vector<const Resource*> & minerals) {
+    if (minerals.empty()) {
         return CCPosition(0, 0);
     }
 
     CCPositionType cx = 0;
     CCPositionType cy = 0;
-    for (auto & unit : units) {
+    for (auto & unit : minerals) {
         cx += unit->getPosition().x;
         cy += unit->getPosition().y;
     }
 
-    return CCPosition(cx / units.size(), cy / units.size());
+    return CCPosition(cx / minerals.size(), cy / minerals.size());
 }
 
 bool Util::IsZerg(const CCRace & race) {

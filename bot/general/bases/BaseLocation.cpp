@@ -4,7 +4,9 @@
 #include <sstream>
 #include <iostream>
 
-BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit*> & resources)
+const int NearBaseLocationTileDistance = 20;
+
+BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Resource*> & resources)
     : m_bot(bot)
     , m_baseID               (baseID)
     , m_isStartLocation      (false)
@@ -23,16 +25,14 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit
 
     // add each of the resources to its corresponding container
      for (auto & resource : resources) {
-        if (resource->getType().isMineral()) {
+        if (resource->getResourceType() == ResourceType::MINERAL) {
             m_minerals.push_back(resource);
-            m_mineralPositions.push_back(resource->getPosition());
 
             // add the position of the minerals to the center
             resourceCenterX += resource->getPosition().x;
             resourceCenterY += resource->getPosition().y;
-        } else if (resource->getType().isGeyser()) {
+        } else if (resource->getResourceType() == ResourceType::GEYSER) {
             m_geysers.push_back(resource);
-            m_geyserPositions.push_back(resource->getPosition());
 
             // pull the resource center toward the geyser if it exists
             resourceCenterX += resource->getPosition().x;
@@ -44,6 +44,7 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit
         // set the limits of the base location bounding box
         CCPositionType resWidth = Util::TileToPosition(1);
         CCPositionType resHeight = Util::TileToPosition(0.5);
+
 
         m_left   = std::min(m_left,   resource->getPosition().x - resWidth);
         m_right  = std::max(m_right,  resource->getPosition().x + resWidth);
@@ -59,15 +60,18 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Unit
     // calculate the depot position
     UnitType depot = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot);
 
-    // this doesnt work for starting location, probably we need to pass existing nexus into this method
 
     // the position of the depot will be the closest spot we can build one from the resource center
-    for (auto & tile : m_distanceMap.getSortedTiles()) {
-        // nexus is 5x5 so build position is the middle of the tile
-        CCPosition buildPos(tile.x + .5, tile.y + .5);
-        if (m_bot.Map().canBuildTypeAtPosition(buildPos.x, buildPos.y, depot)) {
-            m_depotActualPosition = buildPos;
-            break;
+    if (containsPosition(m_bot.Observation()->GetStartLocation())) {
+        m_depotActualPosition = m_bot.Observation()->GetStartLocation();
+    } else {
+        for (auto & tile : m_distanceMap.getSortedTiles()) {
+            // nexus is 5x5 so build position is the middle of the tile
+            CCPosition buildPos(tile.x + .5, tile.y + .5);
+            if (m_bot.Map().canBuildTypeAtPosition(buildPos.x, buildPos.y, depot)) {
+                m_depotActualPosition = buildPos;
+                break;
+            }
         }
     }
 
@@ -106,30 +110,22 @@ bool BaseLocation::isExplored() const {
     return m_bot.Map().isExplored(m_centerOfResources);
 }
 
-int BaseLocation::getBaseId() const {
-    return m_baseID;
-}
-
 bool BaseLocation::isPlayerStartLocation(CCPlayer player) const {
     return m_isPlayerStartLocation.at(player);
 }
 
-bool BaseLocation::containsPosition(const CCPosition & pos, int distance) const {
+bool BaseLocation::containsPosition(const CCPosition & pos) const {
     if (!m_bot.Map().isValidPosition(pos) || (pos.x == 0 && pos.y == 0)) {
         return false;
     }
-    int dist = getGroundDistance(pos);
-    if (dist == -1) {
-        return false;
-    }
-    return dist < distance;
+    return getGroundDistance(pos) < NearBaseLocationTileDistance;
 }
 
-const std::vector<const Unit*> & BaseLocation::getGeysers() const {
+const std::vector<const Resource*> & BaseLocation::getGeysers() const {
     return m_geysers;
 }
 
-const std::vector<const Unit*> & BaseLocation::getMinerals() const {
+const std::vector<const Resource*> & BaseLocation::getMinerals() const {
     return m_minerals;
 }
 
@@ -154,8 +150,8 @@ void BaseLocation::draw() {
     std::stringstream ss;
     ss << "BaseLocation: " << m_baseID << "\n";
     ss << "Start Loc:    " << (m_isStartLocation ? "true" : "false") << "\n";
-    ss << "Minerals:     " << m_mineralPositions.size() << "\n";
-    ss << "Geysers:      " << m_geyserPositions.size() << "\n";
+    ss << "Minerals:     " << m_minerals.size() << "\n";
+    ss << "Geysers:      " << m_geysers.size() << "\n";
     ss << "Occupied By:  ";
 
     if (isOccupiedByPlayer(Players::Self)) {
@@ -180,12 +176,14 @@ void BaseLocation::draw() {
         //m_bot.Map().drawLine(m_left, y, m_right, y, CCColor(160, 160, 160));
     }
 
-    for (auto & mineralPos : m_mineralPositions) {
-        m_bot.Map().drawCircle(mineralPos, radius, CCColor(0, 128, 128));
+    for (auto & mineral : m_minerals) {
+        m_bot.Map().drawCircle(mineral->getPosition(), radius, CCColor(0, 128, 128));
+        m_bot.Map().drawText(mineral->getPosition(), std::to_string(mineral->getID()));
     }
 
-    for (auto & geyserPos : m_geyserPositions) {
-        m_bot.Map().drawCircle(geyserPos, radius, CCColor(0, 255, 0));
+    for (auto & geyser : m_geysers) {
+        m_bot.Map().drawCircle(geyser->getPosition(), radius, CCColor(0, 255, 0));
+        m_bot.Map().drawText(geyser->getPosition(), std::to_string(geyser->getID()));
     }
 
     m_bot.Map().drawGroundCircle(m_depotActualPosition, radius, CCColor(255, 0, 0));
@@ -198,4 +196,12 @@ void BaseLocation::draw() {
 
 bool BaseLocation::isMineralOnly() const {
     return getGeysers().empty();
+}
+
+void BaseLocation::resourceExpiredCallback(const Resource *resource) {
+    if (resource->getResourceType() == ResourceType::MINERAL) {
+        m_minerals.erase(std::find(m_minerals.begin(), m_minerals.end(), resource));
+    } else {
+        m_geysers.erase(std::find(m_geysers.begin(), m_geysers.end(), resource));
+    }
 }

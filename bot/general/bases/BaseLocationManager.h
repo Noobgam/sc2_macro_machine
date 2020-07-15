@@ -21,12 +21,13 @@ public:
 
     void onStart();
     void onFrame();
-    void drawBaseLocations();
+
+    void resourceExpiredCallback(const Resource* resource);
 
     const std::vector<const BaseLocation *> & getBaseLocations() const;
     const std::set<const BaseLocation *> & getOccupiedBaseLocations(int player) const;
     const BaseLocation* getPlayerStartLocation(CCPlayer player) const;
 
     CCPosition getNextExpansion(int player) const;
-
+    void drawBaseLocations();
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <general/managers/resources/ResourceManager.h>
 #include "workers/WorkerManager.h"
 #include "squads/SquadManager.h"
 #include "buildings/BuildingManager.h"
@@ -12,6 +13,7 @@ private:
     WorkerManager   m_workerManager;
     SquadManager    m_squadManager;
     BuildingManager m_buildingManager;
+    ResourceManager m_resourceManager;
 public:
     explicit Managers(CCBot & bot);
 
@@ -21,4 +23,10 @@ public:
     WorkerManager & getWorkerManager();
     SquadManager & getSquadManager();
     BuildingManager & getBuildingManager();
+    ResourceManager & getResourceManager();
+
+    const WorkerManager & getWorkerManager() const;
+    const SquadManager & getSquadManager() const;
+    const BuildingManager & getBuildingManager() const;
+    const ResourceManager & getResourceManager() const;
 };

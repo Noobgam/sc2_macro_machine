@@ -117,6 +117,10 @@ const MapTools & CCBot::Map() const {
     return m_map;
 }
 
+BaseLocationManager & CCBot::Bases() {
+    return m_bases;
+}
+
 const BaseLocationManager & CCBot::Bases() const {
     return m_bases;
 }
@@ -130,6 +134,10 @@ GameCommander &CCBot::Commander() {
 }
 
 Managers &CCBot::getManagers() {
+    return m_managers;
+}
+
+const Managers &CCBot::getManagers() const {
     return m_managers;
 }
 
