@@ -37,6 +37,11 @@ private:
     bool done;
 
     void dfsTo(int v);
+
+    void blindDfs(int v);
+
+    // check whether source and result are connected after removal of v
+    bool checkConnected(int v, int source, int result);
 };
 
 

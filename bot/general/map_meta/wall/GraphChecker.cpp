@@ -68,7 +68,7 @@ GraphCheckResult GraphChecker::getResult(int sx, int sy, int tx, int ty) {
 
     // select only ones on a path from s to t, all bridges and all articulation points
     //  MUST be on that path. Otherwise they aren't bridges/articulation points.
-    visited.assign(vertexCount, false);
+    visited.assign(vertexCount + 1, false);
     t = result;
     done = false;
     dfsTo(source);
@@ -76,8 +76,15 @@ GraphCheckResult GraphChecker::getResult(int sx, int sy, int tx, int ty) {
 
     GraphCheckResult res;
 
+    std::vector<int> arts;
     for (auto x : pts) {
         if (cutpoints.count(x)) {
+            arts.push_back(x);
+        }
+    }
+
+    for (auto x : arts) {
+        if (!checkConnected(x, source, result)) {
             res.articulationPoints.push_back(revVertices[x]);
         }
     }
@@ -130,12 +137,13 @@ void GraphChecker::dfs(int v, int p) {
 }
 
 void GraphChecker::dfsTo(int v) {
+    auto&& curv = revVertices[v];
     visited[v] = true;
+    pts.push_back(v);
     if (v == t) {
         done = true;
         return;
     }
-    pts.push_back(v);
     for (auto& lr : edges[v]) {
         if (visited[lr.first]) {
             continue;
@@ -146,4 +154,22 @@ void GraphChecker::dfsTo(int v) {
         edgeIds.pop_back();
     }
     pts.pop_back();
+}
+
+bool GraphChecker::checkConnected(int v, int source, int result) {
+
+    visited.assign(vertexCount + 1, false);
+    visited[v] = true;
+    blindDfs(source);
+    return visited[result];
+}
+
+void GraphChecker::blindDfs(int v) {
+    visited[v] = true;
+    for (auto& lr : edges[v]) {
+        if (visited[lr.first]) {
+            continue;
+        }
+        blindDfs(lr.first);
+    }
 }
