@@ -78,6 +78,10 @@ BaseLocationManager & CCBot::Bases() {
     return m_bases;
 }
 
+const BaseLocationManager & CCBot::Bases() const {
+    return m_bases;
+}
+
 const UnitInfoManager & CCBot::UnitInfo() const {
     return m_unitInfo;
 }
@@ -87,6 +91,10 @@ GameCommander &CCBot::Commander() {
 }
 
 Managers &CCBot::getManagers() {
+    return m_managers;
+}
+
+const Managers &CCBot::getManagers() const {
     return m_managers;
 }
 

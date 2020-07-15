@@ -28,5 +28,9 @@ public:
     ResourceManager & getResourceManager();
     EconomyManager & getEconomyManager();
 
+    const WorkerManager & getWorkerManager() const;
+    const SquadManager & getSquadManager() const;
+    const BuildingManager & getBuildingManager() const;
+    const ResourceManager & getResourceManager() const;
     const EconomyManager & getEconomyManager() const;
 };

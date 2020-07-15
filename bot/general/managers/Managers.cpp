@@ -14,7 +14,15 @@ Managers::Managers(CCBot & bot) :
     return m_workerManager;
 }
 
+const WorkerManager &Managers::getWorkerManager() const {
+    return m_workerManager;
+}
+
 SquadManager &Managers::getSquadManager() {
+    return m_squadManager;
+}
+
+const SquadManager &Managers::getSquadManager() const {
     return m_squadManager;
 }
 
@@ -22,7 +30,15 @@ BuildingManager &Managers::getBuildingManager() {
     return m_buildingManager;
 }
 
+const BuildingManager &Managers::getBuildingManager() const {
+    return m_buildingManager;
+}
+
 ResourceManager &Managers::getResourceManager() {
+    return m_resourceManager;
+}
+
+const ResourceManager &Managers::getResourceManager() const {
     return m_resourceManager;
 }
 

@@ -34,10 +34,12 @@ public:
     size_t getObservationId() const;
 
           BaseLocationManager & Bases();
+    const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
           Managers & getManagers();
+    const Managers & getManagers() const;
 
     const TypeData & Data(const UnitType & type) const;
     const TypeData & Data(const CCUpgrade & type) const;

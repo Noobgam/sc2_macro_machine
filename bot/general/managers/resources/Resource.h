@@ -13,14 +13,14 @@ enum ResourceType {
 
 class Resource {
 private:
-    mutable CCBot * m_bot;
+    const CCBot & m_bot;
     const Unit * m_unit;
     MineralID m_id;
     ResourceType m_type;
 
     size_t m_lastUpdate = 0;
 public:
-    Resource(CCBot & bot, const Unit * unit, MineralID id);
+    Resource(const CCBot & bot, const Unit * unit, MineralID id);
     void updateUnit(const Unit * unit);
 
     MineralID getID() const;
