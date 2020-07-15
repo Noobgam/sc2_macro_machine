@@ -33,7 +33,9 @@ void CCBot::OnGameStart() {
     if (m_wallPlacements.size() != 0) {
         chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
         for (auto x : chosenPlacement->gaps) {
-            m_wallCandidates.push_back({x.first.first, x.first.second});
+            if (x.second == GapType::TwoByTwo) {
+                m_wallCandidates.push_back({x.first.first, x.first.second});
+            }
         }
     } else {
 //        m_wallCandidates = WallPlacement::getTileCandidates(*this,
@@ -83,7 +85,7 @@ void CCBot::OnStep() {
         }
 
         for (auto x : m_wallCandidates) {
-            Map().drawTile(x.x, x.y, CCColor(0, 230, 0));
+            Map().drawBox(CCPosition{x.x + 0.f, x.y + .0f}, CCPosition{x.x + 2.0f, x.y + 2.0f}, CCColor(150, 150, 0));
         }
     } else {
         for (auto x : m_wallCandidates) {

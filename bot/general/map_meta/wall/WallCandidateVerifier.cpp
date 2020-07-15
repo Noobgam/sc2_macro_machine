@@ -65,6 +65,7 @@ bool WallCandidateVerifier::verifyPlacement(
                 for (int j = -7; j <= 7; ++j) {
                     float xi = x - i + .5;
                     float yj = y - j + .5;
+                    if (!m_bot.Map().isBuildable(x - i, y - j)) continue;
                     const int SIZE = 9;
                     // 9 =
                     //   6.5 + 1.5 (half a gateway) + 1 (a single unit gap to allow walls with 1 empty tile)
@@ -100,7 +101,7 @@ bool WallCandidateVerifier::verifyPlacement(
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
         auto & tile = m_sortedTiles[fringeIndex];
-        if (myBase->containsPosition({tile.x + .5f, tile.y + .5f}, 1)) {
+        if (myBase->containsPosition({tile.x + .5f, tile.y + .5f}, 6)) {
             baseReachable = true;
             break;
         }

@@ -44,6 +44,8 @@ struct cmp {
     }
 };
 
+static std::set<std::pair<int,int>> pylons;
+
 void recursion(
         const CCBot& bot,
         const WallCandidateVerifier& verifier,
@@ -101,6 +103,7 @@ void recursion(
                         almostPoweredCandidates.erase(CCTilePosition{x + i, y + j});
                     }
                 }
+                size_t tmp = container.size();
                 recursion(
                         bot,
                         verifier,
@@ -109,6 +112,10 @@ void recursion(
                         buildings,
                         container
                 );
+                size_t tmp2 = container.size();
+                if (tmp2 != tmp) {
+                    pylons.insert({x, y});
+                }
                 break;
             } case BuildingType::ThreeByThree: {
                 bool badPlacement = false;
@@ -271,6 +278,20 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
             placements.push_back(placementO.value());
         }
     }
+    std::set <std::pair<int,int>> ss;
+    for (auto& x : placements) {
+        ss.insert(x.buildings[0].first);
+    }
+    for (auto& x : placements) {
+        for (auto y : pylons) {
+            if (ss.count(y) == 0) {
+                x.gaps.push_back({y, GapType::TwoByTwo});
+            }
+        }
+    }
+    LOG_DEBUG << "Found " << ss.size() << " good pylons" << endl;
+    LOG_DEBUG << "Found " << pylons.size() - ss.size() << " bad pylons" << endl;
+
     LOG_DEBUG << "Found " << placements.size() << " valid wall layouts" << endl;
     return placements;
 }

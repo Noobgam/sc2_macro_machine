@@ -4,8 +4,6 @@
 #include <sstream>
 #include <iostream>
 
-const int NearBaseLocationTileDistance = 20;
-
 BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Resource*> & resources)
     : m_bot(bot)
     , m_baseID               (baseID)
@@ -114,11 +112,11 @@ bool BaseLocation::isPlayerStartLocation(CCPlayer player) const {
     return m_isPlayerStartLocation.at(player);
 }
 
-bool BaseLocation::containsPosition(const CCPosition & pos) const {
+bool BaseLocation::containsPosition(const CCPosition & pos, int distance) const {
     if (!m_bot.Map().isValidPosition(pos) || (pos.x == 0 && pos.y == 0)) {
         return false;
     }
-    return getGroundDistance(pos) < NearBaseLocationTileDistance;
+    return getGroundDistance(pos) < distance;
 }
 
 const std::vector<const Resource*> & BaseLocation::getGeysers() const {
@@ -204,4 +202,8 @@ void BaseLocation::resourceExpiredCallback(const Resource *resource) {
     } else {
         m_geysers.erase(std::find(m_geysers.begin(), m_geysers.end(), resource));
     }
+}
+
+int BaseLocation::getBaseId() const {
+    return this->m_baseID;
 }
