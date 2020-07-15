@@ -60,6 +60,9 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     if (b.isRefinery()) {
         return getRefineryPosition();
     }
+    if (b.is(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+        return m_bot.Bases().getNextExpansion(Players::Self);
+    }
     double bestHeuristic = std::numeric_limits<double>::min();
     std::optional<CCPosition> bestPosO;
     auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);

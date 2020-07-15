@@ -6,7 +6,7 @@
 
 const int NearBaseLocationTileDistance = 20;
 
-BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Resource*> & resources)
+BaseLocation::BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources)
     : m_bot(bot)
     , m_baseID               (baseID)
     , m_isStartLocation      (false)
@@ -19,6 +19,8 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const Reso
     m_isPlayerStartLocation[Players::Enemy] = false;
     m_isPlayerOccupying[Players::Self] = false;
     m_isPlayerOccupying[Players::Enemy] = false;
+    m_playerHasDepot[Players::Self] = false;
+    m_playerHasDepot[Players::Enemy] = false;
 
     CCPositionType resourceCenterX = 0;
     CCPositionType resourceCenterY = 0;
@@ -91,6 +93,10 @@ void BaseLocation::setStartLocation(CCPlayer player) {
     m_isStartLocation = true;
 }
 
+void BaseLocation::setPlayerHasDepot(CCPlayer player, bool hasDepot) {
+    m_playerHasDepot[player] = hasDepot;
+}
+
 void BaseLocation::setPlayerOccupying(CCPlayer player, bool occupying) {
     m_isPlayerOccupying[player] = occupying;
 }
@@ -104,6 +110,10 @@ bool BaseLocation::isInResourceBox(int tileX, int tileY) const {
 
 bool BaseLocation::isOccupiedByPlayer(CCPlayer player) const {
     return m_isPlayerOccupying.at(player);
+}
+
+bool BaseLocation::hasPlayerDepot(CCPlayer player) const {
+    return m_playerHasDepot.at(player);
 }
 
 bool BaseLocation::isExplored() const {
@@ -141,7 +151,7 @@ int BaseLocation::getGroundDistance(const CCTilePosition & pos) const {
     return m_distanceMap.getDistance(pos);
 }
 
-void BaseLocation::draw() {
+void BaseLocation::draw() const {
 #ifdef _DEBUG
     CCPositionType radius = Util::TileToPosition(1.0f);
 
@@ -204,4 +214,8 @@ void BaseLocation::resourceExpiredCallback(const Resource *resource) {
     } else {
         m_geysers.erase(std::find(m_geysers.begin(), m_geysers.end(), resource));
     }
+}
+
+BaseLocationID BaseLocation::getID() const {
+    return m_baseID;
 }

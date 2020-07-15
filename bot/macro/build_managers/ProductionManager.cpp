@@ -29,7 +29,7 @@ std::optional<BuildOrderItem> ProductionManager::getTopPriority() {
     if (income.first < production.first || income.second < production.second) {
         return {};
     }
-    BuildOrderItem defaultGatePriority{ { gatewayType, m_bot }, 5, false };
+    BuildOrderItem defaultGatePriority{ { gatewayType, m_bot }, 5 - gateWayCount, false };
     if (potentialAdeptCount == 0) {
         return defaultGatePriority;
     }

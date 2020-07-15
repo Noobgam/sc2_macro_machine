@@ -9,13 +9,22 @@ EconomyBuildManager::EconomyBuildManager(CCBot& bot)
 { }
 
 std::optional<BuildOrderItem> EconomyBuildManager::getTopPriority() {
+    std::vector<BuildOrderItem> items;
     auto workerBuildItem = m_worker_manager.getTopPriority();
-    auto gasBuildItem = m_gas_manager.getTopPriority();
-    if (gasBuildItem.has_value()) {
-        if (workerBuildItem.has_value() && gasBuildItem.value() < workerBuildItem.value()) {
-            return workerBuildItem;
-        }
-        return gasBuildItem;
+    if (workerBuildItem.has_value()){
+        items.emplace_back(workerBuildItem.value());
     }
-    return workerBuildItem;
+    auto gasBuildItem = m_gas_manager.getTopPriority();
+    if (gasBuildItem.has_value()){
+        items.emplace_back(gasBuildItem.value());
+    }
+    auto expandBuildItem = m_expand_manager.getTopPriority();
+    if (expandBuildItem.has_value()){
+        items.emplace_back(expandBuildItem.value());
+    }
+    auto item_ptr = std::max_element(items.begin(), items.end());
+    if (item_ptr == items.end()) {
+        return {};
+    }
+    return *item_ptr;
 }
