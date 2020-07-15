@@ -11,7 +11,9 @@ struct GraphChecker {
 private:
     int& getVertex(int x1, int y1);
 
-    std::map<int, std::vector<std::pair<int, int>>> edges;
+    std::vector<std::pair<std::pair<int,int>, std::pair<int,int>>> initialEdges;
+
+    std::vector<std::vector<std::pair<int, int>>> edges;
     std::map<int, std::map<int, int>> vertices;
 
     std::map<int, std::pair<int,int>> revEdges;

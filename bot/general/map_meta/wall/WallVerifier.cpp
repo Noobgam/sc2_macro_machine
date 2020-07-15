@@ -102,16 +102,9 @@ WallVerifier::verifyPlacement(
             int dy = actionY[a];
             CCTilePosition nextTile(tile.x + dx, tile.y + dy);
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
-            if (m_bot.Map().isWalkable(nextTile) && m_dist[(int)nextTile.x][(int)nextTile.y] == -1)
-            {
-                if (blockedByWall.count(nextTile)) continue;
-                if (abs(dx + dy) % 2 == 0) {
-                    // diagonal edges are counted once, straight edges are counted twice.
-                    checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
-                } else {
-                    checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
-                    checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
-                }
+            if (m_bot.Map().isWalkable(nextTile) && !blockedByWall.count(nextTile)) {
+                checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
+                if (m_dist[(int)nextTile.x][(int)nextTile.y] != -1) continue;
                 m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
                 m_sortedTiles.push_back(nextTile);
             }
@@ -145,4 +138,5 @@ WallVerifier::verifyPlacement(
         result.buildings = buildings;
         return result;
     }
+    return {};
 }

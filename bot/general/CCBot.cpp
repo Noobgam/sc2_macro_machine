@@ -32,11 +32,14 @@ void CCBot::OnGameStart() {
     srand(time(NULL));
     if (m_wallPlacements.size() != 0) {
         chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
+        for (auto x : chosenPlacement->gaps) {
+            m_wallCandidates.push_back({x.first.first, x.first.second});
+        }
     } else {
-        m_wallCandidates = WallPlacement::getTileCandidates(*this,
-                myBaseId,
-                enemyBaseId
-                );
+//        m_wallCandidates = WallPlacement::getTileCandidates(*this,
+//                myBaseId,
+//                enemyBaseId
+//                );
     }
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
 }
@@ -77,6 +80,10 @@ void CCBot::OnStep() {
                     Map().drawTile(i + x.first.first, j + x.first.second);
                 }
             }
+        }
+
+        for (auto x : m_wallCandidates) {
+            Map().drawTile(x.x, x.y, CCColor(0, 230, 0));
         }
     } else {
         for (auto x : m_wallCandidates) {
