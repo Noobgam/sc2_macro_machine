@@ -1,12 +1,12 @@
 #include "Resource.h"
 #include "general/CCBot.h"
 
-Resource::Resource(CCBot &bot, const Unit *unit, MineralID id):
+Resource::Resource(const CCBot &bot, const Unit *unit, MineralID id):
     m_unit(unit),
-    m_bot(&bot),
+    m_bot(bot),
     m_id(id)
 {
-    m_lastUpdate = m_bot->getObservationId();
+    m_lastUpdate = m_bot.getObservationId();
     if (unit->getType().isMineral()) {
         m_type = ResourceType::MINERAL;
     } else if (unit->getType().isGeyser()) {
@@ -18,7 +18,7 @@ Resource::Resource(CCBot &bot, const Unit *unit, MineralID id):
 
 void Resource::updateUnit(const Unit *unit) {
     m_unit = unit;
-    m_lastUpdate = m_bot->getObservationId();
+    m_lastUpdate = m_bot.getObservationId();
 }
 
 MineralID Resource::getID() const {
