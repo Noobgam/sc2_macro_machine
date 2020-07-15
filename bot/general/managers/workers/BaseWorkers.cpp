@@ -51,11 +51,14 @@ int BaseWorkers::getMaximumVespeneWorkers() const {
     return 0;
 }
 
-float BaseWorkers::getMineralIncome() const {
-    return 0;
+double BaseWorkers::getMineralIncome() const {
+    int workers = getActiveMineralWorkersNumber();
+    int bestWorkers = std::min(workers, getIdealMineralWorkersNumber());
+    int thirdWorkers = std::min(workers, getMaximumMineralWorkersNumber()) - bestWorkers;
+    return (bestWorkers * 40 + thirdWorkers * 22.0) / 60;
 }
 
-float BaseWorkers::getVespeneIncome() const {
+double BaseWorkers::getVespeneIncome() const {
     return 0;
 }
 

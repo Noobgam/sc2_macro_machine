@@ -4,7 +4,8 @@
 class CCBot;
 
 class SupplyBuildManager : public BuildManager {
-	int getExpectedExtraSupply();
+	int getExpectedExtraSupply() const;
+	int getExpectedConsumedSupply() const;
 public:
 	explicit SupplyBuildManager(CCBot& bot);
 	std::optional<BuildOrderItem> getTopPriority() override;

@@ -31,6 +31,8 @@ public:
     void onStart();
     void onFrame();
 
+    const std::vector<BaseWorkers*>&  getBaseWorkers() const;
+
     // Gives a new build task to a worker.
     void build(UnitType type, CCPosition position);
 
