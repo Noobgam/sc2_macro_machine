@@ -45,9 +45,6 @@ void UnitInfoManager::updateUnits() {
     }
 
     // callback missingUnits before destruction
-    if (missingUnits.size() > 0) {
-        std::cerr << missingUnits.size() << " < " << std::endl;
-    }
     for (auto & unit : missingUnits) {
         processRemoveUnit(unit.get());
     }
@@ -65,6 +62,7 @@ void UnitInfoManager::updateUnits() {
 
 void UnitInfoManager::processNewUnit(const Unit* unit) {
     updateSquadsWithNewUnit(unit);
+    m_bot.getManagers().getResourceManager().newUnitCallback(unit);
     m_bot.getManagers().getBuildingManager().newUnitCallback(unit);
 }
 
@@ -76,7 +74,8 @@ void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
 
 void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     updateSquadsWithRemovedUnit(unit);
-    m_bot.getManagers().getBuildingManager().unitDiedCallback(unit);
+    m_bot.getManagers().getResourceManager().unitDisappearedCallback(unit);
+    m_bot.getManagers().getBuildingManager().unitDisappearedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {

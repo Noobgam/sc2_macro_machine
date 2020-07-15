@@ -15,18 +15,11 @@ void BaseLocationManager::onStart() {
     const CCPositionType clusterDistance = Util::TileToPosition(12);
 
     // stores each cluster of resources based on some ground distance
-    std::vector<std::vector<const Unit*>> resourceClusters;
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Neutral)) {
-        // skip minerals that don't have more than 100 starting minerals
-        // these are probably stupid map-blocking minerals to confuse us
-        if (!unit->getType().isMineral()) {
-            continue;
-        }
-
-        const Unit* mineral = unit;
+    std::vector<std::vector<const Resource*>> resourceClusters;
+    for (const auto& mineral : m_bot.getManagers().getResourceManager().getMinerals()) {
         bool foundCluster = false;
         for (auto & cluster : resourceClusters) {
-            float dist = Util::Dist(mineral, Util::CalcCenter(cluster));
+            float dist = Util::Dist(mineral->getPosition(), Util::CalcCenter(cluster));
 
             // quick initial air distance check to eliminate most resources
             if (dist < clusterDistance) {
@@ -47,15 +40,10 @@ void BaseLocationManager::onStart() {
     }
 
     // add geysers only to existing resource clusters
-    for (auto & unit : m_bot.UnitInfo().getUnits(Players::Neutral)) {
-        if (!unit->getType().isGeyser()) {
-            continue;
-        }
-
-        const Unit* geyser = unit;
+    for (const auto& geyser : m_bot.getManagers().getResourceManager().getGeysers()) {
         for (auto & cluster : resourceClusters) {
             //int groundDist = m_bot.Map().getGroundDistance(geyser.pos, Util::CalcCenter(cluster));
-            float groundDist = Util::Dist(geyser, Util::CalcCenter(cluster));
+            float groundDist = Util::Dist(geyser->getPosition(), Util::CalcCenter(cluster));
             if (groundDist >= 0 && groundDist < clusterDistance) {
                 cluster.push_back(geyser);
                 break;
@@ -215,4 +203,9 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
     }
 
     return closestBase ? closestBase->getDepotActualPosition() : CCPosition(0, 0);
+}
+
+void BaseLocationManager::resourceExpiredCallback(const Resource* resource) {
+    BaseLocation *baseLocation = getBaseLocation(resource->getPosition());
+    baseLocation->resourceExpiredCallback(resource);
 }

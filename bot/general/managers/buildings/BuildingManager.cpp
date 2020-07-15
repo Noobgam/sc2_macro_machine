@@ -52,7 +52,7 @@ void BuildingManager::newUnitCallback(const Unit *unit) {
     }
 }
 
-void BuildingManager::unitDiedCallback(const Unit *unit) {
+void BuildingManager::unitDisappearedCallback(const Unit *unit) {
     if (unit->getPlayer() != Players::Self) {
         return;
     }

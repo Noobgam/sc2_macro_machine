@@ -20,5 +20,5 @@ public:
     std::vector<BuildingTask*> getTasks();
 
     void newUnitCallback(const Unit* unit);
-    void unitDiedCallback(const Unit* unit);
+    void unitDisappearedCallback(const Unit* unit);
 };
