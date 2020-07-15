@@ -11,7 +11,10 @@ std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority() {
     if (freeNexuses == 0) {
         return {};
     }
-//    int totalWorkers = m_bot.Workers().getTotalWorkerCount();
+    int totalWorkers = m_bot.UnitInfo().getUnitTypeCount(Players::Self, probeType, false);
+    if (totalWorkers >= 38) {
+        return {};
+    }
 //    int priority = (10648 - totalWorkers * totalWorkers * totalWorkers) * 10 / 10648;
     int priority = 12;
     BuildOrderItem item{ MetaType(probeType, m_bot), priority, false };
