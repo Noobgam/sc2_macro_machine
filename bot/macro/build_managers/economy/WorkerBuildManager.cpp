@@ -12,7 +12,7 @@ std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority() {
         return {};
     }
     int totalWorkers = m_bot.UnitInfo().getUnitTypeCount(Players::Self, probeType, false);
-    if (totalWorkers >= 38) {
+    if (totalWorkers >= 32) {
         return {};
     }
 //    int priority = (10648 - totalWorkers * totalWorkers * totalWorkers) * 10 / 10648;
