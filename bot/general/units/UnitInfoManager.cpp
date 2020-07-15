@@ -23,6 +23,10 @@ void UnitInfoManager::updateUnits() {
     for (auto & unit : m_bot.Observation()->GetUnits()) {
         auto it = unitWrapperByTag.find(unit->tag);
         if (it == unitWrapperByTag.end()) {
+            if (unit->display_type == sc2::Unit::DisplayType::Placeholder) {
+                BOT_ASSERT(unit->tag == 0, "Placeholder has id not equal to 0");
+                continue;
+            }
             auto inserted = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, m_bot, observationId)});
             processNewUnit(inserted.first->second.get());
         } else {
@@ -36,7 +40,8 @@ void UnitInfoManager::updateUnits() {
         bool dead = !it->second->isAlive();
         bool needToDelete = notObserved || dead;
         if (needToDelete) {
-            std::cerr << "Unit is missing. [" << it->second->getType().getName() << "]" << std::endl;
+            auto& unit = it->second;
+            LOG_DEBUG << "Unit is missing. [" << it->second->getType().getName() << "]" <<  it->second.get()->getUnitPtr()->tag << " " << std::endl;
             missingUnits.push_back(std::move(it->second));
             it = unitWrapperByTag.erase(it);
         } else {
