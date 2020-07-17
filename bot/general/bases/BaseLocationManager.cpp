@@ -184,7 +184,6 @@ const BaseLocation *BaseLocationManager::getBaseLocation(BaseLocationID id) cons
     return it->second.get();
 }
 
-
 const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocations(int player) const {
     return m_occupiedBaseLocations.at(player);
 }

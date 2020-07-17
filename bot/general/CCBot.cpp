@@ -14,9 +14,9 @@ void CCBot::OnGameStart() {
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
 
     m_techTree.onStart();
-    m_map.onStart();
     m_unitInfo.onStart();
 
+    m_map.onStart();
     m_managers.onStart();
 
     m_gameCommander.onStart();
@@ -37,8 +37,8 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Starting onStep()" << std::endl;
     Control()->GetObservation();
     ++observationId;
-    m_map.onFrame();
     m_unitInfo.onFrame();
+    m_map.onFrame();
     m_bases.onFrame();
 
     m_managers.onFrame();

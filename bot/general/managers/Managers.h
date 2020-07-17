@@ -2,6 +2,7 @@
 
 #include <general/managers/resources/ResourceManager.h>
 #include <general/managers/economy/EconomyManager.h>
+#include <general/managers/base/BasesManager.h>
 #include "workers/WorkerManager.h"
 #include "squads/SquadManager.h"
 #include "buildings/BuildingManager.h"
@@ -16,6 +17,7 @@ private:
     BuildingManager m_buildingManager;
     ResourceManager m_resourceManager;
     EconomyManager  m_economyManager;
+    BasesManager    m_basesManager;
 public:
     explicit Managers(CCBot & bot);
 
@@ -27,10 +29,12 @@ public:
     BuildingManager & getBuildingManager();
     ResourceManager & getResourceManager();
     EconomyManager & getEconomyManager();
+    BasesManager & getBasesManager();
 
     const WorkerManager & getWorkerManager() const;
     const SquadManager & getSquadManager() const;
     const BuildingManager & getBuildingManager() const;
     const ResourceManager & getResourceManager() const;
     const EconomyManager & getEconomyManager() const;
+    const BasesManager & getBasesManager() const;
 };

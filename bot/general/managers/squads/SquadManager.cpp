@@ -9,6 +9,12 @@ SquadManager::SquadManager(CCBot & bot):
     m_squads.insert({unassignedSquadID, std::make_unique<Squad>(bot, unassignedSquadID)});
 }
 
+void SquadManager::onStart() {
+    for (const auto& unit : m_bot.UnitInfo().getUnits(Players::Self)) {
+        addUnitCallback(unit);
+    }
+}
+
 void SquadManager::onFrame() {
     for (auto & squad : m_squads) {
         if (squad.first != unassignedSquadID) {

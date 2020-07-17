@@ -18,6 +18,7 @@ public:
 
     explicit SquadManager(CCBot & bot);
 
+    void onStart();
     void onFrame();
 
     Squad* getUnassignedSquad() const;

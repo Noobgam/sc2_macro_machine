@@ -1,7 +1,7 @@
 #include "Resource.h"
 #include "general/CCBot.h"
 
-Resource::Resource(const CCBot &bot, const Unit *unit, MineralID id):
+Resource::Resource(const CCBot &bot, const Unit *unit, ResourceID id):
     m_unit(unit),
     m_bot(bot),
     m_id(id)
@@ -21,7 +21,7 @@ void Resource::updateUnit(const Unit *unit) {
     m_lastUpdate = m_bot.getObservationId();
 }
 
-MineralID Resource::getID() const {
+ResourceID Resource::getID() const {
     return m_id;
 }
 

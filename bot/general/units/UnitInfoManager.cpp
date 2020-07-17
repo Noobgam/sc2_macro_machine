@@ -11,7 +11,13 @@ UnitInfoManager::UnitInfoManager(CCBot & bot) : m_bot(bot) {
 }
 
 void UnitInfoManager::onStart() {
-    updateUnits();
+    // collect initial units
+    size_t observationId = m_bot.getObservationId();
+    for (auto & rawUnit : m_bot.Observation()->GetUnits()) {
+        const auto& it = unitWrapperByTag.insert({rawUnit->tag, std::make_unique<Unit>(rawUnit, m_bot, observationId)});
+        const auto& unit = it.first->second.get();
+        m_units.find(unit->getPlayer())->second.push_back(unit);
+    }
 }
 
 void UnitInfoManager::onFrame() {
@@ -28,7 +34,7 @@ void UnitInfoManager::updateUnits() {
                 continue;
             }
             auto inserted = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, m_bot, observationId)});
-            processNewUnit(inserted.first->second.get());
+              processNewUnit(inserted.first->second.get());
         } else {
             it->second->updateObservationId(observationId);
         }
@@ -69,6 +75,7 @@ void UnitInfoManager::processNewUnit(const Unit* unit) {
     updateSquadsWithNewUnit(unit);
     m_bot.getManagers().getResourceManager().newUnitCallback(unit);
     m_bot.getManagers().getBuildingManager().newUnitCallback(unit);
+    m_bot.getManagers().getBasesManager().newUnitCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
@@ -81,6 +88,7 @@ void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     updateSquadsWithRemovedUnit(unit);
     m_bot.getManagers().getResourceManager().unitDisappearedCallback(unit);
     m_bot.getManagers().getBuildingManager().unitDisappearedCallback(unit);
+    m_bot.getManagers().getBasesManager().unitDisappearedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {

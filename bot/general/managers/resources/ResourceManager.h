@@ -14,15 +14,15 @@ private:
     std::vector<const Resource*> m_mineralPtrs = {};
     std::vector<const Resource*> m_geysersPtrs = {};
 
-    MineralID m_currentResourceID = 0;
-
-    void onResourceExpired(const Resource* resource);
+    ResourceID m_currentResourceID = 0;
 public:
     explicit ResourceManager(CCBot & bot);
 
-    const std::vector<const Resource*>& getMinerals() const;
-    const std::vector<const Resource*>& getGeysers() const;
+    void onStart();
 
     void newUnitCallback(const Unit* unit);
     void unitDisappearedCallback(const Unit* unit);
+
+    const std::vector<const Resource*>& getMinerals() const;
+    const std::vector<const Resource*>& getGeysers() const;
 };

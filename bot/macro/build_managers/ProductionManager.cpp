@@ -39,5 +39,5 @@ std::optional<BuildOrderItem> ProductionManager::getTopPriority() {
     if (additionalGateCount <= 0) {
         return {};
     }
-    return BuildOrderItem({ gatewayType, m_bot }, 4 + additionalGateCount, false );
+    return BuildOrderItem({ gatewayType, m_bot }, 2 + additionalGateCount, false );
 }
