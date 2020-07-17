@@ -8,5 +8,7 @@ private:
 public:
     AttackOrder(CCBot & bot, Squad* squad, CCPosition position);
 
+    void onStart() override;
     void onStep() override;
+    void onUnitAdded(const Unit* unit) override;
 };

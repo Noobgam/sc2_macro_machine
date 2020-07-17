@@ -25,6 +25,10 @@ void WorkerManager::onFrame() {
     draw();
 }
 
+const std::vector<BaseWorkers *> & WorkerManager::getBaseWorkers() const {
+    return m_baseWorkersPtrs;
+}
+
 void WorkerManager::build(UnitType type, CCPosition position) {
     auto freeWorkers = getFreeWorkers();
     BOT_ASSERT(!freeWorkers.empty(), "No worker for task.");

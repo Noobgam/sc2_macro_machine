@@ -26,8 +26,8 @@ public:
     int getIdealVespeneWorkers() const;
     int getMaximumVespeneWorkers() const;
 
-    float getMineralIncome() const;
-    float getVespeneIncome() const;
+    double getMineralIncome() const;
+    double getVespeneIncome() const;
 
     void assignToMineral(const Unit* unit);
     void assignToVespene(const Unit* unit);
