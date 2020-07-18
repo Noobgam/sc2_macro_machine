@@ -63,7 +63,8 @@ struct WallPlacement {
             const StaticMapMeta& mapMeta,
             int baseLocationId,
             int startBaseLocationId,
-            int enemyStartBaseLocationId
+            int enemyStartBaseLocationId,
+            int threads = 8
     );
 
 

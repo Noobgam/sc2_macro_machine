@@ -11,6 +11,9 @@
 #include <csignal>
 #include <general/bases/BaseLocation.h>
 
+#include <future>
+#include <thread>
+
 using std::vector;
 
 WallPlacement::WallPlacement() {}
@@ -225,7 +228,8 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         const StaticMapMeta &mapMeta,
         int baseLocationId,
         int startBaseLocationId,
-        int enemyStartBaseLocationId
+        int enemyStartBaseLocationId,
+        int threads
 ) {
     auto&& bases = mapMeta.getBaseLocations();
     auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](auto& loc) {
@@ -261,22 +265,51 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
             buildings,
             container
     );
-    WallVerifier verifier{
-            mapMeta,
-            baseLocationId,
-            startBaseLocationId,
-            enemyStartBaseLocationId
+    std::atomic<int> stuffLeft = container.size();
+    int initial = container.size();
+    auto validateContainerPart = [&](int l, int r) {
+        int cnt = 0;
+        WallVerifier verifier{
+                mapMeta,
+                baseLocationId,
+                startBaseLocationId,
+                enemyStartBaseLocationId
+        };
+        std::vector<WallPlacement> placements;
+        for (int i = l; i < r; ++i) {
+            if (++cnt == 100) {
+                int localLeft = (stuffLeft -= cnt);
+                int done = (initial - localLeft);
+                LOG_DEBUG << "Done " << done << " of " << initial << endl;
+                cnt = 0;
+            }
+            auto&& placementO = verifier.verifyPlacement(container[i]);
+            if (placementO.has_value()) {
+                placements.push_back(placementO.value());
+            }
+        }
+        stuffLeft -= cnt;
+        cnt = 0;
+        return placements;
     };
     std::vector<WallPlacement> placements;
-    int debug_cnt = 0;
-    for (const auto& x : container) {
-        ++debug_cnt;
-        if (debug_cnt % 100 == 0) {
-            LOG_DEBUG << "Processed " << debug_cnt << " of " << container.size() << endl;
+    if (threads == 1) {
+        placements = validateContainerPart(0, container.size());
+    } else {
+        std::vector<std::future<std::vector<WallPlacement>>> futures;
+        for (int i = 0; i < threads; ++i) {
+            auto l = (i * container.size()) / threads;
+            auto r = ((i + 1) * container.size()) / threads;
+            futures.push_back(std::async(std::launch::async, (
+                    [&]() {
+                        return validateContainerPart(l, r);
+                    })
+                    )
+            );
         }
-        auto&& placementO = verifier.verifyPlacement(x);
-        if (placementO.has_value()) {
-            placements.push_back(placementO.value());
+        for (auto&& x : futures) {
+            auto&& vec = x.get();
+            placements.insert(placements.end(), vec.begin(), vec.end());
         }
     }
     std::set <std::pair<int,int>> ss;

@@ -93,8 +93,8 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
         }
     }
 
-    m_baseLocationProjections = calculateBaseLocations(bot);
     computeConnectivity();
+    m_baseLocationProjections = calculateBaseLocations(bot);
 }
 
 std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
@@ -117,6 +117,19 @@ std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
     }
 }
 
+std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(string mapName) {
+    string fileName = "data/static_map_metas/" + mapName;
+    if (!FileUtils::fileExists(fileName)) {
+        LOG_DEBUG << "Meta for map [" << fileName << "] was not calculated" << endl;
+        std::terminate();
+    }
+    std::unique_ptr<StaticMapMeta> meta;
+    std::ifstream ifs = FileUtils::openReadFile(fileName);
+    boost::archive::text_iarchive ia(ifs);
+    ia >> meta;
+    return meta;
+}
+
 void StaticMapMeta::computeConnectivity() {
     const static int LEGAL_ACTIONS = 8;
     const static int actionX[LEGAL_ACTIONS] = {-1, -1, -1, 0, 1, 1, 1, 0};
@@ -129,8 +142,8 @@ void StaticMapMeta::computeConnectivity() {
     // for every tile on the map, do a connected flood fill using BFS
     for (int x = 0; x < m_width; ++x) {
         for (int y = 0; y < m_height; ++y) {
-            // if the sector is `not currently 0, or the map isn't walkable here, then we can skip this tile
-            if (m_sectorNumber[x][y] != 0 || isWalkable(x, y)) {
+            // if the sector is not currently 0, or the map isn't walkable here, then we can skip this tile
+            if (m_sectorNumber[x][y] != 0 || !isWalkable(x, y)) {
                 continue;
             }
 

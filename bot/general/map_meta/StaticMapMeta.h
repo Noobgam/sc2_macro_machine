@@ -9,8 +9,9 @@
 #include <general/model/Common.h>
 #include <general/DistanceMap.h>
 #include <general/managers/resources/Resource.h>
+#include <util/FileUtils.h>
 
-#include "util/FileUtils.h"
+#include <string>
 
 class CCBot;
 
@@ -49,6 +50,7 @@ struct StaticMapMeta {
             & m_walkable
             & m_buildable
             & m_terrainHeight
+            & m_sectorNumber
             & m_unbuildableNeutral
             & m_unwalkableNeutral
             & m_baseLocationProjections;
@@ -57,6 +59,7 @@ struct StaticMapMeta {
     StaticMapMeta();
     StaticMapMeta(const CCBot& bot);
     static std::unique_ptr<StaticMapMeta> getMeta(const CCBot& bot);
+    static std::unique_ptr<StaticMapMeta> getMeta(std::string mapName);
     bool isValidTile(int x, int y) const;
     bool isValidTile(CCTilePosition tile) const;
     bool isBuildable(int tileX, int tileY) const;
