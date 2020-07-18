@@ -36,13 +36,13 @@ class BaseLocation {
     CCPositionType              m_bottom;
     bool                        m_isStartLocation;
 public:
-    BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources)
+    BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources);
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;
 
     bool isPlayerStartLocation(CCPlayer player) const;
     bool isMineralOnly() const;
-    bool containsPosition(const CCPosition & pos) const;
+    bool containsPosition(const CCPosition & pos, int distance = NearBaseLocationTileDistance) const;
     const CCPosition & getDepotActualPosition() const;
     const CCPosition & getPosition() const;
     const std::vector<const Resource*> & getGeysers() const;

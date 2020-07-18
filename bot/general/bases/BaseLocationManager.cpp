@@ -26,26 +26,18 @@ void BaseLocationManager::onStart() {
         }
     }
 
-    // set start locations
     CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
-    for (auto & baseLocation : m_baseLocationData) {
-        m_baseLocationPtrs.push_back(&baseLocation);
-        if (baseLocation.containsPosition(selfStartLocation)) {
-            baseLocation.setStartLocation(Players::Self);
-            m_playerStartingBaseLocations[Players::Self] = &baseLocation;
-        }
-    }
-
     auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
     BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
     CCPosition enemyStartLocation = potentialLocations[0];
 
     if (m_bot.Observation()->GetGameInfo().map_name.rfind("Test", 0) == 0) {
         // cruth for test maps, so they could be played 1x0.
-        for (auto& baseLocation : m_baseLocationData) {
-            if (!baseLocation.isPlayerStartLocation(Players::Self)) {
-                baseLocation.setStartLocation(Players::Enemy);
-                m_playerStartingBaseLocations[Players::Enemy] = &baseLocation;
+        for (auto& locationPair : m_baseLocationData) {
+            const auto &baseLocation = locationPair.second.get();
+            if (!baseLocation->isPlayerStartLocation(Players::Self)) {
+                baseLocation->setStartLocation(Players::Enemy);
+                m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
                 break;
             }
         }

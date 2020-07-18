@@ -214,6 +214,6 @@ void BaseLocation::resourceExpiredCallback(const Resource *resource) {
     }
 }
 
-int BaseLocation::getBaseId() const {
+BaseLocationID BaseLocation::getBaseId() const {
     return this->m_baseID;
 }
