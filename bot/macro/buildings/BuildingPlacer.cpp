@@ -60,6 +60,9 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     if (b.isRefinery()) {
         return getRefineryPosition();
     }
+    if (b.is(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+        return m_bot.Bases().getNextExpansion(Players::Self);
+    }
     static int id = 0;
     static auto& wallPlacement = m_bot.chosenPlacement;
     if (m_bot.NeedWall() && id < 3 && wallPlacement.has_value()) {
@@ -79,9 +82,9 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     } else {
         double bestHeuristic = std::numeric_limits<double>::min();
         std::optional<CCPosition> bestPosO;
-        auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
+        auto &myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
         BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
-        auto& firstBase = *myBases.begin();
+        auto &firstBase = *myBases.begin();
         if (b.isSupplyProvider()) {
             // perhaps moving this logic to some sort of 'PylonPlacer' would be better
             // copy is intended here

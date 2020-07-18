@@ -66,7 +66,7 @@ void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) 
     for (auto& worker : workers) {
         auto bestIt = std::min_element(m_mineralToWorker.begin(), m_mineralToWorker.end(),
             [](const auto& mw1, const auto& mw2) {
-                return mw1.second.size() - mw2.second.size();
+                return mw1.second.size() < mw2.second.size();
             }
         );
         bestIt->second.emplace_back(worker);

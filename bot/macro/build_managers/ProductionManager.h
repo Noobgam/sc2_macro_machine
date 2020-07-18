@@ -5,7 +5,7 @@ class CCBot;
 
 class ProductionManager : public BuildManager {
 private:
-	std::pair<float, float> approximateIncome();
+	std::pair<double, double> approximateIncome();
 public:
 	explicit ProductionManager(CCBot& bot);
 	std::optional<BuildOrderItem> getTopPriority() override;
