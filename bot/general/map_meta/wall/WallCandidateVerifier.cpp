@@ -15,12 +15,12 @@ struct cmp {
 };
 
 WallCandidateVerifier::WallCandidateVerifier(
-        const CCBot& bot,
+        const StaticMapMeta& mapMeta,
         int baseLocationId,
         int startBaseLocationId,
         int enemyStartBaseLocationId
 )
-        : m_bot(bot)
+        : m_mapMeta(mapMeta)
         , m_baseLocationId(baseLocationId)
         , m_startBaseLocationId(startBaseLocationId)
         , m_enemyStartBaseLocationId(enemyStartBaseLocationId)
@@ -65,7 +65,7 @@ bool WallCandidateVerifier::verifyPlacement(
                 for (int j = -7; j <= 7; ++j) {
                     float xi = x - i + .5;
                     float yj = y - j + .5;
-                    if (!m_bot.Map().isBuildable(x - i, y - j)) continue;
+                    if (!m_mapMeta.isBuildable(x - i, y - j)) continue;
                     const int SIZE = 9;
                     // 9 =
                     //   6.5 + 1.5 (half a gateway) + 1 (a single unit gap to allow walls with 1 empty tile)
@@ -78,30 +78,31 @@ bool WallCandidateVerifier::verifyPlacement(
         }
     }
 
-    auto&& bases = m_bot.Bases().getBaseLocations();
-    auto it = std::find_if(bases.begin(), bases.end(), [this](const BaseLocation* const loc) {
-        return loc->getBaseId() == m_enemyStartBaseLocationId;
+    auto&& bases = m_mapMeta.getBaseLocations();
+    auto it = std::find_if(bases.begin(), bases.end(), [this](auto& loc) {
+        return loc.getBaseId() == m_enemyStartBaseLocationId;
     });
     // move from enemy location to one of base-box tiles
-    auto startTile = Util::GetTilePosition((*it)->getDepotActualPosition());
+    auto startTile = Util::GetTilePosition((*it).pos);
 
-
-    auto m_width = m_bot.Map().width();
-    auto m_height = m_bot.Map().height();
+    auto m_width = m_mapMeta.width();
+    auto m_height = m_mapMeta.height();
     auto m_dist = std::vector<std::vector<bool>>(m_width, std::vector<bool>(m_height));
     std::vector<CCTilePosition> m_sortedTiles;
     m_sortedTiles.push_back(startTile);
 
     m_dist[(int)startTile.x][(int)startTile.y] = true;
 
-    auto&& myBase = *std::find_if(bases.begin(), bases.end(), [this](const BaseLocation* const loc) {
-        return loc->getBaseId() == m_baseLocationId;
+    auto&& myBase = *std::find_if(bases.begin(), bases.end(), [this](auto& loc) {
+        return loc.getBaseId() == m_baseLocationId;
     });
+    auto&& distances = m_mapMeta.getDistanceMap(myBase.pos);
     bool baseReachable = false;
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
         auto & tile = m_sortedTiles[fringeIndex];
-        if (myBase->containsPosition({tile.x + .5f, tile.y + .5f}, 6)) {
+        int dist = distances.getDistance(CCPosition(tile.x + .5f, tile.y + .5f));
+        if (dist != -1 && dist <= 6) {
             baseReachable = true;
             break;
         }
@@ -111,7 +112,7 @@ bool WallCandidateVerifier::verifyPlacement(
         {
             CCTilePosition nextTile(tile.x + actionX[a], tile.y + actionY[a]);
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
-            if (m_bot.Map().isWalkable(nextTile) && m_dist[(int)nextTile.x][(int)nextTile.y] == false)
+            if (m_mapMeta.isWalkable(nextTile.x, nextTile.y) && m_dist[(int)nextTile.x][(int)nextTile.y] == false)
             {
                 if (blockedByWall.count(nextTile)) continue;
                 m_dist[(int)nextTile.x][(int)nextTile.y] = true;

@@ -22,7 +22,7 @@ struct MapMeta {
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version) {
-        ar & mapName & wallPlacements;
+        ar & wallPlacements;
     }
 
     // this constructor is required by boost serialization
@@ -32,7 +32,6 @@ struct MapMeta {
 
     std::vector<WallPlacement> getWallPlacements(int startLocationId, int baseLocationId) const;
 private:
-    std::string mapName;
     // [startLocationId][locationId] -> wallPlacements
     // enemy location id is implied from startLocationId
     std::vector<WallPlacement> wallPlacements;

@@ -1,6 +1,6 @@
 #include <general/model/Common.h>
 #include "WallVerifier.h"
-#include <general/CCBot.h>
+#include <general/map_meta/StaticMapMeta.h>
 #include <util/Util.h>
 #include <vector>
 #include "GraphChecker.h"
@@ -17,12 +17,12 @@ struct cmp {
 };
 
 WallVerifier::WallVerifier(
-        const CCBot& bot,
+        const StaticMapMeta& mapMeta,
         int baseLocationId,
         int startBaseLocationId,
         int enemyStartBaseLocationId
 )
-    : m_bot(bot)
+    : m_mapMeta(mapMeta)
     , m_baseLocationId(baseLocationId)
     , m_startBaseLocationId(startBaseLocationId)
     , m_enemyStartBaseLocationId(enemyStartBaseLocationId)
@@ -36,9 +36,9 @@ std::optional<WallPlacement>
 WallVerifier::verifyPlacement(
         const std::vector<std::pair<std::pair<int, int>, BuildingType>>& buildings
 ) {
-    auto&& bases = m_bot.Bases().getBaseLocations();
-    auto it = std::find_if(bases.begin(), bases.end(), [this](const BaseLocation* const loc) {
-        return loc->getBaseId() == m_baseLocationId;
+    auto&& bases = m_mapMeta.getBaseLocations();
+    auto it = std::find_if(bases.begin(), bases.end(), [this](auto& loc) {
+        return loc.getBaseId() == m_baseLocationId;
     });
     std::set<CCTilePosition, cmp> blockedByWall;
     int lx = std::numeric_limits<int>::max();
@@ -65,13 +65,13 @@ WallVerifier::verifyPlacement(
     // fast heuristic:
     bool borderWalkable = true;
     for (int i = lx; borderWalkable && i <= rx; ++i) {
-        if (!m_bot.Map().isWalkable(i, ly) || !m_bot.Map().isWalkable(i, ry)) {
+        if (!m_mapMeta.isWalkable(i, ly) || !m_mapMeta.isWalkable(i, ry)) {
             borderWalkable = false;
         }
     }
 
     for (int j = ly; borderWalkable && j <= ry; ++j) {
-        if (!m_bot.Map().isWalkable(lx, j) || !m_bot.Map().isWalkable(rx, j)) {
+        if (!m_mapMeta.isWalkable(lx, j) || !m_mapMeta.isWalkable(rx, j)) {
             borderWalkable = false;
         }
     }
@@ -80,9 +80,9 @@ WallVerifier::verifyPlacement(
         return {};
     }
 
-    auto startTile = Util::GetTilePosition((*it)->getDepotActualPosition());
-    auto m_width = m_bot.Map().width();
-    auto m_height = m_bot.Map().height();
+    auto startTile = Util::GetTilePosition((*it).pos);
+    auto m_width = m_mapMeta.width();
+    auto m_height = m_mapMeta.height();
     auto m_dist = std::vector<std::vector<int>>(m_width, std::vector<int>(m_height, -1));
     std::vector<CCTilePosition> m_sortedTiles;
     m_sortedTiles.reserve(m_width * m_height);
@@ -102,7 +102,7 @@ WallVerifier::verifyPlacement(
             int dy = actionY[a];
             CCTilePosition nextTile(tile.x + dx, tile.y + dy);
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
-            if (m_bot.Map().isWalkable(nextTile) && !blockedByWall.count(nextTile)) {
+            if (m_mapMeta.isWalkable(nextTile.x, nextTile.y) && !blockedByWall.count(nextTile)) {
                 checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
                 if (m_dist[(int)nextTile.x][(int)nextTile.y] != -1) continue;
                 m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
@@ -110,9 +110,9 @@ WallVerifier::verifyPlacement(
             }
         }
     }
-    CCTilePosition dest = Util::GetTilePosition((*std::find_if(bases.begin(), bases.end(), [this](const BaseLocation* const loc) {
-        return loc->getBaseId() == m_enemyStartBaseLocationId;
-    }))->getDepotActualPosition());
+    CCTilePosition dest = Util::GetTilePosition((*std::find_if(bases.begin(), bases.end(), [this](auto& loc) {
+        return loc.getBaseId() == m_enemyStartBaseLocationId;
+    })).pos);
     if (m_dist[dest.x][dest.y] == -1) {
         return WallPlacement::fullWall(m_startBaseLocationId, m_baseLocationId, buildings);
     } else {

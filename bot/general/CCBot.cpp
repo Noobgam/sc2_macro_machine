@@ -20,9 +20,8 @@ void CCBot::OnGameStart() {
     m_unitInfo.onStart();
 
     m_map.onStart();
-    m_bases.onStart();
-
     m_managers.onStart();
+
 
     m_gameCommander.onStart();
     m_mapMeta = MapMeta::getMeta(*this);
@@ -60,8 +59,9 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Starting onStep()" << std::endl;
     Control()->GetObservation();
     ++observationId;
-    m_map.onFrame();
     m_unitInfo.onFrame();
+
+    m_map.onFrame();
     m_bases.onFrame();
 
     m_managers.onFrame();

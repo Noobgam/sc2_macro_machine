@@ -1,7 +1,6 @@
 #include "BaseLocation.h"
 #include "../../util/Util.h"
 #include "../CCBot.h"
-#include <sstream>
 #include <iostream>
 
 BaseLocation::BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources)

@@ -1,0 +1,314 @@
+#include "StaticMapMeta.h"
+
+#include <general/CCBot.h>
+#include <string>
+#include <util/Util.h>
+#include <util/LogInfo.h>
+#include <util/BotAssert.h>
+
+using std::vector;
+using std::string;
+
+namespace {
+    bool getBit(const sc2::ImageData &grid, int tileX, int tileY) {
+        assert(grid.bits_per_pixel == 1);
+
+        sc2::Point2DI pointI(tileX, tileY);
+        if (pointI.x < 0 || pointI.x >= grid.width || pointI.y < 0 || pointI.y >= grid.height) {
+            return false;
+        }
+
+        div_t idx = div(pointI.x + pointI.y * grid.width, 8);
+        return (grid.data[idx.quot] >> (7 - idx.rem)) & 1;
+    }
+
+    float terrainHeight(const sc2::ImageData &grid, int x, int y) {
+        assert(grid.bits_per_pixel > 1);
+
+        sc2::Point2DI pointI(x, y);
+        if (pointI.x < 0 || pointI.x >= grid.width || pointI.y < 0 || pointI.y >= grid.height) {
+            return 0.0f;
+        }
+
+        assert(grid.data.size() == static_cast<unsigned long>(grid.width * grid.height));
+        unsigned char value = grid.data[pointI.x + pointI.y * grid.width];
+        return (static_cast<float>(value) - 127.0f) / 8.f;
+    }
+}
+
+StaticMapMeta::StaticMapMeta() {}
+
+StaticMapMeta::StaticMapMeta(const CCBot &bot) {
+    m_width = bot.Observation()->GetGameInfo().width;
+    m_height = bot.Observation()->GetGameInfo().height;
+    m_walkable = vector<vector<bool>>(m_width, std::vector<bool>(m_height, true));
+    m_buildable = vector<vector<bool>>(m_width, std::vector<bool>(m_height, false));
+    m_sectorNumber = vector<vector<int>>(m_width, std::vector<int>(m_height, 0));
+    m_terrainHeight = vector<vector<float>>(m_width, std::vector<float>(m_height, 0.0f));
+    m_unbuildableNeutral = vector<vector<bool>>(m_width, std::vector<bool>(m_height, false));
+    m_unwalkableNeutral = vector<vector<bool>>(m_width, std::vector<bool>(m_height, false));
+
+    auto &&canWalk = [&bot](int tileX, int tileY) {
+        return getBit(bot.Observation()->GetGameInfo().pathing_grid, tileX, tileY);
+    };
+
+    auto &&canBuild = [&bot](int tileX, int tileY) {
+        return getBit(bot.Observation()->GetGameInfo().placement_grid, tileX, tileY);
+    };
+
+    for (int x(0); x < m_width; ++x) {
+        for (int y(0); y < m_height; ++y) {
+            m_buildable[x][y] = canBuild(x, y);
+            m_walkable[x][y] = m_buildable[x][y] || canWalk(x, y);
+            m_terrainHeight[x][y] = terrainHeight(bot.Observation()->GetGameInfo().terrain_height, x, y);
+        }
+    }
+
+    // set tiles that static resources are on as unbuildable
+    auto &&neutrals = bot.UnitInfo().getUnits(Players::Neutral);
+    for (auto &unitPtr : neutrals) {
+
+        int width;
+        int height;
+        if (unitPtr->getType().isMineral() || unitPtr->getType().isGeyser()) {
+            width = unitPtr->getType().tileWidth();
+            height = unitPtr->getType().tileHeight();
+        } else {
+            // otherwise there's no data in tech tree to find from
+            width = unitPtr->getUnitPtr()->radius * 2;
+            height = unitPtr->getUnitPtr()->radius * 2;
+        }
+        int tileX = std::floor(unitPtr->getPosition().x) - (width / 2);
+        int tileY = std::floor(unitPtr->getPosition().y) - (height / 2);
+
+
+        for (int x = tileX; x < tileX + width; ++x) {
+            for (int y = tileY; y < tileY + height; ++y) {
+                m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit(unitPtr->getType());
+                m_unwalkableNeutral[x][y] = m_unwalkableNeutral[x][y] || !Util::canWalkOverUnit(unitPtr->getType());
+                if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
+                    continue;
+                }
+            }
+        }
+    }
+
+    m_baseLocationProjections = calculateBaseLocations(bot);
+    computeConnectivity();
+}
+
+std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
+    string mapName = bot.Observation()->GetGameInfo().map_name;
+    string fileName = "data/static_map_metas/" + mapName;
+    if (FileUtils::fileExists(fileName)) {
+        std::unique_ptr<StaticMapMeta> meta;
+        std::ifstream ifs = FileUtils::openReadFile(fileName);
+        boost::archive::text_iarchive ia(ifs);
+        ia >> meta;
+        LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << endl;
+        return meta;
+    } else {
+        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, will recalculate" << endl;
+        auto ptr = std::make_unique<StaticMapMeta>(bot);
+        auto ofs = FileUtils::openWriteFile(fileName);
+        boost::archive::text_oarchive oa(ofs);
+        oa << ptr;
+        return ptr;
+    }
+}
+
+void StaticMapMeta::computeConnectivity() {
+    const static int LEGAL_ACTIONS = 8;
+    const static int actionX[LEGAL_ACTIONS] = {-1, -1, -1, 0, 1, 1, 1, 0};
+    const static int actionY[LEGAL_ACTIONS] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+    std::vector<std::array<int, 2>> fringe;
+    fringe.reserve(m_width * m_height);
+    int sectorNumber = 0;
+
+    // for every tile on the map, do a connected flood fill using BFS
+    for (int x = 0; x < m_width; ++x) {
+        for (int y = 0; y < m_height; ++y) {
+            // if the sector is `not currently 0, or the map isn't walkable here, then we can skip this tile
+            if (m_sectorNumber[x][y] != 0 || isWalkable(x, y)) {
+                continue;
+            }
+
+            // increase the sector number, so that walkable tiles have sectors 1-N
+            sectorNumber++;
+
+            // reset the fringe for the search and add the start tile to it
+            fringe.clear();
+            fringe.push_back({x, y});
+            m_sectorNumber[x][y] = sectorNumber;
+
+            // do the BFS, stopping when we reach the last element of the fringe
+            for (size_t fringeIndex = 0; fringeIndex < fringe.size(); ++fringeIndex) {
+                auto &tile = fringe[fringeIndex];
+
+                // check every possible child of this tile
+                for (size_t a = 0; a < LEGAL_ACTIONS; ++a) {
+                    int nextX = tile[0] + actionX[a];
+                    int nextY = tile[1] + actionY[a];
+
+                    // if the new tile is inside the map bounds, is walkable, and has not been assigned a sector, add it to the current sector and the fringe
+                    if (isValidTile(nextX, nextY) && isWalkable(nextX, nextY) && m_sectorNumber[nextX][nextY] == 0) {
+                        m_sectorNumber[nextX][nextY] = sectorNumber;
+                        fringe.push_back({nextX, nextY});
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool StaticMapMeta::isValidTile(int x, int y) const {
+    return x >= 0 && x < m_width && y >= 0 && y < m_height;
+}
+
+bool StaticMapMeta::isValidTile(CCTilePosition tile) const {
+    return isValidTile(tile.x, tile.y);
+}
+
+bool StaticMapMeta::isBuildable(int tileX, int tileY) const {
+    if (!isValidTile(tileX, tileY)) {
+        return false;
+    }
+
+    return m_buildable[tileX][tileY] && !m_unbuildableNeutral[tileX][tileY];
+}
+
+bool StaticMapMeta::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const {
+    float h1 = m_terrainHeight[pylonPos.x][pylonPos.y];
+    float h2 = m_terrainHeight[candidate.x][candidate.y];
+    if (h1 < h2) {
+        return false;
+    }
+    return Util::Dist(pylonPos, candidate) < radius;
+}
+
+bool StaticMapMeta::isWalkable(int tileX, int tileY) const {
+    if (!isValidTile(tileX, tileY)) {
+        return false;
+    }
+    return m_walkable[tileX][tileY] && !m_unwalkableNeutral[tileX][tileY];
+}
+
+int StaticMapMeta::width() const {
+    return m_width;
+}
+
+int StaticMapMeta::height() const {
+    return m_height;
+}
+
+const std::vector<BaseLocationProjection> &StaticMapMeta::getBaseLocations() const {
+    return m_baseLocationProjections;
+}
+
+int StaticMapMeta::getSectorNumber(int tileX, int tileY) const {
+    return m_sectorNumber[tileX][tileY];
+}
+
+float StaticMapMeta::getTerrainHeight(float x, float y) const {
+    return m_terrainHeight[x][y];
+}
+
+DistanceMap StaticMapMeta::getDistanceMap(const CCPosition& pos) const {
+    DistanceMap mp{};
+    mp.computeDistanceMap(*this, CCTilePosition(pos.x, pos.y));
+    return mp;
+}
+
+std::vector<std::vector<const Resource *>> StaticMapMeta::findResourceClusters(const CCBot& bot) {
+    // a BaseLocation will be anything where there are minerals to mine
+    // so we will first look over all minerals and cluster them based on some distance
+    const CCPositionType clusterDistance = Util::TileToPosition(12);
+
+    // stores each cluster of resources based on some ground distance
+    std::vector<std::vector<const Resource*>> resourceClusters;
+    for (auto & mineral : bot.getManagers().getResourceManager().getMinerals()) {
+        // skip minerals that don't have more than 100 starting minerals
+        // these are probably stupid map-blocking minerals to confuse us
+        bool foundCluster = false;
+        for (auto & cluster : resourceClusters) {
+            float dist = Util::Dist(mineral->getPosition(), Util::CalcCenter(cluster));
+
+            // quick initial air distance check to eliminate most resources
+            if (dist < clusterDistance) {
+                // now do a more expensive ground distance check
+                float groundDist = dist; //m_bot.Map().getGroundDistance(mineral.pos, Util::CalcCenter(cluster));
+                if (groundDist >= 0 && groundDist < clusterDistance) {
+                    cluster.push_back(mineral);
+                    foundCluster = true;
+                    break;
+                }
+            }
+        }
+
+        if (!foundCluster) {
+            resourceClusters.emplace_back();
+            resourceClusters.back().push_back(mineral);
+        }
+    }
+
+    // add geysers only to existing resource clusters
+    for (auto & geyser : bot.getManagers().getResourceManager().getGeysers()) {
+        for (auto & cluster : resourceClusters) {
+            //int groundDist = m_bot.Map().getGroundDistance(geyser.pos, Util::CalcCenter(cluster));
+            float groundDist = Util::Dist(geyser->getPosition(), Util::CalcCenter(cluster));
+            if (groundDist >= 0 && groundDist < clusterDistance) {
+                cluster.push_back(geyser);
+                break;
+            }
+        }
+    }
+    return resourceClusters;
+}
+
+std::vector<BaseLocationProjection> StaticMapMeta::calculateBaseLocations(const CCBot& bot) {
+    auto&& resourceClusters = findResourceClusters(bot);
+    int baseId = 0;
+    sort(resourceClusters.begin(), resourceClusters.end(), [](const auto& lhs, const auto& rhs) {
+        auto&& lpos = Util::CalcCenter(lhs);
+        auto&& rpos = Util::CalcCenter(rhs);
+        if (lpos.x != rpos.x) return lpos.x < rpos.x;
+        return lpos.y < rpos.y;
+    });
+    std::vector<BaseLocationProjection> projections;
+    projections.reserve(resourceClusters.size());
+    CCPosition pos = bot.GetStartLocation();
+    const int N = 10;
+    for (auto& cluster : resourceClusters) {
+        CCPosition center = Util::CalcCenter(cluster);
+        vector <CCPosition> closest;
+        for (int i = -N; i <= N; ++i) {
+            for (int j = -N; j <= N; ++j) {
+                closest.push_back({center.x + i, center.y + j});
+            }
+        }
+        sort(closest.begin(), closest.end(), [center](CCPosition l, CCPosition r) {
+            double lx = (l.x - center.x);
+            double ly = (l.y - center.y);
+
+            double rx = (r.x - center.x);
+            double ry = (r.y - center.y);
+
+            return (lx * lx + ly * ly) < (rx * rx + ry * ry);
+        });
+        UnitType depot = Util::GetTownHall(bot.GetPlayerRace(Players::Self), const_cast<CCBot&>(bot));
+        if (Util::Dist(pos, center) < 2 * N) {
+            projections.push_back({baseId++, center, pos});
+            continue;
+        }
+        for (auto tile : closest) {
+            int x = tile.x;
+            int y = tile.y;
+            if (bot.Map().canBuildTypeAtPosition(x + .5, y + .5, depot)) {
+                projections.push_back({baseId++, center, CCPosition(x + .5, y + .5)});
+                break;
+            }
+        }
+    }
+    return projections;
+}

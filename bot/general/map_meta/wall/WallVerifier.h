@@ -3,12 +3,13 @@
 #include "WallPlacement.h"
 #include <optional>
 #include <vector>
-class CCBot;
+
+class StaticMapMeta;
 
 // verifies wall placements for specific base
 struct WallVerifier {
     WallVerifier(
-            const CCBot& bot,
+            const StaticMapMeta& mapMeta,
             int baseLocationId,
             int startBaseLocationId,
             int enemyStartBaseLocationId
@@ -19,7 +20,7 @@ struct WallVerifier {
             const std::vector<std::pair<std::pair<int,int>, BuildingType>>& buildings
     );
 private:
-    const CCBot& m_bot;
+    const StaticMapMeta& m_mapMeta;
     int m_baseLocationId;
     int m_startBaseLocationId;
     int m_enemyStartBaseLocationId;

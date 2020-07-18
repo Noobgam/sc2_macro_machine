@@ -4,6 +4,8 @@
 #include <boost/serialization/utility.hpp>
 #include <general/model/Common.h>
 
+#include <general/map_meta/StaticMapMeta.h>
+
 class CCBot;
 
 enum class WallType {
@@ -53,12 +55,12 @@ struct WallPlacement {
             );
 
     static std::vector<CCTilePosition> getTileCandidates(
-            const CCBot &bot,
+            const StaticMapMeta& bot,
             int baseLocationId,
             int enemyLocationID
     );
     static std::vector<WallPlacement> getWallsForBaseLocation(
-            const CCBot& bot,
+            const StaticMapMeta& mapMeta,
             int baseLocationId,
             int startBaseLocationId,
             int enemyStartBaseLocationId

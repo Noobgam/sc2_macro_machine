@@ -27,9 +27,17 @@ void BaseLocationManager::onStart() {
     }
 
     CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
+    for (auto &locationPair : m_baseLocationData) {
+        const auto &baseLocation = locationPair.second.get();
+        m_baseLocationPtrs.push_back(baseLocation);
+        if (baseLocation->containsPosition(selfStartLocation)) {
+            baseLocation->setStartLocation(Players::Self);
+            baseLocation->setPlayerHasDepot(Players::Self, true);
+            m_playerStartingBaseLocations[Players::Self] = baseLocation;
+            break;
+        }
+    }
     auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
-    BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
-    CCPosition enemyStartLocation = potentialLocations[0];
 
     if (m_bot.Observation()->GetGameInfo().map_name.rfind("Test", 0) == 0) {
         // cruth for test maps, so they could be played 1x0.
@@ -42,15 +50,12 @@ void BaseLocationManager::onStart() {
             }
         }
     } else {
+        BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
+        CCPosition enemyStartLocation = potentialLocations[0];
         // construct the vectors of base location pointers, this is safe since they will never change
         for (auto &locationPair : m_baseLocationData) {
             const auto &baseLocation = locationPair.second.get();
             m_baseLocationPtrs.push_back(baseLocation);
-            if (baseLocation->containsPosition(selfStartLocation)) {
-                baseLocation->setStartLocation(Players::Self);
-                baseLocation->setPlayerHasDepot(Players::Self, true);
-                m_playerStartingBaseLocations[Players::Self] = baseLocation;
-            }
             if (baseLocation->containsPosition(enemyStartLocation)) {
                 baseLocation->setStartLocation(Players::Enemy);
                 baseLocation->setPlayerHasDepot(Players::Enemy, true);

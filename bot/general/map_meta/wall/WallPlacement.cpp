@@ -1,14 +1,15 @@
 #include "WallPlacement.h"
 #include "WallVerifier.h"
-#include "general/CCBot.h"
-#include "util/Util.h"
 #include "WallCandidateVerifier.h"
+
 #include <util/LogInfo.h>
+#include <util/Util.h>
 
 #include <algorithm>
 #include <vector>
 #include <set>
 #include <csignal>
+#include <general/bases/BaseLocation.h>
 
 using std::vector;
 
@@ -47,7 +48,7 @@ struct cmp {
 static std::set<std::pair<int,int>> pylons;
 
 void recursion(
-        const CCBot& bot,
+        const StaticMapMeta& mapMeta,
         const WallCandidateVerifier& verifier,
         std::set<CCTilePosition, cmp>& candidates,
         // {{lx, ly}, type} - position of a left-bottom most tile, and building size
@@ -94,7 +95,7 @@ void recursion(
                     // only one powering pylon by design.
                     // could be extended by placing all powering pylons first and then filtering candidates
                     auto it2Pos = Util::GetPosition(*it2);
-                    if (bot.Map().pylonPowers(pylonCenter, 8, it2Pos)) {
+                    if (mapMeta.pylonPowers(pylonCenter, 8, it2Pos)) {
                         almostPoweredCandidates.insert(*it2);
                     }
                 }
@@ -105,7 +106,7 @@ void recursion(
                 }
                 size_t tmp = container.size();
                 recursion(
-                        bot,
+                        mapMeta,
                         verifier,
                         almostPoweredCandidates,
                         alreadyPlaced,
@@ -137,7 +138,7 @@ void recursion(
                 CCPosition gateCenter{it->x + 1.5f, it->y + 1.5f};
 
                 // three by three has to be powered by pylon always.
-                if (!bot.Map().pylonPowers(pylonCenter, 6.5, gateCenter)) break;
+                if (!mapMeta.pylonPowers(pylonCenter, 6.5, gateCenter)) break;
 
                 // three by three always come up last in list of buildings
                 //  so we fix ordering of candidates because why not
@@ -153,7 +154,7 @@ void recursion(
                     }
                 }
                 recursion(
-                        bot,
+                        mapMeta,
                         verifier,
                         candidatesLeft,
                         alreadyPlaced,
@@ -175,34 +176,34 @@ void recursion(
 }
 
 std::vector<CCTilePosition> WallPlacement::getTileCandidates(
-        const CCBot &bot,
+        const StaticMapMeta &mapMeta,
         int baseLocationId,
         int enemyLocationId
 ) {
-    auto&& bases = bot.Bases().getBaseLocations();
-    auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](const BaseLocation* const loc) {
-        return loc->getBaseId() == baseLocationId;
+    auto&& bases = mapMeta.getBaseLocations();
+    auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](auto& loc) {
+        return loc.getBaseId() == baseLocationId;
     });
     auto myBase = (*it);
-    it = std::find_if(bases.begin(), bases.end(), [enemyLocationId](const BaseLocation* const loc) {
-        return loc->getBaseId() == enemyLocationId;
+    it = std::find_if(bases.begin(), bases.end(), [enemyLocationId](auto& loc) {
+        return loc.getBaseId() == enemyLocationId;
     });
     auto enemyBase = (*it);
-    auto myBasePos = myBase->getDepotActualPosition();
-    auto mp_self = bot.Map().getDistanceMap(myBasePos);
-    auto mp_enemy = bot.Map().getDistanceMap(enemyBase->getDepotActualPosition());
+    auto myBasePos = myBase.pos;
+    auto mp_self = mapMeta.getDistanceMap(myBasePos);
+    auto mp_enemy = mapMeta.getDistanceMap(enemyBase.pos);
     int dist = mp_enemy.getDistance(myBasePos);
     vector<CCTilePosition> tiles = mp_self.getSortedTiles();
     // only first 600 tiles around the base loc are candidates for building the wall
     constexpr size_t SZ = 600;
     tiles.erase(std::remove_if(tiles.begin(), tiles.end(), [
             &myBase,
-            &bot,
+            &mapMeta,
             &myBasePos,
             &mp_enemy,
             dist
             ](const CCTilePosition& pos) {
-        if (!bot.Map().isBuildable(pos)) {
+        if (!mapMeta.isBuildable(pos.x, pos.y)) {
             return true;
         }
         float dx = abs(pos.x - myBasePos.x);
@@ -221,22 +222,22 @@ std::vector<CCTilePosition> WallPlacement::getTileCandidates(
 }
 
 std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
-        const CCBot &bot,
+        const StaticMapMeta &mapMeta,
         int baseLocationId,
         int startBaseLocationId,
         int enemyStartBaseLocationId
 ) {
-    auto&& bases = bot.Bases().getBaseLocations();
-    auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](const BaseLocation* const loc) {
-        return loc->getBaseId() == baseLocationId;
+    auto&& bases = mapMeta.getBaseLocations();
+    auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](auto& loc) {
+        return loc.getBaseId() == baseLocationId;
     });
 
-    auto basePos = (*it)->getDepotActualPosition();
-    auto mp = bot.Map().getDistanceMap(basePos);
+    auto basePos = (*it).pos;
+    auto mp = mapMeta.getDistanceMap(basePos);
 
     // tiles is a full list of tiles that could potentially be covered by wall.
     // Make sure to check for buildability via api later.
-    vector<CCTilePosition> tiles = getTileCandidates(bot, baseLocationId, enemyStartBaseLocationId);
+    vector<CCTilePosition> tiles = getTileCandidates(mapMeta, baseLocationId, enemyStartBaseLocationId);
     std::set<CCTilePosition, cmp> tileCandidates;
     for (auto x : tiles) {
         tileCandidates.insert(x);
@@ -247,13 +248,13 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     std::vector<std::vector<std::pair<std::pair<int,int>, BuildingType>>> container;
 
     WallCandidateVerifier candidateVerifier{
-            bot,
+            mapMeta,
             baseLocationId,
             startBaseLocationId,
             enemyStartBaseLocationId
     };
     recursion(
-            bot,
+            mapMeta,
             candidateVerifier,
             tileCandidates,
             alreadyPlaced,
@@ -261,10 +262,10 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
             container
     );
     WallVerifier verifier{
-        bot,
-        baseLocationId,
-        startBaseLocationId,
-        enemyStartBaseLocationId
+            mapMeta,
+            baseLocationId,
+            startBaseLocationId,
+            enemyStartBaseLocationId
     };
     std::vector<WallPlacement> placements;
     int debug_cnt = 0;

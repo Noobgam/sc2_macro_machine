@@ -4,13 +4,13 @@
 #include <optional>
 #include <vector>
 
-class CCBot;
+class StaticMapMeta;
 
 // verifies undone wall placement, if it returns false
 // then this is not a wall candidate (can't be neither a full wall, nor
 struct WallCandidateVerifier {
     WallCandidateVerifier(
-            const CCBot& bot,
+            const StaticMapMeta& bot,
             int baseLocationId,
             int startBaseLocationId,
             int enemyStartBaseLocationId
@@ -22,7 +22,7 @@ struct WallCandidateVerifier {
             const std::vector<BuildingType>& buildingsLeft
     ) const;
 private:
-    const CCBot& m_bot;
+    const StaticMapMeta& m_mapMeta;
     int m_baseLocationId;
     int m_startBaseLocationId;
     int m_enemyStartBaseLocationId;

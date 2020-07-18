@@ -7,13 +7,11 @@
 
 using std::string;
 
-MapMeta::MapMeta(const CCBot &bot)
-    : mapName(bot.Observation()->GetGameInfo().map_name)
-{
+MapMeta::MapMeta(const CCBot &bot) {
     int myStart = bot.Bases().getPlayerStartLocation(Players::Self)->getBaseId();
     int enemyStart = bot.Bases().getPlayerStartLocation(Players::Enemy)->getBaseId();
     auto&& vwp = WallPlacement::getWallsForBaseLocation(
-            bot,
+            bot.Map().getStaticMapMeta(),
             myStart,
             myStart,
             enemyStart
@@ -22,7 +20,7 @@ MapMeta::MapMeta(const CCBot &bot)
         wallPlacements.push_back(x);
     }
     vwp = WallPlacement::getWallsForBaseLocation(
-            bot,
+            bot.Map().getStaticMapMeta(),
             enemyStart,
             enemyStart,
             myStart
