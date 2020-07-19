@@ -53,7 +53,8 @@ struct StaticMapMeta {
             & m_sectorNumber
             & m_unbuildableNeutral
             & m_unwalkableNeutral
-            & m_baseLocationProjections;
+            & m_baseLocationProjections
+            & m_startLocationIds;
     }
 
     StaticMapMeta();
@@ -75,6 +76,7 @@ struct StaticMapMeta {
     int width() const;
     int height() const;
     const std::vector<BaseLocationProjection>& getBaseLocations() const;
+    const std::vector<int>& getStartLocationIds() const;
     DistanceMap getDistanceMap(const CCPosition& pos) const;
 
 private:
@@ -92,6 +94,7 @@ private:
     std::vector<std::vector<bool>>  m_unwalkableNeutral;  // unbuildable rocks, resources
 
     std::vector<BaseLocationProjection> m_baseLocationProjections;
+    std::vector<int> m_startLocationIds;
 };
 
 BOOST_CLASS_VERSION(StaticMapMeta, 1)

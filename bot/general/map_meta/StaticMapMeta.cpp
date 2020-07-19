@@ -9,6 +9,8 @@
 using std::vector;
 using std::string;
 
+#define all(x) x.begin(), x.end()
+
 namespace {
     bool getBit(const sc2::ImageData &grid, int tileX, int tileY) {
         assert(grid.bits_per_pixel == 1);
@@ -95,6 +97,25 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
 
     computeConnectivity();
     m_baseLocationProjections = calculateBaseLocations(bot);
+    if (bot.Observation()->GetGameInfo().map_name.rfind("Test", 0) == 0) {
+        // implied convention on test maps you can start on any location
+        for (auto& x : m_baseLocationProjections) {
+            m_startLocationIds.push_back(x.baseId);
+        }
+    } else {
+        auto locations = bot.Observation()->GetGameInfo().start_locations;
+        auto enemyLocations = bot.Observation()->GetGameInfo().enemy_start_locations;
+
+        locations.insert(locations.end(), enemyLocations.begin(), enemyLocations.end());
+        for (auto& loc : locations) {
+            auto it = std::find_if(all(m_baseLocationProjections), [&loc](auto& base) {
+                return Util::Dist(loc, base.depotPos) < 1;
+            });
+            if (it != m_baseLocationProjections.end()) {
+                m_startLocationIds.push_back(it->baseId);
+            }
+        }
+    }
 }
 
 std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
@@ -120,7 +141,7 @@ std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
 std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(string mapName) {
     string fileName = "data/static_map_metas/" + mapName;
     if (!FileUtils::fileExists(fileName)) {
-        LOG_DEBUG << "Meta for map [" << fileName << "] was not calculated" << endl;
+        LOG_DEBUG << "Static meta for map [" << fileName << "] was not calculated" << endl;
         std::terminate();
     }
     std::unique_ptr<StaticMapMeta> meta;
@@ -217,6 +238,10 @@ int StaticMapMeta::height() const {
 
 const std::vector<BaseLocationProjection> &StaticMapMeta::getBaseLocations() const {
     return m_baseLocationProjections;
+}
+
+const std::vector<int>& StaticMapMeta::getStartLocationIds() const {
+    return m_startLocationIds;
 }
 
 int StaticMapMeta::getSectorNumber(int tileX, int tileY) const {
@@ -325,3 +350,5 @@ std::vector<BaseLocationProjection> StaticMapMeta::calculateBaseLocations(const 
     }
     return projections;
 }
+
+#undef all

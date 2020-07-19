@@ -30,6 +30,24 @@ MapMeta::MapMeta(const CCBot &bot) {
     }
 }
 
+MapMeta::MapMeta(const StaticMapMeta &meta) {
+    auto&& locs = meta.getStartLocationIds();
+    for (int i = 0; i < locs.size(); ++i) {
+        for (int j = 0; j < locs.size(); ++j) {
+            if (j == i) continue;
+            int myStart = locs[i];
+            int enemyStart = locs[j];
+            auto&& vwp = WallPlacement::getWallsForBaseLocation(
+                    meta,
+                    myStart,
+                    myStart,
+                    enemyStart
+            );
+            wallPlacements.insert(wallPlacements.end(), vwp.begin(), vwp.end());
+        }
+    }
+}
+
 std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
     string mapName = bot.Observation()->GetGameInfo().map_name;
     string fileName = "data/map_metas/" + mapName;
@@ -48,6 +66,17 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
         oa << ptr;
         return ptr;
     }
+}
+
+std::unique_ptr<MapMeta> MapMeta::getMeta(const StaticMapMeta &meta, string mapName) {
+    string fileName = "data/map_metas/" + mapName;
+    LOG_DEBUG << "Started calculating [" + mapName + "] meta." << endl;
+    auto ptr = std::make_unique<MapMeta>(meta);
+    auto ofs = FileUtils::openWriteFile(fileName);
+    boost::archive::text_oarchive oa(ofs);
+    oa << ptr;
+    LOG_DEBUG << "Finished calculating [" + mapName + "] meta." << endl;
+    return ptr;
 }
 
 MapMeta::MapMeta() {}

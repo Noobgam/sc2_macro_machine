@@ -6,6 +6,10 @@
 
 #include <general/map_meta/StaticMapMeta.h>
 
+static int VERIFIER_THREAD_COUNT = 1;
+
+void setVerifierThreadCount(int x);
+
 class CCBot;
 
 enum class WallType {
@@ -63,8 +67,7 @@ struct WallPlacement {
             const StaticMapMeta& mapMeta,
             int baseLocationId,
             int startBaseLocationId,
-            int enemyStartBaseLocationId,
-            int threads = 8
+            int enemyStartBaseLocationId
     );
 
 

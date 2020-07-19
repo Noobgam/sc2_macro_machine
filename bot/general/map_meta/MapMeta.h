@@ -8,6 +8,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <string>
 
 #include "util/FileUtils.h"
 #include "general/map_meta/wall/WallPlacement.h"
@@ -28,7 +29,9 @@ struct MapMeta {
     // this constructor is required by boost serialization
     MapMeta();
     MapMeta(const CCBot& bot);
+    MapMeta(const StaticMapMeta& bot);
     static std::unique_ptr<MapMeta> getMeta(const CCBot& bot);
+    static std::unique_ptr<MapMeta> getMeta(const StaticMapMeta& meta, std::string mapName);
 
     std::vector<WallPlacement> getWallPlacements(int startLocationId, int baseLocationId) const;
 private:

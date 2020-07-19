@@ -16,6 +16,10 @@
 
 using std::vector;
 
+void setVerifierThreadCount(int x) {
+    VERIFIER_THREAD_COUNT = x;
+}
+
 WallPlacement::WallPlacement() {}
 
 WallPlacement::WallPlacement(
@@ -211,7 +215,7 @@ std::vector<CCTilePosition> WallPlacement::getTileCandidates(
         }
         float dx = abs(pos.x - myBasePos.x);
         float dy = abs(pos.y - myBasePos.y);
-        if (dx <= 2 && dy <= 2) {
+        if (dx <= 4 && dy <= 4) {
             return true;
         }
         if (mp_enemy.getDistance(pos) > dist) {
@@ -228,9 +232,9 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         const StaticMapMeta &mapMeta,
         int baseLocationId,
         int startBaseLocationId,
-        int enemyStartBaseLocationId,
-        int threads
+        int enemyStartBaseLocationId
 ) {
+    int threads = VERIFIER_THREAD_COUNT;
     auto&& bases = mapMeta.getBaseLocations();
     auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](auto& loc) {
         return loc.getBaseId() == baseLocationId;
@@ -267,6 +271,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     );
     std::atomic<int> stuffLeft = container.size();
     int initial = container.size();
+    std::mutex log_mutex;
     auto validateContainerPart = [&](int l, int r) {
         int cnt = 0;
         WallVerifier verifier{
@@ -277,9 +282,10 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         };
         std::vector<WallPlacement> placements;
         for (int i = l; i < r; ++i) {
-            if (++cnt == 100) {
+            if (++cnt == 250) {
                 int localLeft = (stuffLeft -= cnt);
                 int done = (initial - localLeft);
+                std::lock_guard<std::mutex> lock(log_mutex);
                 LOG_DEBUG << "Done " << done << " of " << initial << endl;
                 cnt = 0;
             }
@@ -293,6 +299,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         return placements;
     };
     std::vector<WallPlacement> placements;
+    LOG_DEBUG << "Using " << threads << " threads to calculate meta" << endl;
     if (threads == 1) {
         placements = validateContainerPart(0, container.size());
     } else {

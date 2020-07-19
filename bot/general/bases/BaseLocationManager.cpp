@@ -29,7 +29,6 @@ void BaseLocationManager::onStart() {
     CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
     for (auto &locationPair : m_baseLocationData) {
         const auto &baseLocation = locationPair.second.get();
-        m_baseLocationPtrs.push_back(baseLocation);
         if (baseLocation->containsPosition(selfStartLocation)) {
             baseLocation->setStartLocation(Players::Self);
             baseLocation->setPlayerHasDepot(Players::Self, true);
@@ -62,6 +61,11 @@ void BaseLocationManager::onStart() {
                 m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
             }
         }
+    }
+
+    for (auto& locationPair : m_baseLocationData) {
+        const auto &baseLocation = locationPair.second.get();
+        m_baseLocationPtrs.push_back(baseLocation);
     }
 
     BOT_ASSERT(m_playerStartingBaseLocations[Players::Self] != nullptr, "Self start location was not found");
@@ -188,6 +192,9 @@ std::vector<std::vector<const Resource *>> BaseLocationManager::findResourceClus
 void BaseLocationManager::drawBaseLocations() {
     for (const auto & baseLocation : m_baseLocationPtrs) {
         baseLocation->draw();
+    }
+    for (const auto& loc : m_bot.Map().getStaticMapMeta().getBaseLocations()) {
+        m_bot.Map().drawCircle(loc.depotPos, 2, CCColor(0, 0, 255));
     }
 
     // draw a purple sphere at the next expansion location
