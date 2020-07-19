@@ -51,13 +51,14 @@ void DistanceMap::computeDistanceMap(CCBot & m_bot, const CCTilePosition & start
 
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
-        auto & tile = m_sortedTiles[fringeIndex];
-        int curDist = m_dist[(int)tile.x][(int)tile.y];
+        int x = m_sortedTiles[fringeIndex].x;
+        int y = m_sortedTiles[fringeIndex].y;
+        int curDist = m_dist[x][y];
 
         // check every possible child of this tile
         for (size_t a=0; a<LegalActions; ++a)
         {
-            CCTilePosition nextTile(tile.x + actionX[a], tile.y + actionY[a]);
+            CCTilePosition nextTile(x + actionX[a], y + actionY[a]);
 
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (m_bot.Map().isWalkable(nextTile) && getDistance(nextTile) == -1)
@@ -87,13 +88,14 @@ void DistanceMap::computeDistanceMap(const StaticMapMeta & mapMeta, const CCTile
 
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
-        auto & tile = m_sortedTiles[fringeIndex];
-        int curDist = m_dist[(int)tile.x][(int)tile.y];
+        int x = m_sortedTiles[fringeIndex].x;
+        int y = m_sortedTiles[fringeIndex].y;
+        int curDist = m_dist[x][y];
 
         // check every possible child of this tile
         for (size_t a=0; a<LegalActions; ++a)
         {
-            CCTilePosition nextTile(tile.x + actionX[a], tile.y + actionY[a]);
+            CCTilePosition nextTile(x + actionX[a], y + actionY[a]);
 
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (mapMeta.isWalkable(nextTile.x, nextTile.y) && getDistance(nextTile) == -1)

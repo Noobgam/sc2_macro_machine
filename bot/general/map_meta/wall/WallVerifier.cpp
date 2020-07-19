@@ -92,18 +92,19 @@ WallVerifier::verifyPlacement(
     GraphChecker checker;
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
-        auto & tile = m_sortedTiles[fringeIndex];
-        int curDist = m_dist[(int)tile.x][(int)tile.y];
+        int x = m_sortedTiles[fringeIndex].x;
+        int y = m_sortedTiles[fringeIndex].y;
+        int curDist = m_dist[x][y];
 
         // check every possible child of this tile
         for (size_t a=0; a < LEGAL_ACTIONS; ++a)
         {
             int dx = actionX[a];
             int dy = actionY[a];
-            CCTilePosition nextTile(tile.x + dx, tile.y + dy);
+            CCTilePosition nextTile(x + dx, y + dy);
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (m_mapMeta.isWalkable(nextTile.x, nextTile.y) && !blockedByWall.count(nextTile)) {
-                checker.addEdge(tile.x, tile.y, nextTile.x, nextTile.y);
+                checker.addEdge(x, y, nextTile.x, nextTile.y);
                 if (m_dist[(int)nextTile.x][(int)nextTile.y] != -1) continue;
                 m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
                 m_sortedTiles.push_back(nextTile);

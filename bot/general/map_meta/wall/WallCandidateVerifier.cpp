@@ -100,7 +100,9 @@ bool WallCandidateVerifier::verifyPlacement(
     bool baseReachable = false;
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
-        int dist = distances.getDistance(CCPosition(m_sortedTiles[fringeIndex].x + .5f, m_sortedTiles[fringeIndex].y + .5f));
+        int x = m_sortedTiles[fringeIndex].x;
+        int y = m_sortedTiles[fringeIndex].y;
+        int dist = distances.getDistance(CCPosition(x + .5f, y + .5f));
         if (dist != -1 && dist <= 6) {
             baseReachable = true;
             break;
@@ -109,8 +111,7 @@ bool WallCandidateVerifier::verifyPlacement(
         // check every possible child of this tile
         for (size_t a=0; a < LEGAL_ACTIONS; ++a)
         {
-            auto & tile = m_sortedTiles[fringeIndex];
-            CCTilePosition nextTile(tile.x + actionX[a], tile.y + actionY[a]);
+            CCTilePosition nextTile(x + actionX[a], y + actionY[a]);
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (m_mapMeta.isWalkable(nextTile.x, nextTile.y) && m_dist[(int)nextTile.x][(int)nextTile.y] == false)
             {
