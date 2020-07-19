@@ -1,8 +1,5 @@
-#include <general/map_meta/wall/WallPlacement.h>
-#include <util/LogInfo.h>
 #include "CCBot.h"
-#include <random>
-#include <ctime>
+#include "../util/LogInfo.h"
 
 CCBot::CCBot()
     : m_map(*this)
@@ -17,34 +14,12 @@ void CCBot::OnGameStart() {
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
 
     m_techTree.onStart();
+    m_map.onStart();
     m_unitInfo.onStart();
 
-    m_map.onStart();
     m_managers.onStart();
 
-
     m_gameCommander.onStart();
-    m_mapMeta = MapMeta::getMeta(*this);
-    int myBaseId = (*m_bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
-    int enemyBaseId = (*m_bases.getOccupiedBaseLocations(Players::Enemy).begin())->getBaseId();
-    m_wallPlacements = m_mapMeta->getWallPlacements(myBaseId, myBaseId);
-    srand(time(NULL));
-    if (m_wallPlacements.size() != 0) {
-        while (true) {
-            chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
-            if (chosenPlacement.value().wallType != WallType::FullWall) break;
-        }
-        for (auto x : chosenPlacement->gaps) {
-            if (x.second == GapType::OneByOne) {
-                m_wallCandidates.push_back({x.first.first, x.first.second});
-            }
-        }
-    } else {
-//        m_wallCandidates = WallPlacement::getTileCandidates(*this,
-//                myBaseId,
-//                enemyBaseId
-//                );
-    }
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
 }
 
@@ -62,9 +37,8 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Starting onStep()" << std::endl;
     Control()->GetObservation();
     ++observationId;
-    m_unitInfo.onFrame();
-
     m_map.onFrame();
+    m_unitInfo.onFrame();
     m_bases.onFrame();
 
     m_managers.onFrame();
@@ -73,28 +47,6 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Finished onStep()" << std::endl;
 
 #ifdef _DEBUG
-    if (chosenPlacement.has_value()) {
-        for (auto x : chosenPlacement->buildings) {
-            int sz = 3;
-            if (x.second == BuildingType::PoweringPylon) {
-                sz = 2;
-            }
-            Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
-            for (int i = 0; i < sz; ++i) {
-                for (int j = 0; j < sz; ++j) {
-                    Map().drawTile(i + x.first.first, j + x.first.second);
-                }
-            }
-        }
-
-        for (auto tile : m_wallCandidates) {
-            Map().drawTile(tile.x, tile.y, CCColor(0, 255, 0));
-        }
-    } else {
-        for (auto x : m_wallCandidates) {
-            Map().drawTile(x.x, x.y);
-        }
-    }
     Debug()->SendDebug();
 #endif
 }
@@ -223,5 +175,6 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 }
 
 bool CCBot::NeedWall() const {
-    return true;
+    // TODO: return true if wall is actually needed
+    return false;
 }

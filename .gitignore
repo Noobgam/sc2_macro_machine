@@ -65,4 +65,3 @@ package.json
 package-lock.json
 
 cmake-build-debug
-cmake-build-release

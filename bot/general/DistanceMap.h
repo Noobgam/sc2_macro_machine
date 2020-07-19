@@ -3,8 +3,6 @@
 #include "model/Common.h"
 #include <map>
 
-class StaticMapMeta;
-
 class CCBot;
 
 class DistanceMap 
@@ -22,7 +20,6 @@ public:
     
     DistanceMap();
     void computeDistanceMap(CCBot & m_bot, const CCTilePosition & startTile);
-    void computeDistanceMap(const StaticMapMeta & m_bot, const CCTilePosition & startTile);
 
     int getDistance(int tileX, int tileY) const;
     int getDistance(const CCTilePosition & pos) const;

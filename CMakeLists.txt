@@ -143,7 +143,6 @@ if (BUILD_API_EXAMPLES)
 endif ()
 
 add_subdirectory("bot")
-add_subdirectory("meta-calculator")
 
 if (BUILD_API_TESTS)
     add_subdirectory("tests")

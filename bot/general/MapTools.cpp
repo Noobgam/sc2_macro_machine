@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <array>
-#include <util/LogInfo.h>
 
 namespace {
 bool getBit(const sc2::ImageData& grid, int tileX, int tileY) {
@@ -35,30 +34,81 @@ typedef std::vector<std::vector<float>>  vvf;
 // constructor for MapTools
 MapTools::MapTools(CCBot & bot)
     : m_bot     (bot)
+    , m_width   (0)
+    , m_height  (0)
     , m_maxZ    (0.0f)
     , m_frame   (0)
 {
+
 }
 
 void MapTools::onStart()
 {
-    // can't load it earlier, map observations do not exist before onstart
-    m_staticMapMeta = StaticMapMeta::getMeta(m_bot);
-
-    auto m_width = m_staticMapMeta->width();
-    auto m_height = m_staticMapMeta->height();
+    m_width  = m_bot.Observation()->GetGameInfo().width;
+    m_height = m_bot.Observation()->GetGameInfo().height;
+    m_walkable       = vvb(m_width, std::vector<bool>(m_height, true));
+    m_buildable      = vvb(m_width, std::vector<bool>(m_height, false));
+    m_depotBuildable = vvb(m_width, std::vector<bool>(m_height, false));
     m_lastSeen       = vvi(m_width, std::vector<int>(m_height, 0));
+    m_sectorNumber   = vvi(m_width, std::vector<int>(m_height, 0));
+    m_terrainHeight  = vvf(m_width, std::vector<float>(m_height, 0.0f));
     m_powerMap       = vvi(m_width, std::vector<int>(m_height, 0));
-    m_unbuildableNeutral = vvb(m_width, std::vector<bool>(m_height, false));
-    m_unwalkableNeutral = vvb(m_width, std::vector<bool>(m_height, false));
+
+    // Set the boolean grid data from the Map
+    for (int x(0); x < m_width; ++x)
+    {
+        for (int y(0); y < m_height; ++y)
+        {
+            m_buildable[x][y]       = canBuild(x, y);
+            m_depotBuildable[x][y]  = canBuild(x, y);
+            m_walkable[x][y]        = m_buildable[x][y] || canWalk(x, y);
+            m_terrainHeight[x][y]   = terrainHeight(CCPosition((CCPositionType)x, (CCPositionType)y));
+        }
+    }
 
     for (auto & unit : m_bot.Observation()->GetUnits())
     {
         m_maxZ = std::max(unit->pos.z, m_maxZ);
     }
 
-    updateNeutralMap();
     // set tiles that static resources are on as unbuildable
+    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral)) {
+        if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
+            continue;
+        }
+        auto& resource = *unitPtr;
+
+        int width = resource.getType().tileWidth();
+        int height = resource.getType().tileHeight();
+        int tileX = std::floor(resource.getPosition().x) - (width / 2);
+        int tileY = std::floor(resource.getPosition().y) - (height / 2);
+
+        if (!isVisible(resource.getTilePosition().x, resource.getTilePosition().y)) { }
+
+        for (int x=tileX; x<tileX+width; ++x)
+        {
+            for (int y=tileY; y<tileY+height; ++y)
+            {
+                m_buildable[x][y] = false;
+
+                // depots can't be built within 3 tiles of any resource
+                for (int rx=-3; rx<=3; rx++)
+                {
+                    for (int ry=-3; ry<=3; ry++)
+                    {
+                        // sc2 doesn't fill out the corners of the mineral 3x3 boxes for some reason
+                        if (std::abs(rx) + std::abs(ry) == 6) { continue; }
+                        if (!isValidTile(CCTilePosition(x+rx, y+ry))) { continue; }
+
+                        m_depotBuildable[x+rx][y+ry] = false;
+                    }
+                }
+            }
+        }
+    }
+
+    m_mapMeta = MapMeta::getMeta(m_bot);
+    computeConnectivity();
 }
 
 void MapTools::onFrame()
@@ -66,9 +116,9 @@ void MapTools::onFrame()
     m_frame++;
     updatePowerMap();
 
-    for (int x=0; x < m_staticMapMeta->width(); ++x)
+    for (int x=0; x<m_width; ++x)
     {
-        for (int y=0; y < m_staticMapMeta->height(); ++y)
+        for (int y=0; y<m_height; ++y)
         {
             if (isVisible(x, y))
             {
@@ -78,6 +128,55 @@ void MapTools::onFrame()
     }
 
     draw();
+}
+
+void MapTools::computeConnectivity()
+{
+    // the fringe data structe we will use to do our BFS searches
+    std::vector<std::array<int, 2>> fringe;
+    fringe.reserve(m_width*m_height);
+    int sectorNumber = 0;
+
+    // for every tile on the map, do a connected flood fill using BFS
+    for (int x=0; x<m_width; ++x)
+    {
+        for (int y=0; y<m_height; ++y)
+        {
+            // if the sector is `not currently 0, or the map isn't walkable here, then we can skip this tile
+            if (getSectorNumber(x, y) != 0 || !isWalkable(x, y))
+            {
+                continue;
+            }
+
+            // increase the sector number, so that walkable tiles have sectors 1-N
+            sectorNumber++;
+
+            // reset the fringe for the search and add the start tile to it
+            fringe.clear();
+            fringe.push_back({x,y});
+            m_sectorNumber[x][y] = sectorNumber;
+
+            // do the BFS, stopping when we reach the last element of the fringe
+            for (size_t fringeIndex=0; fringeIndex<fringe.size(); ++fringeIndex)
+            {
+                auto & tile = fringe[fringeIndex];
+
+                // check every possible child of this tile
+                for (size_t a=0; a<LegalActions; ++a)
+                {
+                    int nextX = tile[0] + actionX[a];
+                    int nextY = tile[1] + actionY[a];
+
+                    // if the new tile is inside the map bounds, is walkable, and has not been assigned a sector, add it to the current sector and the fringe
+                    if (isValidTile(nextX, nextY) && isWalkable(nextX, nextY) && (getSectorNumber(nextX, nextY) == 0))
+                    {
+                        m_sectorNumber[nextX][nextY] = sectorNumber;
+                        fringe.push_back({nextX, nextY});
+                    }
+                }
+            }
+        }
+    }
 }
 
 bool MapTools::isExplored(const CCTilePosition & pos) const
@@ -112,7 +211,7 @@ bool MapTools::isPowered(float x, float y) const
 
 float MapTools::terrainHeight(float x, float y) const
 {
-    return m_staticMapMeta->getTerrainHeight(x, y);
+    return m_terrainHeight[(int)x][(int)y];
 }
 
 int MapTools::getGroundDistance(const CCPosition & src, const CCPosition & dest) const
@@ -150,12 +249,12 @@ int MapTools::getSectorNumber(int x, int y) const
         return 0;
     }
 
-    return m_staticMapMeta->getSectorNumber(x, y);
+    return m_sectorNumber[x][y];
 }
 
 bool MapTools::isValidTile(int tileX, int tileY) const
 {
-    return tileX >= 0 && tileY >= 0 && tileX < m_staticMapMeta->width() && tileY < m_staticMapMeta->height();
+    return tileX >= 0 && tileY >= 0 && tileX < m_width && tileY < m_height;
 }
 
 bool MapTools::isValidTile(const CCTilePosition & tile) const
@@ -262,7 +361,7 @@ bool MapTools::isBuildable(int tileX, int tileY) const
         return false;
     }
 
-    return m_staticMapMeta->isBuildable(tileX, tileY) && !m_unbuildableNeutral[tileX][tileY];
+    return m_buildable[tileX][tileY];
 }
 
 bool MapTools::canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const
@@ -278,9 +377,9 @@ bool MapTools::isBuildable(const CCTilePosition & tile) const
 void MapTools::printMap()
 {
     std::stringstream ss;
-    for (int y(0); y < m_staticMapMeta->height(); ++y)
+    for (int y(0); y < m_height; ++y)
     {
-        for (int x(0); x < m_staticMapMeta->width(); ++x)
+        for (int x(0); x < m_width; ++x)
         {
             ss << isWalkable(x, y);
         }
@@ -293,6 +392,16 @@ void MapTools::printMap()
     out.close();
 }
 
+bool MapTools::isDepotBuildableTile(int tileX, int tileY) const
+{
+    if (!isValidTile(tileX, tileY))
+    {
+        return false;
+    }
+
+    return m_depotBuildable[tileX][tileY];
+}
+
 bool MapTools::isWalkable(int tileX, int tileY) const
 {
     if (!isValidTile(tileX, tileY))
@@ -300,7 +409,7 @@ bool MapTools::isWalkable(int tileX, int tileY) const
         return false;
     }
 
-    return m_staticMapMeta->isWalkable(tileX, tileY) && !m_unwalkableNeutral[tileX][tileY];
+    return m_walkable[tileX][tileY];
 }
 
 bool MapTools::isWalkable(const CCTilePosition & tile) const
@@ -310,12 +419,12 @@ bool MapTools::isWalkable(const CCTilePosition & tile) const
 
 int MapTools::width() const
 {
-    return m_staticMapMeta->width();
+    return m_width;
 }
 
 int MapTools::height() const
 {
-    return m_staticMapMeta->height();
+    return m_height;
 }
 
 const std::vector<CCTilePosition> & MapTools::getClosestTilesTo(const CCTilePosition & pos) const
@@ -361,6 +470,7 @@ bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPos
         return false;
     }
     return Util::Dist(pylonPos, candidate) < radius;
+
 }
 
 void MapTools::powerPylon(const CCPosition & pos, float r) {
@@ -372,8 +482,6 @@ void MapTools::depowerPylon(const CCPosition & pos, float r) {
 }
 
 void MapTools::updatePowerMap() {
-    auto m_width = m_staticMapMeta->width();
-    auto m_height = m_staticMapMeta->height();
     // TODO: remove this, use callbacks, depower dead pylons, power live pylons
     m_powerMap.assign(2 * m_width, std::vector<int>(2 * m_height, 0));
     for (auto & powerSource : m_bot.Observation()->GetPowerSources())
@@ -418,40 +526,4 @@ std::pair<int, int> MapTools::assumePylonBuilt(const CCPosition& pos, float radi
         }
     }
     return {freshlyPowered, poweredOnce};
-}
-
-void MapTools::updateNeutralMap() {
-    auto&& neutrals = m_bot.UnitInfo().getUnits(Players::Neutral);
-    for (auto & unitPtr : neutrals) {
-
-        int width;
-        int height;
-        if (unitPtr->getType().isMineral() || unitPtr->getType().isGeyser()) {
-            width = unitPtr->getType().tileWidth();
-            height = unitPtr->getType().tileHeight();
-        } else {
-            // otherwise there's no data in tech tree to find from
-            width =  unitPtr->getUnitPtr()->radius * 2;
-            height = unitPtr->getUnitPtr()->radius * 2;
-        }
-        int tileX = std::floor(unitPtr->getPosition().x) - (width / 2);
-        int tileY = std::floor(unitPtr->getPosition().y) - (height / 2);
-
-
-        for (int x=tileX; x<tileX+width; ++x)
-        {
-            for (int y=tileY; y<tileY+height; ++y)
-            {
-                m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit (unitPtr->getType());
-                m_unwalkableNeutral [x][y] = m_unwalkableNeutral[x][y]  || !Util::canWalkOverUnit(unitPtr->getType());
-                if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
-                    continue;
-                }
-            }
-        }
-    }
-}
-
-const StaticMapMeta& MapTools::getStaticMapMeta() const {
-    return *m_staticMapMeta;
 }
