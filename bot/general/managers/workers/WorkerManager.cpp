@@ -67,9 +67,8 @@ Squad *WorkerManager::formSquad(const std::set<const Unit *> &workers) {
 void WorkerManager::updateBasesSquads() {
     for (const auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
         if (base->hasPlayerDepot(Players::Self)) {
-            BaseLocationID baseId = base->getBaseId();
-            const auto& it = std::find_if(m_baseWorkersPtrs.begin(), m_baseWorkersPtrs.end(), [baseId](const auto& bw) {
-                return bw->getBaseLocation()->getBaseId() == baseId;
+            const auto& it = std::find_if(m_baseWorkersPtrs.begin(), m_baseWorkersPtrs.end(), [base](const auto& bw) {
+                return bw->getBaseLocation()->getID() == base->getID();
             });
             if (it == m_baseWorkersPtrs.end()) {
                 const auto& value = m_baseWorkers.emplace_back(std::make_unique<BaseWorkers>(m_bot, base));
