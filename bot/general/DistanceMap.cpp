@@ -1,6 +1,8 @@
 #include "DistanceMap.h"
 #include "CCBot.h"
-#include "../util/Util.h"
+
+#include <general/map_meta/StaticMapMeta.h>
+#include <util/Util.h>
 
 const size_t LegalActions = 4;
 const int actionX[LegalActions] = {1, -1, 0, 0};
@@ -59,6 +61,42 @@ void DistanceMap::computeDistanceMap(CCBot & m_bot, const CCTilePosition & start
 
             // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
             if (m_bot.Map().isWalkable(nextTile) && getDistance(nextTile) == -1)
+            {
+                m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
+                m_sortedTiles.push_back(nextTile);
+            }
+        }
+    }
+}
+
+
+// Computes m_dist[x][y] = ground distance from (startX, startY) to (x,y)
+// Uses BFS, since the map is quite large and DFS may cause a stack overflow
+void DistanceMap::computeDistanceMap(const StaticMapMeta & mapMeta, const CCTilePosition & startTile)
+{
+    m_startTile = startTile;
+    m_width = mapMeta.width();
+    m_height = mapMeta.height();
+    m_dist = std::vector<std::vector<int>>(m_width, std::vector<int>(m_height, -1));
+    m_sortedTiles.reserve(m_width * m_height);
+
+    // the fringe for the BFS we will perform to calculate distances
+    m_sortedTiles.push_back(startTile);
+
+    m_dist[(int)startTile.x][(int)startTile.y] = 0;
+
+    for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
+    {
+        auto & tile = m_sortedTiles[fringeIndex];
+        int curDist = m_dist[(int)tile.x][(int)tile.y];
+
+        // check every possible child of this tile
+        for (size_t a=0; a<LegalActions; ++a)
+        {
+            CCTilePosition nextTile(tile.x + actionX[a], tile.y + actionY[a]);
+
+            // if the new tile is inside the map bounds, is walkable, and has not been visited yet, set the distance of its parent + 1
+            if (mapMeta.isWalkable(nextTile.x, nextTile.y) && getDistance(nextTile) == -1)
             {
                 m_dist[(int)nextTile.x][(int)nextTile.y] = curDist + 1;
                 m_sortedTiles.push_back(nextTile);

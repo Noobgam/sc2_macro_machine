@@ -6,6 +6,7 @@
 #include "units/UnitInfoManager.h"
 #include "TechTree.h"
 #include "../GameCommander.h"
+#include "general/map_meta/wall/WallPlacement.h"
 #include <general/managers/Managers.h>
 
 class CCBot : public sc2::Agent {
@@ -17,12 +18,19 @@ class CCBot : public sc2::Agent {
     Managers                m_managers;
 
 
+    std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
+
+
     size_t observationId = 0;
 
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
 
 public:
+    // TODO: move to mapMeta
+    std::vector<WallPlacement>      m_wallPlacements;
+    std::optional<WallPlacement> chosenPlacement;
+    std::vector<CCTilePosition> m_wallCandidates;
 
     CCBot();
 

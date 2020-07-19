@@ -174,6 +174,32 @@ sc2::BuffID Util::GetBuffFromName(const std::string & name, CCBot & bot)
     return 0;
 }
 
+bool Util::canWalkOverUnit(const UnitType& type) {
+    sc2::UNIT_TYPEID typeId = type.getAPIUnitType();
+    switch (typeId) {
+        case sc2::UNIT_TYPEID::UNBUILDABLEPLATESUNIT:                     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEPLATESSMALLUNIT:                return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSUNIT:                     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSSMALLUNIT:                return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEBRICKSDESTRUCTIBLE:     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEROCKSDESTRUCTIBLE:              return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEPLATESDESTRUCTIBLE:     return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_KARAKFEMALE:                       return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UTILITYBOT:                        return true;
+        default:                                                          return false;
+    }
+}
+
+bool Util::canBuildOnUnit(const UnitType& type) {
+    // most of units are not buildable on, but moving neutrals is a mess.
+    sc2::UNIT_TYPEID typeId = type.getAPIUnitType();
+    switch (typeId) {
+        case sc2::UNIT_TYPEID::NEUTRAL_KARAKFEMALE:                       return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UTILITYBOT:                        return true;
+        default:                                                          return false;
+    }
+}
+
 sc2::AbilityID Util::GetAbilityFromName(const std::string & name, CCBot & bot)
 {
     for (const sc2::AbilityData & data : bot.Observation()->GetAbilityData())
