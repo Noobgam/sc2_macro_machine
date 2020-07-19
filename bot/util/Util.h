@@ -34,4 +34,6 @@ namespace Util
     float Dist(const Unit & unit1, const Unit & unit2);
     float Dist(const CCPosition & p1, const CCPosition & p2);
     CCPositionType DistSq(const CCPosition & p1, const CCPosition & p2);
+    bool canWalkOverUnit(const UnitType& type);
+    bool canBuildOnUnit(const UnitType& type);
 };

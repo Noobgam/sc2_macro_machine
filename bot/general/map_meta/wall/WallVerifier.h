@@ -1,0 +1,29 @@
+#pragma once
+
+#include "WallPlacement.h"
+#include <optional>
+#include <vector>
+
+class StaticMapMeta;
+
+// verifies wall placements for specific base
+struct WallVerifier {
+    WallVerifier(
+            const StaticMapMeta& mapMeta,
+            int baseLocationId,
+            int startBaseLocationId,
+            int enemyStartBaseLocationId
+            );
+
+    std::optional<WallPlacement> verifyPlacement(
+            // {{lx, ly}, type} - position of a left-bottom most tile, and building size
+            const std::vector<std::pair<std::pair<int,int>, BuildingType>>& buildings
+    );
+private:
+    const StaticMapMeta& m_mapMeta;
+    int m_baseLocationId;
+    int m_startBaseLocationId;
+    int m_enemyStartBaseLocationId;
+};
+
+

@@ -16,6 +16,13 @@ void UnitInfoManager::onStart() {
 
 void UnitInfoManager::onFrame() {
     updateUnits();
+    auto&& units = m_units.find(Players::Self)->second;
+    for (auto& unit : units) {
+        auto&& centerPos = unit->getPosition();
+        std::stringstream ss;
+        ss << "[" << centerPos.x << ":" << centerPos.y << "]";
+        m_bot.Debug()->DebugTextOut(ss.str(), unit->getUnitPtr()->pos);
+    }
 }
 
 void UnitInfoManager::updateUnits() {
