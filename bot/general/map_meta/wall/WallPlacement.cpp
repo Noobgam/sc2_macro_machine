@@ -252,7 +252,12 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     }
 
     std::vector<std::pair<std::pair<int,int>, BuildingType>> alreadyPlaced;
-    std::vector<BuildingType> buildings = {BuildingType::ThreeByThree, BuildingType::ThreeByThree, BuildingType::PoweringPylon};
+    std::vector<BuildingType> buildings = {
+            BuildingType::ThreeByThree,
+            BuildingType::ThreeByThree,
+            BuildingType::ThreeByThree,
+            BuildingType::PoweringPylon
+    };
     std::vector<std::vector<std::pair<std::pair<int,int>, BuildingType>>> container;
 
     WallCandidateVerifier candidateVerifier{
