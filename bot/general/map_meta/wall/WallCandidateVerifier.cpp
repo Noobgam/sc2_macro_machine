@@ -100,7 +100,7 @@ bool WallCandidateVerifier::verifyPlacement(
     bool baseReachable = false;
     for (size_t fringeIndex=0; fringeIndex < m_sortedTiles.size(); ++fringeIndex)
     {
-        int dist = distances.getDistance(CCPosition(m_sortedTiles.x + .5f, m_sortedTiles.y + .5f));
+        int dist = distances.getDistance(CCPosition(m_sortedTiles[fringeIndex].x + .5f, m_sortedTiles[fringeIndex].y + .5f));
         if (dist != -1 && dist <= 6) {
             baseReachable = true;
             break;
