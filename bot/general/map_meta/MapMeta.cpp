@@ -13,17 +13,17 @@ MapMeta::MapMeta(const StaticMapMeta &meta) {
         int myStart = locs[i];
         scoutingKeyPoints.push_back(ScoutingKeyPoints::getScoutingKeyPoints(meta, myStart));
 
-        for (int j = 0; j < locs.size(); ++j) {
-            if (j == i) continue;
-            int enemyStart = locs[j];
-            auto&& vwp = WallPlacement::getWallsForBaseLocation(
-                    meta,
-                    myStart,
-                    myStart,
-                    enemyStart
-            );
-            wallPlacements.insert(wallPlacements.end(), vwp.begin(), vwp.end());
-        }
+//        for (int j = 0; j < locs.size(); ++j) {
+//            if (j == i) continue;
+//            int enemyStart = locs[j];
+//            auto&& vwp = WallPlacement::getWallsForBaseLocation(
+//                    meta,
+//                    myStart,
+//                    myStart,
+//                    enemyStart
+//            );
+//            wallPlacements.insert(wallPlacements.end(), vwp.begin(), vwp.end());
+//        }
     }
 }
 

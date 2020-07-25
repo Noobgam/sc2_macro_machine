@@ -144,6 +144,7 @@ endif ()
 
 add_subdirectory("bot")
 add_subdirectory("meta-calculator")
+add_subdirectory("static-meta-calculator")
 
 if (BUILD_API_TESTS)
     add_subdirectory("tests")

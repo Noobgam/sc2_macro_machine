@@ -44,6 +44,7 @@ public:
           BaseLocationManager & Bases();
     const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
+    const MapMeta & MapMeta() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
           Managers & getManagers();

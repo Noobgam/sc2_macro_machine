@@ -14,6 +14,13 @@ CCBot::CCBot()
 { }
 
 void CCBot::OnGameStart() {
+#ifdef _STATIC_MAP_CALCULATOR
+    StaticMapMeta::getMeta(*this);
+    std::terminate();
+#else
+    m_mapMeta = MapMeta::getMeta(*this);
+#endif
+
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
 
     m_techTree.onStart();
@@ -24,11 +31,8 @@ void CCBot::OnGameStart() {
 
 
     m_gameCommander.onStart();
-    m_mapMeta = MapMeta::getMeta(*this);
     int myBaseId = (*m_bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
-    int enemyBaseId = (*m_bases.getOccupiedBaseLocations(Players::Enemy).begin())->getBaseId();
     m_wallPlacements = m_mapMeta->getWallPlacements(myBaseId, myBaseId);
-    srand(time(NULL));
     if (m_wallPlacements.size() != 0) {
         while (true) {
             chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
@@ -120,6 +124,10 @@ CCRace CCBot::GetPlayerRace(int player) const
 
 const MapTools & CCBot::Map() const {
     return m_map;
+}
+
+const MapMeta & CCBot::MapMeta() const {
+    return *m_mapMeta.get();
 }
 
 BaseLocationManager & CCBot::Bases() {
