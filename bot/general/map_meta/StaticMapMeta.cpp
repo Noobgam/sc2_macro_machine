@@ -37,6 +37,38 @@ namespace {
         unsigned char value = grid.data[pointI.x + pointI.y * grid.width];
         return (static_cast<float>(value) - 127.0f) / 8.f;
     }
+
+    bool isGeyser(sc2::UnitTypeID m_type)
+    {
+        switch (m_type.ToType())
+        {
+            case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER         : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER  : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER   : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_SHAKURASVESPENEGEYSER : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_RICHVESPENEGEYSER     : return true;
+            default: return false;
+        }
+    }
+
+    bool isMineral(sc2::UnitTypeID m_type)
+    {
+        switch (m_type.ToType())
+        {
+            case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD            : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750         : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD        : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750     : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		   : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	   : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD750 : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD: return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD750: return true;
+            case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD450         : return true;
+            default: return false;
+        }
+    }
 }
 
 StaticMapMeta::StaticMapMeta() {}
@@ -68,13 +100,13 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
     }
 
     // set tiles that static resources are on as unbuildable
-    auto &&neutrals = bot.UnitInfo().getUnits(Players::Neutral);
+    auto &&neutrals = bot.Observation()->GetUnits(sc2::Unit::Alliance::Neutral);
     for (auto &unitPtr : neutrals) {
 
         int width;
         int height;
         UnitType unitType = UnitType(
-                unitPtr->getAPIUnitType(),
+                unitPtr->unit_type,
                 const_cast<CCBot&>(bot)
         );
         if (unitType.isMineral() || unitType.isGeyser()) {
@@ -82,11 +114,11 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
             height = unitType.tileHeight();
         } else {
             // otherwise there's no data in tech tree to find from
-            width = unitPtr->getUnitPtr()->radius * 2;
-            height = unitPtr->getUnitPtr()->radius * 2;
+            width = unitPtr->radius * 2;
+            height = unitPtr->radius * 2;
         }
-        int tileX = std::floor(unitPtr->getPosition().x) - (width / 2);
-        int tileY = std::floor(unitPtr->getPosition().y) - (height / 2);
+        int tileX = std::floor(unitPtr->pos.x) - (width / 2);
+        int tileY = std::floor(unitPtr->pos.y) - (height / 2);
 
 
         for (int x = tileX; x < tileX + width; ++x) {
@@ -265,38 +297,6 @@ DistanceMap StaticMapMeta::getDistanceMap(const CCTilePosition & pos) const {
     DistanceMap mp{};
     mp.computeDistanceMap(*this, CCTilePosition(pos.x, pos.y));
     return mp;
-}
-
-bool isGeyser(sc2::UnitTypeID m_type)
-{
-    switch (m_type.ToType())
-    {
-        case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER         : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER  : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER   : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_SHAKURASVESPENEGEYSER : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHVESPENEGEYSER     : return true;
-        default: return false;
-    }
-}
-
-bool isMineral(sc2::UnitTypeID m_type)
-{
-    switch (m_type.ToType())
-    {
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD            : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750         : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD        : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750     : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		   : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	   : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD750 : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD: return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD750: return true;
-        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD450         : return true;
-        default: return false;
-    }
 }
 
 std::vector<std::vector<const sc2::Unit *>> StaticMapMeta::findResourceClusters(const CCBot& bot) {

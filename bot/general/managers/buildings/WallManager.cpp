@@ -28,6 +28,7 @@ std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
 
 WallManager::WallManager(CCBot& bot)
     : m_bot(bot)
+    , needWall(true)
 {
 }
 
@@ -42,5 +43,30 @@ void WallManager::onStart() {
             chosenPlacement = wallPlacements[rand() % wallPlacements.size()];
             if (chosenPlacement.value().wallType != WallType::FullWall) break;
         }
+    }
+}
+
+void WallManager::draw() {
+    if (chosenPlacement.has_value()) {
+        for (auto x : chosenPlacement->buildings) {
+            int sz = 3;
+            if (x.second == BuildingType::PoweringPylon) {
+                sz = 2;
+            }
+            m_bot.Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
+            for (int i = 0; i < sz; ++i) {
+                for (int j = 0; j < sz; ++j) {
+                    m_bot.Map().drawTile(i + x.first.first, j + x.first.second);
+                }
+            }
+        }
+
+        for (auto tile : chosenPlacement->gaps) {
+            if (tile.second != GapType::OneByOne) continue;
+            int x = tile.first.first;
+            int y = tile.first.second;
+            m_bot.Map().drawTile(x, y, CCColor(0, 255, 0));
+        }
+    } else {
     }
 }

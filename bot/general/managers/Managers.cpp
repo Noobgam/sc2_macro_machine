@@ -61,4 +61,13 @@ void Managers::onFrame() {
     m_workerManager.onFrame();
     m_squadManager.onFrame();
     m_buildingManager.onFrame();
+    m_wallManager.draw();
+}
+
+WallManager &Managers::getWallManager() {
+    return m_wallManager;
+}
+
+const WallManager &Managers::getWallManager() const {
+    return m_wallManager;
 }

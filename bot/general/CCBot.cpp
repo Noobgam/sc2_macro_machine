@@ -33,24 +33,6 @@ void CCBot::OnGameStart() {
 
 
     m_gameCommander.onStart();
-    int myBaseId = (*m_bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
-    m_wallPlacements = m_mapMeta->getWallPlacements(myBaseId, myBaseId);
-    if (m_wallPlacements.size() != 0) {
-        while (true) {
-            chosenPlacement = m_wallPlacements[rand() % m_wallPlacements.size()];
-            if (chosenPlacement.value().wallType != WallType::FullWall) break;
-        }
-        for (auto x : chosenPlacement->gaps) {
-            if (x.second == GapType::OneByOne) {
-                m_wallCandidates.push_back({x.first.first, x.first.second});
-            }
-        }
-    } else {
-//        m_wallCandidates = WallPlacement::getTileCandidates(*this,
-//                myBaseId,
-//                enemyBaseId
-//                );
-    }
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
 }
 
@@ -79,28 +61,6 @@ void CCBot::OnStep() {
     LOG_DEBUG << "Finished onStep()" << std::endl;
 
 #ifdef _DEBUG
-    if (chosenPlacement.has_value()) {
-        for (auto x : chosenPlacement->buildings) {
-            int sz = 3;
-            if (x.second == BuildingType::PoweringPylon) {
-                sz = 2;
-            }
-            Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
-            for (int i = 0; i < sz; ++i) {
-                for (int j = 0; j < sz; ++j) {
-                    Map().drawTile(i + x.first.first, j + x.first.second);
-                }
-            }
-        }
-
-        for (auto tile : m_wallCandidates) {
-            Map().drawTile(tile.x, tile.y, CCColor(0, 255, 0));
-        }
-    } else {
-        for (auto x : m_wallCandidates) {
-            Map().drawTile(x.x, x.y);
-        }
-    }
     Debug()->SendDebug();
 #endif
 }
