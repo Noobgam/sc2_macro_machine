@@ -20,7 +20,14 @@ namespace boost::serialization {
     void serialize(Archive& ar, CCPosition& pos, const unsigned int version) {
         ar & pos.x & pos.y;
     }
+
+
+    template<class Archive>
+    void serialize(Archive& ar, CCTilePosition & pos, const unsigned int version) {
+        ar & pos.x & pos.y;
+    }
 }
+
 
 struct BaseLocationProjection {
     friend class boost::serialization::access;
