@@ -128,7 +128,7 @@ const MapTools & CCBot::Map() const {
     return m_map;
 }
 
-const MapMeta & CCBot::MapMeta() const {
+const MapMeta & CCBot::getMapMeta() const {
     return *m_mapMeta.get();
 }
 
