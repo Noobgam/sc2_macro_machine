@@ -7,29 +7,6 @@
 
 using std::string;
 
-MapMeta::MapMeta(const CCBot &bot) {
-    int myStart = bot.Bases().getPlayerStartLocation(Players::Self)->getBaseId();
-    int enemyStart = bot.Bases().getPlayerStartLocation(Players::Enemy)->getBaseId();
-    auto&& vwp = WallPlacement::getWallsForBaseLocation(
-            bot.Map().getStaticMapMeta(),
-            myStart,
-            myStart,
-            enemyStart
-    );
-    for (auto& x : vwp) {
-        wallPlacements.push_back(x);
-    }
-    vwp = WallPlacement::getWallsForBaseLocation(
-            bot.Map().getStaticMapMeta(),
-            enemyStart,
-            enemyStart,
-            myStart
-    );
-    for (auto& x : vwp) {
-        wallPlacements.push_back(x);
-    }
-}
-
 MapMeta::MapMeta(const StaticMapMeta &meta) {
     auto&& locs = meta.getStartLocationIds();
     for (int i = 0; i < locs.size(); ++i) {
@@ -66,7 +43,7 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
     }
 }
 
-std::unique_ptr<MapMeta> MapMeta::getMeta(const StaticMapMeta &meta, string mapName) {
+std::unique_ptr<MapMeta> MapMeta::calculateMeta(const StaticMapMeta &meta, string mapName) {
     string fileName = "data/map_metas/" + mapName;
     LOG_DEBUG << "Started calculating [" + mapName + "] meta." << endl;
     auto ptr = std::make_unique<MapMeta>(meta);

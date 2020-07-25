@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     setVerifierThreadCount(std::thread::hardware_concurrency());
     for (auto mapName : maps) {
         std::unique_ptr<StaticMapMeta> staticMapMeta = StaticMapMeta::getMeta(mapName);
-        std::unique_ptr<MapMeta> meta = MapMeta::getMeta(*staticMapMeta, mapName);
+        std::unique_ptr<MapMeta> meta = MapMeta::calculateMeta(*staticMapMeta, mapName);
     }
+    return 0;
 }

@@ -72,9 +72,13 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
 
         int width;
         int height;
-        if (unitPtr->getType().isMineral() || unitPtr->getType().isGeyser()) {
-            width = unitPtr->getType().tileWidth();
-            height = unitPtr->getType().tileHeight();
+        UnitType unitType = UnitType(
+                unitPtr->getAPIUnitType(),
+                const_cast<CCBot&>(bot)
+        );
+        if (unitType.isMineral() || unitType.isGeyser()) {
+            width = unitType.tileWidth();
+            height = unitType.tileHeight();
         } else {
             // otherwise there's no data in tech tree to find from
             width = unitPtr->getUnitPtr()->radius * 2;
@@ -86,9 +90,9 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
 
         for (int x = tileX; x < tileX + width; ++x) {
             for (int y = tileY; y < tileY + height; ++y) {
-                m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit(unitPtr->getType());
-                m_unwalkableNeutral[x][y] = m_unwalkableNeutral[x][y] || !Util::canWalkOverUnit(unitPtr->getType());
-                if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
+                m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit(unitType);
+                m_unwalkableNeutral[x][y] = m_unwalkableNeutral[x][y] || !Util::canWalkOverUnit(unitType);
+                if (!unitType.isMineral() && !unitType.isGeyser()) {
                     continue;
                 }
             }
