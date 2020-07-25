@@ -33,9 +33,11 @@ MapMeta::MapMeta(const CCBot &bot) {
 MapMeta::MapMeta(const StaticMapMeta &meta) {
     auto&& locs = meta.getStartLocationIds();
     for (int i = 0; i < locs.size(); ++i) {
+        int myStart = locs[i];
+        scoutingKeyPoints.push_back(ScoutingKeyPoints::getScoutingKeyPoints(meta, myStart));
+
         for (int j = 0; j < locs.size(); ++j) {
             if (j == i) continue;
-            int myStart = locs[i];
             int enemyStart = locs[j];
             auto&& vwp = WallPlacement::getWallsForBaseLocation(
                     meta,

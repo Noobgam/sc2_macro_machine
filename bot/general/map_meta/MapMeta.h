@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <general/map_meta/scouting/ScoutingKeypoints.h>
 
 #include "util/FileUtils.h"
 #include "general/map_meta/wall/WallPlacement.h"
@@ -23,7 +24,9 @@ struct MapMeta {
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version) {
-        ar & wallPlacements;
+        ar
+            & wallPlacements
+            & scoutingKeyPoints;
     }
 
     // this constructor is required by boost serialization
@@ -38,6 +41,9 @@ private:
     // [startLocationId][locationId] -> wallPlacements
     // enemy location id is implied from startLocationId
     std::vector<WallPlacement> wallPlacements;
+
+    // Key points to scout.
+    std::vector<ScoutingKeyPoints> scoutingKeyPoints;
 };
 
 BOOST_CLASS_VERSION(MapMeta, 1)

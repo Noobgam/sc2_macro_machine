@@ -78,6 +78,8 @@ struct StaticMapMeta {
     const std::vector<BaseLocationProjection>& getBaseLocations() const;
     const std::vector<int>& getStartLocationIds() const;
     DistanceMap getDistanceMap(const CCPosition& pos) const;
+    DistanceMap getDistanceMap(const CCTilePosition & pos) const;
+    bool isVisible(const CCTilePosition &from, const CCTilePosition &to, float R) const;
 
 private:
     static std::vector<BaseLocationProjection> calculateBaseLocations(const CCBot& bot);

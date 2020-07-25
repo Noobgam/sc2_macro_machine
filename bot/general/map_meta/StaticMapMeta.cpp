@@ -258,6 +258,12 @@ DistanceMap StaticMapMeta::getDistanceMap(const CCPosition& pos) const {
     return mp;
 }
 
+DistanceMap StaticMapMeta::getDistanceMap(const CCTilePosition & pos) const {
+    DistanceMap mp{};
+    mp.computeDistanceMap(*this, CCTilePosition(pos.x, pos.y));
+    return mp;
+}
+
 std::vector<std::vector<const Resource *>> StaticMapMeta::findResourceClusters(const CCBot& bot) {
     // a BaseLocation will be anything where there are minerals to mine
     // so we will first look over all minerals and cluster them based on some distance
@@ -349,6 +355,38 @@ std::vector<BaseLocationProjection> StaticMapMeta::calculateBaseLocations(const 
         }
     }
     return projections;
+}
+
+constexpr static int VISIBILITY_PROBES = 9;
+
+// statically this function is more precise than runtime alternative
+bool StaticMapMeta::isVisible(const CCTilePosition &from, const CCTilePosition &to, float R) const {
+    float fromHeight = m_terrainHeight[from.x][from.y];
+    float toHeight =   m_terrainHeight[to.x][to.y];
+    // could there be a case where there is a highground between two points?
+    if (toHeight > fromHeight) {
+        return false;
+    }
+    int dx = from.x - to.x;
+    int dy = from.y - to.y;
+    if (dx * dx + dy * dy > R * R) {
+        return false;
+    }
+    // if there is a highground in between, which is heigher than fromHeight - we won't be able to see it
+    // iterative probing should be a good heuristic I guess
+    float startx = from.x + .5;
+    float starty = from.y + .5;
+    float endx =   to.x + .5;
+    float endy =   to.y + .5;
+    for (int i = 1; i < VISIBILITY_PROBES - 1; ++i) {
+        float curx = (startx * (VISIBILITY_PROBES - i) + endx * i) / VISIBILITY_PROBES;
+        float cury = (starty * (VISIBILITY_PROBES - i) + endy * i) / VISIBILITY_PROBES;
+        float height = m_terrainHeight[curx][cury];
+        if (height > fromHeight) {
+            return false;
+        }
+    }
+    return true;
 }
 
 #undef all
