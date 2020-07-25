@@ -89,7 +89,11 @@ void WorkerManager::assignUnit(const Unit* unit) {
             }
         }
     }
-    completedBases[0]->getBaseWorkers()->assignToMineral(unit);
+    if (!m_baseWorkersPtrs.empty()) {
+        m_baseWorkersPtrs[0]->assignToMineral(unit);
+    } else {
+        LOG_DEBUG << "[SURRENDER_REQUEST] Out of bases."<< endl;
+    }
 }
 
 std::vector<const Unit*> WorkerManager::getFreeWorkers() {
