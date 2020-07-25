@@ -72,7 +72,6 @@ void WorkerManager::assignFreeUnits() {
 
 void WorkerManager::assignUnit(const Unit* unit) {
     const auto& completedBases = m_bot.getManagers().getBasesManager().getCompletedBases();
-    BOT_ASSERT(!completedBases.empty(), "No active bases found");
     for (const auto& type : {ResourceType::GEYSER, ResourceType::MINERAL}) {
         for (auto& base : completedBases) {
             const auto & baseWorkers = base->getBaseWorkers();
@@ -89,8 +88,8 @@ void WorkerManager::assignUnit(const Unit* unit) {
             }
         }
     }
-    if (!m_baseWorkersPtrs.empty()) {
-        m_baseWorkersPtrs[0]->assignToMineral(unit);
+    if (!completedBases.empty()) {
+        completedBases[0]->getBaseWorkers()->assignToMineral(unit);
     } else {
         LOG_DEBUG << "[SURRENDER_REQUEST] Out of bases."<< endl;
     }

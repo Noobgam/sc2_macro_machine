@@ -43,16 +43,24 @@ void UnitInfoManager::updateUnits() {
     std::vector<std::unique_ptr<Unit>> missingUnits;
     for (auto it = unitWrapperByTag.begin(); it != unitWrapperByTag.end(); ) {
         bool notObserved = it->second->getObservationId() != observationId;
-        bool dead = !it->second->isAlive();
-        bool needToDelete = notObserved || dead;
-        if (needToDelete) {
+        if (notObserved) {
             auto& unit = it->second;
-            LOG_DEBUG << "Unit is missing. [" << it->second->getType().getName() << "]" <<  it->second.get()->getUnitPtr()->tag << " " << std::endl;
-            missingUnits.push_back(std::move(it->second));
-            it = unitWrapperByTag.erase(it);
+            if (unit->getPlayer() == Players::Self && unit->isAlive()) {
+                ++it;
+            } else {
+                LOG_DEBUG << "Unit is missing. [" << it->second->getType().getName() << "]" <<  it->second.get()->isAlive() << " " << std::endl;
+                missingUnits.push_back(std::move(it->second));
+                it = unitWrapperByTag.erase(it);
+            }
         } else {
             ++it;
         }
+//        bo    ol dead = !it->second->isAlive();
+//        bool needToDelete = notObserved || dead;
+//        if (needToDelete) {
+//        } else {
+//            ++it;
+//        }
     }
 
     // callback missingUnits before destruction
