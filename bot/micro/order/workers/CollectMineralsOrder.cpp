@@ -1,10 +1,11 @@
 #include "CollectMineralsOrder.h"
+#include "../../../general/bases/BaseLocation.h"
 
-CollectMineralsOrder::CollectMineralsOrder(CCBot &bot, Squad *squad, const BaseLocation *baseLocation):
+CollectMineralsOrder::CollectMineralsOrder(CCBot &bot, Squad *squad, const Base *base):
     Order(bot, squad),
-    m_baseLocation(baseLocation)
+    m_base(base)
 {
-    for (auto& mineral : baseLocation->getMinerals()) {
+    for (auto& mineral : base->getBaseLocation()->getMinerals()) {
         m_mineralToWorker.insert({mineral->getID(), {}});
     }
 }
@@ -19,7 +20,7 @@ void CollectMineralsOrder::onStart() {
 }
 
 void CollectMineralsOrder::onStep() {
-    auto minerals = m_baseLocation->getMinerals();
+    auto minerals = m_base->getBaseLocation()->getMinerals();
     // clear empty patches
     std::vector<CCUnitID> toDelete;
     for (auto& mineralWorkers : m_mineralToWorker) {
@@ -62,7 +63,7 @@ void CollectMineralsOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) {
-    auto& minerals = m_baseLocation->getMinerals();
+    auto& minerals = m_base->getBaseLocation()->getMinerals();
     for (auto& worker : workers) {
         auto bestIt = std::min_element(m_mineralToWorker.begin(), m_mineralToWorker.end(),
             [](const auto& mw1, const auto& mw2) {

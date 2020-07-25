@@ -8,8 +8,8 @@ BaseWorkers::BaseWorkers(CCBot &bot, const Base * base): m_bot(bot), m_base(base
     m_mineralSquad = m_bot.getManagers().getSquadManager().createNewSquad();
     m_vespeneSquad = m_bot.getManagers().getSquadManager().createNewSquad();
 
-    m_mineralSquad->setOrder(std::make_shared<CollectMineralsOrder>(m_bot, m_mineralSquad, base->getBaseLocation()));
-    m_vespeneSquad->setOrder(std::make_shared<CollectVespeneOrder>(m_bot, m_mineralSquad, base));
+    m_mineralSquad->setOrder(std::make_shared<CollectMineralsOrder>(m_bot, m_mineralSquad, base));
+    m_vespeneSquad->setOrder(std::make_shared<CollectVespeneOrder>(m_bot, m_vespeneSquad, base));
 }
 
 const Base *BaseWorkers::getBase() const {

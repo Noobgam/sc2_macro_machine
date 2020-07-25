@@ -3,9 +3,10 @@
 Base::Base(CCBot &bot, const BaseLocation *baseLocation, const Unit *nexus):
     m_bot(bot),
     m_baseLocation(baseLocation),
-    m_nexus(nexus),
-    m_workers(std::make_unique<BaseWorkers>(bot, this))
-{ }
+    m_nexus(nexus)
+{
+    m_workers = std::make_unique<BaseWorkers>(bot, this);
+}
 
 const BaseLocation *Base::getBaseLocation() const {
     return m_baseLocation;
