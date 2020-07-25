@@ -101,7 +101,6 @@ void WorkerManager::assignFreeUnits() {
 }
 
 void WorkerManager::assignUnit(const Unit* unit) {
-    BOT_ASSERT(!m_baseWorkersPtrs.empty(), "No active bases found");
     for (auto& baseWorkers : m_baseWorkersPtrs) {
         if (baseWorkers->getIdealMineralWorkersNumber() > baseWorkers->getMineralSquad()->units().size()) {
             baseWorkers->assignToMineral(unit);
@@ -114,7 +113,11 @@ void WorkerManager::assignUnit(const Unit* unit) {
             return;
         }
     }
-    m_baseWorkersPtrs[0]->assignToMineral(unit);
+    if (!m_baseWorkersPtrs.empty()) {
+        m_baseWorkersPtrs[0]->assignToMineral(unit);
+    } else {
+        LOG_DEBUG << "[SURRENDER_REQUEST] Out of bases."<< endl;
+    }
 }
 
 std::vector<const Unit*> WorkerManager::getFreeWorkers() {
