@@ -109,22 +109,14 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
         }
     } else {
         auto locations = bot.Observation()->GetGameInfo().start_locations;
-        auto enemyLocations = bot.Observation()->GetGameInfo().enemy_start_locations;
-        locations.insert(locations.end(), enemyLocations.begin(), enemyLocations.end());
-
-        // I'm not really sure whether locations and enemyLocations intersect.
-        std::set<int> startLocs;
 
         for (auto& loc : locations) {
             auto it = std::find_if(all(m_baseLocationProjections), [&loc](auto& base) {
                 return Util::Dist(loc, base.depotPos) < 1;
             });
             if (it != m_baseLocationProjections.end()) {
-                startLocs.insert(it->baseId);
+                m_startLocationIds.push_back(it->baseId);
             }
-        }
-        for (auto x : startLocs) {
-            m_startLocationIds.push_back(x);
         }
     }
 }
@@ -275,19 +267,58 @@ DistanceMap StaticMapMeta::getDistanceMap(const CCTilePosition & pos) const {
     return mp;
 }
 
-std::vector<std::vector<const Resource *>> StaticMapMeta::findResourceClusters(const CCBot& bot) {
+bool isGeyser(sc2::UnitTypeID m_type)
+{
+    switch (m_type.ToType())
+    {
+        case sc2::UNIT_TYPEID::NEUTRAL_VESPENEGEYSER         : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PROTOSSVESPENEGEYSER  : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_SPACEPLATFORMGEYSER   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_SHAKURASVESPENEGEYSER : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHVESPENEGEYSER     : return true;
+        default: return false;
+    }
+}
+
+bool isMineral(sc2::UnitTypeID m_type)
+{
+    switch (m_type.ToType())
+    {
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD            : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD750         : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD        : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_RICHMINERALFIELD750     : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD		   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_LABMINERALFIELD750	   : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD750 : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERMINERALFIELD    : return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_PURIFIERRICHMINERALFIELD750: return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_MINERALFIELD450         : return true;
+        default: return false;
+    }
+}
+
+std::vector<std::vector<const sc2::Unit *>> StaticMapMeta::findResourceClusters(const CCBot& bot) {
     // a BaseLocation will be anything where there are minerals to mine
     // so we will first look over all minerals and cluster them based on some distance
     const CCPositionType clusterDistance = Util::TileToPosition(12);
 
     // stores each cluster of resources based on some ground distance
-    std::vector<std::vector<const Resource*>> resourceClusters;
-    for (auto & mineral : bot.getManagers().getResourceManager().getMinerals()) {
+    std::vector<std::vector<const sc2::Unit*>> resourceClusters;
+    std::function<bool(const sc2::Unit& unit)> mineralFilter = [](const sc2::Unit& unit) {
+        return isMineral(unit.unit_type);
+    };
+    std::function<bool(const sc2::Unit& unit)> geyserFilter = [](const sc2::Unit& unit) {
+        return isGeyser(unit.unit_type);
+    };
+
+    for (auto & mineral : bot.Observation()->GetUnits(mineralFilter)) {
         // skip minerals that don't have more than 100 starting minerals
         // these are probably stupid map-blocking minerals to confuse us
         bool foundCluster = false;
         for (auto & cluster : resourceClusters) {
-            float dist = Util::Dist(mineral->getPosition(), Util::CalcCenter(cluster));
+            float dist = Util::Dist(mineral->pos, Util::CalcCenter(cluster));
 
             // quick initial air distance check to eliminate most resources
             if (dist < clusterDistance) {
@@ -308,10 +339,10 @@ std::vector<std::vector<const Resource *>> StaticMapMeta::findResourceClusters(c
     }
 
     // add geysers only to existing resource clusters
-    for (auto & geyser : bot.getManagers().getResourceManager().getGeysers()) {
+    for (auto & geyser : bot.Observation()->GetUnits(geyserFilter)) {
         for (auto & cluster : resourceClusters) {
             //int groundDist = m_bot.Map().getGroundDistance(geyser.pos, Util::CalcCenter(cluster));
-            float groundDist = Util::Dist(geyser->getPosition(), Util::CalcCenter(cluster));
+            float groundDist = Util::Dist(geyser->pos, Util::CalcCenter(cluster));
             if (groundDist >= 0 && groundDist < clusterDistance) {
                 cluster.push_back(geyser);
                 break;

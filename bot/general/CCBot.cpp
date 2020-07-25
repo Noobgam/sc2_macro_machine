@@ -14,7 +14,10 @@ CCBot::CCBot()
 { }
 
 void CCBot::OnGameStart() {
+    m_techTree.onStart();
 #ifdef _STATIC_MAP_CALCULATOR
+    StaticMapMeta::getMeta(*this);
+    // reload it to validate
     StaticMapMeta::getMeta(*this);
     std::terminate();
 #else
@@ -23,7 +26,6 @@ void CCBot::OnGameStart() {
 
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
 
-    m_techTree.onStart();
     m_unitInfo.onStart();
 
     m_map.onStart();

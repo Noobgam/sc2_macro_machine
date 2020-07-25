@@ -104,6 +104,21 @@ CCPosition Util::CalcCenter(const std::vector<const Resource*> & minerals) {
     return CCPosition(cx / minerals.size(), cy / minerals.size());
 }
 
+CCPosition Util::CalcCenter(const std::vector<const sc2::Unit*> & minerals) {
+    if (minerals.empty()) {
+        return CCPosition(0, 0);
+    }
+
+    CCPositionType cx = 0;
+    CCPositionType cy = 0;
+    for (auto & unit : minerals) {
+        cx += unit->pos.x;
+        cy += unit->pos.y;
+    }
+
+    return CCPosition(cx / minerals.size(), cy / minerals.size());
+}
+
 bool Util::IsZerg(const CCRace & race) {
     return race == sc2::Race::Zerg;
 }

@@ -90,7 +90,7 @@ struct StaticMapMeta {
 
 private:
     static std::vector<BaseLocationProjection> calculateBaseLocations(const CCBot& bot);
-    static std::vector<std::vector<const Resource *>> findResourceClusters(const CCBot& bot);
+    static std::vector<std::vector<const sc2::Unit *>> findResourceClusters(const CCBot& bot);
     int     m_width;
     int     m_height;
     std::vector<std::vector<bool>>  m_walkable;           // whether a tile is buildable (does not include resources)
