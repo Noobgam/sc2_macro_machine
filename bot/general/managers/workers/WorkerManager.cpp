@@ -151,7 +151,7 @@ void WorkerManager::draw() {
             ss << base->getBaseWorkers()->getActiveMineralWorkers() << "/" << base->getBaseWorkers()->getIdealMineralWorkers() << " : ";
             ss << base->getBaseWorkers()->getActiveVespeneWorkers() << "/" << base->getBaseWorkers()->getMaximumVespeneWorkers() << ", ";
         }
-        ss << "\n";
+        ss << endl;
     }
     m_bot.Map().drawTextScreen(0.6f, 0.01f, ss.str(), CCColor(255, 255, 0));
 #endif
