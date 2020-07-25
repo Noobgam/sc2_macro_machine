@@ -12,7 +12,7 @@ std::optional<BuildOrderItem> TechBuildManager::getTopPriority() {
     if (!hasGate || cyberneticsNumber >= 1) {
         return {};
     }
-    int priority = 8;
+    int priority = 10;
     BuildOrderItem item{ MetaType(cyberneticsType, m_bot), priority, false };
     return item;
 }
