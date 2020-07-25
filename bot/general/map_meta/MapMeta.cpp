@@ -61,12 +61,8 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
         LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << endl;
         return meta;
     } else {
-        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, will recalculate" << endl;
-        auto ptr = std::make_unique<MapMeta>(bot);
-        auto ofs = FileUtils::openWriteFile(fileName);
-        boost::archive::text_oarchive oa(ofs);
-        oa << ptr;
-        return ptr;
+        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, cannot continue, will take too long to recalc" << endl;
+        std::terminate();
     }
 }
 
