@@ -70,6 +70,7 @@ public:
     bool    isExplored(const CCPosition & pos) const;
     bool    isExplored(const CCTilePosition & pos) const;
     bool    isVisible(int tileX, int tileY) const;
+    bool    isVisible(const CCTilePosition& from, const CCTilePosition& to, float R) const;
     bool    canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const;
 
     const   DistanceMap & getDistanceMap(const CCTilePosition & tile) const;
@@ -91,6 +92,7 @@ public:
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<CCTilePosition> & getClosestTilesTo(const CCTilePosition & pos) const;
+
 
     void updateNeutralMap();
     const StaticMapMeta& getStaticMapMeta() const;

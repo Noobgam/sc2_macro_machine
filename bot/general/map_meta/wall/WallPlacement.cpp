@@ -234,6 +234,50 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         int startBaseLocationId,
         int enemyStartBaseLocationId
 ) {
+    auto threeBuildings =
+            getWallsForBaseLocation(
+                    mapMeta,
+                    baseLocationId,
+                    startBaseLocationId,
+                    enemyStartBaseLocationId,
+                    {
+                            BuildingType::ThreeByThree,
+                            BuildingType::ThreeByThree,
+                            BuildingType::ThreeByThree,
+                            BuildingType::PoweringPylon
+                    }
+    );
+
+    auto twoBuildings =
+            getWallsForBaseLocation(
+                    mapMeta,
+                    baseLocationId,
+                    startBaseLocationId,
+                    enemyStartBaseLocationId,
+                    {
+                            BuildingType::ThreeByThree,
+                            BuildingType::ThreeByThree,
+                            BuildingType::ThreeByThree,
+                            BuildingType::PoweringPylon
+                    }
+            );
+    std::vector<WallPlacement> walls;
+    for (auto&& x : threeBuildings) {
+        walls.push_back(std::move(x));
+    }
+    for (auto&& y : twoBuildings) {
+        walls.push_back((std::move(y)));
+    }
+    return walls;
+}
+
+std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
+        const StaticMapMeta &mapMeta,
+        int baseLocationId,
+        int startBaseLocationId,
+        int enemyStartBaseLocationId,
+        std::vector<BuildingType> buildings
+) {
     int threads = VERIFIER_THREAD_COUNT;
     auto&& bases = mapMeta.getBaseLocations();
     auto it = std::find_if(bases.begin(), bases.end(), [baseLocationId](auto& loc) {
@@ -252,12 +296,6 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     }
 
     std::vector<std::pair<std::pair<int,int>, BuildingType>> alreadyPlaced;
-    std::vector<BuildingType> buildings = {
-            BuildingType::ThreeByThree,
-            BuildingType::ThreeByThree,
-            BuildingType::ThreeByThree,
-            BuildingType::PoweringPylon
-    };
     std::vector<std::vector<std::pair<std::pair<int,int>, BuildingType>>> container;
 
     WallCandidateVerifier candidateVerifier{

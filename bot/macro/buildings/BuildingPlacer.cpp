@@ -63,25 +63,10 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     if (b.is(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
         return m_bot.Bases().getNextExpansion(Players::Self);
     }
-    static int id = 0;
-    static auto& wallPlacement = m_bot.chosenPlacement;
-    if (m_bot.NeedWall() && wallPlacement.has_value() && id < wallPlacement->buildings.size()) {
-        auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
-        auto& lr = wallPlacement.value().buildings[id].first;
-        if (b.isSupplyProvider() && id == 0) {
-            id++;
-            return CCPosition(lr.first + 1, lr.second + 1);
-        } else {
-            if (abs(b.getFootPrintRadius() - 1.5) < 1e-9) {
-                int pylons = m_bot.UnitInfo().getUnitTypeCount(Players::Self, pylonType);
-                if (pylons == 0) {
-                    // cant build gate if pylons were not built
-                    return {};
-                }
-                id++;
-                return CCPosition(lr.first + 1.5, lr.second + 1.5);
-            }
-        }
+    auto&& opt = m_bot.getManagers().getWallManager().getBuildLocation(b);
+    // if wall manager thinks it is necessary, it takes priority
+    if (opt.has_value()) {
+        return opt;
     }
 
     double bestHeuristic = std::numeric_limits<double>::min();

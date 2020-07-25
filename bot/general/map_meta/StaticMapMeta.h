@@ -1,7 +1,7 @@
 #pragma once
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/vector.hpp>
 #include <fstream>
 #include <vector>
@@ -20,7 +20,14 @@ namespace boost::serialization {
     void serialize(Archive& ar, CCPosition& pos, const unsigned int version) {
         ar & pos.x & pos.y;
     }
+
+
+    template<class Archive>
+    void serialize(Archive& ar, CCTilePosition & pos, const unsigned int version) {
+        ar & pos.x & pos.y;
+    }
 }
+
 
 struct BaseLocationProjection {
     friend class boost::serialization::access;
@@ -78,10 +85,12 @@ struct StaticMapMeta {
     const std::vector<BaseLocationProjection>& getBaseLocations() const;
     const std::vector<int>& getStartLocationIds() const;
     DistanceMap getDistanceMap(const CCPosition& pos) const;
+    DistanceMap getDistanceMap(const CCTilePosition & pos) const;
+    bool isVisible(const CCTilePosition &from, const CCTilePosition &to, float R) const;
 
 private:
     static std::vector<BaseLocationProjection> calculateBaseLocations(const CCBot& bot);
-    static std::vector<std::vector<const Resource *>> findResourceClusters(const CCBot& bot);
+    static std::vector<std::vector<const sc2::Unit *>> findResourceClusters(const CCBot& bot);
     int     m_width;
     int     m_height;
     std::vector<std::vector<bool>>  m_walkable;           // whether a tile is buildable (does not include resources)

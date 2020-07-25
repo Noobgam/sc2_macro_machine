@@ -27,10 +27,6 @@ class CCBot : public sc2::Agent {
                  const std::vector<std::string> & protocol_errors = {}) override;
 
 public:
-    // TODO: move to mapMeta
-    std::vector<WallPlacement>      m_wallPlacements;
-    std::optional<WallPlacement> chosenPlacement;
-    std::vector<CCTilePosition> m_wallCandidates;
 
     CCBot();
 
@@ -44,6 +40,7 @@ public:
           BaseLocationManager & Bases();
     const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
+    const MapMeta & getMapMeta() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
           Managers & getManagers();

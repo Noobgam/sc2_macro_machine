@@ -7,35 +7,14 @@
 
 using std::string;
 
-MapMeta::MapMeta(const CCBot &bot) {
-    int myStart = bot.Bases().getPlayerStartLocation(Players::Self)->getBaseId();
-    int enemyStart = bot.Bases().getPlayerStartLocation(Players::Enemy)->getBaseId();
-    auto&& vwp = WallPlacement::getWallsForBaseLocation(
-            bot.Map().getStaticMapMeta(),
-            myStart,
-            myStart,
-            enemyStart
-    );
-    for (auto& x : vwp) {
-        wallPlacements.push_back(x);
-    }
-    vwp = WallPlacement::getWallsForBaseLocation(
-            bot.Map().getStaticMapMeta(),
-            enemyStart,
-            enemyStart,
-            myStart
-    );
-    for (auto& x : vwp) {
-        wallPlacements.push_back(x);
-    }
-}
-
 MapMeta::MapMeta(const StaticMapMeta &meta) {
     auto&& locs = meta.getStartLocationIds();
     for (int i = 0; i < locs.size(); ++i) {
+        int myStart = locs[i];
+        scoutingKeyPoints.push_back(ScoutingKeyPoints::getScoutingKeyPoints(meta, myStart));
+
         for (int j = 0; j < locs.size(); ++j) {
             if (j == i) continue;
-            int myStart = locs[i];
             int enemyStart = locs[j];
             auto&& vwp = WallPlacement::getWallsForBaseLocation(
                     meta,
@@ -59,16 +38,12 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
         LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << endl;
         return meta;
     } else {
-        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, will recalculate" << endl;
-        auto ptr = std::make_unique<MapMeta>(bot);
-        auto ofs = FileUtils::openWriteFile(fileName);
-        boost::archive::text_oarchive oa(ofs);
-        oa << ptr;
-        return ptr;
+        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, cannot continue, will take too long to recalc" << endl;
+        std::terminate();
     }
 }
 
-std::unique_ptr<MapMeta> MapMeta::getMeta(const StaticMapMeta &meta, string mapName) {
+std::unique_ptr<MapMeta> MapMeta::calculateMeta(const StaticMapMeta &meta, string mapName) {
     string fileName = "data/map_metas/" + mapName;
     LOG_DEBUG << "Started calculating [" + mapName + "] meta." << endl;
     auto ptr = std::make_unique<MapMeta>(meta);

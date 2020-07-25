@@ -452,6 +452,37 @@ void MapTools::updateNeutralMap() {
     }
 }
 
+constexpr static int VISIBILITY_PROBES = 5;
+
+bool MapTools::isVisible(const CCTilePosition &from, const CCTilePosition &to, float R) const {
+    float fromHeight = terrainHeight(CCPosition(from.x + .5, from.y + .5));
+    float toHeight = terrainHeight(CCPosition(to.x + .5, to.y + .5));
+    // could there be a case where there is a highground between two points?
+    if (toHeight > fromHeight) {
+        return false;
+    }
+    int dx = from.x - to.x;
+    int dy = from.y - to.y;
+    if (dx * dx + dy * dy > R * R) {
+        return false;
+    }
+    // if there is a highground in between, which is heigher than fromHeight - we won't be able to see it
+    // iterative probing should be a good heuristic I guess
+    float startx = from.x + .5;
+    float starty = from.y + .5;
+    float endx =   to.x + .5;
+    float endy =   to.y + .5;
+    for (int i = 1; i < VISIBILITY_PROBES - 1; ++i) {
+        float curx = (startx * (VISIBILITY_PROBES - i) + endx * i) / VISIBILITY_PROBES;
+        float cury = (starty * (VISIBILITY_PROBES - i) + endy * i) / VISIBILITY_PROBES;
+        float height = terrainHeight(curx, cury);
+        if (height > fromHeight) {
+            return false;
+        }
+    }
+    return true;
+}
+
 const StaticMapMeta& MapTools::getStaticMapMeta() const {
     return *m_staticMapMeta;
 }

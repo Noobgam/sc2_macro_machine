@@ -70,6 +70,14 @@ struct WallPlacement {
             int enemyStartBaseLocationId
     );
 
+    static std::vector<WallPlacement> getWallsForBaseLocation(
+            const StaticMapMeta& mapMeta,
+            int baseLocationId,
+            int startBaseLocationId,
+            int enemyStartBaseLocationId,
+            std::vector<BuildingType> buildings
+    );
+
 
     static WallPlacement fullWall(
             int startLocationId,
