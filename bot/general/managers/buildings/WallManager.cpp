@@ -36,7 +36,7 @@ void WallManager::onStart() {
         srand(time(NULL));
         auto&& bases = m_bot.Bases();
         int myBaseId = (*bases.getOccupiedBaseLocations(Players::Self).begin())->getBaseId();
-        auto wallPlacements = m_bot.MapMeta().getWallPlacements(myBaseId, myBaseId);
+        auto wallPlacements = m_bot.getMapMeta().getWallPlacements(myBaseId, myBaseId);
         BOT_ASSERT(wallPlacements.size() > 0, "No wall placements exist, but wall requested");
         while (true) {
             chosenPlacement = wallPlacements[rand() % wallPlacements.size()];
