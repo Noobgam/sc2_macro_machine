@@ -27,8 +27,7 @@ MapMeta::MapMeta(const StaticMapMeta &meta) {
     }
 }
 
-std::unique_ptr<MapMeta> MapMeta::getMeta(const CCBot &bot) {
-    string mapName = bot.Observation()->GetGameInfo().map_name;
+std::unique_ptr<MapMeta> MapMeta::getMeta(string mapName) {
     string fileName = "data/map_metas/" + mapName;
     if (FileUtils::fileExists(fileName)) {
         std::unique_ptr<MapMeta> meta;

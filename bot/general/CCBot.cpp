@@ -21,7 +21,7 @@ void CCBot::OnGameStart() {
     StaticMapMeta::getMeta(*this);
     std::terminate();
 #else
-    m_mapMeta = MapMeta::getMeta(*this);
+    m_mapMeta = MapMeta::getMeta(Observation()->GetGameInfo().map_name);
 #endif
 
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
