@@ -32,7 +32,7 @@ struct MapMeta {
     // this constructor is required by boost serialization
     MapMeta();
     MapMeta(const StaticMapMeta& bot);
-    static std::unique_ptr<MapMeta> getMeta(const CCBot& bot);
+    static std::unique_ptr<MapMeta> getMeta(std::string mapName);
     static std::unique_ptr<MapMeta> calculateMeta(const StaticMapMeta& meta, std::string mapName);
 
     std::vector<WallPlacement> getWallPlacements(int startLocationId, int baseLocationId) const;
