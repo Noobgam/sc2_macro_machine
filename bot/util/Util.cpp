@@ -104,6 +104,21 @@ CCPosition Util::CalcCenter(const std::vector<const Resource*> & minerals) {
     return CCPosition(cx / minerals.size(), cy / minerals.size());
 }
 
+CCPosition Util::CalcCenter(const std::vector<const sc2::Unit*> & minerals) {
+    if (minerals.empty()) {
+        return CCPosition(0, 0);
+    }
+
+    CCPositionType cx = 0;
+    CCPositionType cy = 0;
+    for (auto & unit : minerals) {
+        cx += unit->pos.x;
+        cy += unit->pos.y;
+    }
+
+    return CCPosition(cx / minerals.size(), cy / minerals.size());
+}
+
 bool Util::IsZerg(const CCRace & race) {
     return race == sc2::Race::Zerg;
 }
@@ -172,6 +187,32 @@ sc2::BuffID Util::GetBuffFromName(const std::string & name, CCBot & bot)
     }
 
     return 0;
+}
+
+bool Util::canWalkOverUnit(const UnitType& type) {
+    sc2::UNIT_TYPEID typeId = type.getAPIUnitType();
+    switch (typeId) {
+        case sc2::UNIT_TYPEID::UNBUILDABLEPLATESUNIT:                     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEPLATESSMALLUNIT:                return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSUNIT:                     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSSMALLUNIT:                return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEBRICKSDESTRUCTIBLE:     return true;
+        case sc2::UNIT_TYPEID::UNBUILDABLEROCKSDESTRUCTIBLE:              return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEPLATESDESTRUCTIBLE:     return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_KARAKFEMALE:                       return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UTILITYBOT:                        return true;
+        default:                                                          return false;
+    }
+}
+
+bool Util::canBuildOnUnit(const UnitType& type) {
+    // most of units are not buildable on, but moving neutrals is a mess.
+    sc2::UNIT_TYPEID typeId = type.getAPIUnitType();
+    switch (typeId) {
+        case sc2::UNIT_TYPEID::NEUTRAL_KARAKFEMALE:                       return true;
+        case sc2::UNIT_TYPEID::NEUTRAL_UTILITYBOT:                        return true;
+        default:                                                          return false;
+    }
 }
 
 sc2::AbilityID Util::GetAbilityFromName(const std::string & name, CCBot & bot)

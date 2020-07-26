@@ -368,3 +368,11 @@ bool UnitType::isMorphedBuilding() const
             m_type == BWAPI::UnitTypes::Zerg_Greater_Spire;
 #endif
 }
+
+float UnitType::visionRange() const {
+    switch (m_type.ToType()) {
+        case sc2::UNIT_TYPEID::PROTOSS_PROBE: { return 8; }
+        case sc2::UNIT_TYPEID::PROTOSS_ZEALOT: { return 9; }
+        default: { return 9.0; }
+    }
+}

@@ -63,50 +63,52 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     if (b.is(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
         return m_bot.Bases().getNextExpansion(Players::Self);
     }
+    auto&& opt = m_bot.getManagers().getWallManager().getBuildLocation(b);
+    // if wall manager thinks it is necessary, it takes priority
+    if (opt.has_value()) {
+        return opt;
+    }
+
     double bestHeuristic = std::numeric_limits<double>::min();
     std::optional<CCPosition> bestPosO;
-    auto& myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
+    auto &myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
     BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
-    auto& firstBase = *myBases.begin();
-    if (m_bot.NeedWall()) {
-        // TODO: implement walling
-    } else {
-        if (b.isSupplyProvider()) {
-            // perhaps moving this logic to some sort of 'PylonPlacer' would be better
-            // copy is intended here
-            auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
-            // pylons are built in corners of tiles.
-            for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
-                const auto & pos = closestToStart[i];
-                if (canBuildHere(pos.x, pos.y, b)) {
-                    auto&& lr = m_bot.Map().assumePylonBuilt(Util::GetPosition(pos), 6.5f);
-                    int dist = m_bot.Map().getGroundDistance(firstBase->getDepotActualPosition(), Util::GetPosition(pos));
-                    double curHeuristic = heuristic(
-                            lr.first,
-                            lr.second,
-                            dist
-                            );
-                    if (curHeuristic > bestHeuristic) {
-                        bestPosO = Util::GetPosition(pos);
-                        bestHeuristic = curHeuristic;
-                    }
-                    // if there aint no good pylons or there is a very good one it doesnt really matter
-                    if (bestHeuristic > 400) break;
+    auto &firstBase = *myBases.begin();
+    if (b.isSupplyProvider()) {
+        // perhaps moving this logic to some sort of 'PylonPlacer' would be better
+        // copy is intended here
+        auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
+        // pylons are built in corners of tiles.
+        for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
+            const auto & pos = closestToStart[i];
+            if (canBuildHere(pos.x, pos.y, b)) {
+                auto&& lr = m_bot.Map().assumePylonBuilt(Util::GetPosition(pos), 6.5f);
+                int dist = m_bot.Map().getGroundDistance(firstBase->getDepotActualPosition(), Util::GetPosition(pos));
+                double curHeuristic = heuristic(
+                        lr.first,
+                        lr.second,
+                        dist
+                        );
+                if (curHeuristic > bestHeuristic) {
+                    bestPosO = Util::GetPosition(pos);
+                    bestHeuristic = curHeuristic;
                 }
+                // if there aint no good pylons or there is a very good one it doesnt really matter
+                if (bestHeuristic > 400) break;
             }
-            return bestPosO;
-        } else {
-            auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
+        }
+        return bestPosO;
+    } else {
+        auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
 
-            bool isRound = Util::isRound(b.getFootPrintRadius());
-            for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
-                auto & pos = closestToStart[i];
-                CCPosition cand = isRound
-                        ? CCPosition(pos.x, pos.y)
-                        : CCPosition(pos.x + .5, pos.y + .5);
-                if (canBuildHere(cand.x, cand.y, b)) {
-                    return cand;
-                }
+        bool isRound = Util::isRound(b.getFootPrintRadius());
+        for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
+            auto & pos = closestToStart[i];
+            CCPosition cand = isRound
+                    ? CCPosition(pos.x, pos.y)
+                    : CCPosition(pos.x + .5, pos.y + .5);
+            if (canBuildHere(cand.x, cand.y, b)) {
+                return cand;
             }
         }
     }
