@@ -257,7 +257,6 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
                     {
                             BuildingType::ThreeByThree,
                             BuildingType::ThreeByThree,
-                            BuildingType::ThreeByThree,
                             BuildingType::PoweringPylon
                     }
             );
