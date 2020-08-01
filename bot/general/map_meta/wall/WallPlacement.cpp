@@ -196,9 +196,9 @@ std::vector<CCTilePosition> WallPlacement::getTileCandidates(
         return loc.getBaseId() == enemyLocationId;
     });
     auto enemyBase = (*it);
-    auto myBasePos = myBase.pos;
+    auto myBasePos = myBase.depotPos;
     auto mp_self = mapMeta.getDistanceMap(myBasePos);
-    auto mp_enemy = mapMeta.getDistanceMap(enemyBase.pos);
+    auto mp_enemy = mapMeta.getDistanceMap(enemyBase.depotPos);
     int dist = mp_enemy.getDistance(myBasePos);
     vector<CCTilePosition> tiles = mp_self.getSortedTiles();
     // only first 600 tiles around the base loc are candidates for building the wall
@@ -248,25 +248,25 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
                     }
     );
 
-    auto twoBuildings =
-            getWallsForBaseLocation(
-                    mapMeta,
-                    baseLocationId,
-                    startBaseLocationId,
-                    enemyStartBaseLocationId,
-                    {
-                            BuildingType::ThreeByThree,
-                            BuildingType::ThreeByThree,
-                            BuildingType::PoweringPylon
-                    }
-            );
+//    auto twoBuildings =
+//            getWallsForBaseLocation(
+//                    mapMeta,
+//                    baseLocationId,
+//                    startBaseLocationId,
+//                    enemyStartBaseLocationId,
+//                    {
+//                            BuildingType::ThreeByThree,
+//                            BuildingType::ThreeByThree,
+//                            BuildingType::PoweringPylon
+//                    }
+//            );
     std::vector<WallPlacement> walls;
     for (auto&& x : threeBuildings) {
         walls.push_back(std::move(x));
     }
-    for (auto&& y : twoBuildings) {
-        walls.push_back((std::move(y)));
-    }
+//    for (auto&& y : twoBuildings) {
+//        walls.push_back((std::move(y)));
+//    }
     return walls;
 }
 
