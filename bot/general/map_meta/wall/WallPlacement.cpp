@@ -248,25 +248,25 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
                     }
     );
 
-//    auto twoBuildings =
-//            getWallsForBaseLocation(
-//                    mapMeta,
-//                    baseLocationId,
-//                    startBaseLocationId,
-//                    enemyStartBaseLocationId,
-//                    {
-//                            BuildingType::ThreeByThree,
-//                            BuildingType::ThreeByThree,
-//                            BuildingType::PoweringPylon
-//                    }
-//            );
+    auto twoBuildings =
+            getWallsForBaseLocation(
+                    mapMeta,
+                    baseLocationId,
+                    startBaseLocationId,
+                    enemyStartBaseLocationId,
+                    {
+                            BuildingType::ThreeByThree,
+                            BuildingType::ThreeByThree,
+                            BuildingType::PoweringPylon
+                    }
+            );
     std::vector<WallPlacement> walls;
     for (auto&& x : threeBuildings) {
         walls.push_back(std::move(x));
     }
-//    for (auto&& y : twoBuildings) {
-//        walls.push_back((std::move(y)));
-//    }
+    for (auto&& y : twoBuildings) {
+        walls.push_back((std::move(y)));
+    }
     return walls;
 }
 
@@ -288,7 +288,11 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
 
     // tiles is a full list of tiles that could potentially be covered by wall.
     // Make sure to check for buildability via api later.
-    vector<CCTilePosition> tiles = getTileCandidates(mapMeta, baseLocationId, enemyStartBaseLocationId);
+    vector<CCTilePosition> tiles = getTileCandidates(
+            mapMeta,
+            baseLocationId,
+            enemyStartBaseLocationId
+    );
     std::set<CCTilePosition, cmp> tileCandidates;
     for (auto x : tiles) {
         tileCandidates.insert(x);
