@@ -16,14 +16,14 @@ MapMeta::MapMeta(const StaticMapMeta &meta) {
             if (myStart == enemyStart) continue;
             scoutingKeyPoints.push_back(ScoutingKeyPoints::getScoutingKeyPoints(meta, myStart));
 
-            for (int baseIndex = 0; baseIndex < 2 && baseIndex < lr.second.size(); ++baseIndex) {
+            for (int baseIndex = 1; baseIndex < 2 && baseIndex < lr.second.size(); ++baseIndex) {
                 int myBase = lr.second[baseIndex];
                 // this would be dumb anyway.
                 if (myBase == enemyStart) continue;
                 auto &&vwp = WallPlacement::getWallsForBaseLocation(
                         meta,
-                        myStart,
                         myBase,
+                        myStart,
                         enemyStart
                 );
                 wallPlacements.insert(wallPlacements.end(), vwp.begin(), vwp.end());
