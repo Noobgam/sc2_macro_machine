@@ -10,19 +10,24 @@ using std::string;
 MapMeta::MapMeta(const StaticMapMeta &meta) {
     auto&& locs = meta.getStartLocationIds();
     for (int i = 0; i < locs.size(); ++i) {
-        int myStart = locs[i];
-        scoutingKeyPoints.push_back(ScoutingKeyPoints::getScoutingKeyPoints(meta, myStart));
+        int enemyStart = locs[i];
+        for (const auto &lr : meta.getOrderedBasesByStartLocationId()) {
+            int myStart = lr.first;
+            if (myStart == enemyStart) continue;
+            scoutingKeyPoints.push_back(ScoutingKeyPoints::getScoutingKeyPoints(meta, myStart));
 
-        for (int j = 0; j < locs.size(); ++j) {
-            if (j == i) continue;
-            int enemyStart = locs[j];
-            auto&& vwp = WallPlacement::getWallsForBaseLocation(
-                    meta,
-                    myStart,
-                    myStart,
-                    enemyStart
-            );
-            wallPlacements.insert(wallPlacements.end(), vwp.begin(), vwp.end());
+            for (int baseIndex = 0; baseIndex < 2 && baseIndex < lr.second.size(); ++baseIndex) {
+                int myBase = lr.second[baseIndex];
+                // this would be dumb anyway.
+                if (myBase == enemyStart) continue;
+                auto &&vwp = WallPlacement::getWallsForBaseLocation(
+                        meta,
+                        myStart,
+                        myBase,
+                        enemyStart
+                );
+                wallPlacements.insert(wallPlacements.end(), vwp.begin(), vwp.end());
+            }
         }
     }
 }
