@@ -18,10 +18,27 @@ void AttackWithKiting::onStep() {
 void AttackWithKiting::onUnitAdded(const Unit *unit) {
 }
 
-void AttackWithKiting::handleOneUnit(const Unit *unit) const {
+void AttackWithKiting::handleOneUnit(const Unit *unit) {
     auto&& enemies = m_bot.UnitInfo().getUnits(Players::Enemy);
     float range = unit->getType().getAttackRange() + .5f;
-    if (unit->getWeaponCooldown() > 0.1) {
+    auto it = endangered.find(unit->getID());
+    bool weaponOnCooldown = unit->getWeaponCooldown() > 0.1;
+    bool inDanger;
+    if (it != endangered.end()) {
+        if (unit->shieldPercentage() > 0.8) {
+            endangered.erase(it);
+            inDanger = false;
+        } else {
+            inDanger = true;
+        }
+    } else {
+
+        inDanger = unit->hpPercentage() < 0.9 && unit->getShields() == 0;
+        if (inDanger) {
+            endangered.insert(unit->getID());
+        }
+    }
+    if (inDanger) {
         std::vector<std::pair<float, const Unit*>> targets;
         for (auto enemy : enemies) {
             float dist = Util::Dist(*enemy, *unit);
@@ -30,7 +47,7 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) const {
         std::sort(targets.begin(), targets.end());
         std::vector<const Unit*> closeTargets;
         for (auto x : targets) {
-            if (x.first > range) {
+            if (x.first > range + 3) {
                 break;
             }
             closeTargets.push_back(x.second);
@@ -56,7 +73,7 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) const {
         float maxPriority = -1;
         const Unit* maxPriorityTarget = NULL;
         for (auto x : targets) {
-            if (x.first > range + 1) {
+            if (x.first > range + 2) {
                 break;
             }
             closeTargets.push_back(x.second);

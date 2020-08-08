@@ -6,7 +6,8 @@
 class AttackWithKiting : public Order {
 private:
     CCPosition m_target_position;
-    void handleOneUnit(const Unit* unit) const;
+    std::set<sc2::Tag> endangered;
+    void handleOneUnit(const Unit* unit);
 public:
     AttackWithKiting(CCBot & bot, Squad* squad, CCPosition position);
 
