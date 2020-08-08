@@ -92,6 +92,7 @@ void WorkerManager::assignUnit(const Unit* unit) {
         completedBases[0]->getBaseWorkers()->assignToMineral(unit);
     } else {
         LOG_DEBUG << "[SURRENDER_REQUEST] Out of bases."<< endl;
+        m_bot.Control()->RequestLeaveGame();
     }
 }
 
