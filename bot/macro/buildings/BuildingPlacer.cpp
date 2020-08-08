@@ -115,7 +115,7 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         // pylons are built in corners of tiles.
         for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
             const auto & pos = closestToStart[i];
-            if (canBuildHere(pos.x, pos.y, b)) {
+            if (canBuildHereWithoutCoveringNexus(pos.x, pos.y, b)) {
                 auto&& lr = m_bot.Map().assumePylonBuilt(Util::GetPosition(pos), 6.5f);
                 int dist = m_bot.Map().getGroundDistance(firstBase->getDepotActualPosition(), Util::GetPosition(pos));
                 double curHeuristic = heuristic(
