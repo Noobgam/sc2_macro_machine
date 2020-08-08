@@ -26,6 +26,12 @@ void MacroManager::onStart() {
 }
 
 void MacroManager::onFrame(){
+    static int frameId = 0;
+    if (++frameId != 3) {
+        LOG_DEBUG << "Skipping frame" << endl;
+        return;
+    }
+    frameId = 0;
     LOG_DEBUG << "Getting top priority" << endl;
     std::optional<BuildOrderItem> item = getTopPriority();
     if (item.has_value()) {
