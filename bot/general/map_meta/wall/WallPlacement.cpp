@@ -372,7 +372,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     for (auto& x : placements) {
         for (auto y : pylons) {
             if (ss.count(y) == 0) {
-                x.gaps.push_back({y, GapType::TwoByTwo});
+                x.gaps.emplace_back(y, GapType::TwoByTwo);
             }
         }
     }
