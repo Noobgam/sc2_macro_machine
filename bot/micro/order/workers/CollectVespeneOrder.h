@@ -10,6 +10,7 @@ private:
     std::map<ResourceID, std::vector<const Unit*>> m_assimilatorToWorker;
 
     void assignWorkers(const  std::set<const Unit*>& workers);
+    void addActiveAssimilators(const std::vector<std::pair<const Unit *, const Resource *>> &assimilators);
 public:
     CollectVespeneOrder(CCBot & bot, Squad* squad, const Base* base);
 

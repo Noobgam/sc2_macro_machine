@@ -16,11 +16,7 @@ void CollectVespeneOrder::onStart() {
 
 void CollectVespeneOrder::onStep() {
     auto assimilators = m_base->getActiveAssimilators();
-    if (assimilators.size() > m_assimilatorToWorker.size()) {
-        for (auto& assimilator : assimilators) {
-            m_assimilatorToWorker.insert({assimilator->getID(), {}});
-        }
-    }
+    addActiveAssimilators(assimilators);
     // clear exhausted assimilators
     std::vector<CCUnitID> toDelete;
     std::set<const Unit*> unassignedWorkers;
@@ -32,9 +28,8 @@ void CollectVespeneOrder::onStep() {
         if (iter == assimilators.end() || iter->second->getResourceAmount() == 0) {
             toDelete.push_back(assimilatorID);
         }
-        //
         auto& workers = vespeneWorkers.second;
-        // does not try to make ideal saturation
+        // do not try to make ideal saturation
         while (workers.size() > 3) {
             unassignedWorkers.insert(workers.front());
             workers.erase(workers.begin());
@@ -50,7 +45,7 @@ void CollectVespeneOrder::onStep() {
 }
 
 void CollectVespeneOrder::onUnitAdded(const Unit *unit) {
-    BOT_ASSERT(unit->getType().isWorker(), "Can harvest minerals only with workers.");
+    BOT_ASSERT(unit->getType().isWorker(), "Can harvest vespene only with workers.");
     assignWorkers({unit});
 }
 
@@ -66,19 +61,14 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void CollectVespeneOrder::assignWorkers(const std::set<const Unit *>& workers) {
-    const auto& assimilators = m_base->getAssimilators();
-    if (assimilators.size() > m_assimilatorToWorker.size()) {
-        for (auto& assimilator : assimilators) {
-            m_assimilatorToWorker.insert({assimilator.first->getID(), {}});
-        }
-    }
+    const auto& assimilators = m_base->getActiveAssimilators();
+    addActiveAssimilators(assimilators);
     for (auto& worker : workers) {
         auto bestIt = std::min_element(m_assimilatorToWorker.begin(), m_assimilatorToWorker.end(),
-            [](const auto& mw1, const auto& mw2) {
-                return mw1.second.size() < mw2.second.size();
+            [](const auto& w1, const auto& w2) {
+                return w1.second.size() < w2.second.size();
             }
         );
-        bestIt->second.emplace_back(worker);
         auto id = bestIt->first;
         const auto& assimilatorIt = std::find_if(assimilators.begin(), assimilators.end(),
             [id](const auto& a) {
@@ -86,9 +76,21 @@ void CollectVespeneOrder::assignWorkers(const std::set<const Unit *>& workers) {
             }
         );
         if (assimilatorIt != assimilators.end()) {
+            bestIt->second.emplace_back(worker);
             worker->rightClick(*(*assimilatorIt).first);
         } else {
-            onEnd();
+            // Do nothing?
         }
     }
 }
+
+void CollectVespeneOrder::addActiveAssimilators(const std::vector<std::pair<const Unit *, const Resource *>> &assimilators) {
+    if (assimilators.size() > m_assimilatorToWorker.size()) {
+        for (auto& assimilator : assimilators) {
+            if (assimilator.second->getResourceAmount() != 0) {
+                m_assimilatorToWorker.insert({assimilator.first->getID(), {}});
+            }
+        }
+    }
+}
+

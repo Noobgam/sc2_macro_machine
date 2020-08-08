@@ -22,7 +22,7 @@ public:
     const Unit * getNexus() const;
 
     std::vector<std::pair<const Unit*, const Resource*>> getAssimilators() const;
-    std::vector<const Unit*> getActiveAssimilators() const;
+    std::vector<std::pair<const Unit*, const Resource*>> getActiveAssimilators() const;
 
     void onNewAssimilator(const Unit* assimilator, const Resource* geyser);
     void onAssimilatorDestroyed(const Unit* assimilator);

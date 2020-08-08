@@ -24,11 +24,11 @@ std::vector<std::pair<const Unit *, const Resource *>> Base::getAssimilators() c
     return m_assimilators;
 }
 
-std::vector<const Unit *> Base::getActiveAssimilators() const {
-    std::vector<const Unit*> activeAssimilators;
+std::vector<std::pair<const Unit *, const Resource *>> Base:: getActiveAssimilators() const {
+    std::vector<std::pair<const Unit *, const Resource *>> activeAssimilators;
     for (const auto& assimilator : m_assimilators) {
         if (assimilator.first->isCompleted() && assimilator.second->getResourceAmount() != 0) {
-            activeAssimilators.emplace_back(assimilator.first);
+            activeAssimilators.emplace_back(assimilator);
         }
     }
     return activeAssimilators;
