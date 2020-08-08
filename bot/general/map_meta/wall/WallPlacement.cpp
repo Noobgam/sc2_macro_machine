@@ -196,9 +196,9 @@ std::vector<CCTilePosition> WallPlacement::getTileCandidates(
         return loc.getBaseId() == enemyLocationId;
     });
     auto enemyBase = (*it);
-    auto myBasePos = myBase.pos;
+    auto myBasePos = myBase.depotPos;
     auto mp_self = mapMeta.getDistanceMap(myBasePos);
-    auto mp_enemy = mapMeta.getDistanceMap(enemyBase.pos);
+    auto mp_enemy = mapMeta.getDistanceMap(enemyBase.depotPos);
     int dist = mp_enemy.getDistance(myBasePos);
     vector<CCTilePosition> tiles = mp_self.getSortedTiles();
     // only first 600 tiles around the base loc are candidates for building the wall
@@ -288,7 +288,11 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
 
     // tiles is a full list of tiles that could potentially be covered by wall.
     // Make sure to check for buildability via api later.
-    vector<CCTilePosition> tiles = getTileCandidates(mapMeta, baseLocationId, enemyStartBaseLocationId);
+    vector<CCTilePosition> tiles = getTileCandidates(
+            mapMeta,
+            baseLocationId,
+            enemyStartBaseLocationId
+    );
     std::set<CCTilePosition, cmp> tileCandidates;
     for (auto x : tiles) {
         tileCandidates.insert(x);
