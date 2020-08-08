@@ -104,19 +104,34 @@ CCPosition Util::CalcCenter(const std::vector<const Resource*> & minerals) {
     return CCPosition(cx / minerals.size(), cy / minerals.size());
 }
 
-CCPosition Util::CalcCenter(const std::vector<const sc2::Unit*> & minerals) {
-    if (minerals.empty()) {
+CCPosition Util::CalcCenter(const std::vector<const sc2::Unit*> & units) {
+    if (units.empty()) {
         return CCPosition(0, 0);
     }
 
     CCPositionType cx = 0;
     CCPositionType cy = 0;
-    for (auto & unit : minerals) {
+    for (auto & unit : units) {
         cx += unit->pos.x;
         cy += unit->pos.y;
     }
 
-    return CCPosition(cx / minerals.size(), cy / minerals.size());
+    return CCPosition(cx / units.size(), cy / units.size());
+}
+
+CCPosition Util::CalcCenter(const std::vector<const Unit*> & units) {
+    if (units.empty()) {
+        return CCPosition(0, 0);
+    }
+
+    CCPositionType cx = 0;
+    CCPositionType cy = 0;
+    for (auto & unit : units) {
+        cx += unit->getPosition().x;
+        cy += unit->getPosition().y;
+    }
+
+    return CCPosition(cx / units.size(), cy / units.size());
 }
 
 bool Util::IsZerg(const CCRace & race) {
@@ -187,6 +202,11 @@ sc2::BuffID Util::GetBuffFromName(const std::string & name, CCBot & bot)
     }
 
     return 0;
+}
+
+CCPosition Util::NormalizeVector(const CCPosition& pos) {
+    float len = sqrtf(pos.x * pos.x + pos.y * pos.y);
+    return pos / len;
 }
 
 bool Util::canWalkOverUnit(const UnitType& type) {

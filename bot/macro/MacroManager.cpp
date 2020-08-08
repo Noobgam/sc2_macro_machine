@@ -92,7 +92,10 @@ std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
 void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     // if we're dealing with a building
     if (item.type.isBuilding()) {
+        Timer timer;
+        timer.start();
         std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(item.type.getUnitType());
+        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" endl;
         if (!positionOpt.has_value()) {
             return;
         }
