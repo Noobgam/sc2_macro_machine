@@ -29,7 +29,7 @@ void MacroManager::onFrame(){
     LOG_DEBUG << "Getting top priority" << endl;
     std::optional<BuildOrderItem> item = getTopPriority();
     if (item.has_value()) {
-        LOG_DEBUG << "Top priority item is " << item->type.getName() << endl;
+        LOG_DEBUG << "Top priority item is " << item->type.getName() << " with priority " << item->priority << endl;
         produceIfPossible(item.value());
     } else {
         LOG_DEBUG << "No candidates to build" << endl;
@@ -92,7 +92,10 @@ std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
 void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     // if we're dealing with a building
     if (item.type.isBuilding()) {
+        Timer timer;
+        timer.start();
         std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(item.type.getUnitType());
+        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
         if (!positionOpt.has_value()) {
             return;
         }

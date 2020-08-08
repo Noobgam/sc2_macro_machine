@@ -42,7 +42,7 @@ public:
     CCPlayer getPlayer() const;
     CCUnitID getID() const;
     float getBuildPercentage() const;
-    int getWeaponCooldown() const;
+    float getWeaponCooldown() const;
     bool isCompleted() const;
     bool isBeingConstructed() const;
     bool isCloaked() const;

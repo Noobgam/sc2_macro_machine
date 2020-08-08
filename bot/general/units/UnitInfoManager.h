@@ -32,7 +32,7 @@ class UnitInfoManager {
     void updateSquadsWithRemovedUnit(const Unit *unit);
 
 public:
-    UnitInfoManager(CCBot & bot);
+    explicit UnitInfoManager(CCBot & bot);
 
     void                    onFrame();
     void                    onStart();

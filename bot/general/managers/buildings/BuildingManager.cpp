@@ -25,7 +25,7 @@ BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, C
     auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(id, type, unit, position)});
     BuildingTask* ptr = iter.first->second.get();
     m_tasksPtr.emplace_back(ptr);
-    LOG_DEBUG << "[BUILDING_MANAGER] New task added: " << ptr->getId() << " " << ptr->getType().getName() << std::endl;
+    LOG_DEBUG << "New task added: " << ptr->getId() << " " << ptr->getType().getName() << std::endl;
     return ptr;
 }
 

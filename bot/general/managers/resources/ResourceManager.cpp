@@ -4,6 +4,12 @@
 
 ResourceManager::ResourceManager(CCBot &bot): m_bot(bot) { }
 
+void ResourceManager::onStart() {
+    for (const auto& unit : m_bot.UnitInfo().getUnits(Players::Neutral)) {
+        newUnitCallback(unit);
+    }
+}
+
 const std::vector<const Resource *> & ResourceManager::getMinerals() const {
     return m_mineralPtrs;
 }

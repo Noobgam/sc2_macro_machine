@@ -15,6 +15,8 @@ CCBot::CCBot()
 
 void CCBot::OnGameStart() {
     m_techTree.onStart();
+    m_unitInfo.onStart();
+
 #ifdef _STATIC_MAP_CALCULATOR
     StaticMapMeta::getMeta(*this);
     // reload it to validate
@@ -25,8 +27,6 @@ void CCBot::OnGameStart() {
 #endif
 
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
-
-    m_unitInfo.onStart();
 
     m_map.onStart();
     m_managers.onStart();
@@ -47,8 +47,11 @@ void CCBot::OnGameEnd() {
 }
 
 void CCBot::OnStep() {
+    Timer timer;
+    timer.start();
     LOG_DEBUG << "Starting onStep()" << std::endl;
     Control()->GetObservation();
+    logging::propagateFrame(GetCurrentFrame());
     ++observationId;
     m_unitInfo.onFrame();
 
@@ -58,11 +61,13 @@ void CCBot::OnStep() {
     m_managers.onFrame();
 
     m_gameCommander.onFrame();
-    LOG_DEBUG << "Finished onStep()" << std::endl;
 
 #ifdef _DEBUG
     Debug()->SendDebug();
 #endif
+
+    timer.stop();
+    LOG_DEBUG << "Finished onStep(): " << timer.getElapsedTimeInMilliSec() << "ms" << std::endl;
 }
 
 size_t CCBot::getObservationId() const {
@@ -190,8 +195,4 @@ void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const s
 
 UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
     return UnitType{ typeId, *this };
-}
-
-bool CCBot::NeedWall() const {
-    return true;
 }

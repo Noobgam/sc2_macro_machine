@@ -2,7 +2,7 @@
 
 #include <general/model/Unit.h>
 
-typedef long long MineralID;
+typedef long long ResourceID;
 
 class CCBot;
 
@@ -15,15 +15,15 @@ class Resource {
 private:
     const CCBot & m_bot;
     const Unit * m_unit;
-    MineralID m_id;
+    ResourceID m_id;
     ResourceType m_type;
 
     size_t m_lastUpdate = 0;
 public:
-    Resource(const CCBot & bot, const Unit * unit, MineralID id);
+    Resource(const CCBot & bot, const Unit * unit, ResourceID id);
     void updateUnit(const Unit * unit);
 
-    MineralID getID() const;
+    ResourceID getID() const;
     size_t getLastUpdate() const;
     const Unit * getUnit() const;
     ResourceType getResourceType() const;

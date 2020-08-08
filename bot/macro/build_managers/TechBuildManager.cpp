@@ -5,7 +5,6 @@
 TechBuildManager::TechBuildManager(CCBot & bot) : BuildManager(bot) { }
 
 std::optional<BuildOrderItem> TechBuildManager::getTopPriority() {
-    return {};
     auto cyberneticsType = UnitType(sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE, m_bot);
     auto gatewayType = UnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY, m_bot);
     bool hasGate = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::COMPLETED) > 0;
@@ -13,7 +12,7 @@ std::optional<BuildOrderItem> TechBuildManager::getTopPriority() {
     if (!hasGate || cyberneticsNumber >= 1) {
         return {};
     }
-    int priority = 8;
+    int priority = 10;
     BuildOrderItem item{ MetaType(cyberneticsType, m_bot), priority, false };
     return item;
 }

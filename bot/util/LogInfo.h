@@ -9,6 +9,8 @@ using std::endl;
 
 namespace logging {
 
+    void propagateFrame(int currentFrame);
+
     std::ostream& LogDebug(const char * file, int line);
 
     std::ostream& LogInfo(const char * file, int line);

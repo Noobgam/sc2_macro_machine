@@ -1,5 +1,6 @@
 #include "WallManager.h"
 #include <general/CCBot.h>
+#include <util/Util.h>
 
 std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
     if (!needWall || id >= 3) {
@@ -28,11 +29,12 @@ std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
 
 WallManager::WallManager(CCBot& bot)
     : m_bot(bot)
-    , needWall(true)
+    , needWall(false)
 {
 }
 
 void WallManager::onStart() {
+    VALIDATE_CALLED_ONCE();
     if (needWall) {
         srand(time(NULL));
         auto&& bases = m_bot.Bases();

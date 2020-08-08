@@ -8,10 +8,11 @@ Managers::Managers(CCBot & bot) :
     m_buildingManager(bot),
     m_resourceManager(bot),
     m_economyManager(bot),
+    m_basesManager(bot),
     m_wallManager(bot)
 { }
 
-    WorkerManager &Managers::getWorkerManager() {
+WorkerManager &Managers::getWorkerManager() {
     return m_workerManager;
 }
 
@@ -51,9 +52,19 @@ const EconomyManager &Managers::getEconomyManager() const {
     return m_economyManager;
 }
 
+BasesManager &Managers::getBasesManager() {
+    return m_basesManager;
+}
+
+const BasesManager &Managers::getBasesManager() const {
+    return m_basesManager;
+}
+
 void Managers::onStart() {
+    m_resourceManager.onStart();
     m_bot.Bases().onStart();
-    m_workerManager.onStart();
+    m_basesManager.onStart();
+    m_squadManager.onStart();
     m_wallManager.onStart();
 }
 

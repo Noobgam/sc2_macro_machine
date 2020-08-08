@@ -1,16 +1,16 @@
 #pragma once
 
+#include <general/managers/base/Base.h>
 #include "../Order.h"
-#include "../../../general/bases/BaseLocation.h"
 
 class CollectMineralsOrder: public Order {
 private:
-    const BaseLocation* m_baseLocation;
-    std::map<MineralID, std::vector<const Unit*>> m_mineralToWorker;
+    const Base* m_base;
+    std::map<ResourceID, std::vector<const Unit*>> m_mineralToWorker;
 
     void assignWorkers(const  std::set<const Unit*>& workers);
 public:
-    CollectMineralsOrder(CCBot & bot, Squad* squad, const BaseLocation* baseLocation);
+    CollectMineralsOrder(CCBot & bot, Squad* squad, const Base* base);
 
     void onStart() override;
     void onStep() override;

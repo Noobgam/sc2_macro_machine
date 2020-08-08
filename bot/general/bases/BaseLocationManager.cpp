@@ -6,6 +6,8 @@
 BaseLocationManager::BaseLocationManager(CCBot & bot) : m_bot(bot) { }
 
 void BaseLocationManager::onStart() {
+    VALIDATE_CALLED_ONCE();
+
     m_tileBaseLocations = std::vector<std::vector<BaseLocation *>>(m_bot.Map().width(), std::vector<BaseLocation *>(m_bot.Map().height(), nullptr));
     m_playerStartingBaseLocations[Players::Self]  = nullptr;
     m_playerStartingBaseLocations[Players::Enemy] = nullptr;
@@ -54,11 +56,11 @@ void BaseLocationManager::onStart() {
         // construct the vectors of base location pointers, this is safe since they will never change
         for (auto &locationPair : m_baseLocationData) {
             const auto &baseLocation = locationPair.second.get();
-            m_baseLocationPtrs.push_back(baseLocation);
             if (baseLocation->containsPosition(enemyStartLocation)) {
                 baseLocation->setStartLocation(Players::Enemy);
                 baseLocation->setPlayerHasDepot(Players::Enemy, true);
                 m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
+                break;
             }
         }
     }
@@ -73,7 +75,7 @@ void BaseLocationManager::onStart() {
 
     // construct the map of tile positions to base locations
     for (int x = 0; x < m_bot.Map().width(); ++x) {
-        for (int y=0; y < m_bot.Map().height(); ++y) {
+        for (int y = 0; y < m_bot.Map().height(); ++y) {
             for (auto & locationPair : m_baseLocationData) {
                 const auto & baseLocation = locationPair.second.get();
                 CCPosition pos(Util::TileToPosition(x + 0.5f), Util::TileToPosition(y + 0.5f));
@@ -213,7 +215,6 @@ const BaseLocation *BaseLocationManager::getBaseLocation(BaseLocationID id) cons
     BOT_ASSERT(it != m_baseLocationData.end(), "Base location was not found");
     return it->second.get();
 }
-
 
 const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocations(int player) const {
     return m_occupiedBaseLocations.at(player);

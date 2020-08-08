@@ -2,6 +2,7 @@
 #include "../../util/Util.h"
 #include "../CCBot.h"
 #include <iostream>
+#include <util/LogInfo.h>
 
 BaseLocation::BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources)
     : m_bot(bot)
@@ -125,7 +126,7 @@ bool BaseLocation::containsPosition(const CCPosition & pos, int distance) const 
     if (!m_bot.Map().isValidPosition(pos) || (pos.x == 0 && pos.y == 0)) {
         return false;
     }
-    return getGroundDistance(pos) < distance;
+    return Util::Dist(m_centerOfResources, pos) < distance;
 }
 
 const std::vector<const Resource*> & BaseLocation::getGeysers() const {
@@ -158,6 +159,10 @@ void BaseLocation::draw() const {
     ss << "BaseLocation: " << m_baseID << "\n";
     ss << "Start Loc:    " << (m_isStartLocation ? "true" : "false") << "\n";
     ss << "Minerals:     " << m_minerals.size() << "\n";
+    for (auto x : m_minerals) {
+        ss << x->getID() << " ";
+    }
+    ss << "\n";
     ss << "Geysers:      " << m_geysers.size() << "\n";
     ss << "Occupied By:  ";
 
@@ -206,10 +211,15 @@ bool BaseLocation::isMineralOnly() const {
 }
 
 void BaseLocation::resourceExpiredCallback(const Resource *resource) {
+    LOG_DEBUG << "Removing resource from " << resource->getID() << " : " << this->getBaseId() << endl;
     if (resource->getResourceType() == ResourceType::MINERAL) {
-        m_minerals.erase(std::find(m_minerals.begin(), m_minerals.end(), resource));
+        auto it = std::find(m_minerals.begin(), m_minerals.end(), resource);
+        BOT_ASSERT(it != m_minerals.end(), "Trying to remove a mineral that I do not own");
+        m_minerals.erase(it);
     } else {
-        m_geysers.erase(std::find(m_geysers.begin(), m_geysers.end(), resource));
+        auto it = std::find(m_geysers.begin(), m_geysers.end(), resource);
+        BOT_ASSERT(it != m_geysers.end(), "Trying to remove a geyser that I do not own");
+        m_geysers.erase(it);
     }
 }
 
