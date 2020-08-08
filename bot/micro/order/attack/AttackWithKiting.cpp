@@ -33,7 +33,7 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
         }
     } else {
 
-        inDanger = unit->hpPercentage() < 0.9 && unit->getShields() == 0;
+        inDanger = unit->hpPercentage() < 0.2 && unit->getShields() == 0;
         if (inDanger) {
             endangered.insert(unit->getID());
         }
