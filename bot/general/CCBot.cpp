@@ -51,6 +51,7 @@ void CCBot::OnStep() {
     timer.start();
     LOG_DEBUG << "Starting onStep()" << std::endl;
     Control()->GetObservation();
+    logging::propagateFrame(GetCurrentFrame());
     ++observationId;
     m_unitInfo.onFrame();
 
