@@ -174,11 +174,11 @@ bool Unit::isBeingConstructed() const
 #endif
 }
 
-int Unit::getWeaponCooldown() const
+float Unit::getWeaponCooldown() const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
 #ifdef SC2API
-    return (int)m_unit->weapon_cooldown;
+    return m_unit->weapon_cooldown;
 #else
     return std::max(m_unit->getGroundWeaponCooldown(), m_unit->getAirWeaponCooldown());
 #endif

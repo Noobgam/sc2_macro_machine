@@ -47,6 +47,8 @@ void CCBot::OnGameEnd() {
 }
 
 void CCBot::OnStep() {
+    Timer timer;
+    timer.start();
     LOG_DEBUG << "Starting onStep()" << std::endl;
     Control()->GetObservation();
     ++observationId;
@@ -58,11 +60,13 @@ void CCBot::OnStep() {
     m_managers.onFrame();
 
     m_gameCommander.onFrame();
-    LOG_DEBUG << "Finished onStep()" << std::endl;
 
 #ifdef _DEBUG
     Debug()->SendDebug();
 #endif
+
+    timer.stop();
+    LOG_DEBUG << "Finished onStep(): " << timer.getElapsedTimeInMilliSec() << "ms" << std::endl;
 }
 
 size_t CCBot::getObservationId() const {
