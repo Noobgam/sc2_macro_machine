@@ -34,6 +34,7 @@ public:
     void    onStart();
     void    onFrame();
     void    drawProductionInformation();
+    BuildingPlacer& getBuildingPlacer();
 
     /**
         If you don't care about the position of trained / created unit you can use 1-arg func

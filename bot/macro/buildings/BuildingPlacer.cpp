@@ -224,7 +224,7 @@ void BuildingPlacer::drawReservedTiles()
     {
         for (int y = 0; y < rheight; ++y)
         {
-            if (m_reserveMap[x][y] || isInResourceBox(x, y))
+            if (m_reserveMap[x][y])
             {
                 m_bot.Map().drawTile(x, y, CCColor(255, 255, 0));
             }
@@ -314,5 +314,15 @@ bool BuildingPlacer::isReserved(int x, int y) const
     }
 
     return m_reserveMap[x][y];
+}
+
+void BuildingPlacer::reserveTiles(const UnitType &type, CCPosition pos) {
+    float lx = pos.x - type.getFootPrintRadius();
+    float ly = pos.y - type.getFootPrintRadius();
+    for (int cx = lx; cx < lx + type.tileWidth(); cx++) {
+        for (int cy = ly; cy < ly + type.tileHeight(); cy++) {
+            m_reserveMap[cx][cy] = true;
+        }
+   }
 }
 

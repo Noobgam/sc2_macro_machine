@@ -36,6 +36,7 @@ public:
     std::optional<CCPosition> getBuildLocation(const UnitType & b) const;
 
     void drawReservedTiles();
+    void reserveTiles(const UnitType& type, CCPosition pos);
     void reserveTiles(int x, int y, int width, int height);
     void freeTiles(int x, int y, int width, int height);
 };

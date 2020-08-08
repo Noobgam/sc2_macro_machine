@@ -36,6 +36,7 @@ void MacroManager::onFrame(){
     }
 
     drawProductionInformation();
+    m_buildingPlacer.drawReservedTiles();
 }
 
 std::optional<BuildOrderItem> MacroManager::getTopPriority() {
@@ -91,21 +92,23 @@ std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
 // this function will check to see if all preconditions are met and then create a unit
 void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     // if we're dealing with a building
+    const UnitType &buildingType = item.type.getUnitType();
     if (item.type.isBuilding()) {
         Timer timer;
         timer.start();
-        std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(item.type.getUnitType());
+        std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(buildingType);
         LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
         if (!positionOpt.has_value()) {
             return;
         }
         CCPosition position = positionOpt.value();
-        m_bot.getManagers().getWorkerManager().build(item.type.getUnitType(), position);
+        m_buildingPlacer.reserveTiles(buildingType, position);
+        m_bot.getManagers().getWorkerManager().build(buildingType, position);
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
     {
-        producer->train(item.type.getUnitType());
+        producer->train(buildingType);
     }
     else if (item.type.isUpgrade())
     {
@@ -164,3 +167,7 @@ bool MacroManager::meetsReservedResources(const MetaType & type)
 }
 
 void MacroManager::drawProductionInformation() { }
+
+BuildingPlacer &MacroManager::getBuildingPlacer() {
+    return m_buildingPlacer;
+}
