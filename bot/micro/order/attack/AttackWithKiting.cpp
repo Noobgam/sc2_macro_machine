@@ -1,4 +1,5 @@
 #include <util/Util.h>
+#include <general/ThreatAnalyzer.h>
 #include "AttackWithKiting.h"
 
 AttackWithKiting::AttackWithKiting(CCBot &bot, Squad *squad, CCPosition position)
@@ -52,14 +53,23 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) const {
         }
         std::sort(targets.begin(), targets.end());
         std::vector<const Unit*> closeTargets;
+        float maxPriority = -1;
+        const Unit* maxPriorityTarget = NULL;
         for (auto x : targets) {
-            if (x.first > range) {
+            if (x.first > range + 1) {
                 break;
             }
             closeTargets.push_back(x.second);
+            float threat = ThreatAnalyzer::getUnitTypeThreat(x.second->getType(), unit->getType());
+            if (threat > maxPriority) {
+                maxPriority = std::max(threat, maxPriority);
+                maxPriorityTarget = x.second;
+            }
         }
-        // TODO: better logic here
-        unit->attackMove(m_target_position);
+        if (closeTargets.empty()) {
+            unit->attackMove(m_target_position);
+        } else {
+            unit->attackUnit(*maxPriorityTarget);
+        }
     }
-
 }

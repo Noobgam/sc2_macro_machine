@@ -43,6 +43,8 @@ public:
     CCUnitID getID() const;
     float getBuildPercentage() const;
     float getWeaponCooldown() const;
+    float hpPercentage() const;
+    float shieldPercentage() const;
     bool isCompleted() const;
     bool isBeingConstructed() const;
     bool isCloaked() const;

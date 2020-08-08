@@ -349,3 +349,11 @@ bool Unit::isConstructing(const UnitType & type) const
 bool Unit::isOfType(const sc2::UNIT_TYPEID& type) const {
     return this->getAPIUnitType() == type;
 }
+
+float Unit::hpPercentage() const {
+    return m_unit->health / m_unit->health_max;
+}
+
+float Unit::shieldPercentage() const {
+    return m_unit->shield / m_unit->shield_max;
+}

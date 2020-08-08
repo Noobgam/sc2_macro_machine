@@ -15,6 +15,16 @@ void BuildingPlacer::onStart()
     m_reserveMap = std::vector< std::vector<bool> >(m_bot.Map().width(), std::vector<bool>(m_bot.Map().height(), false));
 }
 
+bool BuildingPlacer::isInAnyResourceBox(int tileX, int tileY) const
+{
+    for (auto & base : m_bot.Bases().getBaseLocations()) {
+        if (base->isInResourceBox(tileX, tileY)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool BuildingPlacer::isInResourceBox(int tileX, int tileY) const
 {
     for (auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
@@ -47,7 +57,31 @@ bool BuildingPlacer::canBuildHere(float x, float y, const UnitType & type) const
         }
     }
     return buildable(type, x, y);
+}
 
+// makes final checks to see if a building can be built at a certain location
+bool BuildingPlacer::canBuildHereWithoutCoveringNexus(float x, float y, const UnitType & type) const
+{
+
+    // check the reserve map
+    int lx = x - type.getFootPrintRadius() + .5;
+    int ly = y - type.getFootPrintRadius() + .5;
+    for (int cx = lx; cx < lx + type.tileWidth(); cx++) {
+        for (int cy = ly; cy < ly + type.tileHeight(); cy++) {
+
+            if (!m_bot.Map().isValidTile(cx, cy) || m_reserveMap[cx][cy]) {
+                return false;
+            }
+            if (!m_bot.Map().isBuildable(cx, cy)) {
+                return false;
+            }
+
+            if (isInAnyResourceBox(cx, cy)) {
+                return false;
+            }
+        }
+    }
+    return buildable(type, x, y);
 }
 
 static inline double heuristic(int newlyPowered, [[maybe_unused]] int doublePowered, double distFromBase) {

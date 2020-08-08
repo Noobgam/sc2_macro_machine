@@ -36,6 +36,7 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(string mapName) {
     string fileName = "data/map_metas/" + mapName;
     if (FileUtils::fileExists(fileName)) {
         std::unique_ptr<MapMeta> meta;
+        meta = std::make_unique<MapMeta>();
         std::ifstream ifs = FileUtils::openReadFile(fileName);
         boost::archive::text_iarchive ia(ifs);
         ia >> meta;
