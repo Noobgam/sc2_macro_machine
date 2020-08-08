@@ -28,8 +28,6 @@ void CCBot::OnGameStart() {
 
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
 
-    m_unitInfo.onStart();
-
     m_map.onStart();
     m_managers.onStart();
 

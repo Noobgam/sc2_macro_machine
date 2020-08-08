@@ -3,6 +3,7 @@
 #include "../../util/LogInfo.h"
 
 #include <sstream>
+#include <util/Util.h>
 
 UnitInfoManager::UnitInfoManager(CCBot & bot) : m_bot(bot) {
     m_units.insert({Players::Self, {}});
@@ -11,6 +12,8 @@ UnitInfoManager::UnitInfoManager(CCBot & bot) : m_bot(bot) {
 }
 
 void UnitInfoManager::onStart() {
+    VALIDATE_CALLED_ONCE();
+
     // collect initial units
     size_t observationId = m_bot.getObservationId();
     for (auto & rawUnit : m_bot.Observation()->GetUnits()) {

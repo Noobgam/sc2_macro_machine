@@ -6,6 +6,8 @@
 BaseLocationManager::BaseLocationManager(CCBot & bot) : m_bot(bot) { }
 
 void BaseLocationManager::onStart() {
+    VALIDATE_CALLED_ONCE();
+
     m_tileBaseLocations = std::vector<std::vector<BaseLocation *>>(m_bot.Map().width(), std::vector<BaseLocation *>(m_bot.Map().height(), nullptr));
     m_playerStartingBaseLocations[Players::Self]  = nullptr;
     m_playerStartingBaseLocations[Players::Enemy] = nullptr;
@@ -54,11 +56,11 @@ void BaseLocationManager::onStart() {
         // construct the vectors of base location pointers, this is safe since they will never change
         for (auto &locationPair : m_baseLocationData) {
             const auto &baseLocation = locationPair.second.get();
-            m_baseLocationPtrs.push_back(baseLocation);
             if (baseLocation->containsPosition(enemyStartLocation)) {
                 baseLocation->setStartLocation(Players::Enemy);
                 baseLocation->setPlayerHasDepot(Players::Enemy, true);
                 m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
+                break;
             }
         }
     }
