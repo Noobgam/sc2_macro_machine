@@ -64,6 +64,10 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) const {
             if (threat > maxPriority) {
                 maxPriority = std::max(threat, maxPriority);
                 maxPriorityTarget = x.second;
+            } else if (threat == maxPriority) {
+                if (maxPriorityTarget->hpPercentage() < x.second->hpPercentage()) {
+                    maxPriorityTarget = x.second;
+                }
             }
         }
         if (closeTargets.empty()) {
