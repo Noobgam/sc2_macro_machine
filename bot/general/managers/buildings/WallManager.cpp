@@ -29,7 +29,7 @@ std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
 
 WallManager::WallManager(CCBot& bot)
     : m_bot(bot)
-    , needWall(true)
+    , needWall(false)
 {
 }
 
