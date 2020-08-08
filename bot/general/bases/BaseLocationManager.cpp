@@ -75,7 +75,7 @@ void BaseLocationManager::onStart() {
 
     // construct the map of tile positions to base locations
     for (int x = 0; x < m_bot.Map().width(); ++x) {
-        for (int y=0; y < m_bot.Map().height(); ++y) {
+        for (int y = 0; y < m_bot.Map().height(); ++y) {
             for (auto & locationPair : m_baseLocationData) {
                 const auto & baseLocation = locationPair.second.get();
                 CCPosition pos(Util::TileToPosition(x + 0.5f), Util::TileToPosition(y + 0.5f));
