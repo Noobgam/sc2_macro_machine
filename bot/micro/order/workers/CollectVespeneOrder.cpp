@@ -15,14 +15,15 @@ void CollectVespeneOrder::onStart() {
 }
 
 void CollectVespeneOrder::onStep() {
-    auto assimilators = m_base->getAssimilators();
+    auto assimilators = m_base->getActiveAssimilators();
     if (assimilators.size() > m_assimilatorToWorker.size()) {
         for (auto& assimilator : assimilators) {
-            m_assimilatorToWorker.insert({assimilator.first->getID(), {}});
+            m_assimilatorToWorker.insert({assimilator->getID(), {}});
         }
     }
-    // clear exchausted assimilators
+    // clear exhausted assimilators
     std::vector<CCUnitID> toDelete;
+    std::set<const Unit*> unassignedWorkers;
     for (auto& vespeneWorkers : m_assimilatorToWorker) {
         CCUnitID assimilatorID = vespeneWorkers.first;
         const auto& iter = std::find_if(assimilators.begin(), assimilators.end(), [assimilatorID](auto& assimilator) {
@@ -31,19 +32,21 @@ void CollectVespeneOrder::onStep() {
         if (iter == assimilators.end() || iter->second->getResourceAmount() == 0) {
             toDelete.push_back(assimilatorID);
         }
+        //
+        auto& workers = vespeneWorkers.second;
+        // does not try to make ideal saturation
+        while (workers.size() > 3) {
+            unassignedWorkers.insert(workers.front());
+            workers.erase(workers.begin());
+        }
     }
     // reassign workers
-    std::set<const Unit*> unassignedWorkers;
     for (auto& assimilatorID : toDelete) {
         const auto& ptr = m_assimilatorToWorker.find(assimilatorID);
         BOT_ASSERT(ptr != m_assimilatorToWorker.end(), "Assimilator was not found");
         unassignedWorkers.insert(ptr->second.begin(), ptr->second.end());
     }
     assignWorkers(unassignedWorkers);
-    // Task is completed if no minerals left
-    if (assimilators.empty()) {
-        onEnd();
-    }
 }
 
 void CollectVespeneOrder::onUnitAdded(const Unit *unit) {

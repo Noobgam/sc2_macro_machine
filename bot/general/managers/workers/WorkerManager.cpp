@@ -6,9 +6,6 @@
 WorkerManager::WorkerManager(CCBot &bot) : m_bot(bot) { }
 
 void WorkerManager::onFrame() {
-    assignFreeUnits();
-    fixResourceLines(ResourceType::MINERAL);
-    fixResourceLines(ResourceType::GEYSER);
     auto& squadManager = m_bot.getManagers().getSquadManager();
     // process completed tasks
     for (auto it = m_additionalSquads.begin(); it < m_additionalSquads.end();) {
@@ -20,6 +17,9 @@ void WorkerManager::onFrame() {
             it++;
         }
     }
+    fixResourceLines(ResourceType::MINERAL);
+    fixResourceLines(ResourceType::GEYSER);
+    assignFreeUnits();
     draw();
 }
 
@@ -117,7 +117,7 @@ void WorkerManager::fixResourceLines(ResourceType type) {
     for (const auto& base : bases) {
         const auto& baseWorkers = base->getBaseWorkers();
         while (baseWorkers->getIdealResourceWorkers(type) < baseWorkers->getActiveResourceWorkers(type) && availableWorkerPositions > 0) {
-            const Unit* worker = *(baseWorkers->getMineralSquad()->units().begin());
+            const Unit* worker = *(baseWorkers->getResourceSquad(type)->units().begin());
             assignUnit(worker);
             availableWorkerPositions--;
         }
@@ -133,7 +133,7 @@ void WorkerManager::fixResourceLines(ResourceType type) {
     for (const auto& base : bases) {
         const auto& baseWorkers = base->getBaseWorkers();
         while (baseWorkers->getMaximumResourceWorkers(type) < baseWorkers->getActiveResourceWorkers(type) && availableWorkerPositions > 0) {
-            const Unit* worker = *(baseWorkers->getMineralSquad()->units().begin());
+            const Unit* worker = *(baseWorkers->getResourceSquad(type)->units().begin());
             assignUnit(worker);
             availableWorkerPositions--;
         }

@@ -34,7 +34,7 @@ void UnitInfoManager::updateUnits() {
                 continue;
             }
             auto inserted = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, m_bot, observationId)});
-              processNewUnit(inserted.first->second.get());
+            processNewUnit(inserted.first->second.get());
         } else {
             it->second->updateObservationId(observationId);
         }
@@ -55,12 +55,6 @@ void UnitInfoManager::updateUnits() {
         } else {
             ++it;
         }
-//        bo    ol dead = !it->second->isAlive();
-//        bool needToDelete = notObserved || dead;
-//        if (needToDelete) {
-//        } else {
-//            ++it;
-//        }
     }
 
     // callback missingUnits before destruction

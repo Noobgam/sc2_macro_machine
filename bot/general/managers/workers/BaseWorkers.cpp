@@ -28,7 +28,7 @@ const Squad* BaseWorkers::getResourceSquad(ResourceType type) const {
         case ResourceType::GEYSER:
             return getVespeneSquad();
     }
-    BOT_BREAK
+    BOT_ASSERT(false, "Unknown resource type");
     return getMineralSquad();
 }
 
@@ -47,7 +47,7 @@ int BaseWorkers::getActiveResourceWorkers(ResourceType type) const {
         case ResourceType::GEYSER:
             return getActiveVespeneWorkers();
     }
-    BOT_BREAK
+    BOT_ASSERT(false, "Unknown resource type");
     return getActiveMineralWorkers();
 }
 
@@ -66,7 +66,7 @@ int BaseWorkers::getIdealResourceWorkers(ResourceType type) const {
         case ResourceType::GEYSER:
             return getIdealVespeneWorkers();
     }
-    BOT_BREAK
+    BOT_ASSERT(false, "Unknown resource type");
     return getIdealMineralWorkers();
 }
 
@@ -85,7 +85,7 @@ int BaseWorkers::getMaximumResourceWorkers(ResourceType type) const {
         case ResourceType::GEYSER:
             return getMaximumVespeneWorkers();
     }
-    BOT_BREAK
+    BOT_ASSERT(false, "Unknown resource type");
     return getMaximumMineralWorkers();
 }
 
@@ -104,7 +104,7 @@ double BaseWorkers::getResourceIncome(ResourceType type) const {
         case ResourceType::GEYSER:
             return getVespeneIncome();
     }
-    BOT_BREAK
+    BOT_ASSERT(false, "Unknown resource type");
     return getMineralIncome();
 }
 
@@ -135,7 +135,7 @@ void BaseWorkers::assignToResource(ResourceType type, const Unit *unit) {
             assignToVespene(unit);
             return;
     }
-    BOT_BREAK
+    BOT_ASSERT(false, "Unknown resource type");
 }
 
 void BaseWorkers::assignToMineral(const Unit *unit) {

@@ -40,10 +40,6 @@ void CollectMineralsOrder::onStep() {
         unassignedWorkers.insert(ptr->second.begin(), ptr->second.end());
     }
     assignWorkers(unassignedWorkers);
-    // Task is completed if no minerals left
-    if (minerals.empty()) {
-        onEnd();
-    }
 }
 
 void CollectMineralsOrder::onUnitAdded(const Unit *unit) {
