@@ -56,4 +56,5 @@ public:
     bool isEgg() const;
     bool isQueen() const;
     bool isTank() const;
+    float visionRange() const;
 };
