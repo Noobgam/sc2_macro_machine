@@ -61,7 +61,8 @@ struct StaticMapMeta {
             & m_unbuildableNeutral
             & m_unwalkableNeutral
             & m_baseLocationProjections
-            & m_startLocationIds;
+            & m_startLocationIds
+            & m_orderedBasesByStartLocationId;
     }
 
     StaticMapMeta();
@@ -84,6 +85,7 @@ struct StaticMapMeta {
     int height() const;
     const std::vector<BaseLocationProjection>& getBaseLocations() const;
     const std::vector<int>& getStartLocationIds() const;
+    const std::map<int, std::vector<int>>& getOrderedBasesByStartLocationId() const;
     DistanceMap getDistanceMap(const CCPosition& pos) const;
     DistanceMap getDistanceMap(const CCTilePosition & pos) const;
     bool isVisible(const CCTilePosition &from, const CCTilePosition &to, float R) const;
@@ -104,9 +106,10 @@ private:
 
     std::vector<BaseLocationProjection> m_baseLocationProjections;
     std::vector<int> m_startLocationIds;
+    std::map<int, std::vector<int>> m_orderedBasesByStartLocationId;
 };
 
-BOOST_CLASS_VERSION(StaticMapMeta, 1)
+BOOST_CLASS_VERSION(StaticMapMeta, 2)
 BOOST_CLASS_TRACKING(StaticMapMeta, boost::serialization::track_never)
 
 

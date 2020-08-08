@@ -140,6 +140,7 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
             m_startLocationIds.push_back(x.baseId);
         }
     } else {
+
         auto locations = bot.Observation()->GetGameInfo().start_locations;
 
         for (auto& loc : locations) {
@@ -148,6 +149,23 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
             });
             if (it != m_baseLocationProjections.end()) {
                 m_startLocationIds.push_back(it->baseId);
+                DistanceMap dm;
+                // Reorder them for real maps to comply with https://github.com/Noobgam/sc2_macro_machine/issues/55
+                std::vector<int> orderedLocations;
+                for (int i = 0; i < m_baseLocationProjections.size(); ++i) {
+                    orderedLocations.push_back(i);
+                }
+                // careful when doing this, object is not fully constructed yet.
+                dm.computeDistanceMap(*this, it->depotPos);
+                sort(orderedLocations.begin(), orderedLocations.end(), [this, &dm](int l, int r) {
+                    int dl = dm.getDistance(m_baseLocationProjections[l].depotPos);
+                    int dr = dm.getDistance(m_baseLocationProjections[r].depotPos);
+                    // Push all unreachable bases to the end.
+                    // Probably these are not the bases we want to consider.
+                    // TODO: test golden wall
+                    return dr == -1 || dl < dr;
+                });
+                m_orderedBasesByStartLocationId[it->baseId] = std::move(orderedLocations);
             }
         }
     }
@@ -429,6 +447,10 @@ bool StaticMapMeta::isVisible(const CCTilePosition &from, const CCTilePosition &
         }
     }
     return true;
+}
+
+const std::map<int, std::vector<int>> &StaticMapMeta::getOrderedBasesByStartLocationId() const {
+    return m_orderedBasesByStartLocationId;
 }
 
 #undef all
