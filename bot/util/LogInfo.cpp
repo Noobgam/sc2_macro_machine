@@ -25,6 +25,7 @@ namespace {
         } else {
             int seconds = frameId / 22.4;
             int minutes = seconds / 60;
+            seconds -= minutes * 60;
             std::stringstream ss;
             ss << "[" << minutes << ":" << seconds << "]";
             return ss.str();
