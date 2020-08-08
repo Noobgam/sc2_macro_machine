@@ -141,7 +141,7 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
             CCPosition cand = isRound
                     ? CCPosition(pos.x, pos.y)
                     : CCPosition(pos.x + .5, pos.y + .5);
-            if (canBuildHere(cand.x, cand.y, b)) {
+            if (canBuildHereWithoutCoveringNexus(cand.x, cand.y, b)) {
                 return cand;
             }
         }

@@ -1,3 +1,4 @@
+#include <util/Util.h>
 #include "Managers.h"
 #include "general/CCBot.h"
 
@@ -61,6 +62,8 @@ const BasesManager &Managers::getBasesManager() const {
 }
 
 void Managers::onStart() {
+    VALIDATE_CALLED_ONCE();
+
     m_resourceManager.onStart();
     m_bot.Bases().onStart();
     m_basesManager.onStart();
