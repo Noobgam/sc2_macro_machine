@@ -225,14 +225,19 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
     const BaseLocation * closestBase = nullptr;
     int minDistance = std::numeric_limits<int>::max();
 
-    for (auto & base : getBaseLocations()) {
+    const auto& bases = m_bot.getManagers().getBasesManager().getBases();
+    for (auto & baseLocation : getBaseLocations()) {
+        const auto baseIt = std::find_if(bases.begin(), bases.end(), [baseLocation](auto b) {
+            return baseLocation == b->getBaseLocation();
+        });
+
         // skip mineral only and starting locations (TODO: fix this)
-        if (base->isMineralOnly() || base->isOccupiedByPlayer(player)) {
+        if (baseLocation->isMineralOnly() || baseIt != bases.end()) {
             continue;
         }
 
         // get the tile position of the base
-        auto tile = base->getDepotActualPosition();
+        auto tile = baseLocation->getDepotActualPosition();
 
         bool buildingInTheWay = false; // TODO: check if there are any units on the tile
 
@@ -251,7 +256,7 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
 
         if (!closestBase || distanceFromHome < minDistance)
         {
-            closestBase = base;
+            closestBase = baseLocation;
             minDistance = distanceFromHome;
         }
     }
