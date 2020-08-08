@@ -1,16 +1,20 @@
 #include "BasesManager.h"
 #include <general/bases/BaseLocation.h>
 #include <general/CCBot.h>
+#include <util/LogInfo.h>
+#include <util/Util.h>
 
 BasesManager::BasesManager(CCBot &bot) : m_bot(bot) { }
 
 void BasesManager::onStart() {
+    VALIDATE_CALLED_ONCE();
     for (const auto& unit : m_bot.UnitInfo().getUnits(Players::Self)) {
         newUnitCallback(unit);
     }
 }
 
 void BasesManager::newUnitCallback(const Unit *unit) {
+    LOG_DEBUG << "New unit " << unit->getID() << endl;
     if (unit->getPlayer() != Players::Self) {
         return;
     }
@@ -78,6 +82,7 @@ std::vector<Base *> BasesManager::getCompletedBases() const {
 }
 
 void BasesManager::newBaseOccupied(const BaseLocation *baseLocation, const Unit * nexus) {
+    LOG_DEBUG << "Occupying new base " << baseLocation->getBaseId() << " by unit " << nexus->getID() << endl;
     const auto& it = m_bases.emplace_back(std::make_unique<Base>(m_bot, baseLocation, nexus));
     const auto& base = it.get();
     m_basesPtrs.push_back(base);

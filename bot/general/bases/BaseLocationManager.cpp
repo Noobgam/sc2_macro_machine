@@ -6,6 +6,8 @@
 BaseLocationManager::BaseLocationManager(CCBot & bot) : m_bot(bot) { }
 
 void BaseLocationManager::onStart() {
+    VALIDATE_CALLED_ONCE();
+
     m_tileBaseLocations = std::vector<std::vector<BaseLocation *>>(m_bot.Map().width(), std::vector<BaseLocation *>(m_bot.Map().height(), nullptr));
     m_playerStartingBaseLocations[Players::Self]  = nullptr;
     m_playerStartingBaseLocations[Players::Enemy] = nullptr;
@@ -13,6 +15,12 @@ void BaseLocationManager::onStart() {
     std::vector<std::vector<const Resource*>> resourceClusters = findResourceClusters();
     // add the base locations if there are more than 4 resouces in the cluster
     BaseLocationID baseID = 0;
+    sort(resourceClusters.begin(), resourceClusters.end(), [](const auto& lhs, const auto& rhs) {
+       auto&& lpos = Util::CalcCenter(lhs);
+       auto&& rpos = Util::CalcCenter(rhs);
+       if (lpos.x != rpos.x) return lpos.x < rpos.x;
+       return lpos.y < rpos.y;
+    });
     for (auto & cluster : resourceClusters) {
         if (cluster.size() > 4) {
             auto id = baseID++;
@@ -20,33 +28,54 @@ void BaseLocationManager::onStart() {
         }
     }
 
-    // set start locations
     CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
-    auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
-    BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
-    CCPosition enemyStartLocation = potentialLocations[0];
-
-    // construct the vectors of base location pointers, this is safe since they will never change
-    for (auto & locationPair : m_baseLocationData) {
-        const auto & baseLocation = locationPair.second.get();
-        m_baseLocationPtrs.push_back(baseLocation);
+    for (auto &locationPair : m_baseLocationData) {
+        const auto &baseLocation = locationPair.second.get();
         if (baseLocation->containsPosition(selfStartLocation)) {
             baseLocation->setStartLocation(Players::Self);
             baseLocation->setPlayerHasDepot(Players::Self, true);
             m_playerStartingBaseLocations[Players::Self] = baseLocation;
-        }
-        if (baseLocation->containsPosition(enemyStartLocation)) {
-            baseLocation->setStartLocation(Players::Enemy);
-            baseLocation->setPlayerHasDepot(Players::Enemy, true);
-            m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
+            break;
         }
     }
+    auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
+
+    if (m_bot.Observation()->GetGameInfo().map_name.rfind("Test", 0) == 0) {
+        // cruth for test maps, so they could be played 1x0.
+        for (auto& locationPair : m_baseLocationData) {
+            const auto &baseLocation = locationPair.second.get();
+            if (!baseLocation->isPlayerStartLocation(Players::Self)) {
+                baseLocation->setStartLocation(Players::Enemy);
+                m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
+                break;
+            }
+        }
+    } else {
+        BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
+        CCPosition enemyStartLocation = potentialLocations[0];
+        // construct the vectors of base location pointers, this is safe since they will never change
+        for (auto &locationPair : m_baseLocationData) {
+            const auto &baseLocation = locationPair.second.get();
+            if (baseLocation->containsPosition(enemyStartLocation)) {
+                baseLocation->setStartLocation(Players::Enemy);
+                baseLocation->setPlayerHasDepot(Players::Enemy, true);
+                m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
+                break;
+            }
+        }
+    }
+
+    for (auto& locationPair : m_baseLocationData) {
+        const auto &baseLocation = locationPair.second.get();
+        m_baseLocationPtrs.push_back(baseLocation);
+    }
+
     BOT_ASSERT(m_playerStartingBaseLocations[Players::Self] != nullptr, "Self start location was not found");
     BOT_ASSERT(m_playerStartingBaseLocations[Players::Enemy] != nullptr, "Enemy start location was not found");
 
     // construct the map of tile positions to base locations
     for (int x = 0; x < m_bot.Map().width(); ++x) {
-        for (int y=0; y < m_bot.Map().height(); ++y) {
+        for (int y = 0; y < m_bot.Map().height(); ++y) {
             for (auto & locationPair : m_baseLocationData) {
                 const auto & baseLocation = locationPair.second.get();
                 CCPosition pos(Util::TileToPosition(x + 0.5f), Util::TileToPosition(y + 0.5f));
@@ -166,6 +195,9 @@ void BaseLocationManager::drawBaseLocations() {
     for (const auto & baseLocation : m_baseLocationPtrs) {
         baseLocation->draw();
     }
+    for (const auto& loc : m_bot.Map().getStaticMapMeta().getBaseLocations()) {
+        m_bot.Map().drawCircle(loc.depotPos, 2, CCColor(0, 0, 255));
+    }
 
     // draw a purple sphere at the next expansion location
     CCPosition nextExpansionPosition = getNextExpansion(Players::Self);
@@ -230,4 +262,8 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
 void BaseLocationManager::resourceExpiredCallback(const Resource* resource) {
     BaseLocation *baseLocation = getBaseLocation(resource->getPosition());
     baseLocation->resourceExpiredCallback(resource);
+}
+
+const BaseLocation * BaseLocationManager::getPlayerStartLocation(CCPlayer player) const {
+    return m_playerStartingBaseLocations.at(player);
 }

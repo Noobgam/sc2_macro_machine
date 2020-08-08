@@ -6,6 +6,7 @@
 #include "units/UnitInfoManager.h"
 #include "TechTree.h"
 #include "../GameCommander.h"
+#include "general/map_meta/wall/WallPlacement.h"
 #include <general/managers/Managers.h>
 
 class CCBot : public sc2::Agent {
@@ -15,6 +16,9 @@ class CCBot : public sc2::Agent {
     TechTree                m_techTree;
     GameCommander           m_gameCommander;
     Managers                m_managers;
+
+
+    std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
 
 
     size_t observationId = 0;
@@ -36,6 +40,7 @@ public:
           BaseLocationManager & Bases();
     const BaseLocationManager & Bases() const;
     const MapTools & Map() const;
+    const MapMeta & getMapMeta() const;
     const UnitInfoManager & UnitInfo() const;
           GameCommander & Commander();
           Managers & getManagers();

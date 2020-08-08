@@ -1,5 +1,8 @@
+#include <general/map_meta/wall/WallPlacement.h>
+#include <util/LogInfo.h>
 #include "CCBot.h"
-#include "../util/LogInfo.h"
+#include <random>
+#include <ctime>
 
 CCBot::CCBot()
     : m_map(*this)
@@ -11,13 +14,23 @@ CCBot::CCBot()
 { }
 
 void CCBot::OnGameStart() {
-    LOG_DEBUG << "Starting OnGameStart()" << std::endl;
-
     m_techTree.onStart();
     m_unitInfo.onStart();
 
+#ifdef _STATIC_MAP_CALCULATOR
+    StaticMapMeta::getMeta(*this);
+    // reload it to validate
+    StaticMapMeta::getMeta(*this);
+    std::terminate();
+#else
+    m_mapMeta = MapMeta::getMeta(Observation()->GetGameInfo().map_name);
+#endif
+
+    LOG_DEBUG << "Starting OnGameStart()" << std::endl;
+
     m_map.onStart();
     m_managers.onStart();
+
 
     m_gameCommander.onStart();
     LOG_DEBUG << "Finished OnGameStart()" << std::endl;
@@ -38,6 +51,7 @@ void CCBot::OnStep() {
     Control()->GetObservation();
     ++observationId;
     m_unitInfo.onFrame();
+
     m_map.onFrame();
     m_bases.onFrame();
 
@@ -72,6 +86,10 @@ CCRace CCBot::GetPlayerRace(int player) const
 
 const MapTools & CCBot::Map() const {
     return m_map;
+}
+
+const MapMeta & CCBot::getMapMeta() const {
+    return *m_mapMeta.get();
 }
 
 BaseLocationManager & CCBot::Bases() {
@@ -175,6 +193,5 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 }
 
 bool CCBot::NeedWall() const {
-    // TODO: return true if wall is actually needed
-    return false;
+    return true;
 }

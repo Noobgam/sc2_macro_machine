@@ -27,6 +27,7 @@ public:
     const BaseLocation* getBaseLocation(BaseLocationID id) const;
     const std::vector<const BaseLocation *> & getBaseLocations() const;
     const std::set<const BaseLocation *> & getOccupiedBaseLocations(int player) const;
+    const BaseLocation* getPlayerStartLocation(CCPlayer player) const;
 
 
     CCPosition getNextExpansion(int player) const;

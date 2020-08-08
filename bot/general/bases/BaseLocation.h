@@ -11,6 +11,8 @@ typedef unsigned long long BaseLocationID;
 
 class CCBot;
 
+static const int NearBaseLocationTileDistance = 20;
+
 class BaseLocation {
     CCBot &                     m_bot;
     DistanceMap                 m_distanceMap;
@@ -35,14 +37,12 @@ class BaseLocation {
     bool                        m_isStartLocation;
 public:
     BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources);
-    BaseLocationID getID() const;
-
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;
 
     bool isPlayerStartLocation(CCPlayer player) const;
     bool isMineralOnly() const;
-    bool containsPosition(const CCPosition & pos) const;
+    bool containsPosition(const CCPosition & pos, int distance = NearBaseLocationTileDistance) const;
     const CCPosition & getDepotActualPosition() const;
     const CCPosition & getPosition() const;
     const std::vector<const Resource*> & getGeysers() const;
@@ -50,6 +50,7 @@ public:
     bool isOccupiedByPlayer(CCPlayer player) const;
     bool hasPlayerDepot(CCPlayer player) const;
     bool isExplored() const;
+    BaseLocationID  getBaseId() const;
     bool isInResourceBox(int x, int y) const;
 
     void setStartLocation(CCPlayer player);

@@ -3,38 +3,30 @@
 #include "model/Common.h"
 #include "DistanceMap.h"
 #include "model/UnitType.h"
-#include "MapMeta.h"
+#include <memory>
+#include "general/map_meta/MapMeta.h"
 
 class MapTools
 {
     CCBot & m_bot;
-    int     m_width;
-    int     m_height;
     float   m_maxZ;
     int     m_frame;
+    std::unique_ptr<StaticMapMeta> m_staticMapMeta;
     
 
     // a cache of already computed distance maps, which is mutable since it only acts as a cache
-    mutable std::map<std::pair<int,int>, DistanceMap>   m_allMaps;   
+    mutable std::map<std::pair<int,int>, DistanceMap>   m_allMaps;
 
-    std::vector<std::vector<bool>>  m_walkable;         // whether a tile is buildable (includes static resources)
-    std::vector<std::vector<bool>>  m_buildable;        // whether a tile is buildable (includes static resources)
-    std::vector<std::vector<bool>>  m_depotBuildable;   // whether a depot is buildable on a tile (illegal within 3 tiles of static resource)
     std::vector<std::vector<int>>   m_lastSeen;         // the last time any of our units has seen this position on the map
-    std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
-    std::vector<std::vector<float>> m_terrainHeight;    // height of the map at x+0.5, y+0.5
     std::vector<std::vector<int>>   m_powerMap;         // boolean map whether specific halftile is powered by our pylons
-
-    std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
-    
-    void computeConnectivity();
+    std::vector<std::vector<bool>>  m_unbuildableNeutral;        // unbuildable rocks and plates
+    std::vector<std::vector<bool>>  m_unwalkableNeutral;         // unbuildable rocks
 
     int getSectorNumber(int x, int y) const;
         
     void printMap();
 
     float   terrainHeight(const CCPosition & point) const;
-    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
 
     bool    canBuild(int tileX, int tileY);
     bool    canWalk(int tileX, int tileY);
@@ -46,6 +38,8 @@ class MapTools
 public:
 
     MapTools(CCBot & bot);
+
+    bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
 
     void    onStart();
     void    onFrame();
@@ -76,6 +70,7 @@ public:
     bool    isExplored(const CCPosition & pos) const;
     bool    isExplored(const CCTilePosition & pos) const;
     bool    isVisible(int tileX, int tileY) const;
+    bool    isVisible(const CCTilePosition& from, const CCTilePosition& to, float R) const;
     bool    canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const;
 
     const   DistanceMap & getDistanceMap(const CCTilePosition & tile) const;
@@ -89,7 +84,6 @@ public:
     
     bool    isBuildable(int tileX, int tileY) const;
     bool    isBuildable(const CCTilePosition & tile) const;
-    bool    isDepotBuildableTile(int tileX, int tileY) const;
 
     // returns
     // @first  number of new spots that would be powered
@@ -98,5 +92,9 @@ public:
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<CCTilePosition> & getClosestTilesTo(const CCTilePosition & pos) const;
+
+
+    void updateNeutralMap();
+    const StaticMapMeta& getStaticMapMeta() const;
 };
 

@@ -1,0 +1,4 @@
+map_metas/ filter=lfs diff=lfs merge=lfs -text
+map_metas/ filter=lfs diff=lfs merge=lfs -text
+static-map_metas/**/* filter=lfs diff=lfs merge=lfs -text
+static-map_metas/**/* filter=lfs diff=lfs merge=lfs -text

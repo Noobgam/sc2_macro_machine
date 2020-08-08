@@ -7,6 +7,11 @@ class Unit;
 class Resource;
 class UnitType;
 
+#define VALIDATE_CALLED_ONCE() \
+    static bool alreadyCalled = false; \
+    BOT_ASSERT(!alreadyCalled, "This function can should only be called once.)"); \
+    alreadyCalled = true
+
 namespace Util
 {
     CCRace          GetRaceFromString(const std::string & str);
@@ -18,6 +23,7 @@ namespace Util
     UnitType        GetRefinery(const CCRace & race, CCBot & bot);
     UnitType        GetSupplyProvider(const CCRace & race, CCBot & bot);
     CCPosition      CalcCenter(const std::vector<const Resource*> & minerals);
+    CCPosition      CalcCenter(const std::vector<const sc2::Unit*> & minerals);
     bool            IsZerg(const CCRace & race);
     bool            IsProtoss(const CCRace & race);
     bool            IsTerran(const CCRace & race);
@@ -34,4 +40,6 @@ namespace Util
     float Dist(const Unit & unit1, const Unit & unit2);
     float Dist(const CCPosition & p1, const CCPosition & p2);
     CCPositionType DistSq(const CCPosition & p1, const CCPosition & p2);
+    bool canWalkOverUnit(const UnitType& type);
+    bool canBuildOnUnit(const UnitType& type);
 };
