@@ -168,6 +168,8 @@ StaticMapMeta::StaticMapMeta(const CCBot &bot) {
                 m_orderedBasesByStartLocationId[it->baseId] = std::move(orderedLocations);
             }
         }
+
+        BOT_ASSERT(m_startLocationIds.size() > 1, "Number of start locations should be more than 1.");
     }
 }
 
@@ -381,7 +383,6 @@ std::vector<BaseLocationProjection> StaticMapMeta::calculateBaseLocations(const 
     });
     std::vector<BaseLocationProjection> projections;
     projections.reserve(resourceClusters.size());
-    CCPosition pos = bot.GetStartLocation();
     const int N = 10;
     for (auto& cluster : resourceClusters) {
         CCPosition center = Util::CalcCenter(cluster);
@@ -400,9 +401,18 @@ std::vector<BaseLocationProjection> StaticMapMeta::calculateBaseLocations(const 
 
             return (lx * lx + ly * ly) < (rx * rx + ry * ry);
         });
+
         UnitType depot = Util::GetTownHall(bot.GetPlayerRace(Players::Self), const_cast<CCBot&>(bot));
-        if (Util::Dist(pos, center) < 2 * N) {
-            projections.push_back({baseId++, center, pos});
+
+        bool done = false;
+        for (auto pos : bot.Observation()->GetGameInfo().start_locations) {
+            if (Util::Dist(pos, center) < 8) {
+                projections.push_back({baseId++, center, pos});
+                done = true;
+                break;
+            }
+        }
+        if (done) {
             continue;
         }
         for (auto tile : closest) {
