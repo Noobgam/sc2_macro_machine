@@ -1,3 +1,4 @@
+#include <util/Util.h>
 #include "SquadManager.h"
 #include "../../../util/LogInfo.h"
 #include "../../CCBot.h"
@@ -19,6 +20,35 @@ void SquadManager::onFrame() {
     for (auto & squad : m_squads) {
         if (squad.first != unassignedSquadID) {
             squad.second->act();
+        }
+    }
+
+
+    // TODO: do this the correct way, this should be removed.
+    auto nexuses = m_bot.UnitInfo().getUnits(
+            Players::Self,
+            sc2::UNIT_TYPEID::PROTOSS_NEXUS
+    );
+    int chronoBoostsAvailable = 0;
+    for (auto& x : nexuses) {
+        chronoBoostsAvailable += ((int)x->getEnergy()) / 50;
+    }
+    sc2::Units nexusesRaw;
+    for (auto x : nexuses) {
+        nexusesRaw.push_back(x->getUnitPtr());
+    }
+
+    for (auto& x : nexuses) {
+        if (chronoBoostsAvailable == 0) break;
+        auto&& buffs = x->getUnitPtr()->buffs;
+        if (buffs.empty()) {
+            m_bot.Actions()->UnitCommand(
+                    nexusesRaw,
+                    sc2::ABILITY_ID::EFFECT_CHRONOBOOSTENERGYCOST,
+                    x->getUnitPtr(),
+                    false
+            );
+            --chronoBoostsAvailable;
         }
     }
 }

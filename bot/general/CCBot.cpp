@@ -78,8 +78,6 @@ void CCBot::OnStep() {
 
     timer.stop();
     LOG_DEBUG << "Finished onStep(): " << timer.getElapsedTimeInMilliSec() << "ms" << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    LOG_DEBUG << "Sleeping for 20 ms after onStep()." << std::endl;
 }
 
 size_t CCBot::getObservationId() const {
