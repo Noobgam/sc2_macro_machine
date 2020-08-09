@@ -1,4 +1,5 @@
-include_directories("../include")
+include_directories("../cpp_sc2/include")
+include_directories("./")
 
 # Included for all examples
 include_directories(SYSTEM "${PROJECT_BINARY_DIR}/generated")
