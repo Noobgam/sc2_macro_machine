@@ -36,13 +36,15 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(string mapName) {
     string fileName = "data/map_metas/" + mapName;
     if (FileUtils::fileExists(fileName)) {
         std::unique_ptr<MapMeta> meta;
+        meta = std::make_unique<MapMeta>();
         std::ifstream ifs = FileUtils::openReadFile(fileName);
         boost::archive::text_iarchive ia(ifs);
         ia >> meta;
         LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << endl;
         return meta;
     } else {
-        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, cannot continue, will take too long to recalc" << endl;
+        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, loading empty map meta instead" << endl;
+        return std::make_unique<MapMeta>();
         std::terminate();
     }
 }

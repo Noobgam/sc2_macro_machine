@@ -40,6 +40,7 @@ public:
     MapTools(CCBot & bot);
 
     bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
+    CCPosition findClosestWalkablePosition(const CCPosition& pos) const;
 
     void    onStart();
     void    onFrame();

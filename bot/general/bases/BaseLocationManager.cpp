@@ -24,7 +24,13 @@ void BaseLocationManager::onStart() {
     for (auto & cluster : resourceClusters) {
         if (cluster.size() > 4) {
             auto id = baseID++;
-            m_baseLocationData.insert({id, std::make_unique<BaseLocation>(m_bot, id, cluster)});
+            auto&& projection = m_bot.Map().getStaticMapMeta().getBaseLocations()[id];
+            m_baseLocationData.insert({id, std::make_unique<BaseLocation>(
+                    m_bot,
+                    id,
+                    projection,
+                    cluster
+            )});
         }
     }
 

@@ -486,3 +486,30 @@ bool MapTools::isVisible(const CCTilePosition &from, const CCTilePosition &to, f
 const StaticMapMeta& MapTools::getStaticMapMeta() const {
     return *m_staticMapMeta;
 }
+
+// this would allow us to avoid walling ourselves in. If we get pinned to the corner we'll still get stuck here.
+CCPosition MapTools::findClosestWalkablePosition(const CCPosition &pos) const {
+    if (isWalkable(pos.x, pos.y)) {
+        return pos;
+    }
+    for (int r = 1; r < 3; ++r) {
+        std::vector<std::pair<float, CCPosition>> positions;
+        int y = pos.y - r;
+        for (int x = pos.x - r; x <= pos.x + r; ++x) {
+            if (isWalkable(x, y)) {
+                CCPosition tileCenter = {x + .5f, y + .5f};
+                float dist = Util::Dist(pos, tileCenter);
+                positions.emplace_back(dist, tileCenter);
+            }
+        }
+        if (!positions.empty()) {
+            sort(positions.begin(), positions.end(), [](auto& lhs, auto& rhs) {
+                return lhs.first < rhs.first;
+            });
+            return positions.begin()->second;
+        }
+    }
+
+    // there's no point in searching for the position past r = 3
+    return pos;
+}

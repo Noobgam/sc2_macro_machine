@@ -7,10 +7,14 @@ class Unit;
 class Resource;
 class UnitType;
 
+#ifdef _STATIC_MAP_CALCULATOR
+#define VALIDATE_CALLED_ONCE() ((void)0)
+#else
 #define VALIDATE_CALLED_ONCE() \
     static bool alreadyCalled = false; \
     BOT_ASSERT(!alreadyCalled, "This function can should only be called once.)"); \
     alreadyCalled = true
+#endif
 
 namespace Util
 {

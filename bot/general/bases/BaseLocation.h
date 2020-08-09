@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <general/managers/resources/Resource.h>
+#include <general/map_meta/StaticMapMeta.h>
 
 typedef unsigned long long BaseLocationID;
 
@@ -35,7 +36,16 @@ class BaseLocation {
     CCPositionType              m_top;
     CCPositionType              m_bottom;
     bool                        m_isStartLocation;
+
+    void initialize(const std::vector<const Resource*> & resources);
+    void finishInitialization();
 public:
+    BaseLocation(
+            CCBot & bot,
+            BaseLocationID baseID,
+            BaseLocationProjection baseLocationProjection,
+            const std::vector<const Resource*> & resources
+    );
     BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources);
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;

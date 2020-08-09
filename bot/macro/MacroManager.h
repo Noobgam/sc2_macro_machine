@@ -16,6 +16,7 @@ class MacroManager
     BuildingPlacer       m_buildingPlacer;
 
     std::vector<std::unique_ptr<BuildManager>> m_managers;
+    std::string cachedProductionInformation;
 
     std::optional<BuildOrderItem>     getTopPriority();
 
@@ -34,6 +35,7 @@ public:
     void    onStart();
     void    onFrame();
     void    drawProductionInformation();
+    BuildingPlacer& getBuildingPlacer();
 
     /**
         If you don't care about the position of trained / created unit you can use 1-arg func

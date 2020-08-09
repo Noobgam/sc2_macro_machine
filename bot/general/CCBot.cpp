@@ -4,6 +4,9 @@
 #include <random>
 #include <ctime>
 
+#include <thread>
+#include <chrono>
+
 CCBot::CCBot()
     : m_map(*this)
     , m_bases(*this)
@@ -18,13 +21,9 @@ void CCBot::OnGameStart() {
     m_unitInfo.onStart();
 
 #ifdef _STATIC_MAP_CALCULATOR
-    StaticMapMeta::getMeta(*this);
-    // reload it to validate
-    StaticMapMeta::getMeta(*this);
-    std::terminate();
-#else
-    m_mapMeta = MapMeta::getMeta(Observation()->GetGameInfo().map_name);
+    return;
 #endif
+
 
     LOG_DEBUG << "Starting OnGameStart()" << std::endl;
 
@@ -47,12 +46,23 @@ void CCBot::OnGameEnd() {
 }
 
 void CCBot::OnStep() {
+    logging::propagateFrame(GetCurrentFrame());
+    ++observationId;
+#ifdef _STATIC_MAP_CALCULATOR
+    if (observationId == 1) {
+        Debug()->DebugShowMap();
+        Debug()->SendDebug();
+        return;
+    }
+    StaticMapMeta::getMeta(*this);
+    // reload it to validate
+    StaticMapMeta::getMeta(*this);
+    Control()->RequestLeaveGame();
+    return;
+#endif
     Timer timer;
     timer.start();
     LOG_DEBUG << "Starting onStep()" << std::endl;
-    Control()->GetObservation();
-    logging::propagateFrame(GetCurrentFrame());
-    ++observationId;
     m_unitInfo.onFrame();
 
     m_map.onFrame();
@@ -68,6 +78,8 @@ void CCBot::OnStep() {
 
     timer.stop();
     LOG_DEBUG << "Finished onStep(): " << timer.getElapsedTimeInMilliSec() << "ms" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    LOG_DEBUG << "Sleeping for 20 ms after onStep()." << std::endl;
 }
 
 size_t CCBot::getObservationId() const {
