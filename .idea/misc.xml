@@ -6,7 +6,7 @@
       <file path="$PROJECT_DIR$/bot" />
     </sourceRoots>
     <excludeRoots>
-      <file path="$PROJECT_DIR$/contrib" />
+      <file path="$PROJECT_DIR$/cpp_sc2/contrib" />
     </excludeRoots>
   </component>
   <component name="JavaScriptSettings">
