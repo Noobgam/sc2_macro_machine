@@ -20,7 +20,7 @@ void AttackWithKiting::onUnitAdded(const Unit *unit) {
 
 void AttackWithKiting::handleOneUnit(const Unit *unit) {
     auto&& enemies = m_bot.UnitInfo().getUnits(Players::Enemy);
-    float range = unit->getType().getAttackRange() + .5f;
+    float range = unit->getType().getAttackRange();
     auto it = endangered.find(unit->getID());
     bool weaponOnCooldown = unit->getWeaponCooldown() > 0.1;
     bool inDanger;
@@ -60,8 +60,9 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
         }
         auto center = Util::CalcCenter(closeTargets);
         auto vec_to_center = center - unit->getPosition();
-        auto normalized_backward = Util::NormalizeVector(vec_to_center * -1);
-        unit->move(unit->getPosition() + normalized_backward);
+        auto backward_direction = Util::NormalizeVector(vec_to_center * -2);
+        CCPosition walkable = m_bot.Map().findClosestWalkablePosition(unit->getPosition() + backward_direction);
+        unit->move(walkable);
     } else {
         std::vector<std::pair<float, const Unit*>> targets;
         for (auto enemy : enemies) {
@@ -73,7 +74,8 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
         float maxPriority = -1;
         const Unit* maxPriorityTarget = NULL;
         for (auto x : targets) {
-            if (x.first > range + 2) {
+            // even if it is out of range it does not mean we shouldnt attack it
+            if (x.first > range + 4) {
                 break;
             }
             closeTargets.push_back(x.second);
