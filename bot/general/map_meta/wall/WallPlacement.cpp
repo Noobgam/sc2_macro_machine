@@ -13,6 +13,7 @@
 
 #include <future>
 #include <thread>
+#include <util/ctpl.h>
 
 using std::vector;
 
@@ -349,15 +350,15 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     if (threads == 1) {
         placements = validateContainerPart(0, container.size());
     } else {
+        ctpl::thread_pool pool(threads);
         std::vector<std::future<std::vector<WallPlacement>>> futures;
         for (int i = 0; i < threads; ++i) {
             auto l = (i * container.size()) / threads;
             auto r = ((i + 1) * container.size()) / threads;
-            futures.push_back(std::async(std::launch::async, (
-                    [&]() {
+            futures.push_back(pool.push(
+                    [&](int) {
                         return validateContainerPart(l, r);
                     })
-                    )
             );
         }
         for (auto&& x : futures) {
