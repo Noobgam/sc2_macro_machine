@@ -2033,7 +2033,7 @@ void ControlImp::IssueUnitDestroyedEvents() {
     if (raw.has_event()) {
         const SC2APIProtocol::Event& event = raw.event();
         for (const auto& tag : event.dead_units()) {
-            const Unit* unit = observation_imp_->unit_pool_.GetUnit(tag);
+            Unit* unit = observation_imp_->unit_pool_.GetUnit(tag);
 
             if (!unit->is_alive) {
                 std::cerr << "Unit from event is already not alive.";

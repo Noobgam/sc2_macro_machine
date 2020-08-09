@@ -49,15 +49,7 @@ void UnitPool::IncrementIndex() {
     }
 }
 
-void UnitPool::MarkDead(Tag tag) {
-    Unit* unit = GetUnit(tag);
-    if (!unit) {
-        return;
-    }
-    MarkDead(unit);
-}
-
-void UnitPool::MarkDead(const Unit* unit) {
+void UnitPool::MarkDead(Unit* unit) {
     unit->is_alive = false;
     tag_to_existing_unit_.erase(unit->tag);
 }
