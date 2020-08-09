@@ -1,4 +1,5 @@
 include_directories("../cpp_sc2/include")
+include_directories("../bot/include")
 include_directories("./")
 
 # Included for all examples
@@ -6,6 +7,9 @@ include_directories(SYSTEM "${PROJECT_BINARY_DIR}/generated")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/contrib/SDL-mirror/include")
 
 include_directories("../bot")
+
+# Build with c++17 support.
+set(CMAKE_CXX_STANDARD 17)
 
 add_definitions("-DSC2API")
 add_definitions("-DDEBUG_LOGGING")
