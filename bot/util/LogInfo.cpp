@@ -3,6 +3,9 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 
 namespace {
 
@@ -21,7 +24,24 @@ namespace {
     std::string CurrentDateTime()
     {
         if (frameId == -1) {
-            return "";
+            using namespace std::chrono;
+
+            // get current time
+            auto now = system_clock::now();
+
+            // get number of milliseconds for the current second
+            // (remainder after division into seconds)
+            auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+
+            // convert to std::time_t in order to convert to std::tm (broken time)
+            auto timer = system_clock::to_time_t(now);
+
+            // convert to broken time
+            std::tm bt = *std::localtime(&timer);
+            std::stringstream ss;
+            ss << std::put_time(&bt, "%d-%m-%Y %H-%M-%S");
+            ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
+            return ss.str();
         } else {
             int seconds = frameId / 22.4;
             int minutes = seconds / 60;
