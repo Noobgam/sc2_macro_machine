@@ -46,9 +46,10 @@ void CCBot::OnGameEnd() {
 }
 
 void CCBot::OnStep() {
+    logging::propagateFrame(GetCurrentFrame());
+    ++observationId;
 #ifdef _STATIC_MAP_CALCULATOR
-    static int frameId = 0;
-    if (frameId++ == 0) {
+    if (observationId == 1) {
         Debug()->DebugShowMap();
         Debug()->SendDebug();
         return;
@@ -56,14 +57,12 @@ void CCBot::OnStep() {
     StaticMapMeta::getMeta(*this);
     // reload it to validate
     StaticMapMeta::getMeta(*this);
-    std::terminate();
+    Control()->RequestLeaveGame();
+    return;
 #endif
     Timer timer;
     timer.start();
     LOG_DEBUG << "Starting onStep()" << std::endl;
-    Control()->GetObservation();
-    logging::propagateFrame(GetCurrentFrame());
-    ++observationId;
     m_unitInfo.onFrame();
 
     m_map.onFrame();

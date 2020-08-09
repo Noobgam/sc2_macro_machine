@@ -27,22 +27,20 @@ void MacroManager::onStart() {
 
 void MacroManager::onFrame(){
     static int frameId = 0;
-    if (++frameId != 3) {
-        LOG_DEBUG << "Skipping frame" << endl;
-        return;
-    }
-    frameId = 0;
-    LOG_DEBUG << "Getting top priority" << endl;
-    std::optional<BuildOrderItem> item = getTopPriority();
-    if (item.has_value()) {
-        LOG_DEBUG << "Top priority item is " << item->type.getName() << " with priority " << item->priority << endl;
-        produceIfPossible(item.value());
-    } else {
-        LOG_DEBUG << "No candidates to build" << endl;
+
+    if (++frameId == 3) {
+        LOG_DEBUG << "Getting top priority" << endl;
+        std::optional<BuildOrderItem> item = getTopPriority();
+        if (item.has_value()) {
+            LOG_DEBUG << "Top priority item is " << item->type.getName() << " with priority " << item->priority << endl;
+            produceIfPossible(item.value());
+        } else {
+            LOG_DEBUG << "No candidates to build" << endl;
+        }
+        frameId = 0;
     }
 
     drawProductionInformation();
-    m_buildingPlacer.drawReservedTiles();
 }
 
 std::optional<BuildOrderItem> MacroManager::getTopPriority() {
@@ -60,8 +58,7 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority() {
     for (auto& item : items) {
         ss << item.type.getName() << " : " << item.priority << '\n';
     }
-
-    m_bot.Map().drawTextScreen(0.01f, 0.01f, ss.str(), CCColor(255, 255, 0));
+    cachedProductionInformation = std::move(ss.str());
 
     auto item_ptr = std::max_element(items.begin(), items.end());
     if (item_ptr == items.end()) {
@@ -172,7 +169,10 @@ bool MacroManager::meetsReservedResources(const MetaType & type)
     return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
 }
 
-void MacroManager::drawProductionInformation() { }
+void MacroManager::drawProductionInformation() {
+    m_bot.Map().drawTextScreen(0.01f, 0.01f, cachedProductionInformation, CCColor(255, 255, 0));
+    m_buildingPlacer.drawReservedTiles();
+}
 
 BuildingPlacer &MacroManager::getBuildingPlacer() {
     return m_buildingPlacer;

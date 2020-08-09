@@ -16,6 +16,7 @@ class MacroManager
     BuildingPlacer       m_buildingPlacer;
 
     std::vector<std::unique_ptr<BuildManager>> m_managers;
+    std::string cachedProductionInformation;
 
     std::optional<BuildOrderItem>     getTopPriority();
 
