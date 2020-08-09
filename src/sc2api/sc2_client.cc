@@ -2039,7 +2039,7 @@ void ControlImp::IssueUnitDestroyedEvents() {
                 continue;
             }
 
-            observation_imp_->unit_pool_.MarkDead(tag);
+            observation_imp_->unit_pool_.MarkDead(unit);
             client_.OnUnitDestroyed(unit);
         }
     }
@@ -2128,11 +2128,12 @@ void ControlImp::IssueUpgradeEvents() {
 }
 
 bool ControlImp::IssueEvents(const std::vector<Tag>& commands) {
+    IssueUnitDestroyedEvents();
+
     if (observation_imp_->current_game_loop_ == observation_imp_->previous_game_loop) {
         return false;
     }
 
-    IssueUnitDestroyedEvents();
     IssueUnitAddedEvents();
     IssueBuildingCompletedEvents();
     IssueIdleEvents(commands);

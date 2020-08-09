@@ -226,6 +226,7 @@ public:
     Unit* GetUnit(Tag tag) const;
     Unit* GetExistingUnit(Tag tag) const;
     void MarkDead(Tag tag);
+    void MarkDead(const Unit* unit);
 
     //TODO: Change alive -> Exist
     void ForEachExistingUnit(const std::function<void(Unit& unit)>& functor) const;

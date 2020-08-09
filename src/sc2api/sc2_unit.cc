@@ -54,9 +54,12 @@ void UnitPool::MarkDead(Tag tag) {
     if (!unit) {
         return;
     }
+    MarkDead(unit);
+}
+
+void UnitPool::MarkDead(const Unit* unit) {
     unit->is_alive = false;
-    // CHeck if this is necessary, bro
-    tag_to_existing_unit_.erase(tag);
+    tag_to_existing_unit_.erase(unit->tag);
 }
 
 void UnitPool::ForEachExistingUnit(const std::function<void(Unit& unit)>& functor) const {
