@@ -4,7 +4,7 @@ include_directories("./")
 
 # Included for all examples
 include_directories(SYSTEM "${PROJECT_BINARY_DIR}/cpp_sc2/generated")
-include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/contrib/SDL-mirror/include")
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/cpp_sc2/contrib/SDL-mirror/include")
 
 # Build with c++17 support.
 set(CMAKE_CXX_STANDARD 17)
