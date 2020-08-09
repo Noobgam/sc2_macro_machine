@@ -2035,6 +2035,8 @@ void ControlImp::IssueUnitDestroyedEvents() {
         for (const auto& tag : event.dead_units()) {
             const Unit* unit = observation_imp_->unit_pool_.GetUnit(tag);
 
+            assert(unit->is_alive && "Unit should be alive");
+
             if (!unit) {
                 continue;
             }
