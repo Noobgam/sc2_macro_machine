@@ -1,6 +1,6 @@
 include_directories("../cpp-sc2/include")
-include_directories("include")
-include_directories("./")
+include_directories("src/include")
+include_directories("src")
 
 # Included for all examples
 include_directories(SYSTEM "${PROJECT_BINARY_DIR}/cpp-sc2/generated")
@@ -12,7 +12,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_definitions("-DSC2API")
 add_definitions("-DDEBUG_LOGGING")
 
-file (GLOB_RECURSE all_sources "*.h" "*.cpp" "*.hpp")
+file (GLOB_RECURSE all_sources "src/*.h" "src/*.cpp" "src/*.hpp")
+
 add_executable(main_bot ${all_sources})
 target_link_libraries(main_bot sc2api sc2lib sc2utils sc2protocol)
 
