@@ -1,5 +1,5 @@
 include_directories("../cpp-sc2/include")
-include_directories("src/include")
+include_directories("include")
 include_directories("src")
 
 # Included for all examples
