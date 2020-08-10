@@ -2035,12 +2035,12 @@ void ControlImp::IssueUnitDestroyedEvents() {
         for (const auto& tag : event.dead_units()) {
             Unit* unit = observation_imp_->unit_pool_.GetUnit(tag);
 
-            if (!unit->is_alive) {
-                std::cerr << "Unit from event is already not alive.";
+            if (!unit) {
                 continue;
             }
 
-            if (!unit) {
+            if (!unit->is_alive) {
+                std::cerr << "Unit from event is already not alive.";
                 continue;
             }
 
