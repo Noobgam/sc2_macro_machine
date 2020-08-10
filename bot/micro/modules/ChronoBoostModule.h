@@ -2,11 +2,11 @@
 
 class CCBot;
 
-class BoostModule {
+class ChronoBoostModule {
 private:
     CCBot & m_bot;
 public:
-    explicit BoostModule(CCBot & bot);
+    explicit ChronoBoostModule(CCBot & bot);
 
     void onFrame();
 };

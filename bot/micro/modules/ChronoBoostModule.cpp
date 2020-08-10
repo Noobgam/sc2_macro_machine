@@ -1,9 +1,9 @@
-#include "BoostModule.h"
+#include "ChronoBoostModule.h"
 #include "general/CCBot.h"
 
-BoostModule::BoostModule(CCBot &bot): m_bot(bot) {}
+ChronoBoostModule::ChronoBoostModule(CCBot &bot): m_bot(bot) {}
 
-void BoostModule::onFrame() {
+void ChronoBoostModule::onFrame() {
     auto nexuses = m_bot.UnitInfo().getUnits(
             Players::Self,
             sc2::UNIT_TYPEID::PROTOSS_NEXUS
