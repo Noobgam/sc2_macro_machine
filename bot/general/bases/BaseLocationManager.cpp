@@ -150,6 +150,16 @@ void BaseLocationManager::onFrame() {
     }
 }
 
+BaseLocation * BaseLocationManager::getBaseLocation(const Resource* resource) const {
+    for (auto baseLocation : m_baseLocationPtrs) {
+        if (baseLocation->containsResource(resource)) {
+            return baseLocation;
+        }
+    }
+    BOT_ASSERT(false, "Could not find a base for this resource");
+    return nullptr;
+}
+
 BaseLocation * BaseLocationManager::getBaseLocation(const CCPosition & pos) const {
     if (!m_bot.Map().isValidPosition(pos)) { return nullptr; }
     return m_tileBaseLocations[(int)pos.x][(int)pos.y];
@@ -216,7 +226,7 @@ void BaseLocationManager::drawBaseLocations() {
     m_bot.Map().drawText(Util::GetPosition(nextExpansionPosition), "Next Expansion Location", CCColor(255, 0, 255));
 }
 
-const std::vector<const BaseLocation *> & BaseLocationManager::getBaseLocations() const {
+const std::vector<BaseLocation *> & BaseLocationManager::getBaseLocations() const {
     return m_baseLocationPtrs;
 }
 
@@ -275,7 +285,7 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
 }
 
 void BaseLocationManager::resourceExpiredCallback(const Resource* resource) {
-    BaseLocation *baseLocation = getBaseLocation(resource->getPosition());
+    BaseLocation *baseLocation = getBaseLocation(resource);
     baseLocation->resourceExpiredCallback(resource);
 }
 

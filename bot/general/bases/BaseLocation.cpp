@@ -145,6 +145,10 @@ void BaseLocation::draw() const {
     }
     ss << "\n";
     ss << "Geysers:      " << m_geysers.size() << "\n";
+    for (auto x : m_geysers) {
+        ss << x->getID() << " ";
+    }
+    ss << "\n";
     ss << "Occupied By:  ";
 
     if (isOccupiedByPlayer(Players::Self)) {
@@ -259,4 +263,19 @@ void BaseLocation::finishInitialization() {
     m_right  = std::max(m_right,  m_depotActualPosition.x + 2.5f);
     m_top    = std::max(m_top,    m_depotActualPosition.y + 2.5f);
     m_bottom = std::min(m_bottom, m_depotActualPosition.y - 2.5f);
+    m_distanceMap = m_bot.Map().getDistanceMap(m_depotActualPosition);
+}
+
+const DistanceMap &BaseLocation::getDistanceMap() const {
+    return m_distanceMap;
+}
+
+bool BaseLocation::containsResource(const Resource *resource) const {
+    if (resource->getResourceType() == ResourceType::MINERAL) {
+        return std::find(m_minerals.begin(), m_minerals.end(), resource) != m_minerals.end();
+    } else if (resource->getResourceType() == ResourceType::GEYSER) {
+        return std::find(m_geysers.begin(), m_geysers.end(), resource) != m_geysers.end();
+    }
+    BOT_ASSERT(false, "Unexpected resource type.");
+    return false;
 }

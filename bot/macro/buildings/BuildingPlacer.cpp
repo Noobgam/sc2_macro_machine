@@ -103,26 +103,28 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         return opt;
     }
 
-    double bestHeuristic = std::numeric_limits<double>::min();
+    double bestHeuristic = std::numeric_limits<double>::lowest();
     std::optional<CCPosition> bestPosO;
     auto &myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
     BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
-    auto &firstBase = *myBases.begin();
+    auto closeToBases = getUnreservedTilesCloseToBases();
     if (b.isSupplyProvider()) {
-        // perhaps moving this logic to some sort of 'PylonPlacer' would be better
-        // copy is intended here
-        auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
         // pylons are built in corners of tiles.
-        for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
-            const auto & pos = closestToStart[i];
+        for (auto& pos : closeToBases) {
             if (canBuildHereWithoutCoveringNexus(pos.x, pos.y, b)) {
                 auto&& lr = m_bot.Map().assumePylonBuilt(Util::GetPosition(pos), 6.5f);
-                int dist = m_bot.Map().getGroundDistance(firstBase->getDepotActualPosition(), Util::GetPosition(pos));
+                int dist = std::numeric_limits<int>::max();
+                for (auto base : myBases) {
+                    dist = std::min(
+                            dist,
+                            m_bot.Map().getGroundDistance(base->getDepotActualPosition(), Util::GetPosition(pos))
+                    );
+                }
                 double curHeuristic = heuristic(
                         lr.first,
                         lr.second,
                         dist
-                        );
+                );
                 if (curHeuristic > bestHeuristic) {
                     bestPosO = Util::GetPosition(pos);
                     bestHeuristic = curHeuristic;
@@ -133,11 +135,9 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         }
         return bestPosO;
     } else {
-        auto closestToStart = m_bot.Map().getClosestTilesTo(firstBase->getDepotActualPosition());
 
         bool isRound = Util::isRound(b.getFootPrintRadius());
-        for (size_t i(0); i < closestToStart.size() && i < 1000; ++i) {
-            auto & pos = closestToStart[i];
+        for (auto& pos : closeToBases) {
             CCPosition cand = isRound
                     ? CCPosition(pos.x, pos.y)
                     : CCPosition(pos.x + .5, pos.y + .5);
@@ -165,7 +165,7 @@ bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
     int ty2 = ty1 + type.tileHeight();
 
     // for each base location
-    for (const BaseLocation * base : m_bot.Bases().getBaseLocations())
+    for (auto& base : m_bot.Bases().getBaseLocations())
     {
         // dimensions of the base location
         int bx1 = (int)base->getDepotActualPosition().x;
@@ -324,5 +324,71 @@ void BuildingPlacer::reserveTiles(const UnitType &type, CCPosition pos) {
             m_reserveMap[cx][cy] = true;
         }
    }
+}
+
+void BuildingPlacer::freeTiles(const UnitType &type, CCPosition pos) {
+    float lx = pos.x - type.getFootPrintRadius();
+    float ly = pos.y - type.getFootPrintRadius();
+    for (int cx = lx; cx < lx + type.tileWidth(); cx++) {
+        for (int cy = ly; cy < ly + type.tileHeight(); cy++) {
+            m_reserveMap[cx][cy] = false;
+        }
+    }
+}
+
+namespace {
+    struct cmp {
+        bool operator()(const CCTilePosition &lhs, const CCTilePosition &rhs) const {
+            if (lhs.x != rhs.x) {
+                return lhs.x < rhs.x;
+            }
+            return lhs.y < rhs.y;
+        }
+    };
+}
+
+constexpr int THRESHOLD = 300;
+
+std::vector<CCTilePosition> BuildingPlacer::getUnreservedTilesCloseToBases() const {
+    auto &myBases = m_bot.getManagers().getBasesManager().getBases();
+    std::set<CCTilePosition, cmp> tiles;
+    for (auto x : myBases) {
+        auto&& closestTiles = x->getBaseLocation()->getDistanceMap().getSortedTiles();
+        for (int i = 0; i < THRESHOLD && i < closestTiles.size(); ++i) {
+            auto& tile = closestTiles[i];
+            if (isReserved(tile.x, tile.y)) continue;
+            tiles.insert(closestTiles[i]);
+        }
+    }
+    std::vector<std::pair<int, CCTilePosition>> distAndTiles;
+    for (auto& tile : tiles) {
+        int dist = std::numeric_limits<int>::max();
+        for (auto x : myBases) {
+            int distHere = x->getBaseLocation()->getGroundDistance(tile);
+            if (distHere == -1) continue;
+            dist = std::min(dist, distHere);
+        }
+        if (dist == std::numeric_limits<int>::max()) {
+            continue;
+        }
+        distAndTiles.emplace_back(dist, tile);
+    }
+    std::sort(distAndTiles.begin(), distAndTiles.end(), [](auto& lhs, auto& rhs) {
+        return lhs.first < rhs.first;
+    });
+    std::vector<CCTilePosition> sortedTiles;
+    for (int i = 0; i < distAndTiles.size() && i < THRESHOLD; ++i) {
+        sortedTiles.push_back(distAndTiles[i].second);
+    }
+    return sortedTiles;
+}
+
+void BuildingPlacer::unitDisappearedCallback(const Unit *unit) {
+    if (unit->getType().isBuilding()) {
+        freeTiles(
+                unit->getType(),
+                unit->getPosition()
+        );
+    }
 }
 

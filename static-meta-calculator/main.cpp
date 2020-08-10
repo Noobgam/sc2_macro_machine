@@ -12,13 +12,13 @@
 using namespace std;
 
 vector<string> ALL_MAPS = {
-        "DeathAuraLE.SC2Map",
-        "EternalEmpireLE.SC2Map",
-        "EverDreamLE.SC2Map",
-        "GoldenWallLE.SC2Map",
+        //"DeathAuraLE.SC2Map",
+        //"EternalEmpireLE.SC2Map",
+        //"EverDreamLE.SC2Map",
+        //"GoldenWallLE.SC2Map",
         "IceandChromeLE.SC2Map",
-        "PillarsofGoldLE.SC2Map",
-        "SubmarineLE.SC2Map"
+//        "PillarsofGoldLE.SC2Map",
+//        "SubmarineLE.SC2Map"
 };
 
 // requires static meta to be already calculated

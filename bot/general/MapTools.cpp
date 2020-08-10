@@ -387,6 +387,8 @@ void MapTools::changePowering(const CCPosition &pos, float radius, int d) {
     float y = pos.y;
     for (float i = (int)(x - radius); i <= x + radius; i += .5) {
         for (float j = (int)(y - radius); j <= y + radius; j += .5) {
+            if (m_unbuildableNeutral[i][j]) continue;
+
             int idI = (2 * i + .5);
             int idJ = (2 * j + .5);
 
@@ -404,6 +406,10 @@ std::pair<int, int> MapTools::assumePylonBuilt(const CCPosition& pos, float radi
     int poweredOnce    = 0;
     for (float i = (int)(x - radius); i <= x + radius; i += .5) {
         for (float j = (int)(y - radius); j <= y + radius; j += .5) {
+            // this might be a little off if neutral is cleared.
+            //  should not be as important, and will work if you update powering when neutrals died
+            if (m_unbuildableNeutral[i][j]) continue;
+
             int idI = (2 * i + .5);
             int idJ = (2 * j + .5);
 

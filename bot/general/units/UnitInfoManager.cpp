@@ -101,6 +101,7 @@ void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     m_bot.getManagers().getResourceManager().unitDisappearedCallback(unit);
     m_bot.getManagers().getBuildingManager().unitDisappearedCallback(unit);
     m_bot.getManagers().getBasesManager().unitDisappearedCallback(unit);
+    m_bot.Commander().getMacroManager().getBuildingPlacer().unitDisappearedCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {
