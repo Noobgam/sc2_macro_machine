@@ -96,6 +96,7 @@ void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to)
 }
 
 void SquadManager::deformSquad(Squad* squad) {
+    LOG_DEBUG << "[SQUAD_MANAGER] Deforming squad with id" << squad->getId() << endl;
     transferUnits(squad, getUnassignedSquad());
     if (squad->getId() != unassignedSquadID) {
         m_squads.erase(squad->getId());

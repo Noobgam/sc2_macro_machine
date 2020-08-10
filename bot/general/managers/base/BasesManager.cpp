@@ -14,7 +14,6 @@ void BasesManager::onStart() {
 }
 
 void BasesManager::newUnitCallback(const Unit *unit) {
-    LOG_DEBUG << "New unit " << unit->getID() << endl;
     if (unit->getPlayer() != Players::Self) {
         return;
     }
