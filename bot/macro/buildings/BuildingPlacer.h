@@ -19,7 +19,7 @@ class BuildingPlacer
     bool tileOverlapsBaseLocation(int x, int y, UnitType type) const;
 
     std::optional<CCPosition> getRefineryPosition() const;
-    std::vector<CCTilePosition> getUnreservedTilesCloseToBases() const;
+    std::vector<CCTilePosition> getUnreservedTilesCloseToBases(int threshold) const;
 
 public:
 
