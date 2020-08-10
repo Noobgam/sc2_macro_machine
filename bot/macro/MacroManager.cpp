@@ -100,10 +100,11 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
         Timer timer;
         timer.start();
         std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(buildingType);
-        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
         if (!positionOpt.has_value()) {
+            LOG_DEBUG << "Build place search failed. Took` " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
             return;
         }
+        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
         CCPosition position = positionOpt.value();
         m_buildingPlacer.reserveTiles(buildingType, position);
         m_bot.getManagers().getWorkerManager().build(buildingType, position);
