@@ -41,7 +41,7 @@ void SquadManager::onFrame() {
     for (auto& x : nexuses) {
         if (chronoBoostsAvailable == 0) break;
         auto&& buffs = x->getUnitPtr()->buffs;
-        if (buffs.empty()) {
+        if (buffs.empty() && x->isTraining()) {
             m_bot.Actions()->UnitCommand(
                     nexusesRaw,
                     sc2::ABILITY_ID::EFFECT_CHRONOBOOSTENERGYCOST,
