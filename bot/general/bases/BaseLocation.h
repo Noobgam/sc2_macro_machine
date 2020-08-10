@@ -49,6 +49,7 @@ public:
     BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources);
     int getGroundDistance(const CCPosition & pos) const;
     int getGroundDistance(const CCTilePosition & pos) const;
+    bool containsResource(const Resource* resource) const;
 
     bool isPlayerStartLocation(CCPlayer player) const;
     bool isMineralOnly() const;
@@ -66,6 +67,7 @@ public:
     void setStartLocation(CCPlayer player);
     void setPlayerHasDepot(CCPlayer player, bool hasDepot);
     void setPlayerOccupying(CCPlayer player, bool occupying);
+    const DistanceMap& getDistanceMap() const;
 
     void resourceExpiredCallback(const Resource* resource);
 
