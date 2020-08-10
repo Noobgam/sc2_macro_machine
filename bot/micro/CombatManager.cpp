@@ -3,7 +3,10 @@
 #include "general/CCBot.h"
 #include "order/Orders.h"
 
-CombatManager::CombatManager(CCBot & bot) : m_bot(bot) { }
+CombatManager::CombatManager(CCBot & bot) :
+    m_bot(bot),
+    m_boostModule(bot)
+{}
 
 void CombatManager::onStart() {
     mainSquad = m_bot.getManagers().getSquadManager().createNewSquad();
@@ -16,6 +19,7 @@ void CombatManager::onFrame() {
         mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
         inAttack = true;
     }
+    m_boostModule.onFrame();
 }
 
 void CombatManager::reformSquads() {
