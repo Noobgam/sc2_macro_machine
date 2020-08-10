@@ -107,8 +107,8 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     std::optional<CCPosition> bestPosO;
     auto &myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
     BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
-    auto closeToBases = getUnreservedTilesCloseToBases();
     if (b.isSupplyProvider()) {
+        auto closeToBases = getUnreservedTilesCloseToBases(300);
         // pylons are built in corners of tiles.
         for (auto& pos : closeToBases) {
             if (canBuildHereWithoutCoveringNexus(pos.x, pos.y, b)) {
@@ -135,6 +135,8 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         }
         return bestPosO;
     } else {
+
+        auto closeToBases = getUnreservedTilesCloseToBases(300);
 
         bool isRound = Util::isRound(b.getFootPrintRadius());
         for (auto& pos : closeToBases) {
@@ -347,14 +349,12 @@ namespace {
     };
 }
 
-constexpr int THRESHOLD = 300;
-
-std::vector<CCTilePosition> BuildingPlacer::getUnreservedTilesCloseToBases() const {
+std::vector<CCTilePosition> BuildingPlacer::getUnreservedTilesCloseToBases(int threshold) const {
     auto &myBases = m_bot.getManagers().getBasesManager().getBases();
     std::set<CCTilePosition, cmp> tiles;
     for (auto x : myBases) {
         auto&& closestTiles = x->getBaseLocation()->getDistanceMap().getSortedTiles();
-        for (int i = 0; i < THRESHOLD && i < closestTiles.size(); ++i) {
+        for (int i = 0; i < threshold && i < closestTiles.size(); ++i) {
             auto& tile = closestTiles[i];
             if (isReserved(tile.x, tile.y)) continue;
             tiles.insert(closestTiles[i]);
@@ -377,7 +377,7 @@ std::vector<CCTilePosition> BuildingPlacer::getUnreservedTilesCloseToBases() con
         return lhs.first < rhs.first;
     });
     std::vector<CCTilePosition> sortedTiles;
-    for (int i = 0; i < distAndTiles.size() && i < THRESHOLD; ++i) {
+    for (int i = 0; i < distAndTiles.size(); ++i) {
         sortedTiles.push_back(distAndTiles[i].second);
     }
     return sortedTiles;
