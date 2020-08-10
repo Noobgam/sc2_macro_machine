@@ -82,14 +82,18 @@ void BaseLocationManager::onStart() {
     // construct the map of tile positions to base locations
     for (int x = 0; x < m_bot.Map().width(); ++x) {
         for (int y = 0; y < m_bot.Map().height(); ++y) {
+            CCPosition pos(Util::TileToPosition(x + 0.5f), Util::TileToPosition(y + 0.5f));
+            std::vector<std::pair<int, BaseLocation*>> distBaseLocationPair;
+            distBaseLocationPair.reserve(m_baseLocationData.size());
             for (auto & locationPair : m_baseLocationData) {
                 const auto & baseLocation = locationPair.second.get();
-                CCPosition pos(Util::TileToPosition(x + 0.5f), Util::TileToPosition(y + 0.5f));
-                if (baseLocation->containsPosition(pos)) {
-                    m_tileBaseLocations[x][y] = baseLocation;
-                    break;
-                }
+                distBaseLocationPair.emplace_back(
+                        baseLocation->getGroundDistance(pos),
+                        baseLocation
+                );
             }
+            sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
+            m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
         }
     }
 
