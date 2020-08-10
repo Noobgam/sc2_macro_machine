@@ -38,11 +38,9 @@ void ResourceManager::newUnitCallback(const Unit *unit) {
 void ResourceManager::unitDisappearedCallback(const Unit *unit) {
     const UnitType & type = unit->getType();
     if (type.isMineral()) {
-        LOG_DEBUG << "Mineral disappeared" << endl;
         const auto & it = std::find_if(m_minerals.begin(), m_minerals.end(), [unit](auto & m) {
             return m->getPosition() == unit->getPosition();
         });
-        BOT_ASSERT(it != m_minerals.end(), "Mineral was not found");
         const auto& mineral = *it;
         if (mineral->getLastUpdate() < m_bot.getObservationId()) {
             // mineral exhausted

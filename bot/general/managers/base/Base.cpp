@@ -1,4 +1,6 @@
+#include <util/LogInfo.h>
 #include "Base.h"
+#include "general/bases/BaseLocation.h"
 
 Base::Base(CCBot &bot, const BaseLocation *baseLocation, const Unit *nexus):
     m_bot(bot),
@@ -45,5 +47,6 @@ void Base::onAssimilatorDestroyed(const Unit *assimilator) {
 }
 
 void Base::onDestroyed() {
+    LOG_DEBUG << "[BASE_MANAGER] Base was destroyed. Base location id:" << m_baseLocation->getBaseId() << endl;
     m_workers->deform();
 }

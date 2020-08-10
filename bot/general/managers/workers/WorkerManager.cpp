@@ -23,14 +23,19 @@ void WorkerManager::onFrame() {
     draw();
 }
 
-void WorkerManager::build(UnitType type, CCPosition position) {
+bool WorkerManager::build(UnitType type, CCPosition position) {
     auto freeWorkers = getFreeWorkers();
-    BOT_ASSERT(!freeWorkers.empty(), "No worker for task.");
-    const auto & worker = *freeWorkers.begin();
-    const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
-    Squad* squad = formSquad({worker});
-    const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
-    squad->setOrder(buildOrder);
+    if (!freeWorkers.empty()) {
+        const auto & worker = *freeWorkers.begin();
+        const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
+        Squad* squad = formSquad({worker});
+        const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
+        squad->setOrder(buildOrder);
+        return true;
+    } else {
+        LOG_DEBUG << "[SURRENDER_REQUEST] No workers found."<< endl;
+        return false;
+    }
 }
 
 std::optional<Squad*> WorkerManager::formSquad(int targetSquadSize) {

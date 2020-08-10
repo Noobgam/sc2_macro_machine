@@ -28,8 +28,8 @@ public:
 
     void onFrame();
 
-    // Gives a new build task to a worker.
-    void build(UnitType type, CCPosition position);
+    // Gives a new build task to a worker. Returns true if
+    bool build(UnitType type, CCPosition position);
 
     // Forms new worker squad for the task. Do not forget to call onEnd for the order.
     std::optional<Squad*> formSquad(int targetSquadSize);

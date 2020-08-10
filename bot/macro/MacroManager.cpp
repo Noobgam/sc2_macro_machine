@@ -107,7 +107,9 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
         LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
         CCPosition position = positionOpt.value();
         m_buildingPlacer.reserveTiles(buildingType, position);
-        m_bot.getManagers().getWorkerManager().build(buildingType, position);
+        if (!m_bot.getManagers().getWorkerManager().build(buildingType, position)) {
+            m_buildingPlacer.freeTiles(buildingType, position);
+        }
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
