@@ -253,7 +253,7 @@ void Unit::stop() const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
 #ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::STOP);
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::STOP);
 #else
     m_unit->stop();
 #endif
@@ -264,7 +264,7 @@ void Unit::attackUnit(const Unit & target) const
     BOT_ASSERT(isValid(), "Unit is not valid");
     BOT_ASSERT(target.isValid(), "Target is not valid");
 #ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, target.getUnitPtr());
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, target.getUnitPtr());
 #else
     m_unit->attack(target.getUnitPtr());
 #endif
@@ -274,7 +274,7 @@ void Unit::attackMove(const CCPosition & targetPosition) const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
 #ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, targetPosition);
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, targetPosition);
 #else
     m_unit->attack(targetPosition);
 #endif
@@ -282,17 +282,17 @@ void Unit::attackMove(const CCPosition & targetPosition) const
 
 void Unit::move(const CCPosition & targetPosition) const {
     BOT_ASSERT(isValid(), "Unit is not valid");
-    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
 }
 
 void Unit::move(const CCTilePosition & targetPosition) const {
     BOT_ASSERT(isValid(), "Unit is not valid");
-    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, CCPosition((float)targetPosition.x, (float)targetPosition.y));
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, CCPosition((float)targetPosition.x, (float)targetPosition.y));
 }
 
 void Unit::rightClick(const Unit & target) const {
     BOT_ASSERT(isValid(), "Unit is not valid");
-    m_bot->Actions()->UnitCommand(m_unit, sc2::ABILITY_ID::SMART, target.getUnitPtr());
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::SMART, target.getUnitPtr());
 }
 
 void Unit::repair(const Unit & target) const
@@ -303,14 +303,14 @@ void Unit::repair(const Unit & target) const
 void Unit::build(const UnitType & buildingType, CCPosition pos) const {
     BOT_ASSERT(m_bot->Map().isConnected(getTilePosition(), pos), "Error: Build Position is not connected to worker");
     BOT_ASSERT(isValid(), "Unit is not valid");
-    m_bot->Actions()->UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
 }
 
 void Unit::buildTarget(const UnitType & buildingType, const Unit & target) const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
 #ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, target.getUnitPtr());
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, target.getUnitPtr());
 #else
     BOT_ASSERT(false, "buildTarget shouldn't be called for BWAPI bots");
 #endif
@@ -320,7 +320,7 @@ void Unit::train(const UnitType & type) const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
 #ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, m_bot->Data(type).buildAbility);
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(type).buildAbility);
 #else
     m_unit->train(type.getAPIUnitType());
 #endif
@@ -330,7 +330,7 @@ void Unit::morph(const UnitType & type) const
 {
     BOT_ASSERT(isValid(), "Unit is not valid");
 #ifdef SC2API
-    m_bot->Actions()->UnitCommand(m_unit, m_bot->Data(type).buildAbility);
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(type).buildAbility);
 #else
     m_unit->morph(type.getAPIUnitType());
 #endif

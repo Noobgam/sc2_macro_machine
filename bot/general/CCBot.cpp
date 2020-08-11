@@ -14,6 +14,7 @@ CCBot::CCBot()
     , m_managers(*this)
     , m_gameCommander(*this)
     , m_techTree(*this)
+    , m_unitCommandManager(*this)
 { }
 
 void CCBot::OnGameStart() {
@@ -76,6 +77,7 @@ void CCBot::OnStep() {
     Debug()->SendDebug();
 #endif
 
+    m_unitCommandManager.issueAllCommands(GetCurrentFrame());
     timer.stop();
     LOG_DEBUG << "Finished onStep(): " << timer.getElapsedTimeInMilliSec() << "ms" << std::endl;
 }
@@ -205,4 +207,8 @@ void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const s
 
 UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
     return UnitType{ typeId, *this };
+}
+
+UnitCommandManager &CCBot::getUnitCommandManager() {
+    return m_unitCommandManager;
 }
