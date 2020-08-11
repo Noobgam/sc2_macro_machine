@@ -1,0 +1,11 @@
+{
+  "Bots": {
+    "MacroMachine": {
+      "Race": "Protoss",
+      "Type": "BinaryCpp",
+      "RootPath": "./",
+      "FileName": "Noobgam2",
+	  "Debug": false
+    }
+  }
+}
