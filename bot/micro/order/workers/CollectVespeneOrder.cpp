@@ -1,5 +1,7 @@
 #include "CollectVespeneOrder.h"
 
+#include <util/LogInfo.h>
+
 CollectVespeneOrder::CollectVespeneOrder(CCBot &bot, Squad *squad, const Base *base):
     Order(bot, squad),
     m_base(base)
@@ -70,6 +72,11 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void CollectVespeneOrder::assignWorkers() {
+    auto&& logLine = LOG_DEBUG << "About to assign workers to vespene: ";
+    for (auto& worker : m_unassignedWorkers) {
+        logLine << worker->getID() << " ";
+    }
+    logLine << endl;
     const auto& assimilators = m_base->getActiveAssimilators();
     for (auto workerIt = m_unassignedWorkers.begin(); workerIt < m_unassignedWorkers.end();) {
         auto bestIt = std::min_element(m_assimilatorToWorker.begin(), m_assimilatorToWorker.end(),

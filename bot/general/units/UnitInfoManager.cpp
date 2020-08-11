@@ -58,7 +58,10 @@ void UnitInfoManager::updateUnits() {
             if (unit->getPlayer() == Players::Self && unit->isAlive()) {
                 ++it;
             } else {
-                LOG_DEBUG << "Unit is missing. [" << it->second->getType().getName() << "]" <<  it->second.get()->isAlive() << " " << std::endl;
+                LOG_DEBUG
+                        << "Unit is missing."
+                        << "[" << it->second->getType().getName() << ":" << it->second.get()->getID() << "]"
+                        << " alive:" << it->second.get()->isAlive() << endl;
                 missingUnits.push_back(std::move(it->second));
                 it = unitWrapperByTag.erase(it);
             }
