@@ -74,7 +74,11 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
 void CollectVespeneOrder::assignWorkers() {
     auto&& logLine = LOG_DEBUG << "About to assign workers to vespene: ";
     for (auto& worker : m_unassignedWorkers) {
-        logLine << worker->getID() << " ";
+        if (!worker->isValid()) {
+            logLine << "null ";
+        } else {
+            logLine << worker->getID() << " ";
+        }
     }
     logLine << endl;
     const auto& assimilators = m_base->getActiveAssimilators();

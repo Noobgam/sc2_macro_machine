@@ -62,7 +62,11 @@ void CollectMineralsOrder::onUnitRemoved(const Unit *unit) {
 void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) {
     auto&& logLine = LOG_DEBUG << "About to assign workers to minerals: ";
     for (auto& worker : workers) {
-        logLine << worker->getID() << " ";
+        if (!worker->isValid()) {
+            logLine << "null ";
+        } else {
+            logLine << worker->getID() << " ";
+        }
     }
     logLine << endl;
     auto& minerals = m_base->getBaseLocation()->getMinerals();
