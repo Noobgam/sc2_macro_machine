@@ -60,15 +60,17 @@ void CollectMineralsOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) {
-    auto&& logLine = LOG_DEBUG << "About to assign workers to minerals: ";
-    for (auto& worker : workers) {
-        if (!worker->isValid()) {
-            logLine << "null ";
-        } else {
-            logLine << worker->getID() << " ";
+    if (!workers.empty()) {
+        auto &&logLine = LOG_DEBUG << "About to assign workers to minerals: ";
+        for (auto &worker : workers) {
+            if (!worker->isValid()) {
+                logLine << "null ";
+            } else {
+                logLine << worker->getID() << " ";
+            }
         }
+        logLine << endl;
     }
-    logLine << endl;
     auto& minerals = m_base->getBaseLocation()->getMinerals();
     for (auto& worker : workers) {
         auto bestIt = std::min_element(m_mineralToWorker.begin(), m_mineralToWorker.end(),

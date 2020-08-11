@@ -72,15 +72,17 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void CollectVespeneOrder::assignWorkers() {
-    auto&& logLine = LOG_DEBUG << "About to assign workers to vespene: ";
-    for (auto& worker : m_unassignedWorkers) {
-        if (!worker->isValid()) {
-            logLine << "null ";
-        } else {
-            logLine << worker->getID() << " ";
+    if (!m_unassignedWorkers.empty()) {
+        auto &&logLine = LOG_DEBUG << "About to assign workers to vespene: ";
+        for (auto &worker : m_unassignedWorkers) {
+            if (!worker->isValid()) {
+                logLine << "null ";
+            } else {
+                logLine << worker->getID() << " ";
+            }
         }
+        logLine << endl;
     }
-    logLine << endl;
     const auto& assimilators = m_base->getActiveAssimilators();
     for (auto workerIt = m_unassignedWorkers.begin(); workerIt < m_unassignedWorkers.end();) {
         auto bestIt = std::min_element(m_assimilatorToWorker.begin(), m_assimilatorToWorker.end(),
