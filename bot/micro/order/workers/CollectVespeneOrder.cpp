@@ -99,7 +99,7 @@ void CollectVespeneOrder::assignWorkers() {
         if (assimilatorIt != assimilators.end()) {
             bestIt->second.emplace_back(*workerIt);
             (*workerIt)->rightClick(*(*assimilatorIt).first);
-            m_unassignedWorkers.erase(workerIt);
+            workerIt = m_unassignedWorkers.erase(workerIt);
         } else {
             break;
             // Do nothing?
