@@ -118,6 +118,16 @@ const std::vector<const Unit*> & UnitInfoManager::getUnits(CCPlayer player) cons
     return m_units.at(player);
 }
 
+std::vector<const Unit*> UnitInfoManager::getUnits(CCPlayer player, sc2::UnitTypeID type) const {
+    std::vector<const Unit*> unitsOfType;
+    for (auto & unit : getUnits(player)) {
+        if (type == unit->getType().getAPIUnitType() && unit->isCompleted()) {
+            unitsOfType.push_back(unit);
+        }
+    }
+    return unitsOfType;
+}
+
 // passing in a unit type of 0 returns a count of all units
 size_t UnitInfoManager::getUnitTypeCount(CCPlayer player, UnitType type, bool completed) const {
     size_t count = 0;

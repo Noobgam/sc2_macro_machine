@@ -130,7 +130,9 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
                     bestHeuristic = curHeuristic;
                 }
                 // if there aint no good pylons or there is a very good one it doesnt really matter
-                if (bestHeuristic > 400) break;
+                if (bestHeuristic > 400) {
+                    break;
+                }
             }
         }
         return bestPosO;

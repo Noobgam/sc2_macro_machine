@@ -38,6 +38,7 @@ public:
     void                    onStart();
 
     const std::vector<const Unit*> & getUnits(CCPlayer player) const;
+    std::vector<const Unit*> getUnits(CCPlayer player, sc2::UnitTypeID type) const;
     size_t                  getUnitTypeCount(CCPlayer player, UnitType type, bool completed = true) const;
     int                     getBuildingCount(CCPlayer player, UnitType type, UnitStatus status) const;
 };

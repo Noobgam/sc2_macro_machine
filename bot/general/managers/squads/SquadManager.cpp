@@ -1,3 +1,4 @@
+#include <util/Util.h>
 #include "SquadManager.h"
 #include "../../../util/LogInfo.h"
 #include "../../CCBot.h"
