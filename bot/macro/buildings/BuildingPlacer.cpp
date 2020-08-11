@@ -258,52 +258,25 @@ void BuildingPlacer::freeTiles(int bx, int by, int width, int height)
 }
 
 std::optional<CCPosition> BuildingPlacer::getRefineryPosition() const {
-    CCPosition closestGeyser(0, 0);
+    std::optional<CCPosition> bestPosition = {};
     double minGeyserDistanceFromHome = std::numeric_limits<double>::max();
     CCPosition homePosition = m_bot.GetStartLocation();
-
-    UnitType refinery = Util::GetRefinery(m_bot.GetPlayerRace(Players::Self), m_bot);
-
-    for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Neutral)) {
-        auto& unit = *unitPtr;
-        // unit must be a geyser
-        if (!unit.getType().isGeyser())
-        {
-            continue;
-        }
-
-        CCPosition geyserPos(unit.getPosition());
-        
-        // can't build a refinery on top of another
-        if (!m_bot.Map().canBuildTypeAtPosition(geyserPos.x, geyserPos.y, refinery))
-        {
-            continue;
-        }
-
-        // check to see if it's next to one of our depots
-        bool nearDepot = false;
-        for (auto & unitPtr : m_bot.UnitInfo().getUnits(Players::Self)) {
-            const Unit& unit = *unitPtr;
-            if (unit.getType().isResourceDepot() && Util::Dist(unit, geyserPos) < 10)
-            {
-                nearDepot = true;
-                break;
-            }
-        }
-
-        if (nearDepot)
-        {
-            double homeDistance = Util::Dist(unit, homePosition);
-
-            if (homeDistance < minGeyserDistanceFromHome)
-            {
-                minGeyserDistanceFromHome = homeDistance;
-                closestGeyser = unit.getPosition();
+    for (auto& base : m_bot.getManagers().getBasesManager().getCompletedBases()) {
+        const auto & assimilators = base->getAssimilators();
+        for (auto& geyser : base->getBaseLocation()->getGeysers()) {
+            const auto& assimIt = std::find_if(assimilators.begin(), assimilators.end(), [geyser](auto a) {
+                return a.second == geyser;
+            });
+            if (assimIt == assimilators.end()) {
+                double homeDistance = Util::Dist(geyser->getPosition(), homePosition);
+                if (homeDistance < minGeyserDistanceFromHome) {
+                    minGeyserDistanceFromHome = homeDistance;
+                    bestPosition = geyser->getPosition();
+                }
             }
         }
     }
-
-    return CCPosition (closestGeyser.x, closestGeyser.y);
+    return bestPosition;
 }
 
 bool BuildingPlacer::isReserved(int x, int y) const

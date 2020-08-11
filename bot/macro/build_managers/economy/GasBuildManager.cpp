@@ -15,7 +15,7 @@ std::optional<BuildOrderItem> GasBuildManager::getTopPriority() {
     for (const auto& base : m_bot.getManagers().getBasesManager().getCompletedBases()) {
         geysers += base->getBaseLocation()->getGeysers().size();
     }
-    if (geysers - assimilatorsCount > 0 && probeCount >= 16 * nexusCount + assimilatorsCount * 3 - 1) {
+    if (geysers - assimilatorsCount > 0 && probeCount >= 16 * nexusCount + assimilatorsCount * 3 - nexusCount) {
         int targetAssimilatorCount = (probeCount - nexusCount * 16) / 3;
         int priority = 7 + targetAssimilatorCount - assimilatorsCount;
         return BuildOrderItem(MetaType(assimilatorType, m_bot), priority, false);
