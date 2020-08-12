@@ -12,7 +12,6 @@ BaseLocation::BaseLocation(
 )
     : m_bot(bot)
     , m_baseID(baseID)
-    , m_isStartLocation(false)
     , m_left                 (std::numeric_limits<CCPositionType>::max())
     , m_right                (std::numeric_limits<CCPositionType>::lowest())
     , m_top                  (std::numeric_limits<CCPositionType>::lowest())
@@ -26,7 +25,6 @@ BaseLocation::BaseLocation(
 BaseLocation::BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector<const Resource*> & resources)
     : m_bot(bot)
     , m_baseID               (baseID)
-    , m_isStartLocation      (false)
     , m_left                 (std::numeric_limits<CCPositionType>::max())
     , m_right                (std::numeric_limits<CCPositionType>::lowest())
     , m_top                  (std::numeric_limits<CCPositionType>::lowest())
@@ -66,48 +64,11 @@ const CCPosition & BaseLocation::getDepotActualPosition() const {
     return m_depotActualPosition;
 }
 
-void BaseLocation::setStartLocation(CCPlayer player) {
-    m_isPlayerOccupying[player] = true;
-    m_isPlayerStartLocation[player] = true;
-    m_isStartLocation = true;
-}
-
-void BaseLocation::setPlayerHasDepot(CCPlayer player, bool hasDepot) {
-    m_playerHasDepot[player] = hasDepot;
-}
-
-void BaseLocation::setPlayerOccupying(CCPlayer player, bool occupying) {
-    m_isPlayerOccupying[player] = occupying;
-}
-
 bool BaseLocation::isInResourceBox(int tileX, int tileY) const {
     // technically this is not a box, rather a trapezoid. Probably doesnt matter whatsoever at this point.
     CCPositionType px = Util::TileToPosition((float)tileX);
     CCPositionType py = Util::TileToPosition((float)tileY);
     return px >= m_left && px < m_right && py < m_top && py >= m_bottom;
-}
-
-bool BaseLocation::isOccupiedByPlayer(CCPlayer player) const {
-    return m_isPlayerOccupying.at(player);
-}
-
-bool BaseLocation::hasPlayerDepot(CCPlayer player) const {
-    return m_playerHasDepot.at(player);
-}
-
-bool BaseLocation::isExplored() const {
-    return m_bot.Map().isExplored(m_centerOfResources);
-}
-
-bool BaseLocation::isPlayerStartLocation(CCPlayer player) const {
-    return m_isPlayerStartLocation.at(player);
-}
-
-bool BaseLocation::containsPosition(const CCPosition & pos, int distance) const {
-    if (!m_bot.Map().isValidPosition(pos) || (pos.x == 0 && pos.y == 0)) {
-        return false;
-    }
-    return Util::Dist(m_centerOfResources, pos) < distance;
 }
 
 const std::vector<const Resource*> & BaseLocation::getGeysers() const {
@@ -138,7 +99,6 @@ void BaseLocation::draw() const {
 
     std::stringstream ss;
     ss << "BaseLocation: " << m_baseID << "\n";
-    ss << "Start Loc:    " << (m_isStartLocation ? "true" : "false") << "\n";
     ss << "Minerals:     " << m_minerals.size() << "\n";
     for (auto x : m_minerals) {
         ss << x->getID() << " ";
@@ -151,13 +111,13 @@ void BaseLocation::draw() const {
     ss << "\n";
     ss << "Occupied By:  ";
 
-    if (isOccupiedByPlayer(Players::Self)) {
-        ss << "Self ";
-    }
-
-    if (isOccupiedByPlayer(Players::Enemy)) {
-        ss << "Enemy ";
-    }
+//    if (isOccupiedByPlayer(Players::Self)) {
+//        ss << "Self ";
+//    }
+//
+//    if (isOccupiedByPlayer(Players::Enemy)) {
+//        ss << "Enemy ";
+//    }
 
     m_bot.Map().drawText(CCPosition(m_left, m_top+3), ss.str().c_str());
     m_bot.Map().drawText(CCPosition(m_left, m_bottom), ss.str().c_str());
@@ -213,13 +173,6 @@ BaseLocationID BaseLocation::getBaseId() const {
 }
 
 void BaseLocation::initialize(const std::vector<const Resource*> & resources) {
-    m_isPlayerStartLocation[Players::Self] = false;
-    m_isPlayerStartLocation[Players::Enemy] = false;
-    m_isPlayerOccupying[Players::Self] = false;
-    m_isPlayerOccupying[Players::Enemy] = false;
-    m_playerHasDepot[Players::Self] = false;
-    m_playerHasDepot[Players::Enemy] = false;
-
     CCPositionType resourceCenterX = 0;
     CCPositionType resourceCenterY = 0;
 
