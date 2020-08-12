@@ -15,7 +15,8 @@ void CombatManager::onStart() {
 void CombatManager::onFrame() {
     reformSquads();
     if (mainSquad->units().size() >= 10 && !inAttack) {
-        auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
+        const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getExpectedEnemyBaseLocations();
+        const auto& base = *bases.begin();
         mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
         inAttack = true;
     }
