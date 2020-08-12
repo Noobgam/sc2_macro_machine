@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#ifndef _DEBUG
+#ifdef _DEBUG
 int main(int argc, char* argv[])
 {
     sc2::Coordinator coordinator;
