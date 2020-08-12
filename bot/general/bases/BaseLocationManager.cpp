@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "util/Util.h"
 #include "BaseLocationManager.h"
 
@@ -163,6 +164,22 @@ BaseLocation * BaseLocationManager::getBaseLocation(const Resource* resource) co
 BaseLocation * BaseLocationManager::getBaseLocation(const CCPosition & pos) const {
     if (!m_bot.Map().isValidPosition(pos)) { return nullptr; }
     return m_tileBaseLocations[(int)pos.x][(int)pos.y];
+}
+
+std::optional<BaseLocation *> BaseLocationManager::findBaseLocation(CCPosition position) const {
+    int BASE_LOCATION_RADIUS = 10;
+    if (!m_bot.Map().isValidPosition(position)) {
+        return {};
+    }
+    const auto& it = std::min_element(m_baseLocationPtrs.begin(), m_baseLocationPtrs.end(), [position](auto a, auto b) {
+        return Util::Dist(position, a->getPosition()) < Util::Dist(position, b->getPosition());
+    });
+    const auto baseLocation = *it;
+    LOG_DEBUG << "Dist: " << Util::Dist(position, baseLocation->getPosition()) << endl;
+    if (Util::Dist(position, baseLocation->getPosition()) > BASE_LOCATION_RADIUS) {
+        return {};
+    }
+    return baseLocation;
 }
 
 std::vector<std::vector<const Resource *>> BaseLocationManager::findResourceClusters() const {
