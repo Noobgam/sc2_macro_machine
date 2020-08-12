@@ -139,6 +139,7 @@ std::vector<std::vector<const Resource *>> BaseLocationManager::findResourceClus
 }
 
 void BaseLocationManager::drawBaseLocations() {
+    BRK_IF_NOT_DEBUG
     for (const auto & baseLocation : m_baseLocationPtrs) {
         baseLocation->draw();
     }

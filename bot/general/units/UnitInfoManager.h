@@ -30,6 +30,7 @@ class UnitInfoManager {
 
     void processRemoveUnit(const Unit *unit);
     void updateSquadsWithRemovedUnit(const Unit *unit);
+    void drawUnits();
 
 public:
     explicit UnitInfoManager(CCBot & bot);

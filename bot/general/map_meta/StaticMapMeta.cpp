@@ -181,10 +181,10 @@ std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
         std::ifstream ifs = FileUtils::openReadFile(fileName);
         boost::archive::text_iarchive ia(ifs);
         ia >> meta;
-        LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << endl;
+        LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << BOT_ENDL;
         return meta;
     } else {
-        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, will recalculate" << endl;
+        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, will recalculate" << BOT_ENDL;
         auto ptr = std::make_unique<StaticMapMeta>(bot);
         auto ofs = FileUtils::openWriteFile(fileName);
         boost::archive::text_oarchive oa(ofs);
@@ -196,7 +196,7 @@ std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(const CCBot &bot) {
 std::unique_ptr<StaticMapMeta> StaticMapMeta::getMeta(string mapName) {
     string fileName = "data/static_map_metas/" + mapName;
     if (!FileUtils::fileExists(fileName)) {
-        LOG_DEBUG << "Static meta for map [" << fileName << "] was not calculated" << endl;
+        LOG_DEBUG << "Static meta for map [" << fileName << "] was not calculated" << BOT_ENDL;
         std::terminate();
     }
     std::unique_ptr<StaticMapMeta> meta;

@@ -25,13 +25,6 @@ void UnitInfoManager::onStart() {
 
 void UnitInfoManager::onFrame() {
     updateUnits();
-    auto&& units = m_units.find(Players::Self)->second;
-    for (auto& unit : units) {
-        auto&& centerPos = unit->getPosition();
-        std::stringstream ss;
-        ss << "[" << centerPos.x << ":" << centerPos.y << "]";
-        m_bot.Debug()->DebugTextOut(ss.str(), unit->getUnitPtr()->pos);
-    }
 }
 
 void UnitInfoManager::updateUnits() {
@@ -61,7 +54,7 @@ void UnitInfoManager::updateUnits() {
                 LOG_DEBUG
                         << "Unit is missing."
                         << "[" << it->second->getType().getName() << ":" << it->second.get()->getID() << "]"
-                        << " alive:" << it->second.get()->isAlive() << endl;
+                        << " alive:" << it->second.get()->isAlive() << BOT_ENDL;
                 missingUnits.push_back(std::move(it->second));
                 it = unitWrapperByTag.erase(it);
             }
@@ -173,4 +166,15 @@ int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus
         }
     }
     return count;
+}
+
+void UnitInfoManager::drawUnits() {
+    BRK_IF_NOT_DEBUG
+    auto&& units = m_units.find(Players::Self)->second;
+    for (auto& unit : units) {
+        auto&& centerPos = unit->getPosition();
+        std::stringstream ss;
+        ss << "[" << centerPos.x << ":" << centerPos.y << "]";
+        m_bot.Debug()->DebugTextOut(ss.str(), unit->getUnitPtr()->pos);
+    }
 }

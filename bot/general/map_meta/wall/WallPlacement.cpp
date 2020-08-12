@@ -333,7 +333,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
                 int localLeft = (stuffLeft -= cnt);
                 int done = (initial - localLeft);
                 std::lock_guard<std::mutex> lock(log_mutex);
-                LOG_DEBUG << "Done " << done << " of " << initial << endl;
+                LOG_DEBUG << "Done " << done << " of " << initial << BOT_ENDL;
                 cnt = 0;
             }
             auto&& placementO = verifier.verifyPlacement(container[i]);
@@ -346,7 +346,7 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
         return placements;
     };
     std::vector<WallPlacement> placements;
-    LOG_DEBUG << "Using " << threads << " threads to calculate meta" << endl;
+    LOG_DEBUG << "Using " << threads << " threads to calculate meta" << BOT_ENDL;
     if (threads == 1) {
         placements = validateContainerPart(0, container.size());
     } else {
@@ -377,9 +377,9 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
             }
         }
     }
-    LOG_DEBUG << "Found " << ss.size() << " good pylons" << endl;
-    LOG_DEBUG << "Found " << pylons.size() - ss.size() << " bad pylons" << endl;
+    LOG_DEBUG << "Found " << ss.size() << " good pylons" << BOT_ENDL;
+    LOG_DEBUG << "Found " << pylons.size() - ss.size() << " bad pylons" << BOT_ENDL;
 
-    LOG_DEBUG << "Found " << placements.size() << " valid wall layouts" << endl;
+    LOG_DEBUG << "Found " << placements.size() << " valid wall layouts" << BOT_ENDL;
     return placements;
 }

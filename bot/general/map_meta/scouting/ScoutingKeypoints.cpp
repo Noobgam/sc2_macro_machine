@@ -78,7 +78,7 @@ ScoutingKeyPoints ScoutingKeyPoints::getScoutingKeyPoints(const StaticMapMeta &m
             return is_visible(bestPosition, position);
         }), positionsLeft.end());
         keyPoints.push_back(bestPosition);
-        LOG_DEBUG << positionsLeft.size() << endl;
+        LOG_DEBUG << positionsLeft.size() << BOT_ENDL;
     }
 
     vector<size_t> keypointIds;

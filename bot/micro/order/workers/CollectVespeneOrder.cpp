@@ -81,7 +81,7 @@ void CollectVespeneOrder::assignWorkers() {
                 logLine << worker->getID() << " ";
             }
         }
-        logLine << endl;
+        logLine << BOT_ENDL;
     }
     const auto& assimilators = m_base->getActiveAssimilators();
     for (auto workerIt = m_unassignedWorkers.begin(); workerIt != m_unassignedWorkers.end();) {
