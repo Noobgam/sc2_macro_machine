@@ -9,8 +9,6 @@ include_directories("./")
 
 add_definitions("-DSC2API")
 add_definitions("-DDEBUG_LOGGING")
-set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
 file (GLOB_RECURSE all_sources "*.h" "*.cpp" "*.hpp")
 add_executable(main_bot ${all_sources})
