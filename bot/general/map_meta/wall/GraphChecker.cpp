@@ -28,7 +28,7 @@ namespace {
 }
 
 GraphCheckResult GraphChecker::getResult(int sx, int sy, int tx, int ty) {
-    //LOG_DEBUG << "Getting result" << endl;
+    //LOG_DEBUG << "Getting result" << BOT_ENDL;
 
     int source = getVertex(sx, sy);
     int result = getVertex(tx, ty);
@@ -64,7 +64,7 @@ GraphCheckResult GraphChecker::getResult(int sx, int sy, int tx, int ty) {
     if (!visited[result]) {
         return {};
     }
-    //LOG_DEBUG << "dfs done" << endl;
+    //LOG_DEBUG << "dfs done" << BOT_ENDL;
 
     // select only ones on a path from s to t, all bridges and all articulation points
     //  MUST be on that path. Otherwise they aren't bridges/articulation points.
@@ -72,7 +72,7 @@ GraphCheckResult GraphChecker::getResult(int sx, int sy, int tx, int ty) {
     t = result;
     done = false;
     dfsTo(source);
-    //LOG_DEBUG << "dfsTo done" << endl;
+    //LOG_DEBUG << "dfsTo done" << BOT_ENDL;
 
     GraphCheckResult res;
 

@@ -25,7 +25,7 @@ BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, C
     auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(id, type, unit, position)});
     BuildingTask* ptr = iter.first->second.get();
     m_tasksPtr.emplace_back(ptr);
-    LOG_DEBUG << "New task added: " << ptr->getId() << " " << ptr->getType().getName() << std::endl;
+    LOG_DEBUG << "New task added: " << ptr->getId() << " " << ptr->getType().getName() << BOT_ENDL;
     return ptr;
 }
 
@@ -46,7 +46,7 @@ void BuildingManager::newUnitCallback(const Unit *unit) {
             task->getType() == unit->getType() &&
             task->getPosition() == unit->getPosition()
         ) {
-            LOG_DEBUG << "[BUILDING_MANAGER] Task in progress: " << task->getId() << " " << task->getType().getName() << std::endl;
+            LOG_DEBUG << "[BUILDING_MANAGER] Task in progress: " << task->getId() << " " << task->getType().getName() << BOT_ENDL;
             task->buildingPlaced(unit);
         }
     }
@@ -64,14 +64,14 @@ void BuildingManager::unitDisappearedCallback(const Unit *unit) {
                 task->getStatus() == BuildingStatus::IN_PROGRESS &&
                 task->getBuilding().value()->getID() == unit->getID()
         ) {
-            LOG_DEBUG << "[BUILDING_MANAGER] Task canceled (building destroyed): " << task->getId() << " " << task->getType().getName() << std::endl;
+            LOG_DEBUG << "[BUILDING_MANAGER] Task canceled (building destroyed): " << task->getId() << " " << task->getType().getName() << BOT_ENDL;
             task->buildingDied();
         }
         if (
                 task->getStatus() == BuildingStatus::NEW &&
                 task->getWorker().value()->getID() == unit->getID()
         ) {
-            LOG_DEBUG << "[BUILDING_MANAGER] Task canceled (worker died): " << task->getId() << " " << task->getType().getName() << std::endl;
+            LOG_DEBUG << "[BUILDING_MANAGER] Task canceled (worker died): " << task->getId() << " " << task->getType().getName() << BOT_ENDL;
             task->workerDied();
         }
     }

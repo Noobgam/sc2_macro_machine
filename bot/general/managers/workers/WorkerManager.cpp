@@ -33,7 +33,7 @@ bool WorkerManager::build(UnitType type, CCPosition position) {
         squad->setOrder(buildOrder);
         return true;
     } else {
-        LOG_DEBUG << "[SURRENDER_REQUEST] No workers found."<< endl;
+        LOG_DEBUG << "[SURRENDER_REQUEST] No workers found."<< BOT_ENDL;
         return false;
     }
 }
@@ -96,7 +96,7 @@ void WorkerManager::assignUnit(const Unit* unit) {
     if (!completedBases.empty()) {
         completedBases[0]->getBaseWorkers()->assignToMineral(unit);
     } else {
-        LOG_DEBUG << "[SURRENDER_REQUEST] Out of bases."<< endl;
+        LOG_DEBUG << "[SURRENDER_REQUEST] Out of bases."<< BOT_ENDL;
     }
 }
 
@@ -156,7 +156,7 @@ void WorkerManager::draw() {
             ss << base->getBaseWorkers()->getActiveMineralWorkers() << "/" << base->getBaseWorkers()->getIdealMineralWorkers() << " : ";
             ss << base->getBaseWorkers()->getActiveVespeneWorkers() << "/" << base->getBaseWorkers()->getMaximumVespeneWorkers() << ", ";
         }
-        ss << endl;
+        ss << BOT_ENDL;
     }
     m_bot.Map().drawTextScreen(0.6f, 0.01f, ss.str(), CCColor(255, 255, 0));
 #endif

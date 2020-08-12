@@ -47,6 +47,6 @@ void Base::onAssimilatorDestroyed(const Unit *assimilator) {
 }
 
 void Base::onDestroyed() {
-    LOG_DEBUG << "[BASE_MANAGER] Base was destroyed. Base location id:" << m_baseLocation->getBaseId() << endl;
+    LOG_DEBUG << "[BASE_MANAGER] Base was destroyed. Base location id:" << m_baseLocation->getBaseId() << BOT_ENDL;
     m_workers->deform();
 }
