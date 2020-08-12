@@ -74,7 +74,7 @@ CCPlayer Unit::getPlayer() const {
 CCUnitID Unit::getID() const {
     CCUnitID id = m_unit->tag;
     if (id != m_unitID) {
-        LOG_DEBUG << "Unit ID changed from " << m_unitID << " to " << id << endl;
+        LOG_DEBUG << "Unit ID changed from " << m_unitID << " to " << id << std::endl;
     }
     BOT_ASSERT(id == m_unitID, "Unit ID changed somehow");
     return id;
