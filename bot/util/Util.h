@@ -2,6 +2,12 @@
 
 #include "../general/model/Common.h"
 
+#ifdef _DEBUG
+#define BRK_IF_NOT_DEBUG
+#else
+#define BRK_IF_NOT_DEBUG return;
+#endif
+
 class CCBot;
 class Unit;
 class Resource;

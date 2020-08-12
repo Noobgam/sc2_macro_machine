@@ -131,7 +131,7 @@ int BaseLocation::getGroundDistance(const CCTilePosition & pos) const {
 }
 
 void BaseLocation::draw() const {
-#ifdef _DEBUG
+    BRK_IF_NOT_DEBUG
     CCPositionType radius = Util::TileToPosition(1.0f);
 
     m_bot.Map().drawCircle(m_centerOfResources, radius, CCColor(255, 255, 0));
@@ -188,7 +188,6 @@ void BaseLocation::draw() const {
     m_bot.Map().drawTile(m_depotActualPosition.x, m_depotActualPosition.y, CCColor(0, 0, 255));
 
     //m_distanceMap.draw(m_bot);
-#endif
 }
 
 bool BaseLocation::isMineralOnly() const {

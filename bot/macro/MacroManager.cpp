@@ -1,3 +1,4 @@
+#include <util/Util.h>
 #include "MacroManager.h"
 #include "../general/CCBot.h"
 #include "build_managers/SupplyBuildManager.h"
@@ -6,8 +7,6 @@
 #include "build_managers/UnitHireManager.h"
 #include "build_managers/TechBuildManager.h"
 #include "../util/LogInfo.h"
-
-using BOT_ENDL;
 
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
@@ -173,6 +172,7 @@ bool MacroManager::meetsReservedResources(const MetaType & type)
 }
 
 void MacroManager::drawProductionInformation() {
+    BRK_IF_NOT_DEBUG
     m_bot.Map().drawTextScreen(0.01f, 0.01f, cachedProductionInformation, CCColor(255, 255, 0));
     m_buildingPlacer.drawReservedTiles();
 }
