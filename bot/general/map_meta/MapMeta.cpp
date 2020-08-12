@@ -40,10 +40,10 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(string mapName) {
         std::ifstream ifs = FileUtils::openReadFile(fileName);
         boost::archive::text_iarchive ia(ifs);
         ia >> meta;
-        LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << endl;
+        LOG_DEBUG << "Successfully loaded map [" + mapName + "] from stash" << BOT_ENDL;
         return meta;
     } else {
-        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, loading empty map meta instead" << endl;
+        LOG_DEBUG << "Could not find a map [" + mapName + "] in stash, loading empty map meta instead" << BOT_ENDL;
         return std::make_unique<MapMeta>();
         std::terminate();
     }
@@ -51,12 +51,12 @@ std::unique_ptr<MapMeta> MapMeta::getMeta(string mapName) {
 
 std::unique_ptr<MapMeta> MapMeta::calculateMeta(const StaticMapMeta &meta, string mapName) {
     string fileName = "data/map_metas/" + mapName;
-    LOG_DEBUG << "Started calculating [" + mapName + "] meta." << endl;
+    LOG_DEBUG << "Started calculating [" + mapName + "] meta." << BOT_ENDL;
     auto ptr = std::make_unique<MapMeta>(meta);
     auto ofs = FileUtils::openWriteFile(fileName);
     boost::archive::text_oarchive oa(ofs);
     oa << ptr;
-    LOG_DEBUG << "Finished calculating [" + mapName + "] meta." << endl;
+    LOG_DEBUG << "Finished calculating [" + mapName + "] meta." << BOT_ENDL;
     return ptr;
 }
 

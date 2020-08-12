@@ -69,7 +69,7 @@ void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) 
                 logLine << worker->getID() << " ";
             }
         }
-        logLine << endl;
+        logLine << BOT_ENDL;
     }
     auto& minerals = m_base->getBaseLocation()->getMinerals();
     for (auto& worker : workers) {

@@ -196,7 +196,7 @@ bool BaseLocation::isMineralOnly() const {
 }
 
 void BaseLocation::resourceExpiredCallback(const Resource *resource) {
-    LOG_DEBUG << "Removing resource from " << resource->getID() << " : " << this->getBaseId() << endl;
+    LOG_DEBUG << "Removing resource from " << resource->getID() << " : " << this->getBaseId() << BOT_ENDL;
     if (resource->getResourceType() == ResourceType::MINERAL) {
         auto it = std::find(m_minerals.begin(), m_minerals.end(), resource);
         BOT_ASSERT(it != m_minerals.end(), "Trying to remove a mineral that I do not own");

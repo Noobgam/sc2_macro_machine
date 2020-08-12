@@ -61,7 +61,7 @@ void UnitInfoManager::updateUnits() {
                 LOG_DEBUG
                         << "Unit is missing."
                         << "[" << it->second->getType().getName() << ":" << it->second.get()->getID() << "]"
-                        << " alive:" << it->second.get()->isAlive() << endl;
+                        << " alive:" << it->second.get()->isAlive() << BOT_ENDL;
                 missingUnits.push_back(std::move(it->second));
                 it = unitWrapperByTag.erase(it);
             }

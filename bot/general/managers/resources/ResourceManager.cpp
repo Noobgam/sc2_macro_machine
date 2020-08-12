@@ -44,7 +44,7 @@ void ResourceManager::unitDisappearedCallback(const Unit *unit) {
         const auto& mineral = *it;
         if (mineral->getLastUpdate() < m_bot.getObservationId()) {
             // mineral exhausted
-            LOG_DEBUG << "Mineral field exhausted " << mineral->getPosition().x << ":" << mineral->getPosition().y << " id: " << mineral->getID() << endl;
+            LOG_DEBUG << "Mineral field exhausted " << mineral->getPosition().x << ":" << mineral->getPosition().y << " id: " << mineral->getID() << BOT_ENDL;
             m_bot.Bases().resourceExpiredCallback(mineral.get());
             m_mineralPtrs.erase(std::find(m_mineralPtrs.begin(), m_mineralPtrs.end(), mineral.get()));
             m_minerals.erase(it);

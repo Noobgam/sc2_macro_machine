@@ -10,7 +10,7 @@ std::optional<BuildOrderItem> SupplyBuildManager::getTopPriority() {
     int availableSupply = m_bot.GetMaxSupply() + getExpectedExtraSupply();
     int currentSupply = m_bot.GetCurrentSupply();
     int expectedConsumedSupply = getExpectedConsumedSupply();
-    LOG_INFO << currentSupply << " : " << availableSupply << " : " << expectedConsumedSupply << endl;
+    LOG_INFO << currentSupply << " : " << availableSupply << " : " << expectedConsumedSupply << BOT_ENDL;
     if (availableSupply <= currentSupply) {
         return BuildOrderItem(MetaType(pylonType, m_bot), 1000, false);
     }

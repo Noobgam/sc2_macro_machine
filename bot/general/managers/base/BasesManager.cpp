@@ -81,7 +81,7 @@ std::vector<Base *> BasesManager::getCompletedBases() const {
 }
 
 void BasesManager::newBaseOccupied(const BaseLocation *baseLocation, const Unit * nexus) {
-    LOG_DEBUG << "Occupying new base " << baseLocation->getBaseId() << " by unit " << nexus->getID() << endl;
+    LOG_DEBUG << "Occupying new base " << baseLocation->getBaseId() << " by unit " << nexus->getID() << BOT_ENDL;
     const auto& it = m_bases.emplace_back(std::make_unique<Base>(m_bot, baseLocation, nexus));
     const auto& base = it.get();
     m_basesPtrs.push_back(base);

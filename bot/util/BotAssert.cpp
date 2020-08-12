@@ -1,4 +1,5 @@
 #include "BotAssert.h"
+#include "LogInfo.h"
 #include <iostream>
 
 namespace Assert
@@ -26,11 +27,11 @@ namespace Assert
         }
 
         std::stringstream ss;
-        ss                                              << std::endl;
-        ss << "!Assert:   " << condition                << std::endl;
-        ss << "File:      " << file                     << std::endl;
-        ss << "Message:   " << messageBuffer            << std::endl;
-        ss << "Line:      " << line                     << std::endl;
+        ss                                              << BOT_ENDL;
+        ss << "!Assert:   " << condition                << BOT_ENDL;
+        ss << "File:      " << file                     << BOT_ENDL;
+        ss << "Message:   " << messageBuffer            << BOT_ENDL;
+        ss << "Line:      " << line                     << BOT_ENDL;
         ss << "Time:      " << CurrentDateTime()        << std::endl;
         
         lastErrorMessage = messageBuffer;

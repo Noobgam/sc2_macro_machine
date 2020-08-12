@@ -25,24 +25,24 @@ void CCBot::OnGameStart() {
 #endif
 
 
-    LOG_DEBUG << "Starting OnGameStart()" << std::endl;
+    LOG_DEBUG << "Starting OnGameStart()" << BOT_ENDL;
 
     m_map.onStart();
     m_managers.onStart();
 
 
     m_gameCommander.onStart();
-    LOG_DEBUG << "Finished OnGameStart()" << std::endl;
+    LOG_DEBUG << "Finished OnGameStart()" << BOT_ENDL;
 }
 
 void CCBot::OnGameFullStart() {
-    LOG_DEBUG << "Starting OnGameFullStart()" << std::endl;
-    LOG_DEBUG << "Finished OnGameFullStart()" << std::endl;
+    LOG_DEBUG << "Starting OnGameFullStart()" << BOT_ENDL;
+    LOG_DEBUG << "Finished OnGameFullStart()" << BOT_ENDL;
 }
 
 void CCBot::OnGameEnd() {
-    LOG_DEBUG << "Starting OnGameEnd()" << std::endl;
-    LOG_DEBUG << "Finished OnGameEnd()" << std::endl;
+    LOG_DEBUG << "Starting OnGameEnd()" << BOT_ENDL;
+    LOG_DEBUG << "Finished OnGameEnd()" << BOT_ENDL;
 }
 
 void CCBot::OnStep() {
@@ -60,9 +60,7 @@ void CCBot::OnStep() {
     Control()->RequestLeaveGame();
     return;
 #endif
-    Timer timer;
-    timer.start();
-    LOG_DEBUG << "Starting onStep()" << std::endl;
+    LOG_DEBUG << "Starting onStep()" << BOT_ENDL;
     m_unitInfo.onFrame();
 
     m_map.onFrame();
@@ -75,9 +73,7 @@ void CCBot::OnStep() {
 #ifdef _DEBUG
     Debug()->SendDebug();
 #endif
-
-    timer.stop();
-    LOG_DEBUG << "Finished onStep(): " << timer.getElapsedTimeInMilliSec() << "ms" << std::endl;
+    LOG_DEBUG << "Finished onStep()" << BOT_ENDL;
 }
 
 size_t CCBot::getObservationId() const {
@@ -188,17 +184,17 @@ CCPosition CCBot::GetStartLocation() const
 void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const std::vector<std::string> & protocol_errors) {
     auto& logger = LOG_DEBUG;
     if (client_errors.size() > 0) {
-        logger << "Critical client errors occured in sc2:" << std::endl;
+        logger << "Critical client errors occured in sc2:" << BOT_ENDL;
         logger << "\t";
         for (const auto& clErr : client_errors) {
              logger << static_cast<int>(clErr) << " ";
         }
-        logger << std::endl;
+        logger << BOT_ENDL;
     }
     if (protocol_errors.size() > 0) {
-        logger << "Critical protocol errors occured in sc2:" << std::endl;
+        logger << "Critical protocol errors occured in sc2:" << BOT_ENDL;
         for (const auto& clErr : protocol_errors) {
-            logger << "\t" << clErr << std::endl;
+            logger << "\t" << clErr << BOT_ENDL;
         }
     }
 }
