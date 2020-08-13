@@ -85,7 +85,6 @@ std::optional<BaseLocation *> BaseLocationManager::findBaseLocation(CCPosition p
         return Util::Dist(position, a->getPosition()) < Util::Dist(position, b->getPosition());
     });
     const auto baseLocation = *it;
-    LOG_DEBUG << "Dist: " << Util::Dist(position, baseLocation->getPosition()) << endl;
     if (Util::Dist(position, baseLocation->getPosition()) > BASE_LOCATION_RADIUS) {
         return {};
     }

@@ -5,7 +5,8 @@
 
 CombatManager::CombatManager(CCBot & bot) :
     m_bot(bot),
-    m_boostModule(bot)
+    m_boostModule(bot),
+    m_scoutModule(bot)
 {}
 
 void CombatManager::onStart() {
@@ -20,6 +21,7 @@ void CombatManager::onFrame() {
         mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
         inAttack = true;
     }
+    m_scoutModule.onFrame();
     m_boostModule.onFrame();
 }
 
