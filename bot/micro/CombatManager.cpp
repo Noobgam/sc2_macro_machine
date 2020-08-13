@@ -15,23 +15,34 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
-    if (mainSquad->units().size() >= 10 && !inAttack) {
-        const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations();
-        if (!bases.empty()) {
-            const auto& base = *bases.begin();
-            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
+    if (mainSquad->units().size() >= 20 && !inAttack) {
+        const auto& base = getAttackTarget();
+        if (base.has_value()) {
+            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base.value()->getPosition()));
             inAttack = true;
-        } else {
-            const auto & allBases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();
-            if (!allBases.empty()) {
-                const auto& base = *allBases.begin();
-                mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
-                inAttack = true;
-            }
+        }
+    }
+    if (inAttack && mainSquad->getOrder()->isCompleted()) {
+        const auto& base = getAttackTarget();
+        if (base.has_value()) {
+            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base.value()->getPosition()));
         }
     }
     m_scoutModule.onFrame();
     m_boostModule.onFrame();
+}
+
+const std::optional<const BaseLocation*> CombatManager::getAttackTarget() {
+    const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations();
+    if (!bases.empty()) {
+        return *bases.begin();
+    } else {
+        const auto & allBases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();
+        if (!allBases.empty()) {
+            return *allBases.begin();
+        }
+        return {};
+    }
 }
 
 void CombatManager::reformSquads() {

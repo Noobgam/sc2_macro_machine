@@ -2,6 +2,7 @@
 
 #include <micro/modules/ChronoBoostModule.h>
 #include <micro/modules/scout/ScoutModule.h>
+#include <general/bases/BaseLocation.h>
 #include "../general/model/Common.h"
 #include "../general/managers/squads/SquadManager.h"
 
@@ -16,6 +17,7 @@ class CombatManager {
     bool inAttack = false;
 
     void reformSquads();
+    const std::optional<const BaseLocation*> getAttackTarget();
 public:
     explicit CombatManager(CCBot & bot);
 

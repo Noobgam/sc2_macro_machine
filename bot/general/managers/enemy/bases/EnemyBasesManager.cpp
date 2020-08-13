@@ -1,6 +1,7 @@
 #include <general/managers/enemy/bases/EnemyBasesManager.h>
 #include <general/CCBot.h>
 #include <util/LogInfo.h>
+#include <util/Util.h>
 
 EnemyBasesManager::EnemyBasesManager(CCBot &bot) : m_bot(bot) { }
 
@@ -15,6 +16,14 @@ void EnemyBasesManager::onStart() {
 }
 
 void EnemyBasesManager::onFrame() {
+    for (auto it = m_expectedBaseLocations.begin(); it != m_expectedBaseLocations.end();) {
+        const auto& pos = Util::GetTilePosition((*it)->getPosition());
+        if (m_bot.Map().isVisible(pos.x, pos.y)) {
+            it = m_expectedBaseLocations.erase(it);
+        } else {
+            it++;
+        }
+    }
     // TODO update occupied locations for flying depots
     draw();
 }

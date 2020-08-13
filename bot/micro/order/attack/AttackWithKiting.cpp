@@ -91,6 +91,9 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
         }
         if (closeTargets.empty()) {
             unit->attackMove(m_target_position);
+            if (Util::Dist(m_target_position, unit->getPosition()) < 2) {
+                onEnd();
+            }
         } else {
             unit->attackUnit(*maxPriorityTarget);
         }
