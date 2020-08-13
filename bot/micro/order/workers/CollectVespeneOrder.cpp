@@ -69,6 +69,10 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
             break;
         }
     }
+    auto it = std::find(m_unassignedWorkers.begin(), m_unassignedWorkers.end(), unit);
+    if (it != m_unassignedWorkers.end()) {
+        m_unassignedWorkers.erase(it);
+    }
 }
 
 void CollectVespeneOrder::assignWorkers() {
