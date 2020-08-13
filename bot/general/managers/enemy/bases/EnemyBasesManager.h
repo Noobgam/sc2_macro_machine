@@ -31,6 +31,8 @@ public:
     const std::vector<const Unit*>& getEnemyDepots() const;
     // returns all expected enemy locations
     const std::set<const BaseLocation*>& getExpectedEnemyBaseLocations() const;
+    // returns locations occupied by enemy (excluding expected locations)
+    const std::set<const BaseLocation*> getOccupiedEnemyBaseLocations() const;
     // returns all locations occupied by enemy (including expected locations)
     const std::set<const BaseLocation*> getAllExpectedEnemyBaseLocations() const;
 };

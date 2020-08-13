@@ -16,10 +16,19 @@ void CombatManager::onStart() {
 void CombatManager::onFrame() {
     reformSquads();
     if (mainSquad->units().size() >= 10 && !inAttack) {
-        const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();
-        const auto& base = *bases.begin();
-        mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
-        inAttack = true;
+        const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations();
+        if (!bases.empty()) {
+            const auto& base = *bases.begin();
+            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
+            inAttack = true;
+        } else {
+            const auto & allBases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();
+            if (!allBases.empty()) {
+                const auto& base = *allBases.begin();
+                mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
+                inAttack = true;
+            }
+        }
     }
     m_scoutModule.onFrame();
     m_boostModule.onFrame();

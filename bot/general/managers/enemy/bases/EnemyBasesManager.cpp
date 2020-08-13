@@ -57,6 +57,14 @@ const std::set<const BaseLocation *>& EnemyBasesManager::getExpectedEnemyBaseLoc
     return m_expectedBaseLocations;
 }
 
+const std::set<const BaseLocation *> EnemyBasesManager::getOccupiedEnemyBaseLocations() const {
+    std::set<const BaseLocation*> result;
+    for (const auto& base : m_occupiedBaseLocations) {
+        result.insert(base.second);
+    }
+    return result;
+}
+
 const std::set<const BaseLocation *> EnemyBasesManager::getAllExpectedEnemyBaseLocations() const {
     std::set<const BaseLocation*> result;
     result.insert(m_expectedBaseLocations.begin(), m_expectedBaseLocations.end());
