@@ -24,4 +24,5 @@ public:
 
     const std::vector<Base*> & getBases() const;
     std::vector<Base*> getCompletedBases() const;
+    bool isBaseOccupied(int baseId) const;
 };

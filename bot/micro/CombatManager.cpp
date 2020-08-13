@@ -14,10 +14,28 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
-    if (mainSquad->units().size() >= 10 && !inAttack) {
-        auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
-        mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
-        inAttack = true;
+    if (mainSquad->units().size() >= 10) {
+        Order* order = mainSquad->getOrder().get();
+        if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
+            auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
+            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
+        }
+    } else if (mainSquad->units().size() > 2) {
+        int startId = m_bot.Bases().getPlayerStartLocation(Players::Self)->getBaseId();
+        auto& orderedBases = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(startId);
+        for (auto it = orderedBases.rbegin(); it != orderedBases.rend(); ++it) {
+            int baseId = *it;
+            if (m_bot.getManagers().getBasesManager().isBaseOccupied(baseId)) {
+                auto base = m_bot.Bases().getBaseLocation(baseId);
+                mainSquad->setOrder(std::make_shared<GroupAroundOrder>(
+                    m_bot,
+                    mainSquad,
+                    base->getDepotActualPosition(),
+                    true
+                ));
+                break;
+            }
+        }
     }
     m_boostModule.onFrame();
 }

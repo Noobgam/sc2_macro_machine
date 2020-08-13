@@ -11,7 +11,6 @@ class CombatManager {
     ChronoBoostModule     m_boostModule;
 
     Squad* mainSquad = nullptr;
-    bool inAttack = false;
 
     void reformSquads();
 public:
