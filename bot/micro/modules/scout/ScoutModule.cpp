@@ -1,4 +1,4 @@
-#include <micro/order/attack/AttackWithKiting.h>
+#include <micro/order/scouting/ScoutEnemyBasesOrder.h>
 #include "ScoutModule.h"
 #include "general/CCBot.h"
 
@@ -12,13 +12,15 @@ void ScoutModule::onFrame() {
             m_basesScoutID = {};
         }
     }
+    // make scout squad if none currently
     if (!m_basesScoutID.has_value()) {
-        const auto& squad = m_bot.getManagers().getWorkerManager().formSquad(1);
-        if (squad.has_value()) {
-            const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getExpectedEnemyBaseLocations();
-            const auto& base = *bases.begin();
-            squad.value()->setOrder(std::make_shared<AttackWithKiting>(m_bot, squad.value(), base->getPosition()));
-            m_basesScoutID = squad.value()->getId();
+        const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getExpectedEnemyBaseLocations();
+        if (!bases.empty()) {
+            const auto& squad = m_bot.getManagers().getWorkerManager().formSquad(1);
+            if (squad.has_value()) {
+                squad.value()->setOrder(std::make_shared<ScoutEnemyBasesOrder>(m_bot, squad.value(), bases));
+                m_basesScoutID = squad.value()->getId();
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ void EnemyBasesManager::onFrame() {
 
 void EnemyBasesManager::newUnitCallback(const Unit *unit) {
     if (unit->getPlayer() == Players::Enemy && unit->getType().isResourceDepot()) {
-        LOG_DEBUG << "New depot found " << unit->getType().getName() << " " << unit->getID() << endl;
+        LOG_DEBUG << "New depot found " << unit->getType().getName() << " " << unit->getID() << BOT_ENDL;
         m_depots.emplace_back(unit);
         std::optional<BaseLocation*> baseLocation = m_bot.Bases().findBaseLocation(unit->getPosition());
         if (baseLocation.has_value()) {
@@ -53,7 +53,11 @@ const std::vector<const Unit *>& EnemyBasesManager::getEnemyDepots() const {
     return m_depots;
 }
 
-const std::set<const BaseLocation *> EnemyBasesManager::getExpectedEnemyBaseLocations() const {
+const std::set<const BaseLocation *>& EnemyBasesManager::getExpectedEnemyBaseLocations() const {
+    return m_expectedBaseLocations;
+}
+
+const std::set<const BaseLocation *> EnemyBasesManager::getAllExpectedEnemyBaseLocations() const {
     std::set<const BaseLocation*> result;
     result.insert(m_expectedBaseLocations.begin(), m_expectedBaseLocations.end());
     for (const auto& base : m_occupiedBaseLocations) {
@@ -71,7 +75,7 @@ void EnemyBasesManager::draw() {
         for (const auto & baseLocation: m_occupiedBaseLocations) {
             ss << baseLocation.second->getBaseId() << " ";
         }
-        ss << endl;
+        ss << BOT_ENDL;
     }
     ss << "Expecting enemy on " << m_expectedBaseLocations.size() << " locations."<< "\n";
     if (!m_expectedBaseLocations.empty()) {
@@ -79,7 +83,7 @@ void EnemyBasesManager::draw() {
         for (const auto & baseLocation: m_expectedBaseLocations) {
             ss << baseLocation->getBaseId() << " ";
         }
-        ss << endl;
+        ss << BOT_ENDL;
     }
     m_bot.Map().drawTextScreen(0.85f, 0.6f, ss.str(), CCColor(255, 255, 0));
 #endif
