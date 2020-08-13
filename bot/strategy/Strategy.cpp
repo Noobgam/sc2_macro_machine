@@ -5,7 +5,7 @@ Strategy::Strategy(CCBot& bot) : m_bot(bot) { }
 
 void Strategy::onFrame() {
     int seconds = m_bot.GetCurrentFrame() / 22.4;
-    if (seconds % 60 == 0) {
+    if (seconds % 60 == 20) {
         const auto& bases = m_bot.Bases().getBaseLocations();
         const auto& ourBases = m_bot.getManagers().getBasesManager().getBases();
         const auto& enemyBases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();

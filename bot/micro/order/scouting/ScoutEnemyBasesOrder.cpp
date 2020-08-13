@@ -39,6 +39,12 @@ void ScoutEnemyBasesOrder::onUnitAdded(const Unit *unit) {
     BOT_ASSERT(false, "Unit addition is not supported");
 }
 
+void ScoutEnemyBasesOrder::onUnitRemoved(const Unit *unit) {
+    if (m_scout == unit) {
+        m_scout = {};
+    }
+}
+
 void ScoutEnemyBasesOrder::scoutAround() {
     LOG_DEBUG << "Scouting base " << (*m_nextBaseIt)->getBaseId() << BOT_ENDL;
 }

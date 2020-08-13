@@ -18,5 +18,6 @@ public:
     void onStart() override;
     void onStep() override;
     void onUnitAdded(const Unit* unit) override;
+    void onUnitRemoved(const Unit* unit) override;
 };
 
