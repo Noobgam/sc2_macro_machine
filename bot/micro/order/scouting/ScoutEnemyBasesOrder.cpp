@@ -2,7 +2,7 @@
 #include "ScoutEnemyBasesOrder.h"
 #include "general/CCBot.h"
 
-ScoutEnemyBasesOrder::ScoutEnemyBasesOrder(CCBot &bot, Squad *squad, const std::set<const BaseLocation*>& baseLocations) :
+ScoutEnemyBasesOrder::ScoutEnemyBasesOrder(CCBot &bot, Squad *squad, const std::vector<const BaseLocation*>& baseLocations) :
     Order(bot, squad),
     m_baseLocationsToScout(baseLocations)
 {

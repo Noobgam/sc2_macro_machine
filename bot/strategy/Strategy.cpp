@@ -5,7 +5,7 @@ Strategy::Strategy(CCBot& bot) : m_bot(bot) { }
 
 void Strategy::onFrame() {
     int seconds = m_bot.GetCurrentFrame() / 22.4;
-    if (seconds % 120 == 20) {
+    if ((m_lastUpdate == 0 && seconds >= 20) || (seconds - m_lastUpdate >= 120)) {
         const auto& bases = m_bot.Bases().getBaseLocations();
         const auto& ourBases = m_bot.getManagers().getBasesManager().getBases();
         const auto& enemyBases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();
@@ -18,5 +18,6 @@ void Strategy::onFrame() {
                 m_bot.getManagers().getEnemyManager().getEnemyBasesManager().expectAsOccupied(base);
             }
         }
+        m_lastUpdate = seconds;
     }
 }

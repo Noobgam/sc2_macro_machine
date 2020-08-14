@@ -62,23 +62,27 @@ const std::vector<const Unit *>& EnemyBasesManager::getEnemyDepots() const {
     return m_depots;
 }
 
-const std::set<const BaseLocation *>& EnemyBasesManager::getExpectedEnemyBaseLocations() const {
-    return m_expectedBaseLocations;
+const std::vector<const BaseLocation *> EnemyBasesManager::getExpectedEnemyBaseLocations() const {
+    std::vector<const BaseLocation*> result;
+    result.reserve(m_expectedBaseLocations.size());
+    result.insert(result.end(), m_expectedBaseLocations.begin(), m_expectedBaseLocations.end());
+    return result;
 }
 
-const std::set<const BaseLocation *> EnemyBasesManager::getOccupiedEnemyBaseLocations() const {
-    std::set<const BaseLocation*> result;
+const std::vector<const BaseLocation *> EnemyBasesManager::getOccupiedEnemyBaseLocations() const {
+    std::vector<const BaseLocation*> result;
     for (const auto& base : m_occupiedBaseLocations) {
-        result.insert(base.second);
+        result.emplace_back(base.second);
     }
     return result;
 }
 
-const std::set<const BaseLocation *> EnemyBasesManager::getAllExpectedEnemyBaseLocations() const {
-    std::set<const BaseLocation*> result;
-    result.insert(m_expectedBaseLocations.begin(), m_expectedBaseLocations.end());
+const std::vector<const BaseLocation *> EnemyBasesManager::getAllExpectedEnemyBaseLocations() const {
+    std::vector<const BaseLocation*> result;
+    result.reserve(m_expectedBaseLocations.size());
+    result.insert(result.end(), m_expectedBaseLocations.begin(), m_expectedBaseLocations.end());
     for (const auto& base : m_occupiedBaseLocations) {
-        result.insert(base.second);
+        result.emplace_back(base.second);
     }
     return result;
 }
