@@ -10,6 +10,7 @@ CombatManager::CombatManager(CCBot & bot) :
 
 void CombatManager::onStart() {
     mainSquad = m_bot.getManagers().getSquadManager().createNewSquad();
+    leftOverSquad = m_bot.getManagers().getSquadManager().createNewSquad();
 }
 
 void CombatManager::onFrame() {
@@ -30,6 +31,13 @@ void CombatManager::reformSquads() {
             toTransfer.insert(unit);
         }
     }
-    squadManager.transferUnits(toTransfer, mainSquad);
+    if (!inAttack) {
+        squadManager.transferUnits(toTransfer, mainSquad);
+    } else {
+        squadManager.transferUnits(toTransfer, leftOverSquad);
+        if (leftOverSquad->units().size() >= 8) {
+            squadManager.transferUnits(leftOverSquad, mainSquad);
+        }
+    }
 }
 
