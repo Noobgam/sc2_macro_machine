@@ -85,6 +85,10 @@ void BasesManager::newBaseOccupied(const BaseLocation *baseLocation, const Unit 
     const auto& it = m_bases.emplace_back(std::make_unique<Base>(m_bot, baseLocation, nexus));
     const auto& base = it.get();
     m_basesPtrs.push_back(base);
+    // first found base is our start location
+    if (m_startLocation == nullptr) {
+        m_startLocation = base;
+    }
     for (const auto& unit : m_bot.UnitInfo().getUnits(Players::Self)) {
         if (unit->getType().isRefinery()) {
             tryAddAssimilator(base, unit);
@@ -100,4 +104,9 @@ void BasesManager::tryAddAssimilator(Base * base, const Unit* unit) {
     if (it != geysers.end()) {
         base->onNewAssimilator(unit, *it);
     }
+}
+
+const Base *BasesManager::getStartLocation() const {
+    BOT_ASSERT(m_startLocation != nullptr, "Base location was not setted yet.");
+    return m_startLocation;
 }

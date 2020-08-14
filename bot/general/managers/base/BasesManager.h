@@ -11,6 +11,7 @@ private:
 
     std::vector<std::unique_ptr<Base>> m_bases = {};
     std::vector<Base*> m_basesPtrs = {};
+    Base* m_startLocation = nullptr;
 
     void newBaseOccupied(const BaseLocation* baseLocation, const Unit* nexus);
     void tryAddAssimilator(Base * base, const Unit * unit);
@@ -24,4 +25,6 @@ public:
 
     const std::vector<Base*> & getBases() const;
     std::vector<Base*> getCompletedBases() const;
+
+    const Base* getStartLocation() const;
 };
