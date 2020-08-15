@@ -50,7 +50,7 @@ void CombatManager::orderToGroup(Squad* squad) {
         );
         squad->setOrder(std::make_shared<GroupAroundOrder>(
             m_bot,
-            leftOverSquad,
+            squad,
             Util::GetTileCenter(path[10]),
             true
         ));
