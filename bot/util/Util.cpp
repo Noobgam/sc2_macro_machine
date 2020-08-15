@@ -140,6 +140,11 @@ CCTilePosition Util::GetTilePosition(const CCPosition & pos)
 #endif
 }
 
+CCPosition Util::GetTileCenter(const CCTilePosition & pos)
+{
+    return CCPosition(pos.x + .5f, pos.y + .5f);
+}
+
 CCPosition Util::GetPosition(const CCTilePosition & tile)
 {
 #ifdef SC2API

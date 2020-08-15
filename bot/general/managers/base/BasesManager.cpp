@@ -101,7 +101,8 @@ void BasesManager::tryAddAssimilator(Base * base, const Unit* unit) {
         base->onNewAssimilator(unit, *it);
     }
 }
-bool BasesManager::isBaseOccupied(int baseId) const {
+
+bool BasesManager::isBaseOccupied(BaseLocationID baseId) const {
     for (auto x : m_basesPtrs) {
         if (x->getBaseLocation()->getBaseId() == baseId) {
             return true;

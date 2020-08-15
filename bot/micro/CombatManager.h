@@ -11,8 +11,10 @@ class CombatManager {
     ChronoBoostModule     m_boostModule;
 
     Squad* mainSquad = nullptr;
+    Squad* leftOverSquad = nullptr;
 
     void reformSquads();
+    void orderToGroup(Squad* squad);
 public:
     explicit CombatManager(CCBot & bot);
 

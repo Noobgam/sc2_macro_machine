@@ -11,6 +11,7 @@ class GroupAroundOrder : public Order {
   GroupAroundOrder(CCBot &bot, Squad *squad, CCPosition targetPosition, bool attackWhileMoving);
 
   void onStep() override;
+  void draw() const override;
 };
 
 

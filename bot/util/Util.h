@@ -26,6 +26,7 @@ namespace Util
 {
     CCRace          GetRaceFromString(const std::string & str);
     CCTilePosition  GetTilePosition(const CCPosition & pos);
+    CCPosition      GetTileCenter(const CCTilePosition & pos);
     CCPosition      GetPosition(const CCTilePosition & tile);
     std::string     GetStringFromRace(const CCRace & race);
     bool            UnitCanMetaTypeNow(const Unit & unit, const UnitType & type, CCBot & m_bot);

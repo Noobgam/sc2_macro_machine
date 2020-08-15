@@ -55,3 +55,9 @@ void GroupAroundOrder::validateFinish() {
         onEnd();
     }
 }
+void GroupAroundOrder::draw() const {
+    m_bot.Map().drawTile(targetPosition.x, targetPosition.y, Colors::Purple);
+    for (auto &unit : m_squad->units()) {
+        m_bot.Map().drawLine(unit->getPosition(), targetPosition, Colors::Purple);
+    }
+}
