@@ -12,9 +12,9 @@ class CombatManager {
 
     Squad* mainSquad = nullptr;
     Squad* leftOverSquad = nullptr;
-    bool inAttack = false;
 
     void reformSquads();
+    void orderToGroup(Squad* squad);
 public:
     explicit CombatManager(CCBot & bot);
 

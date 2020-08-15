@@ -26,6 +26,7 @@ namespace Util
 {
     CCRace          GetRaceFromString(const std::string & str);
     CCTilePosition  GetTilePosition(const CCPosition & pos);
+    CCPosition      GetTileCenter(const CCTilePosition & pos);
     CCPosition      GetPosition(const CCTilePosition & tile);
     std::string     GetStringFromRace(const CCRace & race);
     bool            UnitCanMetaTypeNow(const Unit & unit, const UnitType & type, CCBot & m_bot);
@@ -34,7 +35,22 @@ namespace Util
     UnitType        GetSupplyProvider(const CCRace & race, CCBot & bot);
     CCPosition      CalcCenter(const std::vector<const Resource*> & minerals);
     CCPosition      CalcCenter(const std::vector<const sc2::Unit*> & minerals);
-    CCPosition      CalcCenter(const std::vector<const Unit*> & minerals);
+
+    template <class TStorage>
+    CCPosition CalcCenter(const TStorage& units) {
+      if (units.empty()) {
+        return CCPosition(0, 0);
+      }
+
+      CCPositionType cx = 0;
+      CCPositionType cy = 0;
+      for (auto & unit : units) {
+        cx += unit->getPosition().x;
+        cy += unit->getPosition().y;
+      }
+
+      return CCPosition(cx / units.size(), cy / units.size());
+    }
     CCPosition      NormalizeVector(const CCPosition& pos);
     bool            IsZerg(const CCRace & race);
     bool            IsProtoss(const CCRace & race);
