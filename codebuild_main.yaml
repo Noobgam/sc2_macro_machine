@@ -7,6 +7,7 @@ phases:
       - apt-get install -y --no-install-recommends cmake clang
   build:
     commands:
+      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
       - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
       - mkdir build -p
       - cd build
