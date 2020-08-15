@@ -22,15 +22,23 @@ void CombatManager::onFrame() {
     if (mainSquad->units().size() >= 10) {
         Order* order = mainSquad->getOrder().get();
         if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
-            auto & base = *m_bot.Bases().getOccupiedBaseLocations(Players::Enemy).begin();
-            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
+            const auto& base = getAttackTarget();
+            if (base.has_value()) {
+                mainSquad->setOrder(std::make_shared<AttackWithKiting>(
+                    m_bot,
+                    mainSquad,
+                    base.value()->getPosition()
+                ));
+            }
         }
     } else if (mainSquad->units().size() > 2) {
         if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
             orderToGroup(mainSquad);
         }
     }
-    if (inAttack && mainSquad->getOrder()->isCompleted()) {
+    if (mainSquad->getOrder()->isCompleted() &&
+        dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) != nullptr
+    ) {
         const auto& base = getAttackTarget();
         if (base.has_value()) {
             mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base.value()->getPosition()));
@@ -41,7 +49,7 @@ void CombatManager::onFrame() {
 }
 
 void CombatManager::orderToGroup(Squad* squad) {
-    int startId = m_bot.Bases().getPlayerStartLocation(Players::Self)->getBaseId();
+    int startId = m_bot.getManagers().getBasesManager().getStartLocation()->getBaseLocation()->getBaseId();
     auto& orderedBases = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(startId);
     int targetBaseId = -1;
     for (int i = 0; i < 2; ++i) {
@@ -50,13 +58,13 @@ void CombatManager::orderToGroup(Squad* squad) {
             targetBaseId = baseId;
         }
     }
-    if (targetBaseId == -1) {
+    auto enemyBaseLocation = getAttackTarget();
+    if (targetBaseId == -1 || !enemyBaseLocation.has_value()) {
         LOG_DEBUG << "No bases, no idea where to group" << BOT_ENDL;
     } else {
         auto base = m_bot.Bases().getBaseLocation(targetBaseId);
-        auto enemyStartLocation = m_bot.Bases().getPlayerStartLocation(Players::Enemy);
         auto path = base->getDistanceMap().getPathTo(
-            enemyStartLocation->getDepotActualPosition()
+            enemyBaseLocation.value()->getDepotActualPosition()
         );
         squad->setOrder(std::make_shared<GroupAroundOrder>(
             m_bot,

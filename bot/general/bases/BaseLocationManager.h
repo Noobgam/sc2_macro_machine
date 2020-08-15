@@ -9,7 +9,6 @@ class BaseLocationManager {
 
     std::map<BaseLocationID, std::unique_ptr<BaseLocation>> m_baseLocationData;
     std::vector<BaseLocation *>                             m_baseLocationPtrs;
-    std::map<CCPlayer, const BaseLocation *>                m_playerStartingBaseLocations;
     std::vector<std::vector<BaseLocation *>>                m_tileBaseLocations;
 
     std::vector<std::vector<const Resource *>> findResourceClusters() const;
