@@ -94,8 +94,10 @@ void BaseLocationManager::onStart() {
                         baseLocation
                 );
             }
-            sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
-            m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
+            if (!distBaseLocationPair.empty()) {
+                sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
+                m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
+            }
         }
     }
 
