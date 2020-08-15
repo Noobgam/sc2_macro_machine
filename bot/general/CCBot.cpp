@@ -34,7 +34,7 @@ void CCBot::OnGameStart() {
 
 
     m_gameCommander.onStart();
-    Actions()->SendChat("Version: " + Version::CURRENT, sc2::ChatChannel::Team);
+    Actions()->SendChat("Version: " + Version::CURRENT);
     LOG_DEBUG << "Finished OnGameStart()" << BOT_ENDL;
 }
 
