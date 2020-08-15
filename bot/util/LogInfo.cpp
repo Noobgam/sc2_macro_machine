@@ -10,6 +10,7 @@
 namespace {
 
     static int frameId = -1;
+    static auto frameStart = std::chrono::system_clock::now();
 
     std::ostream& nullstream() {
         static std::ofstream os;
@@ -23,12 +24,11 @@ namespace {
 
     std::string CurrentDateTime()
     {
+        using namespace std::chrono;
+        // get current time
+        auto now = system_clock::now();
+
         if (frameId == -1) {
-            using namespace std::chrono;
-
-            // get current time
-            auto now = system_clock::now();
-
             // get number of milliseconds for the current second
             // (remainder after division into seconds)
             auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
@@ -47,7 +47,8 @@ namespace {
             int minutes = seconds / 60;
             seconds -= minutes * 60;
             std::stringstream ss;
-            ss << "[" << minutes << ":" << seconds << "]";
+            auto ms =  std::chrono::duration<double, std::milli>(now - frameStart);
+            ss << "[" << minutes << ":" << seconds << " :: " << ms.count() << "]";
             return ss.str();
         }
     }
@@ -57,6 +58,7 @@ namespace logging {
 
     void propagateFrame(int currentFrame) {
         frameId = currentFrame;
+        frameStart = std::chrono::system_clock::now();
     }
 
     std::ostream& LogDebug(const char * file, int line)

@@ -69,6 +69,10 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
             break;
         }
     }
+    auto it = std::find(m_unassignedWorkers.begin(), m_unassignedWorkers.end(), unit);
+    if (it != m_unassignedWorkers.end()) {
+        m_unassignedWorkers.erase(it);
+    }
 }
 
 void CollectVespeneOrder::assignWorkers() {
@@ -81,7 +85,7 @@ void CollectVespeneOrder::assignWorkers() {
                 logLine << worker->getID() << " ";
             }
         }
-        logLine << endl;
+        logLine << BOT_ENDL;
     }
     const auto& assimilators = m_base->getActiveAssimilators();
     for (auto workerIt = m_unassignedWorkers.begin(); workerIt < m_unassignedWorkers.end();) {
@@ -99,7 +103,7 @@ void CollectVespeneOrder::assignWorkers() {
         if (assimilatorIt != assimilators.end()) {
             bestIt->second.emplace_back(*workerIt);
             (*workerIt)->rightClick(*(*assimilatorIt).first);
-            m_unassignedWorkers.erase(workerIt);
+            workerIt = m_unassignedWorkers.erase(workerIt);
         } else {
             break;
             // Do nothing?

@@ -71,7 +71,7 @@ Squad* SquadManager::mergeSquads(std::vector<Squad*> & squads) {
 }
 
 void SquadManager::transferUnits(Squad* from, Squad* to) {
-    LOG_DEBUG << "Transferring units" << std::endl;
+    LOG_DEBUG << "Transferring units" << BOT_ENDL;
     if (from == to) {
         return;
     }
@@ -97,7 +97,7 @@ void SquadManager::transferUnits(const std::set<const Unit*> & units, Squad* to)
 }
 
 void SquadManager::deformSquad(Squad* squad) {
-    LOG_DEBUG << "[SQUAD_MANAGER] Deforming squad with id" << squad->getId() << endl;
+    LOG_DEBUG << "[SQUAD_MANAGER] Deforming squad with id" << squad->getId() << BOT_ENDL;
     transferUnits(squad, getUnassignedSquad());
     if (squad->getId() != unassignedSquadID) {
         m_squads.erase(squad->getId());

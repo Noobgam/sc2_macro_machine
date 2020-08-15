@@ -1,6 +1,7 @@
 #pragma once
 
 #include <general/model/Unit.h>
+#include <general/bases/BaseLocation.h>
 #include "Base.h"
 
 class CCBot;
@@ -24,4 +25,5 @@ public:
 
     const std::vector<Base*> & getBases() const;
     std::vector<Base*> getCompletedBases() const;
+    bool isBaseOccupied(BaseLocationID baseId) const;
 };

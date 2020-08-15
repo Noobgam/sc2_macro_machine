@@ -1,15 +1,7 @@
+#include <util/LogInfo.h>
 #include "Unit.h"
 #include "../CCBot.h"
 #include "../../util/Util.h"
-
-Unit::Unit()
-    : m_bot(nullptr)
-    , m_unit(nullptr)
-    , m_unitID(0)
-    , observationId(0)
-{
-
-}
 
 Unit::Unit(const sc2::Unit * unit, CCBot & bot, size_t observationId)
     : m_bot(&bot)
@@ -17,12 +9,9 @@ Unit::Unit(const sc2::Unit * unit, CCBot & bot, size_t observationId)
     , m_unitID(unit->tag)
     , m_unitType(unit->unit_type, bot)
     , observationId(observationId)
-{
-    
-}
+{ }
 
-const sc2::Unit * Unit::getUnitPtr() const
-{
+const sc2::Unit * Unit::getUnitPtr() const {
     return m_unit;
 }
 
@@ -34,316 +23,155 @@ size_t Unit::getObservationId() const {
     return observationId;
 }
 
-const sc2::UnitTypeID & Unit::getAPIUnitType() const
-{
+const sc2::UnitTypeID & Unit::getAPIUnitType() const {
     BOT_ASSERT(isValid(), "Unit is not valid");
     return m_unit->unit_type;
 }
 
-bool Unit::operator < (const Unit & rhs) const
-{
+bool Unit::operator < (const Unit & rhs) const {
     return m_unit < rhs.m_unit;
 }
 
-bool Unit::operator == (const Unit & rhs) const
-{
+bool Unit::operator == (const Unit & rhs) const {
     return m_unit == rhs.m_unit;
 }
 
-const UnitType & Unit::getType() const
-{
+const UnitType & Unit::getType() const {
     return m_unitType;
 }
 
 
-CCPosition Unit::getPosition() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCPosition Unit::getPosition() const {
     return m_unit->pos;
-#else
-    return m_unit->getPosition();
-#endif
 }
 
-CCTilePosition Unit::getTilePosition() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCTilePosition Unit::getTilePosition() const {
     return Util::GetTilePosition(m_unit->pos);
-#else
-    return m_unit->getTilePosition();
-#endif
 }
 
-CCHealth Unit::getHitPoints() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCHealth Unit::getHitPoints() const {
     return m_unit->health;
-#else
-    return m_unit->getHitPoints();
-#endif
 }
 
-CCHealth Unit::getShields() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCHealth Unit::getShields() const {
     return m_unit->shield;
-#else
-    return m_unit->getShields();
-#endif
 }
 
-CCHealth Unit::getEnergy() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCHealth Unit::getEnergy() const {
     return m_unit->energy;
-#else
-    return m_unit->getEnergy();
-#endif
 }
 
-float Unit::getBuildPercentage() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+float Unit::getBuildPercentage() const {
     return m_unit->build_progress;
-#else
-    if (getType().isBuilding()) { return m_unit->getRemainingBuildTime() / (float)getType().getAPIUnitType().buildTime(); }
-    else { return m_unit->getRemainingTrainTime() / (float)getType().getAPIUnitType().buildTime(); }
-#endif
 }
 
-CCPlayer Unit::getPlayer() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCPlayer Unit::getPlayer() const {
     if (m_unit->alliance == sc2::Unit::Alliance::Self) { return 0; }
     else if (m_unit->alliance == sc2::Unit::Alliance::Enemy) { return 1; }
     else { return 2; }
-#else
-    if (m_unit->getPlayer() == BWAPI::Broodwar->self()) { return 0; }
-    else if (m_unit->getPlayer() == BWAPI::Broodwar->enemy()) { return 1; }
-    else { return 2; }
-#endif
 }
 
-CCUnitID Unit::getID() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+CCUnitID Unit::getID() const {
     CCUnitID id = m_unit->tag;
-#else
-    CCUnitID id = m_unit->getID();
-#endif
-
+    if (id != m_unitID) {
+        LOG_DEBUG << "Unit ID changed from " << m_unitID << " to " << id << BOT_ENDL;
+    }
     BOT_ASSERT(id == m_unitID, "Unit ID changed somehow");
     return id;
 }
 
-bool Unit::isCompleted() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isCompleted() const {
     return m_unit->build_progress >= 1.0f;
-#else
-    return m_unit->isCompleted();
-#endif
 }
 
-bool Unit::isTraining() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isTraining() const {
     return m_unit->orders.size() > 0;
-#else
-    return m_unit->isTraining();
-#endif
 }
 
-bool Unit::isBeingConstructed() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isBeingConstructed() const {
     return !isCompleted() && m_unit->build_progress > 0.0f;
-#else
-    return m_unit->isBeingConstructed();
-#endif
 }
 
-float Unit::getWeaponCooldown() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+float Unit::getWeaponCooldown() const {
     return m_unit->weapon_cooldown;
-#else
-    return std::max(m_unit->getGroundWeaponCooldown(), m_unit->getAirWeaponCooldown());
-#endif
 }
 
-bool Unit::isCloaked() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isCloaked() const {
     return m_unit->cloak;
-#else
-    return m_unit->isCloaked();
-#endif
 }
 
-bool Unit::isFlying() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isFlying() const {
     return m_unit->is_flying;
-#else
-    return m_unit->isFlying();
-#endif
 }
 
-bool Unit::isAlive() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isAlive() const {
     return m_unit->is_alive;
-#else
-    return m_unit->getHitPoints() > 0;
-#endif
 }
 
-bool Unit::isPowered() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isPowered() const {
     return m_unit->is_powered;
-#else
-    return m_unit->isPowered();
-#endif
 }
 
-bool Unit::isIdle() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isIdle() const {
     return m_unit->orders.empty();
-#else
-    return m_unit->isIdle() && !m_unit->isMoving() && !m_unit->isGatheringGas() && !m_unit->isGatheringMinerals();
-#endif
 }
 
-bool Unit::isBurrowed() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+bool Unit::isBurrowed() const {
     return m_unit->is_burrowed;
-#else
-    return m_unit->isBurrowed();
-#endif
 }
 
-bool Unit::isValid() const
-{
+bool Unit::isValid() const {
     return m_unit != nullptr;
 }
 
-void Unit::stop() const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+void Unit::stop() const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::STOP);
-#else
-    m_unit->stop();
-#endif
 }
 
-void Unit::attackUnit(const Unit & target) const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-    BOT_ASSERT(target.isValid(), "Target is not valid");
-#ifdef SC2API
+void Unit::attackUnit(const Unit & target) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, target.getUnitPtr());
-#else
-    m_unit->attack(target.getUnitPtr());
-#endif
 }
 
-void Unit::attackMove(const CCPosition & targetPosition) const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+void Unit::attackMove(const CCPosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, targetPosition);
-#else
-    m_unit->attack(targetPosition);
-#endif
 }
 
 void Unit::move(const CCPosition & targetPosition) const {
-    BOT_ASSERT(isValid(), "Unit is not valid");
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
 }
 
 void Unit::move(const CCTilePosition & targetPosition) const {
-    BOT_ASSERT(isValid(), "Unit is not valid");
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, CCPosition((float)targetPosition.x, (float)targetPosition.y));
 }
 
 void Unit::rightClick(const Unit & target) const {
-    BOT_ASSERT(isValid(), "Unit is not valid");
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::SMART, target.getUnitPtr());
 }
 
-void Unit::repair(const Unit & target) const
-{
+void Unit::repair(const Unit & target) const {
     rightClick(target);
 }
 
 void Unit::build(const UnitType & buildingType, CCPosition pos) const {
     BOT_ASSERT(m_bot->Map().isConnected(getTilePosition(), pos), "Error: Build Position is not connected to worker");
-    BOT_ASSERT(isValid(), "Unit is not valid");
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
 }
 
-void Unit::buildTarget(const UnitType & buildingType, const Unit & target) const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+void Unit::buildTarget(const UnitType & buildingType, const Unit & target) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, target.getUnitPtr());
-#else
-    BOT_ASSERT(false, "buildTarget shouldn't be called for BWAPI bots");
-#endif
 }
 
-void Unit::train(const UnitType & type) const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+void Unit::train(const UnitType & type) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(type).buildAbility);
-#else
-    m_unit->train(type.getAPIUnitType());
-#endif
 }
 
-void Unit::morph(const UnitType & type) const
-{
-    BOT_ASSERT(isValid(), "Unit is not valid");
-#ifdef SC2API
+void Unit::morph(const UnitType & type) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(type).buildAbility);
-#else
-    m_unit->morph(type.getAPIUnitType());
-#endif
 }
 
-bool Unit::isConstructing(const UnitType & type) const
-{
-#ifdef SC2API
+bool Unit::isConstructing(const UnitType & type) const {
     sc2::AbilityID buildAbility = m_bot->Data(type).buildAbility;
     return (getUnitPtr()->orders.size() > 0) && (getUnitPtr()->orders[0].ability_id == buildAbility);
-#else
-    return m_unit->isConstructing();
-#endif
 }
 
 bool Unit::isOfType(const sc2::UNIT_TYPEID& type) const {

@@ -131,7 +131,7 @@ int BaseLocation::getGroundDistance(const CCTilePosition & pos) const {
 }
 
 void BaseLocation::draw() const {
-#ifdef _DEBUG
+    BRK_IF_NOT_DEBUG
     CCPositionType radius = Util::TileToPosition(1.0f);
 
     m_bot.Map().drawCircle(m_centerOfResources, radius, CCColor(255, 255, 0));
@@ -188,7 +188,6 @@ void BaseLocation::draw() const {
     m_bot.Map().drawTile(m_depotActualPosition.x, m_depotActualPosition.y, CCColor(0, 0, 255));
 
     //m_distanceMap.draw(m_bot);
-#endif
 }
 
 bool BaseLocation::isMineralOnly() const {
@@ -196,7 +195,7 @@ bool BaseLocation::isMineralOnly() const {
 }
 
 void BaseLocation::resourceExpiredCallback(const Resource *resource) {
-    LOG_DEBUG << "Removing resource from " << resource->getID() << " : " << this->getBaseId() << endl;
+    LOG_DEBUG << "Removing resource from " << resource->getID() << " : " << this->getBaseId() << BOT_ENDL;
     if (resource->getResourceType() == ResourceType::MINERAL) {
         auto it = std::find(m_minerals.begin(), m_minerals.end(), resource);
         BOT_ASSERT(it != m_minerals.end(), "Trying to remove a mineral that I do not own");

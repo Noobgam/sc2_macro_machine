@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "TechTree.h"
 #include "../util/Util.h"
 #include "CCBot.h"
@@ -160,7 +161,15 @@ void TechTree::initUnitTypeData()
         if (!kv.first.isValid()) { continue; }
         
         auto& utd = m_bot.Observation()->GetUnitTypeData();
-        auto & data = m_bot.Observation()->GetUnitTypeData()[kv.first.getAPIUnitType()];
+        int typeId = (int)kv.first.getAPIUnitType();
+        bool bad = !(typeId >= 0 && typeId < utd.size());
+        if (bad) {
+            std::string err = "Unit type " + kv.first.getName() + " id crosses the border of the api.";
+            BOT_ASSERT(!bad, err.c_str());
+            // probably incompatible proto formats. Ignore error
+            continue;
+        }
+        auto & data = m_bot.Observation()->GetUnitTypeData()[typeId];
                 
         kv.second.mineralCost = data.mineral_cost;
         kv.second.gasCost     = data.vespene_cost;

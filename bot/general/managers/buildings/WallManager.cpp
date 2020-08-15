@@ -50,6 +50,7 @@ void WallManager::onStart() {
 }
 
 void WallManager::draw() {
+    BRK_IF_NOT_DEBUG
     if (chosenPlacement.has_value()) {
         for (auto x : chosenPlacement->buildings) {
             int sz = 3;

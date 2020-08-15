@@ -1,3 +1,4 @@
+#include <util/Util.h>
 #include "MacroManager.h"
 #include "../general/CCBot.h"
 #include "build_managers/SupplyBuildManager.h"
@@ -6,8 +7,6 @@
 #include "build_managers/UnitHireManager.h"
 #include "build_managers/TechBuildManager.h"
 #include "../util/LogInfo.h"
-
-using std::endl;
 
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
@@ -29,13 +28,13 @@ void MacroManager::onFrame(){
     static int frameId = 0;
 
     if (++frameId == 3) {
-        LOG_DEBUG << "Getting top priority" << endl;
+        LOG_DEBUG << "Getting top priority" << BOT_ENDL;
         std::optional<BuildOrderItem> item = getTopPriority();
         if (item.has_value()) {
-            LOG_DEBUG << "Top priority item is " << item->type.getName() << " with priority " << item->priority << endl;
+            LOG_DEBUG << "Top priority item is " << item->type.getName() << " with priority " << item->priority << BOT_ENDL;
             produceIfPossible(item.value());
         } else {
-            LOG_DEBUG << "No candidates to build" << endl;
+            LOG_DEBUG << "No candidates to build" << BOT_ENDL;
         }
         frameId = 0;
     }
@@ -101,10 +100,10 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
         timer.start();
         std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(buildingType);
         if (!positionOpt.has_value()) {
-            LOG_DEBUG << "Build place search failed. Took` " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
+            LOG_DEBUG << "Build place search failed. Took` " << timer.getElapsedTimeInMilliSec() << "ms" << BOT_ENDL;
             return;
         }
-        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << endl;
+        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << BOT_ENDL;
         CCPosition position = positionOpt.value();
         m_buildingPlacer.reserveTiles(buildingType, position);
         if (!m_bot.getManagers().getWorkerManager().build(buildingType, position)) {
@@ -173,6 +172,7 @@ bool MacroManager::meetsReservedResources(const MetaType & type)
 }
 
 void MacroManager::drawProductionInformation() {
+    BRK_IF_NOT_DEBUG
     m_bot.Map().drawTextScreen(0.01f, 0.01f, cachedProductionInformation, CCColor(255, 255, 0));
     m_buildingPlacer.drawReservedTiles();
 }

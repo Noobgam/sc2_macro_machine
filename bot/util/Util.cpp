@@ -119,21 +119,6 @@ CCPosition Util::CalcCenter(const std::vector<const sc2::Unit*> & units) {
     return CCPosition(cx / units.size(), cy / units.size());
 }
 
-CCPosition Util::CalcCenter(const std::vector<const Unit*> & units) {
-    if (units.empty()) {
-        return CCPosition(0, 0);
-    }
-
-    CCPositionType cx = 0;
-    CCPositionType cy = 0;
-    for (auto & unit : units) {
-        cx += unit->getPosition().x;
-        cy += unit->getPosition().y;
-    }
-
-    return CCPosition(cx / units.size(), cy / units.size());
-}
-
 bool Util::IsZerg(const CCRace & race) {
     return race == sc2::Race::Zerg;
 }
@@ -153,6 +138,11 @@ CCTilePosition Util::GetTilePosition(const CCPosition & pos)
 #else
     return CCTilePosition(pos);
 #endif
+}
+
+CCPosition Util::GetTileCenter(const CCTilePosition & pos)
+{
+    return CCPosition(pos.x + .5f, pos.y + .5f);
 }
 
 CCPosition Util::GetPosition(const CCTilePosition & tile)
