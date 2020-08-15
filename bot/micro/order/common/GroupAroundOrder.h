@@ -6,7 +6,7 @@ class GroupAroundOrder : public Order {
   bool attackWhileMoving;
   CCPosition targetPosition;
 
-  void validateFinish();
+  float getCircleRadius() const;
  public:
   GroupAroundOrder(CCBot &bot, Squad *squad, CCPosition targetPosition, bool attackWhileMoving);
 
