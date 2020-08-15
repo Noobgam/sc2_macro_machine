@@ -25,7 +25,9 @@ void CombatManager::onFrame() {
             mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base->getPosition()));
         }
     } else if (mainSquad->units().size() > 2) {
-        orderToGroup(mainSquad);
+        if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
+            orderToGroup(mainSquad);
+        }
     }
     m_boostModule.onFrame();
 }
