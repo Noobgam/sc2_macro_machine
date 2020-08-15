@@ -64,7 +64,31 @@ namespace NPrivate {
             , target(rhs.target) {
     }
 
-    CommandAttribute::CommandAttribute() {}
+    CommandAttribute::CommandAttribute()
+        : type(CommandAttribute::Type::NONE)
+    {}
+
+    // some abilities cannot be grouped.
+    // for example: warpin, casted abilities usually cannot be grouped.
+    bool CommandAttribute::isGroupable() const {
+        if (type == CommandAttribute::Type::POSITIONAL) {
+            if (abilityId == sc2::ABILITY_ID::MOVE_MOVE) {
+                return true;
+            } else if (abilityId == sc2::ABILITY_ID::ATTACK_ATTACK) {
+                return true;
+            }
+            return false;
+        } else if (type == CommandAttribute::Type::TARGETED) {
+            if (abilityId == sc2::ABILITY_ID::ATTACK_ATTACK) {
+                return true;
+            } else if (abilityId == sc2::ABILITY_ID::SMART) {
+                // right click is always groupable, right?
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
 
     Command::Command(const CommandAttribute::Type type, sc2::ABILITY_ID abilityId,
                      const TargetType &target, const std::vector<const sc2::Unit *> &issuers)
@@ -75,7 +99,7 @@ namespace NPrivate {
 
 void UnitCommandManager::issueAllCommands(int frameId) {
     // TODO: remove std map?
-    std::map<NPrivate::CommandAttribute, std::vector<const sc2::Unit*>> groupedCommands;
+    std::map<NPrivate::CommandAttribute, std::vector<NPrivate::Command*>> groupedCommands;
     for (auto& x : commands) {
         auto& it = groupedCommands[x];
         for (auto& y : x.issuers) {
@@ -85,7 +109,7 @@ void UnitCommandManager::issueAllCommands(int frameId) {
                     continue;
                 }
             }
-            it.push_back(y);
+            it.push_back(&x);
             static_cast<NPrivate::CommandAttribute&>(lastCmd) = x;
             lastCmd.frameId = frameId;
         }
@@ -93,27 +117,21 @@ void UnitCommandManager::issueAllCommands(int frameId) {
 
     for (auto& lr : groupedCommands) {
         auto&& attribute = lr.first;
-        auto&& units = lr.second;
-        switch (attribute.type) {
-            case NPrivate::CommandAttribute::TARGETED:
-                m_bot.Actions()->UnitCommand(
-                        units,
-                        attribute.abilityId,
-                        std::get<const sc2::Unit*>(attribute.target)
-                );
-                break;
-            case NPrivate::CommandAttribute::POSITIONAL:
-                m_bot.Actions()->UnitCommand(
-                        units,
-                        attribute.abilityId,
-                        std::get<CCPosition>(attribute.target)
-                );
-                break;
-            case NPrivate::CommandAttribute::SELF_TARGET:
-
-            case NPrivate::CommandAttribute::NONE:
-                break;
+        if (attribute.isGroupable()) {
+            std::vector<const sc2::Unit*> units;
+            for (auto x : lr.second) {
+                for (auto u : x->issuers) {
+                    units.push_back(u);
+                }
+            }
+            execute(attribute, units);
+        } else {
+            for (auto x : lr.second) {
+                execute(attribute, x->issuers);
+            }
         }
+        auto&& units = lr.second;
+
     }
     commands.clear();
 }
@@ -135,7 +153,7 @@ void UnitCommandManager::UnitCommand(const sc2::Unit* unit, sc2::AbilityID abili
 
 void UnitCommandManager::UnitCommand(const sc2::Unit* unit, sc2::AbilityID ability, const sc2::Unit *target) {
     commands.push_back(NPrivate::Command{
-            NPrivate::Command::POSITIONAL,
+            NPrivate::Command::TARGETED,
             ability,
             target,
             {unit}
@@ -149,4 +167,32 @@ void UnitCommandManager::UnitCommand(const sc2::Unit* unit, sc2::AbilityID abili
             std::monostate(),
             {unit}
     });
+}
+void UnitCommandManager::execute(
+    const NPrivate::CommandAttribute& attribute,
+    const std::vector<const sc2::Unit*>& units
+) {
+    switch (attribute.type) {
+        case NPrivate::CommandAttribute::TARGETED:
+            m_bot.Actions()->UnitCommand(
+                units,
+                attribute.abilityId,
+                std::get<const sc2::Unit *>(attribute.target)
+            );
+            break;
+        case NPrivate::CommandAttribute::POSITIONAL:
+            m_bot.Actions()->UnitCommand(
+                units,
+                attribute.abilityId,
+                std::get<CCPosition>(attribute.target)
+            );
+            break;
+        case NPrivate::CommandAttribute::SELF_TARGET:
+            m_bot.Actions()->UnitCommand(
+                units,
+                attribute.abilityId
+            );
+            break;
+        case NPrivate::CommandAttribute::NONE:break;
+    }
 }

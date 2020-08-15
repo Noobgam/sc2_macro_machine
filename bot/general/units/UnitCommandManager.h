@@ -30,6 +30,8 @@ namespace NPrivate {
 
         bool operator!=(const CommandAttribute &rhs) const;
 
+        bool isGroupable() const;
+
         enum Type {
             // use only for default construction
             NONE = 0,
@@ -74,6 +76,11 @@ private:
 
     std::vector<NPrivate::Command> commands;
     std::map<sc2::Tag, NPrivate::IssuedCommand> lastIssuedCommand;
+
+    void execute(
+        const NPrivate::CommandAttribute& attribute,
+        const std::vector<const sc2::Unit*>& units
+    );
 
 public:
 
