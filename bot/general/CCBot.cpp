@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <chrono>
+#include <util/Version.h>
 
 CCBot::CCBot()
     : m_map(*this)
@@ -17,6 +18,7 @@ CCBot::CCBot()
 { }
 
 void CCBot::OnGameStart() {
+    LOG_DEBUG << "Starting OnGameStart()" << BOT_ENDL;
     m_techTree.onStart();
     m_unitInfo.onStart();
 
@@ -25,13 +27,13 @@ void CCBot::OnGameStart() {
 #endif
 
 
-    LOG_DEBUG << "Starting OnGameStart()" << BOT_ENDL;
 
     m_map.onStart();
     m_managers.onStart();
 
 
     m_gameCommander.onStart();
+    Actions()->SendChat("Version: " + Version::CURRENT, sc2::ChatChannel::Team);
     LOG_DEBUG << "Finished OnGameStart()" << BOT_ENDL;
 }
 
