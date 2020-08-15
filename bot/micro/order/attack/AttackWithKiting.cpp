@@ -1,5 +1,7 @@
 #include <util/Util.h>
 #include <general/ThreatAnalyzer.h>
+#include <micro/util/MicroUtil.h>
+
 #include "AttackWithKiting.h"
 
 AttackWithKiting::AttackWithKiting(CCBot &bot, Squad *squad, CCPosition position)
@@ -64,38 +66,18 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
         CCPosition walkable = m_bot.Map().findClosestWalkablePosition(unit->getPosition() + backward_direction);
         unit->move(walkable);
     } else {
-        std::vector<std::pair<float, const Unit*>> targets;
-        for (auto enemy : enemies) {
-            float dist = Util::Dist(*enemy, *unit);
-            targets.emplace_back(dist, enemy);
-        }
-        std::sort(targets.begin(), targets.end());
-        std::vector<const Unit*> closeTargets;
-        float maxPriority = -1;
-        const Unit* maxPriorityTarget = NULL;
-        for (auto x : targets) {
-            // even if it is out of range it does not mean we shouldnt attack it
-            if (x.first > range + 4) {
-                break;
-            }
-            closeTargets.push_back(x.second);
-            float threat = ThreatAnalyzer::getUnitTypeThreat(x.second->getType(), unit->getType());
-            if (threat > maxPriority) {
-                maxPriority = std::max(threat, maxPriority);
-                maxPriorityTarget = x.second;
-            } else if (threat == maxPriority) {
-                if (maxPriorityTarget->hpPercentage() > x.second->hpPercentage()) {
-                    maxPriorityTarget = x.second;
-                }
-            }
-        }
-        if (closeTargets.empty()) {
+        auto targetO = MicroUtil::findUnitWithHighestThreat(
+            unit,
+            range + 4,
+            m_bot
+        );
+        if (!targetO.has_value()) {
             unit->attackMove(m_target_position);
             if (Util::Dist(m_target_position, unit->getPosition()) < 2) {
                 onEnd();
             }
         } else {
-            unit->attackUnit(*maxPriorityTarget);
+            unit->attackUnit(*targetO.value());
         }
     }
 }

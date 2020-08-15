@@ -14,9 +14,10 @@ class CombatManager {
     ScoutModule           m_scoutModule;
 
     Squad* mainSquad = nullptr;
-    bool inAttack = false;
+    Squad* leftOverSquad = nullptr;
 
     void reformSquads();
+    void orderToGroup(Squad* squad);
     const std::optional<const BaseLocation*> getAttackTarget();
 public:
     explicit CombatManager(CCBot & bot);

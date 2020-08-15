@@ -7,4 +7,5 @@ public:
     explicit EmptyOrder(CCBot & bot, Squad* squad);
 
     void onStep() override;
+  void onStart() override;
 };
