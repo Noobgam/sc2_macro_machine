@@ -45,7 +45,7 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
 void SquadManager::addUnitCallback(const Unit *unit) {
     Squad* unassignedSquad = getUnassignedSquad();
     unassignedSquad->addUnits({ unit });
-    m_units.insert({ unit->getID(), getUnassignedSquad() });
+    m_units.insert({ unit->getID(), unassignedSquad });
 }
 
 void SquadManager::removeUnitCallback(const Unit *unit) {
