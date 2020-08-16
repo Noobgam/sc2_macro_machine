@@ -21,6 +21,9 @@ void SquadManager::onFrame() {
         if (squad.first != unassignedSquadID) {
             squad.second->act();
         }
+        for (auto& unit : squad.second.get()->units()) {
+            BOT_ASSERT(unit->isValid(), "Unit is invalid!");
+        }
     }
 }
 
