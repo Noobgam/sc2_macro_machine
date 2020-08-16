@@ -19,8 +19,10 @@ class MapTools
 
     std::vector<std::vector<int>>   m_lastSeen;         // the last time any of our units has seen this position on the map
     std::vector<std::vector<int>>   m_powerMap;         // boolean map whether specific halftile is powered by our pylons
-    std::vector<std::vector<bool>>  m_unbuildableNeutral;        // unbuildable rocks and plates
-    std::vector<std::vector<bool>>  m_unwalkableNeutral;         // unbuildable rocks
+    std::vector<std::vector<bool>>  m_unbuildableUnits;        // unbuildable rocks and plates
+    std::vector<std::vector<bool>>  m_unwalkableUnits;         // unbuildable rocks and buildings
+    std::vector<std::vector<int>>   m_sectorNumber;
+    std::vector<int>                m_sectorNumberCnt;         // number of tiles in a sector
 
     int getSectorNumber(int x, int y) const;
         
@@ -41,7 +43,9 @@ public:
 
     bool    pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const;
     CCPosition findClosestWalkablePosition(const CCPosition& pos) const;
+    int getSectorCnt(int x, int y) const;
 
+    void    computeConnectivity();
     void    onStart();
     void    onFrame();
     void    draw() const;
