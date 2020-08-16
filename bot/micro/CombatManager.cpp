@@ -3,6 +3,9 @@
 #include "general/CCBot.h"
 #include "order/Orders.h"
 
+#include <util/LogInfo.h>
+#include <util/Util.h>
+
 CombatManager::CombatManager(CCBot & bot) :
     m_bot(bot),
     m_boostModule(bot),
@@ -11,18 +14,31 @@ CombatManager::CombatManager(CCBot & bot) :
 
 void CombatManager::onStart() {
     mainSquad = m_bot.getManagers().getSquadManager().createNewSquad();
+    leftOverSquad = m_bot.getManagers().getSquadManager().createNewSquad();
 }
 
 void CombatManager::onFrame() {
     reformSquads();
-    if (mainSquad->units().size() >= 20 && !inAttack) {
-        const auto& base = getAttackTarget();
-        if (base.has_value()) {
-            mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base.value()->getPosition()));
-            inAttack = true;
+    if (mainSquad->units().size() >= 10) {
+        Order* order = mainSquad->getOrder().get();
+        if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
+            const auto& base = getAttackTarget();
+            if (base.has_value()) {
+                mainSquad->setOrder(std::make_shared<AttackWithKiting>(
+                    m_bot,
+                    mainSquad,
+                    base.value()->getPosition()
+                ));
+            }
+        }
+    } else if (mainSquad->units().size() > 2) {
+        if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
+            orderToGroup(mainSquad);
         }
     }
-    if (inAttack && mainSquad->getOrder()->isCompleted()) {
+    if (mainSquad->getOrder()->isCompleted() &&
+        dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) != nullptr
+    ) {
         const auto& base = getAttackTarget();
         if (base.has_value()) {
             mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base.value()->getPosition()));
@@ -30,6 +46,33 @@ void CombatManager::onFrame() {
     }
     m_scoutModule.onFrame();
     m_boostModule.onFrame();
+}
+
+void CombatManager::orderToGroup(Squad* squad) {
+    int startId = m_bot.getManagers().getBasesManager().getStartLocation()->getBaseLocation()->getBaseId();
+    auto& orderedBases = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(startId);
+    int targetBaseId = -1;
+    for (int i = 0; i < 2; ++i) {
+        int baseId = orderedBases[i];
+        if (m_bot.getManagers().getBasesManager().isBaseOccupied(baseId)) {
+            targetBaseId = baseId;
+        }
+    }
+    auto enemyBaseLocation = getAttackTarget();
+    if (targetBaseId == -1 || !enemyBaseLocation.has_value()) {
+        LOG_DEBUG << "No bases, no idea where to group" << BOT_ENDL;
+    } else {
+        auto base = m_bot.Bases().getBaseLocation(targetBaseId);
+        auto path = base->getDistanceMap().getPathTo(
+            enemyBaseLocation.value()->getDepotActualPosition()
+        );
+        squad->setOrder(std::make_shared<GroupAroundOrder>(
+            m_bot,
+            squad,
+            Util::GetTileCenter(path[10]),
+            true
+        ));
+    }
 }
 
 const std::optional<const BaseLocation*> CombatManager::getAttackTarget() {
@@ -53,6 +96,15 @@ void CombatManager::reformSquads() {
             toTransfer.insert(unit);
         }
     }
-    squadManager.transferUnits(toTransfer, mainSquad);
+    if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
+        squadManager.transferUnits(toTransfer, mainSquad);
+    } else {
+        squadManager.transferUnits(toTransfer, leftOverSquad);
+        if (leftOverSquad->units().size() >= 8) {
+            squadManager.transferUnits(leftOverSquad, mainSquad);
+        } else {
+            orderToGroup(leftOverSquad);
+        }
+    }
 }
 

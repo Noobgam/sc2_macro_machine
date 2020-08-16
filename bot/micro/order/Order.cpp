@@ -12,6 +12,9 @@ void Order::onEnd() {
     m_completed = true;
 }
 
+void Order::draw() const {
+}
+
 void Order::onUnitAdded(const Unit *unit) { }
 
 void Order::onUnitRemoved(const Unit *unit) { }

@@ -106,6 +106,15 @@ void BasesManager::tryAddAssimilator(Base * base, const Unit* unit) {
     }
 }
 
+bool BasesManager::isBaseOccupied(BaseLocationID baseId) const {
+    for (auto x : m_basesPtrs) {
+        if (x->getBaseLocation()->getBaseId() == baseId) {
+            return true;
+        }
+    }
+    return false;
+}
+
 const Base *BasesManager::getStartLocation() const {
     BOT_ASSERT(m_startLocation != nullptr, "Base location was not setted yet.");
     return m_startLocation;

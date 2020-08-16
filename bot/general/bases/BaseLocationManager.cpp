@@ -33,6 +33,8 @@ void BaseLocationManager::onStart() {
         }
     }
 
+    auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
+
     for (auto& locationPair : m_baseLocationData) {
         const auto &baseLocation = locationPair.second.get();
         m_baseLocationPtrs.push_back(baseLocation);
@@ -46,13 +48,17 @@ void BaseLocationManager::onStart() {
             distBaseLocationPair.reserve(m_baseLocationData.size());
             for (auto & locationPair : m_baseLocationData) {
                 const auto & baseLocation = locationPair.second.get();
+                int dist = baseLocation->getGroundDistance(pos);
+                if (dist == -1) continue;
                 distBaseLocationPair.emplace_back(
-                        baseLocation->getGroundDistance(pos),
+                        dist,
                         baseLocation
                 );
             }
-            sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
-            m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
+            if (!distBaseLocationPair.empty()) {
+                sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
+                m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
+            }
         }
     }
 }

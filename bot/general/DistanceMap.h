@@ -23,6 +23,7 @@ public:
     DistanceMap();
     void computeDistanceMap(CCBot & m_bot, const CCTilePosition & startTile);
     void computeDistanceMap(const StaticMapMeta & m_bot, const CCTilePosition & startTile);
+    std::vector<CCTilePosition> getPathTo(CCTilePosition pos) const;
 
     int getDistance(int tileX, int tileY) const;
     int getDistance(const CCTilePosition & pos) const;
