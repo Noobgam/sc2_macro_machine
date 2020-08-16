@@ -18,10 +18,14 @@ void EnemyBasesManager::onStart() {
 void EnemyBasesManager::onFrame() {
     for (auto it = m_expectedBaseLocations.begin(); it != m_expectedBaseLocations.end();) {
         const auto& pos = Util::GetTilePosition((*it)->getPosition());
-        if (m_bot.Map().isVisible(pos.x, pos.y)) {
-            it = m_expectedBaseLocations.erase(it);
-        } else {
-            it++;
+        for (auto dx = -2; dx <= 2; dx++) {
+            for (auto dy = -2; dy <= 2; dy++) {
+                if (m_bot.Map().isVisible(pos.x + dx, pos.y + dy)) {
+                    it = m_expectedBaseLocations.erase(it);
+                } else {
+                    it++;
+                }
+            }
         }
     }
     // TODO update occupied locations for flying depots
