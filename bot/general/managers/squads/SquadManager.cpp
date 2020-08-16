@@ -71,13 +71,14 @@ Squad* SquadManager::mergeSquads(std::vector<Squad*> & squads) {
 }
 
 void SquadManager::transferUnits(Squad* from, Squad* to) {
-    LOG_DEBUG << "Transferring units" << BOT_ENDL;
+    LOG_DEBUG << "Transferring units from [" << from->m_id << "] to [ " << to->m_id << ']' << BOT_ENDL;
     if (from == to) {
         return;
     }
     const std::set<const Unit*>& units = from->units();
     to->addUnits(units);
     for (auto& unit : units) {
+        DEBUG_ASSERT(unit->isValid(), "Transferred invalid unit");
         m_units.find(unit->getID())->second = to;
     }
     from->clear();

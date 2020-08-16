@@ -14,6 +14,20 @@
     #define BOT_BREAK ;
 #endif
 
+#ifdef _DEBUG
+#define DEBUG_ASSERT(cond, msg, ...) \
+        do \
+        { \
+            if (!(cond)) \
+            { \
+                Assert::ReportFailure(#cond, __FILE__, __LINE__, (msg), ##__VA_ARGS__); \
+                BOT_BREAK \
+            } \
+        } while(0)
+#else
+#define DEBUG_ASSERT(cond, msg, ...)
+#endif
+
 #if true
     #define BOT_ASSERT(cond, msg, ...) \
         do \
