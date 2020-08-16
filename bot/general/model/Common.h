@@ -22,11 +22,18 @@ typedef sc2::Tag            CCUnitID;
 typedef sc2::Race           CCRace;
 typedef float               CCHealth;
 typedef float               CCPositionType;
-    
 
     
 typedef size_t CCPlayer;
 namespace Players
 {
     enum {Self = 0u, Enemy = 1u, Neutral = 2u, Size = 3u, None = 4u};
+}
+
+namespace Colors {
+    static const CCColor Red{255, 0, 0};
+    static const CCColor Blue{0, 0, 255};
+    static const CCColor Green{0, 255, 0};
+    static const CCColor Purple{128, 0, 128};
+
 }

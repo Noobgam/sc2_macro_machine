@@ -1,3 +1,4 @@
+#include <util/Util.h>
 #include "Squad.h"
 #include "../order/Orders.h"
 
@@ -56,5 +57,8 @@ void Squad::setOrder(std::shared_ptr<Order>&& order) {
 void Squad::act() {
     if (!m_order->isCompleted()) {
         m_order->onStep();
+
+        BRK_IF_NOT_DEBUG
+        m_order->draw();
     }
 }

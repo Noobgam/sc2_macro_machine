@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - apt-get update -qq
+      - apt-get install -y --no-install-recommends cmake clang
+  build:
+    commands:
+      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
+      - mkdir build -p
+      - cd build
+      - cmake .. -DCMAKE_BUILD_TYPE=Release
+      - VERBOSE=1 cmake --build . --target main_bot -- -j 4
+artifacts:
+  files:
+    - build/bin/**/*
+cache:
+  paths:
+    - .git/**/*

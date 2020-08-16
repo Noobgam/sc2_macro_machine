@@ -37,7 +37,7 @@ void BaseLocationManager::onStart() {
     CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
     for (auto &locationPair : m_baseLocationData) {
         const auto &baseLocation = locationPair.second.get();
-        if (baseLocation->containsPosition(selfStartLocation)) {
+        if (baseLocation->getDepotActualPosition() == selfStartLocation) {
             baseLocation->setStartLocation(Players::Self);
             baseLocation->setPlayerHasDepot(Players::Self, true);
             m_playerStartingBaseLocations[Players::Self] = baseLocation;
@@ -62,7 +62,7 @@ void BaseLocationManager::onStart() {
         // construct the vectors of base location pointers, this is safe since they will never change
         for (auto &locationPair : m_baseLocationData) {
             const auto &baseLocation = locationPair.second.get();
-            if (baseLocation->containsPosition(enemyStartLocation)) {
+            if (baseLocation->getDepotActualPosition() == enemyStartLocation) {
                 baseLocation->setStartLocation(Players::Enemy);
                 baseLocation->setPlayerHasDepot(Players::Enemy, true);
                 m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
@@ -87,13 +87,17 @@ void BaseLocationManager::onStart() {
             distBaseLocationPair.reserve(m_baseLocationData.size());
             for (auto & locationPair : m_baseLocationData) {
                 const auto & baseLocation = locationPair.second.get();
+                int dist = baseLocation->getGroundDistance(pos);
+                if (dist == -1) continue;
                 distBaseLocationPair.emplace_back(
-                        baseLocation->getGroundDistance(pos),
+                        dist,
                         baseLocation
                 );
             }
-            sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
-            m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
+            if (!distBaseLocationPair.empty()) {
+                sort(distBaseLocationPair.begin(), distBaseLocationPair.end());
+                m_tileBaseLocations[x][y] = distBaseLocationPair[0].second;
+            }
         }
     }
 

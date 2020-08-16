@@ -127,3 +127,27 @@ const CCTilePosition & DistanceMap::getStartTile() const
 {
     return m_startTile;
 }
+
+std::vector<CCTilePosition> DistanceMap::getPathTo(CCTilePosition pos) const {
+    std::vector<CCTilePosition> res;
+    res.reserve(m_dist[pos.x][pos.y] + 1);
+    res.push_back(pos);
+    auto is_valid = [this](const CCTilePosition& tile) {
+        return tile.x >= 0 && tile.x < m_width && tile.y >= 0 && tile.y < m_height;
+    };
+    while (pos != m_startTile) {
+        int curDist = m_dist[pos.x][pos.y];
+        std::optional<CCTilePosition> fromTile;
+        for (size_t a=0; a<LegalActions; ++a) {
+            CCTilePosition nextTile(pos.x - actionX[a], pos.y - actionY[a]);
+            if (is_valid(nextTile) && getDistance(nextTile) == curDist - 1) {
+                fromTile = nextTile;
+                break;
+            }
+        }
+        pos = fromTile.value();
+        res.push_back(pos);
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
