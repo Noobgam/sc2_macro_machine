@@ -9,6 +9,7 @@
 #include "general/map_meta/wall/WallPlacement.h"
 #include <general/managers/Managers.h>
 #include <strategy/Strategy.h>
+#include <general/units/UnitCommandManager.h>
 
 class CCBot : public sc2::Agent {
     MapTools                m_map;
@@ -18,6 +19,9 @@ class CCBot : public sc2::Agent {
     Strategy                m_strategy;
     GameCommander           m_gameCommander;
     Managers                m_managers;
+
+    // do not move this to Managers
+    UnitCommandManager      m_unitCommandManager;
 
 
     std::unique_ptr<MapMeta>        m_mapMeta;          // static map information (e.g. wall placements, scouting waypoints)
@@ -55,6 +59,7 @@ public:
     CCRace GetPlayerRace(int player) const;
     CCPosition GetStartLocation() const;
     UnitType getUnitType(sc2::UnitTypeID typeId);
+    UnitCommandManager& getUnitCommandManager();
 
     int GetCurrentFrame() const;
     int GetMinerals() const;

@@ -16,48 +16,30 @@ GroupAroundOrder::GroupAroundOrder(
 {}
 
 void GroupAroundOrder::onStep() {
-    validateFinish();
-    if (m_completed) return;
+    float radius = getCircleRadius();
     for (auto &unit : m_squad->units()) {
-        if (!attackWhileMoving) {
-            unit->move(targetPosition);
-        } else {
-            if (unit->getWeaponCooldown() == 0) {
-                auto targetO = MicroUtil::findUnitWithHighestThreat(
-                    unit,
-                    m_bot
-                );
-                if (targetO.has_value()) {
-                    unit->attackUnit(*targetO.value());
-                } else {
-                    unit->move(targetPosition);
-                }
-            } else {
-                unit->move(targetPosition);
+        if (attackWhileMoving && unit->getWeaponCooldown() < 0.1) {
+            auto targetO = MicroUtil::findUnitWithHighestThreat(
+                unit,
+                m_bot
+            );
+            if (targetO.has_value()) {
+                unit->attackUnit(*targetO.value());
+                continue;
             }
+        }
+        if (Util::Dist(unit, targetPosition) > radius) {
+            unit->move(targetPosition);
         }
     }
 }
 
-void GroupAroundOrder::validateFinish() {
-    auto center = Util::CalcCenter(m_squad->units());
-    // what if center is unwalkable?
-    float maxDist = 0;
-    float distToTarget = std::numeric_limits<float>::max();
-
-    for (auto &unit : m_squad->units()) {
-        maxDist = std::max(maxDist, Util::Dist(unit, center));
-        distToTarget = std::min(distToTarget, Util::Dist(unit, targetPosition));
-    }
-
-    // π * r^2 < units.size()
-    if (distToTarget < 4 && maxDist * maxDist * 3.14 < m_squad->units().size()) {
-        onEnd();
-    }
-}
 void GroupAroundOrder::draw() const {
-    m_bot.Map().drawTile(targetPosition.x, targetPosition.y, Colors::Purple);
+    m_bot.Map().drawGroundCircle(targetPosition, getCircleRadius(), Colors::Purple);
     for (auto &unit : m_squad->units()) {
         m_bot.Map().drawLine(unit->getPosition(), targetPosition, Colors::Purple);
     }
+}
+float GroupAroundOrder::getCircleRadius() const {
+    return sqrt(m_squad->units().size() / 2.28);
 }

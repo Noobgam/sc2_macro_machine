@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <chrono>
+#include <util/Version.h>
 
 CCBot::CCBot()
     : m_map(*this)
@@ -15,9 +16,11 @@ CCBot::CCBot()
     , m_strategy(*this)
     , m_gameCommander(*this)
     , m_techTree(*this)
+    , m_unitCommandManager(*this)
 { }
 
 void CCBot::OnGameStart() {
+    LOG_DEBUG << "Starting OnGameStart()" << BOT_ENDL;
     m_techTree.onStart();
     m_unitInfo.onStart();
 
@@ -26,7 +29,6 @@ void CCBot::OnGameStart() {
 #endif
 
 
-    LOG_DEBUG << "Starting OnGameStart()" << BOT_ENDL;
 
     m_map.onStart();
     m_managers.onStart();
@@ -49,6 +51,13 @@ void CCBot::OnGameEnd() {
 void CCBot::OnStep() {
     logging::propagateFrame(GetCurrentFrame());
     ++observationId;
+    if (GetCurrentFrame() >= 20) {
+        static bool sentVersion = false;
+        if (!sentVersion) {
+            sentVersion = true;
+            Actions()->SendChat("Version: " + Version::CURRENT);
+        }
+    }
 #ifdef _STATIC_MAP_CALCULATOR
     if (observationId == 1) {
         Debug()->DebugShowMap();
@@ -74,6 +83,8 @@ void CCBot::OnStep() {
 #ifdef _DEBUG
     Debug()->SendDebug();
 #endif
+
+    m_unitCommandManager.issueAllCommands(GetCurrentFrame());
     LOG_DEBUG << "Finished onStep()" << BOT_ENDL;
 }
 
@@ -202,4 +213,8 @@ void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const s
 
 UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
     return UnitType{ typeId, *this };
+}
+
+UnitCommandManager &CCBot::getUnitCommandManager() {
+    return m_unitCommandManager;
 }

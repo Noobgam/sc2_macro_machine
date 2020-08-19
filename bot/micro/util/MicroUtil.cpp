@@ -32,7 +32,13 @@ namespace MicroUtil {
                 maxPriority = std::max(threat, maxPriority);
                 maxPriorityTarget = enemy;
             } else if (threat == maxPriority) {
-                if ((*maxPriorityTarget)->hpPercentage() > enemy->hpPercentage()) {
+                // of units with same threat choose one that you'll be able to kill faster.
+                int lowestHealth = (*maxPriorityTarget)->getHitPoints() + (*maxPriorityTarget)->getShields();
+                int enemyHealth = enemy->getHitPoints() + enemy->getShields();
+                if (
+                    lowestHealth > enemyHealth
+                        || (lowestHealth == enemyHealth && enemy->getID() < (*maxPriorityTarget)->getID())
+                ) {
                     maxPriorityTarget = enemy;
                 }
             }
