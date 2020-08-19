@@ -63,12 +63,12 @@ void EnemyBasesManager::unitDisappearedCallback(const Unit *unit) {
 
 void EnemyBasesManager::expectAsOccupied(const BaseLocation* baseLocation) {
     bool status = m_expectedBaseLocations.insert(baseLocation).second;
-    LOG_DEBUG << "[ENEMY_BASES_MANAGER] Expecting new base location as occupied " << baseLocation->getBaseId() << ". " << "Is new expected location: " << result << BOT_ENDL;
+    LOG_DEBUG << "[ENEMY_BASES_MANAGER] Expecting new base location as occupied " << baseLocation->getBaseId() << ". " << "Is new expected location: " << status << BOT_ENDL;
 }
 
 void EnemyBasesManager::locationIsClear(const BaseLocation *baseLocation) {
     bool status = m_expectedBaseLocations.erase(baseLocation) != 0;
-    LOG_DEBUG << "[ENEMY_BASES_MANAGER] Base location " << baseLocation->getBaseId() << " is clear. " << "Expected before: " << result << BOT_ENDL;
+    LOG_DEBUG << "[ENEMY_BASES_MANAGER] Base location " << baseLocation->getBaseId() << " is clear. " << "Expected before: " << status << BOT_ENDL;
 }
 
 const std::vector<const Unit *>& EnemyBasesManager::getEnemyDepots() const {
