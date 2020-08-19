@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "util/Util.h"
 #include "BaseLocationManager.h"
 
@@ -9,8 +10,6 @@ void BaseLocationManager::onStart() {
     VALIDATE_CALLED_ONCE();
 
     m_tileBaseLocations = std::vector<std::vector<BaseLocation *>>(m_bot.Map().width(), std::vector<BaseLocation *>(m_bot.Map().height(), nullptr));
-    m_playerStartingBaseLocations[Players::Self]  = nullptr;
-    m_playerStartingBaseLocations[Players::Enemy] = nullptr;
 
     std::vector<std::vector<const Resource*>> resourceClusters = findResourceClusters();
     // add the base locations if there are more than 4 resouces in the cluster
@@ -34,50 +33,12 @@ void BaseLocationManager::onStart() {
         }
     }
 
-    CCPosition selfStartLocation = m_bot.Observation()->GetStartLocation();
-    for (auto &locationPair : m_baseLocationData) {
-        const auto &baseLocation = locationPair.second.get();
-        if (baseLocation->getDepotActualPosition() == selfStartLocation) {
-            baseLocation->setStartLocation(Players::Self);
-            baseLocation->setPlayerHasDepot(Players::Self, true);
-            m_playerStartingBaseLocations[Players::Self] = baseLocation;
-            break;
-        }
-    }
     auto& potentialLocations = m_bot.Observation()->GetGameInfo().enemy_start_locations;
-
-    if (m_bot.Observation()->GetGameInfo().map_name.rfind("Test", 0) == 0) {
-        // cruth for test maps, so they could be played 1x0.
-        for (auto& locationPair : m_baseLocationData) {
-            const auto &baseLocation = locationPair.second.get();
-            if (!baseLocation->isPlayerStartLocation(Players::Self)) {
-                baseLocation->setStartLocation(Players::Enemy);
-                m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
-                break;
-            }
-        }
-    } else {
-        BOT_ASSERT(potentialLocations.size() == 1, "Multiple start locations are not supportd");
-        CCPosition enemyStartLocation = potentialLocations[0];
-        // construct the vectors of base location pointers, this is safe since they will never change
-        for (auto &locationPair : m_baseLocationData) {
-            const auto &baseLocation = locationPair.second.get();
-            if (baseLocation->getDepotActualPosition() == enemyStartLocation) {
-                baseLocation->setStartLocation(Players::Enemy);
-                baseLocation->setPlayerHasDepot(Players::Enemy, true);
-                m_playerStartingBaseLocations[Players::Enemy] = baseLocation;
-                break;
-            }
-        }
-    }
 
     for (auto& locationPair : m_baseLocationData) {
         const auto &baseLocation = locationPair.second.get();
         m_baseLocationPtrs.push_back(baseLocation);
     }
-
-    BOT_ASSERT(m_playerStartingBaseLocations[Players::Self] != nullptr, "Self start location was not found");
-    BOT_ASSERT(m_playerStartingBaseLocations[Players::Enemy] != nullptr, "Enemy start location was not found");
 
     // construct the map of tile positions to base locations
     for (int x = 0; x < m_bot.Map().width(); ++x) {
@@ -100,58 +61,10 @@ void BaseLocationManager::onStart() {
             }
         }
     }
-
-    // construct the sets of occupied base locations
-    m_occupiedBaseLocations[Players::Self] = { m_playerStartingBaseLocations[Players::Self] };
-    m_occupiedBaseLocations[Players::Enemy] = { m_playerStartingBaseLocations[Players::Enemy] };
-
 }
 
 void BaseLocationManager::onFrame() {
     drawBaseLocations();
-
-    // reset the player occupation information for each location
-    for (auto & baseLocation : m_baseLocationData) {
-        baseLocation.second->setPlayerOccupying(Players::Self, false);
-        baseLocation.second->setPlayerOccupying(Players::Enemy, false);
-        baseLocation.second->setPlayerHasDepot(Players::Self, false);
-        baseLocation.second->setPlayerHasDepot(Players::Enemy, false);
-    }
-
-    for (auto & player : {Players::Self, Players::Enemy}) {
-        for (auto &unit : m_bot.UnitInfo().getUnits(player)) {
-            // we only care about buildings on the ground
-            if (!unit->getType().isBuilding() || unit->isFlying()) {
-                continue;
-            }
-
-            BaseLocation *baseLocation = getBaseLocation(unit->getPosition());
-            if (baseLocation != nullptr) {
-                if (unit->getType().isResourceDepot() && unit->isCompleted()) {
-                    baseLocation->setPlayerHasDepot(player, true);
-                }
-                baseLocation->setPlayerOccupying(player, true);
-            }
-        }
-
-        // set start location as occupied by enemy (TODO fix with time or smt)
-        if (player == Players::Enemy) {
-            auto position = m_playerStartingBaseLocations.find(Players::Enemy)->second->getPosition();
-            getBaseLocation(position)->setPlayerOccupying(Players::Enemy, true);
-        }
-    }
-
-    // update the occupied base locations for each player
-    m_occupiedBaseLocations[Players::Self].clear();
-    m_occupiedBaseLocations[Players::Enemy].clear();
-    for (const auto & baseLocation : m_baseLocationPtrs) {
-        if (baseLocation->isOccupiedByPlayer(Players::Self)) {
-            m_occupiedBaseLocations[Players::Self].insert(baseLocation);
-        }
-        if (baseLocation->isOccupiedByPlayer(Players::Enemy)) {
-            m_occupiedBaseLocations[Players::Enemy].insert(baseLocation);
-        }
-    }
 }
 
 BaseLocation * BaseLocationManager::getBaseLocation(const Resource* resource) const {
@@ -167,6 +80,21 @@ BaseLocation * BaseLocationManager::getBaseLocation(const Resource* resource) co
 BaseLocation * BaseLocationManager::getBaseLocation(const CCPosition & pos) const {
     if (!m_bot.Map().isValidPosition(pos)) { return nullptr; }
     return m_tileBaseLocations[(int)pos.x][(int)pos.y];
+}
+
+std::optional<BaseLocation *> BaseLocationManager::findBaseLocation(CCPosition position) const {
+    int BASE_LOCATION_RADIUS = 10;
+    if (!m_bot.Map().isValidPosition(position)) {
+        return {};
+    }
+    const auto& it = std::min_element(m_baseLocationPtrs.begin(), m_baseLocationPtrs.end(), [position](auto a, auto b) {
+        return Util::Dist(position, a->getPosition()) < Util::Dist(position, b->getPosition());
+    });
+    const auto baseLocation = *it;
+    if (Util::Dist(position, baseLocation->getPosition()) > BASE_LOCATION_RADIUS) {
+        return {};
+    }
+    return baseLocation;
 }
 
 std::vector<std::vector<const Resource *>> BaseLocationManager::findResourceClusters() const {
@@ -241,12 +169,8 @@ const BaseLocation *BaseLocationManager::getBaseLocation(BaseLocationID id) cons
     return it->second.get();
 }
 
-const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocations(int player) const {
-    return m_occupiedBaseLocations.at(player);
-}
-
 CCPosition BaseLocationManager::getNextExpansion(int player) const {
-    const BaseLocation * homeBase =  m_playerStartingBaseLocations.at(player);
+    const BaseLocation * homeBase =  m_bot.getManagers().getBasesManager().getStartLocation()->getBaseLocation();
     const BaseLocation * closestBase = nullptr;
     int minDistance = std::numeric_limits<int>::max();
 
@@ -294,6 +218,3 @@ void BaseLocationManager::resourceExpiredCallback(const Resource* resource) {
     baseLocation->resourceExpiredCallback(resource);
 }
 
-const BaseLocation * BaseLocationManager::getPlayerStartLocation(CCPlayer player) const {
-    return m_playerStartingBaseLocations.at(player);
-}

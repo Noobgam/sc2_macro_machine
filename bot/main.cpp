@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     std::string enemyRaceString;
     std::string mapString;
     int stepSize = 1;
-    sc2::Difficulty enemyDifficulty = sc2::Difficulty::Hard;
+    sc2::Difficulty enemyDifficulty = sc2::Difficulty::HardVeryHard;
 
     if (j.count("SC2API") && j["SC2API"].is_object())
     {
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
     coordinator.SetParticipants({
         sc2::CreateParticipant(Util::GetRaceFromString(botRaceString), &bot),
-        sc2::CreateComputer(Util::GetRaceFromString(enemyRaceString), enemyDifficulty)
+        sc2::CreateComputer(Util::GetRaceFromString(enemyRaceString), enemyDifficulty, sc2::AIBuild::Macro)
     });
 
     // Start the game.

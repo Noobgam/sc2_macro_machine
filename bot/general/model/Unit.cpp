@@ -153,7 +153,10 @@ void Unit::repair(const Unit & target) const {
 }
 
 void Unit::build(const UnitType & buildingType, CCPosition pos) const {
-    BOT_ASSERT(m_bot->Map().isConnected(getTilePosition(), pos), "Error: Build Position is not connected to worker");
+    if (!m_bot->Map().isConnected(getTilePosition(), pos)) {
+        LOG_DEBUG << pos.x << " " << pos.y << BOT_ENDL;
+        BOT_ASSERT(false, "Error: Build Position is not connected to worker");
+    }
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
 }
 

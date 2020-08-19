@@ -13,6 +13,7 @@ CCBot::CCBot()
     , m_bases(*this)
     , m_unitInfo(*this)
     , m_managers(*this)
+    , m_strategy(*this)
     , m_gameCommander(*this)
     , m_techTree(*this)
     , m_unitCommandManager(*this)
@@ -74,9 +75,9 @@ void CCBot::OnStep() {
 
     m_map.onFrame();
     m_bases.onFrame();
-
     m_managers.onFrame();
 
+    m_strategy.onFrame();
     m_gameCommander.onFrame();
 
 #ifdef _DEBUG
