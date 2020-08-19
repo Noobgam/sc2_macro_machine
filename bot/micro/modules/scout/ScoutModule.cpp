@@ -1,7 +1,7 @@
 #include <micro/order/scouting/ScoutEnemyBasesOrder.h>
+#include <util/LogInfo.h>
 #include "ScoutModule.h"
 #include "general/CCBot.h"
-#include "logging/Events.h"
 
 ScoutModule::ScoutModule(CCBot &bot) : m_bot(bot) {}
 
@@ -10,10 +10,10 @@ void ScoutModule::onFrame() {
     if (m_basesScoutID.has_value()) {
         const auto& squad = m_bot.getManagers().getSquadManager().getSquad(m_basesScoutID.value());
         if (!squad.has_value()) {
-            events::scout_module::scoutSquadWasDeformed(m_basesScoutID.value()).log();
+            LOG_DEBUG << "[SCOUT_MODULE] Scout squad was deformed. Squad id:" << squad.value()->getId() << BOT_ENDL;
             m_basesScoutID = {};
         } else if (squad.value()->isEmpty()) {
-            events::scout_module::scoutSquadIsEmpty(m_basesScoutID.value()).log();
+            LOG_DEBUG << "[SCOUT_MODULE] Scout squad is empty: Squad id:" << m_basesScoutID.value() << BOT_ENDL;
             m_basesScoutID = {};
         }
     }
@@ -22,10 +22,13 @@ void ScoutModule::onFrame() {
         const auto & bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getExpectedEnemyBaseLocations();
         if (!bases.empty()) {
             const auto& squad = m_bot.getManagers().getWorkerManager().formSquad(1);
-            events::scout_module::newScoutSquadFormed(squad).log();
+            LOG_DEBUG << "[SCOUT_MODULE] New scout squad was formed: " << (squad.has_value() ? std::to_string(squad.value()->getId()) : "None") << BOT_ENDL;
             if (squad.has_value()) {
-                events::scout_module::setScoutBasesOrder(squad.value(), bases).log();
-                squad.value()->setOrder(std::make_shared<ScoutEnemyBasesOrder>(m_bot, squad.value(), bases));
+                LOG_DEBUG << "[SCOUT_MODULE] Setting scout order for squad " << squad.value()->getId() << ". Checking bases: ";
+                for (const auto& base : bases) {
+                    LOG_DEBUG << base->getBaseId() << " ";
+                }
+                LOG_DEBUG << BOT_ENDL;
                 m_basesScoutID = squad.value()->getId();
             }
         }

@@ -3,8 +3,6 @@
 #include <util/LogInfo.h>
 #include <util/Util.h>
 
-#include "logging/Events.h"
-
 EnemyBasesManager::EnemyBasesManager(CCBot &bot) : m_bot(bot) { }
 
 void EnemyBasesManager::onStart() {
@@ -29,7 +27,7 @@ void EnemyBasesManager::onFrame() {
             }
         }
         if (isVisible) {
-            events::enemy_bases_manager::expectedBaseLocationIsNotOccupied(*it, true).log();
+            LOG_DEBUG << "[ENEMY_BASES_MANAGER] Base location " << (*it)->getBaseId() << " is clear. " << BOT_ENDL;
             it = m_expectedBaseLocations.erase(it);
         } else {
             it++;
@@ -44,7 +42,7 @@ void EnemyBasesManager::newUnitCallback(const Unit *unit) {
         LOG_DEBUG << "New depot found " << unit->getType().getName() << " " << unit->getID() << BOT_ENDL;
         m_depots.emplace_back(unit);
         std::optional<BaseLocation*> baseLocation = m_bot.Bases().findBaseLocation(unit->getPosition());
-        events::enemy_bases_manager::resourceDepotWasDetected(unit, baseLocation).log();
+        LOG_DEBUG << "[ENEMY_BASES_MANAGER] Resource depot " << unit->getID() << " was detected on location " << (baseLocation.has_value() ? std::to_string(baseLocation.value()->getBaseId()) : "None") << BOT_ENDL;
         if (baseLocation.has_value()) {
             m_occupiedBaseLocations.insert({unit->getID(), baseLocation.value()});
             m_expectedBaseLocations.erase(baseLocation.value());
@@ -56,7 +54,7 @@ void EnemyBasesManager::unitDisappearedCallback(const Unit *unit) {
     if (unit->getPlayer() == Players::Enemy && unit->getType().isResourceDepot()) {
         m_depots.erase(std::remove(m_depots.begin(), m_depots.end(), unit), m_depots.end());
         std::optional<BaseLocation*> baseLocation = m_bot.Bases().findBaseLocation(unit->getPosition());
-        events::enemy_bases_manager::resourceDepotIsDisappeared(unit, baseLocation).log();
+        LOG_DEBUG << "[ENEMY_BASES_MANAGER] Resource depot " << unit->getID() << " has disappeared on location " << (baseLocation.has_value() ? std::to_string(baseLocation.value()->getBaseId()) : "None") << BOT_ENDL;
         if (baseLocation.has_value()) {
             m_occupiedBaseLocations.erase(unit->getID());
         }
@@ -65,12 +63,12 @@ void EnemyBasesManager::unitDisappearedCallback(const Unit *unit) {
 
 void EnemyBasesManager::expectAsOccupied(const BaseLocation* baseLocation) {
     bool status = m_expectedBaseLocations.insert(baseLocation).second;
-    events::enemy_bases_manager::expectBaseLocationAsOccupied(baseLocation, status).log();
+    LOG_DEBUG << "[ENEMY_BASES_MANAGER] Expecting new base location as occupied " << baseLocation->getBaseId() << ". " << "Is new expected location: " << result << BOT_ENDL;
 }
 
 void EnemyBasesManager::locationIsClear(const BaseLocation *baseLocation) {
     bool status = m_expectedBaseLocations.erase(baseLocation) != 0;
-    events::enemy_bases_manager::expectedBaseLocationIsNotOccupied(baseLocation, status).log();
+    LOG_DEBUG << "[ENEMY_BASES_MANAGER] Base location " << baseLocation->getBaseId() << " is clear. " << "Expected before: " << result << BOT_ENDL;
 }
 
 const std::vector<const Unit *>& EnemyBasesManager::getEnemyDepots() const {
