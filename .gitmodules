@@ -1,0 +1,3 @@
+[submodule "bot/include/glog"]
+	path = bot/include/glog
+	url = git@github.com:google/glog.git
