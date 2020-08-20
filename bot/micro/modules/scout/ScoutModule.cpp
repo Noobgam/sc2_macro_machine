@@ -24,11 +24,12 @@ void ScoutModule::onFrame() {
             const auto& squad = m_bot.getManagers().getWorkerManager().formSquad(1);
             LOG_DEBUG << "[SCOUT_MODULE] New scout squad was formed: " << (squad.has_value() ? std::to_string(squad.value()->getId()) : "None") << BOT_ENDL;
             if (squad.has_value()) {
-                LOG_DEBUG << "[SCOUT_MODULE] Setting scout order for squad " << squad.value()->getId() << ". Checking bases: ";
+                std::stringstream ss;
+                ss << "[SCOUT_MODULE] Setting scout order for squad " << squad.value()->getId() << ". Checking bases: ";
                 for (const auto& base : bases) {
-                    LOG_DEBUG << base->getBaseId() << " ";
+                    ss << base->getBaseId() << " ";
                 }
-                LOG_DEBUG << BOT_ENDL;
+                LOG_DEBUG << ss.str() << BOT_ENDL;
                 m_basesScoutID = squad.value()->getId();
             }
         }

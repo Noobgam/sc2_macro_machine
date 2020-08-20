@@ -49,7 +49,7 @@ void CombatManager::onFrame() {
 }
 
 void CombatManager::orderToGroup(Squad* squad) {
-    int startId = m_bot.getManagers().getBasesManager().getStartLocation()->getBaseLocation()->getBaseId();
+    int startId = m_bot.getManagers().getBasesManager().getStartLocation()->getBaseId();
     auto& orderedBases = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(startId);
     int targetBaseId = -1;
     for (int i = 0; i < 2; ++i) {
