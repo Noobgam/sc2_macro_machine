@@ -559,7 +559,12 @@ bool CoordinatorImp::WaitForAllResponses() {
 bool CoordinatorImp::CreateGame() {
     // Create the game with the first client.
     Agent* firstClient = agents_.front();
-    return firstClient->Control()->CreateGame(game_settings_.map_name, game_settings_.player_setup, process_settings_.realtime);
+    return firstClient->Control()->CreateGame(
+        game_settings_.map_name,
+        game_settings_.player_setup,
+        process_settings_.realtime,
+        game_settings_.random_seed
+    );
 }
 
 bool CoordinatorImp::JoinGame() {
@@ -691,6 +696,10 @@ bool Coordinator::RemoteSaveMap(const void* data, int data_size, std::string rem
     }
 
     return true;
+}
+
+void Coordinator::SetRandomSeed(std::optional<int> seedO) {
+    imp_->game_settings_.random_seed = seedO;
 }
 
 void Coordinator::SetParticipants(const std::vector<PlayerSetup>& participants) {

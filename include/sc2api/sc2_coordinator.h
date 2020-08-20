@@ -108,6 +108,10 @@ public:
     //! It should be used in combination with SetRealtime(true), otherwise the game has no sound.
     void SetFullScreen(bool value);
 
+    //! Specifies random seed to run game with
+    //! Useful if you want create some reproducible scenario
+    void SetRandomSeed(std::optional<int> seedO);
+
     //! Sets up the bots and whether they are controlled by in-built AI, human or a custom bot.
     // \param participants A vector of player setups for each participant in the game.
     // \sa PlayerSetup
