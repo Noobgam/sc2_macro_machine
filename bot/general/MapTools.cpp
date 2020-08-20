@@ -359,25 +359,8 @@ float MapTools::terrainHeight(const CCPosition & point) const
     return (static_cast<float>(value) - 127.0f) / 8.f;
 }
 
-static std::vector <CCColor> genArr() {
-    std::vector <CCColor> arr(1000);
-    for (int i = 0; i < 1000; ++i) {
-        arr[i] = CCColor(rand() % 256, rand() % 256, rand() % 256);
-    }
-    return arr;
-}
-
 void MapTools::draw() const
 {
-    static std::vector <CCColor> arr = genArr();
-    for (int i = 0; i < width(); ++i) {
-        for (int j = 0; j < height(); ++j) {
-            if (isBuildable(i, j)) {
-                int c = getSectorNumber(i, j);
-                drawTile(i, j, arr[c]);
-            }
-        }
-    }
 }
 
 bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const {
