@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     std::string enemyRaceString;
     std::string mapString;
     int stepSize = 1;
-    sc2::Difficulty enemyDifficulty = sc2::Difficulty::Hard;
+    sc2::Difficulty enemyDifficulty = sc2::Difficulty::HardVeryHard;
 
     if (j.count("SC2API") && j["SC2API"].is_object())
     {
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
     coordinator.SetParticipants({
         sc2::CreateParticipant(Util::GetRaceFromString(botRaceString), &bot),
-        sc2::CreateComputer(Util::GetRaceFromString(enemyRaceString), enemyDifficulty)
+        sc2::CreateComputer(Util::GetRaceFromString(enemyRaceString), enemyDifficulty, sc2::AIBuild::Macro)
     });
 
     // Start the game.
@@ -82,8 +82,37 @@ int main(int argc, char* argv[])
 }
 #else
 #include "LadderInterface.h"
+
+#ifdef _WIN32
+// nothing we can do on win, since execinfo is missing
+void handler(int sig) {};
+
+#else
+#include <stdio.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void handler(int sig) {
+    void *array[40];
+    size_t size;
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 40);
+
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    exit(1);
+}
+#endif
+
 int main(int argc, char* argv[]) {
     std::unique_ptr<CCBot> bot = std::make_unique<CCBot>();
+    for (auto sig : {SIGABRT, SIGSEGV, SIGILL, SIGTERM}) {
+        signal(sig, handler);
+    }
     RunBot(argc, argv, bot.get(), sc2::Race::Protoss);
     std::cerr << "Bot cycle finished" << std::endl;
     return 0;

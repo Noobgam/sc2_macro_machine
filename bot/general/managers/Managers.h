@@ -4,6 +4,7 @@
 #include <general/managers/economy/EconomyManager.h>
 #include <general/managers/base/BasesManager.h>
 #include <general/managers/buildings/WallManager.h>
+#include <general/managers/enemy/EnemyManager.h>
 #include "workers/WorkerManager.h"
 #include "squads/SquadManager.h"
 #include "buildings/BuildingManager.h"
@@ -19,6 +20,7 @@ private:
     ResourceManager m_resourceManager;
     EconomyManager  m_economyManager;
     BasesManager    m_basesManager;
+    EnemyManager    m_enemyManager;
     WallManager     m_wallManager;
 public:
     explicit Managers(CCBot & bot);
@@ -32,6 +34,7 @@ public:
     ResourceManager & getResourceManager();
     EconomyManager & getEconomyManager();
     BasesManager & getBasesManager();
+    EnemyManager & getEnemyManager();
     WallManager & getWallManager();
 
     const WorkerManager & getWorkerManager() const;
@@ -40,5 +43,6 @@ public:
     const ResourceManager & getResourceManager() const;
     const EconomyManager & getEconomyManager() const;
     const BasesManager & getBasesManager() const;
+    const EnemyManager & getEnemyManager() const;
     const WallManager & getWallManager() const;
 };

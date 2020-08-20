@@ -18,9 +18,6 @@ class Unit
     const sc2::Unit * m_unit;
 
 public:
-
-    Unit();
-
     Unit(const sc2::Unit * unit, CCBot & bot, size_t observationId);
     const sc2::Unit * getUnitPtr() const;
     const sc2::UnitTypeID & getAPIUnitType() const;

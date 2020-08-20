@@ -7,15 +7,18 @@ phases:
       - apt-get install -y --no-install-recommends cmake clang
   build:
     commands:
-      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
       - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
-      - mkdir build -p
-      - cd build
-      - cmake .. -DCMAKE_BUILD_TYPE=Release
+      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
+      - sh fix_timestamps.sh
+      - mkdir /var/lib/noobgam/build -p
+      - cd /var/lib/noobgam/build
+      - ln -s $CODEBUILD_SRC_DIR /var/lib/noobgam/code
+      - cmake ../code -DCMAKE_BUILD_TYPE=Release
       - VERBOSE=1 cmake --build . --target main_bot -- -j 4
 artifacts:
   files:
-    - build/bin/**/*
+    - /var/lib/noobgam/build/bin/main_bot
 cache:
   paths:
     - .git/**/*
+    - /var/lib/noobgam/build/**/*

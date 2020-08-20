@@ -73,6 +73,9 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
         );
         if (!targetO.has_value()) {
             unit->attackMove(m_target_position);
+            if (Util::Dist(m_target_position, unit->getPosition()) < 2) {
+                onEnd();
+            }
         } else {
             unit->attackUnit(*targetO.value());
         }

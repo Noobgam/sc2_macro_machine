@@ -27,8 +27,8 @@ bool BuildingPlacer::isInAnyResourceBox(int tileX, int tileY) const
 
 bool BuildingPlacer::isInResourceBox(int tileX, int tileY) const
 {
-    for (auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self)) {
-        if (base->isInResourceBox(tileX, tileY)) {
+    for (auto & base : m_bot.getManagers().getBasesManager().getBases()) {
+        if (base->getBaseLocation()->isInResourceBox(tileX, tileY)) {
             return true;
         }
     }
@@ -105,7 +105,7 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
 
     double bestHeuristic = std::numeric_limits<double>::lowest();
     std::optional<CCPosition> bestPosO;
-    auto &myBases = m_bot.Bases().getOccupiedBaseLocations(Players::Self);
+    auto &myBases = m_bot.getManagers().getBasesManager().getBases();
     BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
     if (b.isSupplyProvider()) {
         auto closeToBases = getUnreservedTilesCloseToBases(300);
@@ -117,7 +117,7 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
                 for (auto base : myBases) {
                     dist = std::min(
                             dist,
-                            m_bot.Map().getGroundDistance(base->getDepotActualPosition(), Util::GetPosition(pos))
+                            m_bot.Map().getGroundDistance(base->getNexus()->getPosition(), Util::GetPosition(pos))
                     );
                 }
                 double curHeuristic = heuristic(

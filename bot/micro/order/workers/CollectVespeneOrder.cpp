@@ -88,7 +88,7 @@ void CollectVespeneOrder::assignWorkers() {
         logLine << BOT_ENDL;
     }
     const auto& assimilators = m_base->getActiveAssimilators();
-    for (auto workerIt = m_unassignedWorkers.begin(); workerIt < m_unassignedWorkers.end();) {
+    for (auto workerIt = m_unassignedWorkers.begin(); workerIt != m_unassignedWorkers.end();) {
         auto bestIt = std::min_element(m_assimilatorToWorker.begin(), m_assimilatorToWorker.end(),
             [](const auto& w1, const auto& w2) {
                 return w1.second.size() < w2.second.size();
