@@ -170,7 +170,7 @@ const BaseLocation *BaseLocationManager::getBaseLocation(BaseLocationID id) cons
 }
 
 CCPosition BaseLocationManager::getNextExpansion(int player) const {
-    const BaseLocation * homeBase =  m_bot.getManagers().getBasesManager().getStartLocation()->getBaseLocation();
+    const BaseLocation * homeBase =  m_bot.getManagers().getBasesManager().getStartLocation();
     const BaseLocation * closestBase = nullptr;
     int minDistance = std::numeric_limits<int>::max();
 

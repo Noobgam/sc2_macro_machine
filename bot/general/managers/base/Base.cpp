@@ -37,16 +37,20 @@ std::vector<std::pair<const Unit *, const Resource *>> Base:: getActiveAssimilat
 }
 
 void Base::onNewAssimilator(const Unit *assimilator, const Resource *geyser) {
+    LOG_DEBUG << "[BASES_MANAGER] New assimilator " << assimilator->getID() << " was added to base on location " << this->getBaseLocation()->getBaseId() << ". Geyser: " << geyser->getID() << BOT_ENDL;
     m_assimilators.emplace_back(assimilator, geyser);
+    BOT_ASSERT(m_assimilators.size() <= this->getBaseLocation()->getGeysers().size(), "More assimilators then geysers.");
 }
 
 void Base::onAssimilatorDestroyed(const Unit *assimilator) {
-    m_assimilators.erase(std::find_if(m_assimilators.begin(), m_assimilators.end(), [assimilator](const auto& p) {
+    int initialLength = m_assimilators.size();
+    m_assimilators.erase(std::remove_if(m_assimilators.begin(), m_assimilators.end(), [assimilator](const auto& p) {
         return p.first == assimilator;
-    }));
+    }), m_assimilators.end());
+    LOG_DEBUG << "[BASES_MANAGER] Assimilator " << assimilator->getID() << " was removed from base on location " << this->getBaseLocation()->getBaseId() << ". Removed: " << (m_assimilators.size() < initialLength) << BOT_ENDL;
 }
 
 void Base::onDestroyed() {
-    LOG_DEBUG << "[BASE_MANAGER] Base was destroyed. Base location id:" << m_baseLocation->getBaseId() << BOT_ENDL;
+    LOG_DEBUG << "[BASES_MANAGER] Base was destroyed on location:" << m_baseLocation->getBaseId() << BOT_ENDL;
     m_workers->deform();
 }

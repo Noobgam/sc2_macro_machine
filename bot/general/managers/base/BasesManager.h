@@ -12,7 +12,7 @@ private:
 
     std::vector<std::unique_ptr<Base>> m_bases = {};
     std::vector<Base*> m_basesPtrs = {};
-    Base* m_startLocation = nullptr;
+    const BaseLocation* m_startLocation = nullptr;
 
     void newBaseOccupied(const BaseLocation* baseLocation, const Unit* nexus);
     void tryAddAssimilator(Base * base, const Unit * unit);
@@ -28,5 +28,5 @@ public:
     std::vector<Base*> getCompletedBases() const;
     bool isBaseOccupied(BaseLocationID baseId) const;
 
-    const Base* getStartLocation() const;
+    const BaseLocation* getStartLocation() const;
 };
