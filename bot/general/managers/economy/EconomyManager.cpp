@@ -19,3 +19,19 @@ double EconomyManager::getVespeneIncome() const {
     }
     return income;
 }
+
+int EconomyManager::getAvailableMineralWorkers() const {
+    double minerals = 0;
+    for (const auto& base : m_bot.getManagers().getBasesManager().getBases()) {
+        minerals += base->getBaseWorkers()->getIdealMineralWorkers();
+    }
+    return minerals;
+}
+
+int EconomyManager::getAvailableVespeneWorkers() const {
+    int geysers = 0;
+    for (const auto& base : m_bot.getManagers().getBasesManager().getBases()) {
+        geysers += base->getBaseWorkers()->getIdealMineralWorkers();
+    }
+    return geysers;
+}

@@ -4,10 +4,14 @@
 ExpandBuildManager::ExpandBuildManager(CCBot &bot) : BuildManager(bot) { }
 
 std::optional<BuildOrderItem> ExpandBuildManager::getTopPriority() {
+    const auto& economyManager = m_bot.getManagers().getEconomyManager();
     auto probeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
     auto nexusType = UnitType(sc2::UNIT_TYPEID::PROTOSS_NEXUS, m_bot);
-    int bases = m_bot.UnitInfo().getBuildingCount(Players::Self, nexusType, UnitStatus::TOTAL);
-    int requiredProbes = bases * 22;
+    int bases = m_bot.getManagers().getBasesManager().getBases().size();
+    if (bases >= m_bot.Bases().getBaseLocations().size() / 2) {
+        return {};
+    }
+    int requiredProbes = economyManager.getAvailableMineralWorkers() + economyManager.getAvailableVespeneWorkers();
     int probes = m_bot.UnitInfo().getUnitTypeCount(Players::Self, probeType);
     int priority = probes - requiredProbes + 12;
     if (priority < 0) {
