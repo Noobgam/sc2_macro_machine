@@ -11,7 +11,7 @@ std::optional<BuildOrderItem> ExpandBuildManager::getTopPriority() {
     if (bases >= m_bot.Bases().getBaseLocations().size() / 2) {
         return {};
     }
-    int requiredProbes = economyManager.getAvailableMineralWorkers() + economyManager.getAvailableVespeneWorkers();
+    int requiredProbes = economyManager.getMineralWorkersPositions() + economyManager.getVespeneWorkersPositions();
     int probes = m_bot.UnitInfo().getUnitTypeCount(Players::Self, probeType);
     int priority = probes - requiredProbes + 12;
     if (priority < 0) {

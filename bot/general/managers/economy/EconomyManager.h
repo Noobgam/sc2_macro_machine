@@ -12,7 +12,7 @@ public:
     double getVespeneIncome() const;
 
     // returns amount of workerks that may gather minerals on currently occupied bases
-    int getAvailableMineralWorkers() const;
+    int getMineralWorkersPositions() const;
     // returns amount of workerks that may gather vespene on currently occupied bases
-    int getAvailableVespeneWorkers() const;
+    int getVespeneWorkersPositions() const;
 };
