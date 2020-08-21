@@ -1,15 +1,12 @@
 version: 0.2
 
 phases:
-  install:
+  pre_build:
     commands:
-      - apt-get update -qq
-      - apt-get install -y --no-install-recommends cmake clang
-  build:
-    commands:
-      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
       - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
       - sh fix_timestamps.sh
+  build:
+    commands:
       - mkdir /var/lib/noobgam/build -p
       - cd /var/lib/noobgam/build
       - ln -s $CODEBUILD_SRC_DIR /var/lib/noobgam/code
