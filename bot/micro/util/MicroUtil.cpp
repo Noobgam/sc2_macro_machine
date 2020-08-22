@@ -19,7 +19,7 @@ namespace MicroUtil {
         const CCBot& bot
     ) {
         auto&& enemies = bot.UnitInfo().getUnits(Players::Enemy);
-        float maxPriority;
+        float maxPriority = -1;
         std::optional<const Unit*> maxPriorityTarget = {};
         for (auto enemy : enemies) {
             float dist = Util::Dist(*enemy, *unit);
