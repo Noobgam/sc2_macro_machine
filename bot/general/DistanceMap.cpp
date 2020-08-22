@@ -83,6 +83,9 @@ std::vector<CCTilePosition> DistanceMap::getPathTo(CCTilePosition pos) const {
     };
     while (pos != m_startTile) {
         int curDist = m_dist[pos.x][pos.y];
+        if (curDist == 0) {
+            break;
+        }
         std::optional<CCTilePosition> fromTile;
         for (size_t a=0; a<LegalActions; ++a) {
             CCTilePosition nextTile(pos.x - actionX[a], pos.y - actionY[a]);

@@ -10,7 +10,7 @@ void ScoutModule::onFrame() {
     if (m_basesScoutID.has_value()) {
         const auto& squad = m_bot.getManagers().getSquadManager().getSquad(m_basesScoutID.value());
         if (!squad.has_value()) {
-            LOG_DEBUG << "[SCOUT_MODULE] Scout squad was deformed. Squad id:" << squad.value()->getId() << BOT_ENDL;
+            LOG_DEBUG << "[SCOUT_MODULE] Scout squad was deformed. Squad id:" << m_basesScoutID.value() << BOT_ENDL;
             m_basesScoutID = {};
         } else if (squad.value()->isEmpty()) {
             LOG_DEBUG << "[SCOUT_MODULE] Scout squad is empty: Squad id:" << m_basesScoutID.value() << BOT_ENDL;
@@ -31,6 +31,7 @@ void ScoutModule::onFrame() {
                 }
                 LOG_DEBUG << ss.str() << BOT_ENDL;
                 m_basesScoutID = squad.value()->getId();
+                squad.value()->setOrder(std::make_shared<ScoutEnemyBasesOrder>(m_bot, squad.value(), bases));
             }
         }
     }
