@@ -14,4 +14,4 @@ RUN wget 'https://noobgam-public.s3.eu-central-1.amazonaws.com/SC2.4.10.zip'
 RUN unzip -P iagreetotheeula SC2.4.10.zip
 RUN rm SC2.4.10.zip
 
-
+ENTRYPOINT [ "/bin/bash" ]
