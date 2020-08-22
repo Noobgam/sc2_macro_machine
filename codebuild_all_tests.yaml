@@ -1,32 +1,6 @@
 version: 0.2
 
 phases:
-  pre_build:
-    commands:
-      - find .
-      - unzip Noobgam2.zip
   build:
     commands:
-      - ./test_all -e
-      - mkdir /var/lib/noobgam/build -p
-      - cd /var/lib/noobgam/build
-      - ln -s $CODEBUILD_SRC_DIR /var/lib/noobgam/code
-      - cmake ../code -DCMAKE_BUILD_TYPE=Debug
-      - VERBOSE=1 cmake --build . --target test_all -- -j 4
-  post_build:
-    commands:
-      - mkdir /var/lib/noobgam/package/data -p
-      - cd    /var/lib/noobgam/package
-      - cp    /var/lib/noobgam/build/bin/main_bot Noobgam2
-      - cp    /var/lib/noobgam/code/ladderbots.json .
-      - cp    /var/lib/noobgam/code/static-map_metas/ data/static_map_metas -r
-      - zip -r Noobgam2.zip *
-artifacts:
-  base-directory: /var/lib/noobgam/package
-  discard-paths: yes
-  files:
-    - /var/lib/noobgam/package/Noobgam2.zip
-cache:
-  paths:
-    - .git/**/*
-    - /var/lib/noobgam/build/**/*
+      ./test_all -e "/home/dummy/StarCraftII/Versions/Base75689/SC2_x64"
