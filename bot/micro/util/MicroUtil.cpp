@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "MicroUtil.h"
 
 namespace MicroUtil {
@@ -22,6 +23,10 @@ namespace MicroUtil {
         float maxPriority;
         std::optional<const Unit*> maxPriorityTarget = {};
         for (auto enemy : enemies) {
+            if (!enemy->isValid()) {
+                LOG_DEBUG << "Unit is invalid" << BOT_ENDL;
+                continue;
+            }
             float dist = Util::Dist(*enemy, *unit);
             // even if it is out of range it does not mean we shouldnt attack it
             if (dist > range) {
