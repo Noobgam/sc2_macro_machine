@@ -7,6 +7,7 @@ protected:
     CCBot & m_bot;
     Squad* m_squad;
     bool m_completed = false;
+    std::optional<std::shared_ptr<Order>> m_nextOrder = {};
 
     virtual void onEnd();
 public:
@@ -20,4 +21,5 @@ public:
     virtual void onUnitRemoved(const Unit* unit);
 
     bool isCompleted() const;
+    void chain(const std::shared_ptr<Order>& order);
 };

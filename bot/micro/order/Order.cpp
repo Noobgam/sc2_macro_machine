@@ -10,6 +10,9 @@ bool Order::isCompleted() const {
 
 void Order::onEnd() {
     m_completed = true;
+    if (m_nextOrder.has_value()) {
+        m_squad->setOrder(m_nextOrder.value());
+    }
 }
 
 void Order::draw() const {
@@ -18,3 +21,11 @@ void Order::draw() const {
 void Order::onUnitAdded(const Unit *unit) { }
 
 void Order::onUnitRemoved(const Unit *unit) { }
+
+void Order::chain(const std::shared_ptr<Order>& order) {
+    Order* lastOrder = this;
+    while (lastOrder->m_nextOrder.has_value()) {
+        lastOrder = m_nextOrder.value().get();
+    }
+    lastOrder->m_nextOrder = order;
+}
