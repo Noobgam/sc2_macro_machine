@@ -54,6 +54,7 @@ public:
     bool isTraining() const;
     bool isConstructing(const UnitType & type) const;
     bool isOfType(const sc2::UNIT_TYPEID& type) const;
+    bool needsRallyPoint() const;
 
     void stop           () const;
     void attackUnit     (const Unit & target) const;
@@ -61,6 +62,7 @@ public:
     void move           (const CCPosition & targetPosition) const;
     void move           (const CCTilePosition & targetTilePosition) const;
     void rightClick     (const Unit & target) const;
+    void rightClick     (const CCPosition & targetPosition) const;
     void repair         (const Unit & target) const;
     void build          (const UnitType & buildingType, CCPosition pos) const;
     void buildTarget    (const UnitType & buildingType, const Unit & target) const;

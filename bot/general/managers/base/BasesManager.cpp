@@ -34,6 +34,12 @@ void BasesManager::newUnitCallback(const Unit *unit) {
             tryAddAssimilator(base, unit);
         }
     }
+
+    if (unit->getType().isBuilding()) {
+        m_bot.getMutableMap().updateNeutralMap();
+        m_bot.getMutableMap().computeConnectivity();
+        // also update distance map in all the bases?
+    }
 }
 
 void BasesManager::unitDisappearedCallback(const Unit *unit) {

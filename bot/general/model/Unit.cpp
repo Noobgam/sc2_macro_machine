@@ -148,15 +148,16 @@ void Unit::rightClick(const Unit & target) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::SMART, target.getUnitPtr());
 }
 
+void Unit::rightClick(const CCPosition & targetPosition) const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::SMART, targetPosition);
+}
+
 void Unit::repair(const Unit & target) const {
     rightClick(target);
 }
 
 void Unit::build(const UnitType & buildingType, CCPosition pos) const {
-    if (!m_bot->Map().isConnected(getTilePosition(), pos)) {
-        LOG_DEBUG << pos.x << " " << pos.y << BOT_ENDL;
-        BOT_ASSERT(false, "Error: Build Position is not connected to worker");
-    }
+    //BOT_ASSERT(m_bot->Map().isConnected(getTilePosition(), pos), "Error: Build Position is not connected to worker");
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
 }
 
@@ -187,4 +188,7 @@ float Unit::hpPercentage() const {
 
 float Unit::shieldPercentage() const {
     return m_unit->shield / m_unit->shield_max;
+}
+bool Unit::needsRallyPoint() const {
+    return m_unit->unit_type != sc2::UNIT_TYPEID::PROTOSS_WARPGATE;
 }

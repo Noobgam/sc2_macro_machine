@@ -283,6 +283,13 @@ bool StaticMapMeta::isWalkable(int tileX, int tileY) const {
     return m_walkable[tileX][tileY] && !m_unwalkableNeutral[tileX][tileY];
 }
 
+bool StaticMapMeta::isStaticallyWalkable(int tileX, int tileY) const {
+    if (!isValidTile(tileX, tileY)) {
+        return false;
+    }
+    return m_walkable[tileX][tileY];
+}
+
 int StaticMapMeta::width() const {
     return m_width;
 }
@@ -461,6 +468,9 @@ bool StaticMapMeta::isVisible(const CCTilePosition &from, const CCTilePosition &
 
 const std::map<int, std::vector<int>> &StaticMapMeta::getOrderedBasesByStartLocationId() const {
     return m_orderedBasesByStartLocationId;
+}
+std::vector<std::vector<int>> StaticMapMeta::getSectorNumber() {
+    return m_sectorNumber;
 }
 
 #undef all
