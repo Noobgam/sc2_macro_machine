@@ -27,6 +27,9 @@ namespace MicroUtil {
                 LOG_DEBUG << "Unit is invalid" << BOT_ENDL;
                 continue;
             }
+            if (enemy->getUnitPtr()->display_type != sc2::Unit::DisplayType::Visible) {
+                continue;
+            }
             float dist = Util::Dist(*enemy, *unit);
             // even if it is out of range it does not mean we shouldnt attack it
             if (dist > range) {
