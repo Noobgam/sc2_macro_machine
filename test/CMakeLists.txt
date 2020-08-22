@@ -23,4 +23,5 @@ target_link_libraries(test_all_debug sc2api sc2lib sc2utils sc2protocol)
 add_executable(test_all ${all_sources} ${all_sources_bot})
 target_compile_options(test_all PUBLIC -fsanitize=address -fno-omit-frame-pointer)
 set_target_properties(test_all PROPERTIES LINK_FLAGS -fsanitize=address)
+target_link_libraries(test_all sc2api sc2lib sc2utils sc2protocol)
 
