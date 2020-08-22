@@ -1,4 +1,5 @@
 #include <util/LogInfo.h>
+#include <util/Util.h>
 #include "ScoutEnemyBasesOrder.h"
 #include "general/CCBot.h"
 
@@ -24,7 +25,8 @@ void ScoutEnemyBasesOrder::onStart() {
 void ScoutEnemyBasesOrder::onStep() {
     if (m_scout.has_value()) {
         const auto& scout = m_scout.value();
-        if (scout->getUnitPtr()->orders.empty()) {
+        m_scout.value()->move((*m_nextBaseIt)->getPosition());
+        if (Util::Dist(scout, (*m_nextBaseIt)->getPosition()) <= 1) {
             scoutAround(); // we are on base
             if (++m_nextBaseIt == m_baseLocationsToScout.end()) {
                 onEnd();
