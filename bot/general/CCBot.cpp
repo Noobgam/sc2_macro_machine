@@ -218,3 +218,6 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 UnitCommandManager &CCBot::getUnitCommandManager() {
     return m_unitCommandManager;
 }
+MapTools &CCBot::getMutableMap() {
+    return m_map;
+}

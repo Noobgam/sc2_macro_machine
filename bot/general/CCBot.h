@@ -60,6 +60,7 @@ public:
     CCPosition GetStartLocation() const;
     UnitType getUnitType(sc2::UnitTypeID typeId);
     UnitCommandManager& getUnitCommandManager();
+    MapTools & getMutableMap();
 
     int GetCurrentFrame() const;
     int GetMinerals() const;

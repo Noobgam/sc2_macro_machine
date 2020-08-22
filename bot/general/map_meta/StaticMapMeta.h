@@ -73,6 +73,7 @@ struct StaticMapMeta {
     bool isValidTile(CCTilePosition tile) const;
     bool isBuildable(int tileX, int tileY) const;
     bool isWalkable(int tileX, int tileY) const;
+    bool isStaticallyWalkable(int tileX, int tileY) const;
     int getSectorNumber(int tileX, int tileY) const;
     float getTerrainHeight(float x, float y) const;
 
@@ -89,6 +90,7 @@ struct StaticMapMeta {
     DistanceMap getDistanceMap(const CCPosition& pos) const;
     DistanceMap getDistanceMap(const CCTilePosition & pos) const;
     bool isVisible(const CCTilePosition &from, const CCTilePosition &to, float R) const;
+    std::vector<std::vector<int>> getSectorNumber();
 
 private:
     static std::vector<BaseLocationProjection> calculateBaseLocations(const CCBot& bot);

@@ -322,7 +322,7 @@ std::vector<CCTilePosition> BuildingPlacer::getUnreservedTilesCloseToBases(int t
         auto&& closestTiles = x->getBaseLocation()->getDistanceMap().getSortedTiles();
         for (int i = 0; i < threshold && i < closestTiles.size(); ++i) {
             auto& tile = closestTiles[i];
-            if (isReserved(tile.x, tile.y)) continue;
+            if (isReserved(tile.x, tile.y) || !m_bot.Map().isBuildable(tile.x, tile.y)) continue;
             tiles.insert(closestTiles[i]);
         }
     }
