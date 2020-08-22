@@ -71,6 +71,7 @@ if (MSVC)
 endif ()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-protector")
+
 # Allow creating filters for projects in visual studio.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
