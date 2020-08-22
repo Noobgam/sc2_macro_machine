@@ -17,6 +17,12 @@ class DistanceMap
     std::vector<std::vector<int>> m_dist;
 
     std::vector<CCTilePosition> m_sortedTiles;
+
+    void computeDistanceMap(
+        std::function<bool(int,int)> walkable,
+        const CCTilePosition startTile,
+        const StaticMapMeta& mapMeta
+    );
     
 public:
     
