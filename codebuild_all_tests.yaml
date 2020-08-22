@@ -3,4 +3,5 @@ version: 0.2
 phases:
   build:
     commands:
-      ./test_all -e "/home/dummy/StarCraftII/Versions/Base75689/SC2_x64"
+      - unzip TestArchive.zip
+      - ./test_all -e "/home/dummy/StarCraftII/Versions/Base75689/SC2_x64"
