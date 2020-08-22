@@ -2,9 +2,16 @@
 
 #include <string>
 #include <memory>
-#include "TestAgent.h"
+
+class TestAgent;
 
 struct TestScenario {
+  friend class TestRunner;
+ private:
+  // factories should no be accessed by nontrusted classes
+  std::function<std::unique_ptr<sc2::Agent>()> testedAgentFactory;
+  std::function<std::unique_ptr<TestAgent>()> testScenarioAgentFactory;
+ public:
   // name to distinguish scenarios.
   std::string name;
 
@@ -13,8 +20,7 @@ struct TestScenario {
   bool realtime;
   sc2::Race testedAgentRace;
   sc2::Race testScenarioAgentRace;
-  std::function<std::unique_ptr<sc2::Agent>()> testedAgentFactory;
-  std::function<std::unique_ptr<TestAgent>()> testScenarioAgentFactory;
+
 
   TestScenario(const std::string &name,
                const std::string &map_string,

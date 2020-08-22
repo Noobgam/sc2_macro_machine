@@ -1,4 +1,6 @@
 #include "TestAgent.h"
+#include "TestScenario.h"
+
 void TestAgent::OnGameEnd() {
     Control()->GetObservation();
     auto res = Observation()->GetResults();
@@ -7,9 +9,6 @@ void TestAgent::OnGameEnd() {
       return pr.player_id == myId;
     });
     if (it != res.end() && it->result == sc2::GameResult::Loss) {
-        lostTheGame = true;
+        scenarioResult = ScenarioResult::SUCCESS;
     }
-}
-bool TestAgent::isLoss() {
-    return lostTheGame;
 }

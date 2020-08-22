@@ -1,4 +1,7 @@
+#include <util/LogInfo.h>
 #include "TestRunner.h"
+#include "TestAgent.h"
+
 TestRunner::TestRunner(const TestScenario &scenario)
     : scenario(scenario)
 {
@@ -7,6 +10,11 @@ TestRunner::TestRunner(const TestScenario &scenario)
 }
 
 void TestRunner::run(int argc, char** argv) {
+    LOG_DEBUG << "Executing scenario [" << scenario.name << "]" << std::endl;
+    // bind test scenario agent before starting the game
+    testScenarioAgent->scenario = &scenario;
+    testScenarioAgent->enemyAgent = testedAgent.get();
+
     sc2::Coordinator coordinator;
     coordinator.LoadSettings(argc, argv);
     coordinator.SetStepSize(1);
@@ -23,6 +31,8 @@ void TestRunner::run(int argc, char** argv) {
     coordinator.StartGame(scenario.mapString);
 
     // Step forward the game simulation.
-    while (coordinator.Update());
-    assert(testScenarioAgent.get()->isLoss());
+    while (coordinator.Update() && testScenarioAgent->scenarioResult == ScenarioResult::NONE);
+    if (testScenarioAgent->scenarioResult != ScenarioResult::SUCCESS) {
+        testScenarioAgent->Control()->SaveReplay(scenario.name);
+    }
 }

@@ -20,8 +20,17 @@ void RunTestScenario(const TestScenario& scenario) {
     runner.run(argc, argv);
 }
 
+#include <signal.h>
+
+void handler(int sig) {
+    // unsure what to do in handler yet, but it might be useful.
+}
+
 int main(int argc, char* argv[])
 {
+    for (auto sig : {SIGABRT, SIGSEGV, SIGILL, SIGTERM}) {
+        signal(sig, handler);
+    }
     ::argc = argc;
     ::argv = argv;
     RunTestScenario(Scenarios::CAN_WIN_AGAINST_EMPTY_BOT);
