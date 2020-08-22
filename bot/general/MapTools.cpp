@@ -49,15 +49,15 @@ void MapTools::onStart()
     auto m_height = m_staticMapMeta->height();
     m_lastSeen       = vvi(m_width, std::vector<int>(m_height, 0));
     m_powerMap       = vvi(m_width, std::vector<int>(m_height, 0));
-    m_unbuildableNeutral = vvb(m_width, std::vector<bool>(m_height, false));
-    m_unwalkableNeutral = vvb(m_width, std::vector<bool>(m_height, false));
+    m_unbuildableUnits = vvb(m_width, std::vector<bool>(m_height, false));
+    m_unwalkableUnits = vvb(m_width, std::vector<bool>(m_height, false));
 
-    for (auto & unit : m_bot.Observation()->GetUnits())
-    {
+    for (auto & unit : m_bot.Observation()->GetUnits()) {
         m_maxZ = std::max(unit->pos.z, m_maxZ);
     }
 
     updateNeutralMap();
+    computeConnectivity();
     // set tiles that static resources are on as unbuildable
 }
 
@@ -150,7 +150,17 @@ int MapTools::getSectorNumber(int x, int y) const
         return 0;
     }
 
-    return m_staticMapMeta->getSectorNumber(x, y);
+    return m_sectorNumber[x][y];
+}
+
+int MapTools::getSectorCnt(int x, int y) const
+{
+    if (!isValidTile(x, y))
+    {
+        return 0;
+    }
+
+    return m_sectorNumberCnt[m_sectorNumber[x][y]];
 }
 
 bool MapTools::isValidTile(int tileX, int tileY) const
@@ -262,7 +272,7 @@ bool MapTools::isBuildable(int tileX, int tileY) const
         return false;
     }
 
-    return m_staticMapMeta->isBuildable(tileX, tileY) && !m_unbuildableNeutral[tileX][tileY];
+    return m_staticMapMeta->isBuildable(tileX, tileY) && !m_unbuildableUnits[tileX][tileY];
 }
 
 bool MapTools::canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const
@@ -300,7 +310,7 @@ bool MapTools::isWalkable(int tileX, int tileY) const
         return false;
     }
 
-    return m_staticMapMeta->isWalkable(tileX, tileY) && !m_unwalkableNeutral[tileX][tileY];
+    return m_staticMapMeta->isWalkable(tileX, tileY) && !m_unwalkableUnits[tileX][tileY];
 }
 
 bool MapTools::isWalkable(const CCTilePosition & tile) const
@@ -349,7 +359,6 @@ float MapTools::terrainHeight(const CCPosition & point) const
     return (static_cast<float>(value) - 127.0f) / 8.f;
 }
 
-
 void MapTools::draw() const
 {
 }
@@ -382,12 +391,65 @@ void MapTools::updatePowerMap() {
     }
 }
 
+// call it sometimes?
+void MapTools::computeConnectivity() {
+    const static int LEGAL_ACTIONS = 8;
+    const static int actionX[LEGAL_ACTIONS] = {-1, -1, -1, 0, 1, 1, 1, 0};
+    const static int actionY[LEGAL_ACTIONS] = {-1, 0, 1, 1, 1, 0, -1, -1};
+
+    std::vector<std::array<int, 2>> fringe;
+    auto m_width = m_staticMapMeta->width();
+    auto m_height = m_staticMapMeta->height();
+    fringe.reserve(m_width * m_height);
+    int sectorNumber = 0;
+    m_sectorNumber = std::vector<std::vector<int>>(m_width, std::vector<int>(m_height, 0));
+    m_sectorNumberCnt = {0};
+
+    // for every tile on the map, do a connected flood fill using BFS
+    for (int x = 0; x < m_width; ++x) {
+        for (int y = 0; y < m_height; ++y) {
+            // if the sector is not currently 0, or the map isn't walkable here, then we can skip this tile
+            if (m_sectorNumber[x][y] != 0 || !isWalkable(x, y)) {
+                continue;
+            }
+
+            // increase the sector number, so that walkable tiles have sectors 1-N
+            sectorNumber++;
+            m_sectorNumberCnt.push_back(1);
+
+            // reset the fringe for the search and add the start tile to it
+            fringe.clear();
+            fringe.push_back({x, y});
+            m_sectorNumber[x][y] = sectorNumber;
+
+
+            // do the BFS, stopping when we reach the last element of the fringe
+            for (size_t fringeIndex = 0; fringeIndex < fringe.size(); ++fringeIndex) {
+                auto &tile = fringe[fringeIndex];
+
+                // check every possible child of this tile
+                for (size_t a = 0; a < LEGAL_ACTIONS; ++a) {
+                    int nextX = tile[0] + actionX[a];
+                    int nextY = tile[1] + actionY[a];
+
+                    // if the new tile is inside the map bounds, is walkable, and has not been assigned a sector, add it to the current sector and the fringe
+                    if (isValidTile(nextX, nextY) && isWalkable(nextX, nextY) && m_sectorNumber[nextX][nextY] == 0) {
+                        m_sectorNumber[nextX][nextY] = sectorNumber;
+                        m_sectorNumberCnt.back()++;
+                        fringe.push_back({nextX, nextY});
+                    }
+                }
+            }
+        }
+    }
+}
+
 void MapTools::changePowering(const CCPosition &pos, float radius, int d) {
     float x = pos.x;
     float y = pos.y;
     for (float i = (int)(x - radius); i <= x + radius; i += .5) {
         for (float j = (int)(y - radius); j <= y + radius; j += .5) {
-            if (m_unbuildableNeutral[i][j]) continue;
+            if (m_unbuildableUnits[i][j]) continue;
 
             int idI = (2 * i + .5);
             int idJ = (2 * j + .5);
@@ -408,7 +470,7 @@ std::pair<int, int> MapTools::assumePylonBuilt(const CCPosition& pos, float radi
         for (float j = (int)(y - radius); j <= y + radius; j += .5) {
             // this might be a little off if neutral is cleared.
             //  should not be as important, and will work if you update powering when neutrals died
-            if (m_unbuildableNeutral[i][j]) continue;
+            if (m_unbuildableUnits[i][j]) continue;
 
             int idI = (2 * i + .5);
             int idJ = (2 * j + .5);
@@ -427,8 +489,23 @@ std::pair<int, int> MapTools::assumePylonBuilt(const CCPosition& pos, float radi
 }
 
 void MapTools::updateNeutralMap() {
-    auto&& neutrals = m_bot.UnitInfo().getUnits(Players::Neutral);
-    for (auto & unitPtr : neutrals) {
+    auto&& neutrals =   m_bot.UnitInfo().getUnits(Players::Neutral);
+    auto&& myUnits =    m_bot.UnitInfo().getUnits(Players::Self);
+    auto&& enemyUnits = m_bot.UnitInfo().getUnits(Players::Enemy);
+    std::vector<const Unit*> neutralsAndBuldings;
+    neutralsAndBuldings.insert(neutralsAndBuldings.end(), neutrals.begin(), neutrals.end());
+    for (auto x : myUnits) {
+        if (x->getType().isBuilding() && x->isAlive()) {
+            neutralsAndBuldings.push_back(x);
+        }
+    }
+    for (auto x : enemyUnits) {
+        if (x->getType().isBuilding() && x->isAlive()) {
+            neutralsAndBuldings.push_back(x);
+        }
+    }
+
+    for (auto & unitPtr : neutralsAndBuldings) {
 
         int width;
         int height;
@@ -448,11 +525,8 @@ void MapTools::updateNeutralMap() {
         {
             for (int y=tileY; y<tileY+height; ++y)
             {
-                m_unbuildableNeutral[x][y] = m_unbuildableNeutral[x][y] || !Util::canBuildOnUnit (unitPtr->getType());
-                m_unwalkableNeutral [x][y] = m_unwalkableNeutral[x][y]  || !Util::canWalkOverUnit(unitPtr->getType());
-                if (!unitPtr->getType().isMineral() && !unitPtr->getType().isGeyser()) {
-                    continue;
-                }
+                m_unbuildableUnits[x][y] = m_unbuildableUnits[x][y] || !Util::canBuildOnUnit (unitPtr->getType());
+                m_unwalkableUnits [x][y] = m_unwalkableUnits[x][y]  || !Util::canWalkOverUnit(unitPtr->getType());
             }
         }
     }

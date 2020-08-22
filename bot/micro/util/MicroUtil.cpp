@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "MicroUtil.h"
 
 namespace MicroUtil {
@@ -19,9 +20,16 @@ namespace MicroUtil {
         const CCBot& bot
     ) {
         auto&& enemies = bot.UnitInfo().getUnits(Players::Enemy);
-        float maxPriority;
+        float maxPriority = -1;
         std::optional<const Unit*> maxPriorityTarget = {};
         for (auto enemy : enemies) {
+            if (!enemy->isValid()) {
+                LOG_DEBUG << "Unit is invalid" << BOT_ENDL;
+                continue;
+            }
+            if (enemy->getUnitPtr()->display_type != sc2::Unit::DisplayType::Visible) {
+                continue;
+            }
             float dist = Util::Dist(*enemy, *unit);
             // even if it is out of range it does not mean we shouldnt attack it
             if (dist > range) {

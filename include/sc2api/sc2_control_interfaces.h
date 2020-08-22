@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <optional>
 
 namespace sc2 {
 
@@ -20,7 +21,12 @@ public:
     virtual ProtoInterface& Proto() = 0;
     virtual bool Connect(const std::string& address, int port, int timeout_ms) = 0;
     virtual bool RemoteSaveMap(const void* data, int data_size, std::string remote_path) = 0;
-    virtual bool CreateGame(const std::string& map_path, const std::vector<PlayerSetup>& players, bool realtime) = 0;
+    virtual bool CreateGame(
+        const std::string& map_path,
+        const std::vector<PlayerSetup>& players,
+        bool realtime,
+        std::optional<int> random_seed
+    ) = 0;
 
     virtual bool RequestJoinGame(PlayerSetup setup, const InterfaceSettings& settings, const Ports& ports = Ports(), bool raw_affects_selection = false) = 0;
     virtual bool WaitJoinGame() = 0;

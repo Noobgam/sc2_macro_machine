@@ -13,6 +13,7 @@ CCBot::CCBot()
     , m_bases(*this)
     , m_unitInfo(*this)
     , m_managers(*this)
+    , m_strategy(*this)
     , m_gameCommander(*this)
     , m_techTree(*this)
     , m_unitCommandManager(*this)
@@ -34,7 +35,6 @@ void CCBot::OnGameStart() {
 
 
     m_gameCommander.onStart();
-    Actions()->SendChat("Version: " + Version::CURRENT);
     LOG_DEBUG << "Finished OnGameStart()" << BOT_ENDL;
 }
 
@@ -51,6 +51,13 @@ void CCBot::OnGameEnd() {
 void CCBot::OnStep() {
     logging::propagateFrame(GetCurrentFrame());
     ++observationId;
+    if (GetCurrentFrame() >= 20) {
+        static bool sentVersion = false;
+        if (!sentVersion) {
+            sentVersion = true;
+            Actions()->SendChat("Version: " + Version::CURRENT);
+        }
+    }
 #ifdef _STATIC_MAP_CALCULATOR
     if (observationId == 1) {
         Debug()->DebugShowMap();
@@ -68,9 +75,9 @@ void CCBot::OnStep() {
 
     m_map.onFrame();
     m_bases.onFrame();
-
     m_managers.onFrame();
 
+    m_strategy.onFrame();
     m_gameCommander.onFrame();
 
 #ifdef _DEBUG
@@ -210,4 +217,7 @@ UnitType CCBot::getUnitType(sc2::UnitTypeID typeId) {
 
 UnitCommandManager &CCBot::getUnitCommandManager() {
     return m_unitCommandManager;
+}
+MapTools &CCBot::getMutableMap() {
+    return m_map;
 }

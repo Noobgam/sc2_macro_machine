@@ -1,21 +1,31 @@
 version: 0.2
 
 phases:
-  install:
+  pre_build:
     commands:
-      - apt-get update -qq
-      - apt-get install -y --no-install-recommends cmake clang
+      - sh fix_timestamps.sh
+      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
   build:
     commands:
-      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
-      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
-      - mkdir build -p
-      - cd build
-      - cmake .. -DCMAKE_BUILD_TYPE=Release
+      - mkdir /var/lib/noobgam/build -p
+      - cd /var/lib/noobgam/build
+      - ln -s $CODEBUILD_SRC_DIR /var/lib/noobgam/code
+      - cmake ../code -DCMAKE_BUILD_TYPE=Release
       - VERBOSE=1 cmake --build . --target main_bot -- -j 4
+  post_build:
+    commands:
+      - mkdir /var/lib/noobgam/package/data -p
+      - cd    /var/lib/noobgam/package
+      - cp    /var/lib/noobgam/build/bin/main_bot Noobgam2
+      - cp    /var/lib/noobgam/code/ladderbots.json .
+      - cp    /var/lib/noobgam/code/static-map_metas/ data/static_map_metas -r
+      - zip -r Noobgam2.zip *
 artifacts:
+  base-directory: /var/lib/noobgam/package
+  discard-paths: yes
   files:
-    - build/bin/**/*
+    - /var/lib/noobgam/package/Noobgam2.zip
 cache:
   paths:
     - .git/**/*
+    - /var/lib/noobgam/build/**/*

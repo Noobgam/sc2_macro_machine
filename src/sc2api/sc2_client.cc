@@ -1346,6 +1346,7 @@ void DebugImp::SendDebug() {
 //-------------------------------------------------------------------------------------------------
 
 class ControlImp : public ControlInterface {
+private:
 public:
     explicit ControlImp(sc2::Client& client);
     ~ControlImp();
@@ -1377,7 +1378,12 @@ public:
 
     virtual bool RemoteSaveMap(const void* data, int data_size, std::string remote_path) override;
     bool Connect(const std::string& address, int port, int timeout_ms) override;
-    bool CreateGame(const std::string& map_name, const std::vector<PlayerSetup>& players, bool realtime) override;
+    bool CreateGame(
+        const std::string& map_path,
+        const std::vector<PlayerSetup>& players,
+        bool realtime,
+        std::optional<int> random_seed
+    ) override;
 
     bool RequestJoinGame(PlayerSetup setup, const InterfaceSettings& settings, const Ports& ports = Ports(), bool raw_affects_selection = false) override;
     bool WaitJoinGame() override;
@@ -1568,7 +1574,12 @@ void ControlImp::ResolveMap (const std::string& map_name, SC2APIProtocol::Reques
     local_map->set_map_path(map_name);
 }
 
-bool ControlImp::CreateGame(const std::string& map_name, const std::vector<PlayerSetup>& players, bool realtime) {
+bool ControlImp::CreateGame(
+    const std::string& map_name,
+    const std::vector<PlayerSetup>& players,
+    bool realtime,
+    std::optional<int> random_seed
+) {
     GameRequestPtr request = proto_.MakeRequest();
     SC2APIProtocol::RequestCreateGame* request_create_game = request->mutable_create_game();
     ResolveMap(map_name, request_create_game);
@@ -1580,8 +1591,10 @@ bool ControlImp::CreateGame(const std::string& map_name, const std::vector<Playe
         playerSetup->set_difficulty(SC2APIProtocol::Difficulty(setup.difficulty));
         playerSetup->set_ai_build(SC2APIProtocol::AIBuild(setup.ai_build));
     }
-
     request_create_game->set_realtime(realtime);
+    if (random_seed.has_value()) {
+        request_create_game->set_random_seed(random_seed.value());
+    }
 
     if (!proto_.SendRequest(request)) {
         return false;

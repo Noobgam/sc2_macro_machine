@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <optional>
 
 namespace sc2 {
 
@@ -99,6 +100,7 @@ struct GameSettings {
     std::vector<PlayerSetup> player_setup;
     Ports ports;
     bool raw_affects_selection = false;
+    std::optional<int> random_seed;
 };
 
 //! Settings for starting a replay.

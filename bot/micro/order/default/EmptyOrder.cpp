@@ -8,6 +8,4 @@ void EmptyOrder::onStart() {
     onEnd();
 }
 
-void EmptyOrder::onStep() {
-    LOG_DEBUG << "Executing empty order" << BOT_ENDL;
-}
+void EmptyOrder::onStep() { }

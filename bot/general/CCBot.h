@@ -8,6 +8,7 @@
 #include "../GameCommander.h"
 #include "general/map_meta/wall/WallPlacement.h"
 #include <general/managers/Managers.h>
+#include <strategy/Strategy.h>
 #include <general/units/UnitCommandManager.h>
 
 class CCBot : public sc2::Agent {
@@ -15,6 +16,7 @@ class CCBot : public sc2::Agent {
     BaseLocationManager     m_bases;
     UnitInfoManager         m_unitInfo;
     TechTree                m_techTree;
+    Strategy                m_strategy;
     GameCommander           m_gameCommander;
     Managers                m_managers;
 
@@ -58,6 +60,7 @@ public:
     CCPosition GetStartLocation() const;
     UnitType getUnitType(sc2::UnitTypeID typeId);
     UnitCommandManager& getUnitCommandManager();
+    MapTools & getMutableMap();
 
     int GetCurrentFrame() const;
     int GetMinerals() const;
