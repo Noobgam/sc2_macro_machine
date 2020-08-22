@@ -3,8 +3,8 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
       - sh fix_timestamps.sh
+      - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
   build:
     commands:
       - mkdir /var/lib/noobgam/build -p
