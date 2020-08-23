@@ -11,8 +11,8 @@ phases:
       - mkdir /var/lib/noobgam/build -p
       - cd /var/lib/noobgam/build
       - ln -s $CODEBUILD_SRC_DIR /var/lib/noobgam/code
-      - cmake ../code -DCMAKE_BUILD_TYPE=Release
-      - VERBOSE=1 cmake --build . --target main_bot -- -j 4
+      - cmake ../code -DCMAKE_BUILD_TYPE=Debug
+      - VERBOSE=1 cmake --build . --target main_bot_asan -- -j 4
   post_build:
     commands:
       - mkdir /var/lib/noobgam/package/data -p

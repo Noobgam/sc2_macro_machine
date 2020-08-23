@@ -90,6 +90,9 @@ public:
     bool    isBuildable(int tileX, int tileY) const;
     bool    isBuildable(const CCTilePosition & tile) const;
 
+    // takes into account the fact whether the unit is flying
+    float   getWalkTime(const Unit& unit, CCPosition pos) const;
+
     // returns
     // @first  number of new spots that would be powered
     // @second number of spots that would be double powered

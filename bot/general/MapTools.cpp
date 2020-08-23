@@ -593,3 +593,9 @@ CCPosition MapTools::findClosestWalkablePosition(const CCPosition &pos) const {
     // there's no point in searching for the position past r = 3
     return pos;
 }
+float MapTools::getWalkTime(const Unit &unit, CCPosition pos) const {
+    float dist = m_bot.Query()->PathingDistance(unit.getUnitPtr(), pos);
+    // is the multiplication actually necessary?
+    float ms = unit.getType().movementSpeed() * 1.4;
+    return dist / ms;
+}

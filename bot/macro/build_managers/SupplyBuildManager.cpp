@@ -30,14 +30,23 @@ int SupplyBuildManager::getExpectedConsumedSupply() const {
     auto nexusType = UnitType(sc2::UNIT_TYPEID::PROTOSS_NEXUS, m_bot);
     auto gateType = UnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY, m_bot);
     auto warpGateType = UnitType(sc2::UNIT_TYPEID::PROTOSS_WARPGATE, m_bot);
+    auto cyberneticsType = UnitType(sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE, m_bot);
     int nexuses = m_bot.UnitInfo().getBuildingCount(Players::Self, nexusType, UnitStatus::COMPLETED);
     int gates = m_bot.UnitInfo().getBuildingCount(Players::Self, gateType, UnitStatus::COMPLETED);
     int warpGates = m_bot.UnitInfo().getBuildingCount(Players::Self, warpGateType, UnitStatus::COMPLETED);
-    return nexuses + gates * 2 + warpGates * 2;
+    int cybernetics = m_bot.UnitInfo().getBuildingCount(Players::Self, cyberneticsType, UnitStatus::COMPLETED);
+    int coef = cybernetics >= 1 ? 2 : 0;
+    return nexuses + gates * coef + warpGates * coef;
 }
 
 int SupplyBuildManager::getExpectedExtraSupply() const {
     auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
     int pylonsInProgress = m_bot.UnitInfo().getBuildingCount(Players::Self, pylonType, UnitStatus::IN_PROGRESS);
-    return pylonsInProgress * 8;
+    int res = pylonsInProgress * 8;
+    for (const auto& nexus : m_bot.UnitInfo().getUnits(Players::Self, sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+        if (!nexus->isCompleted() && nexus->getBuildPercentage() > 0.75) {
+            res += 15;
+        }
+    }
+    return res;
 }

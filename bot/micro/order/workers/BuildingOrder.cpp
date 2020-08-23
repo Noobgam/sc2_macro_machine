@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "BuildingOrder.h"
 #include "../../../util/Util.h"
 #include "../../../general/CCBot.h"
@@ -18,6 +19,7 @@ void BuildingOrder::onStart() {
         }
     } else {
         worker->build(m_task->getType(), position);
+        LOG_DEBUG << "Will take " << m_bot.Map().getWalkTime(*worker, position) << " to move to position";
     }
 }
 

@@ -21,17 +21,21 @@ double EconomyManager::getVespeneIncome() const {
 }
 
 int EconomyManager::getMineralWorkersPositions() const {
-    double minerals = 0;
+    double mineralWorkersPositions = 0;
     for (const auto& base : m_bot.getManagers().getBasesManager().getBases()) {
-        minerals += base->getBaseWorkers()->getIdealMineralWorkers();
+        mineralWorkersPositions += base->getBaseWorkers()->getIdealMineralWorkers();
     }
-    return minerals;
+    return mineralWorkersPositions;
 }
 
 int EconomyManager::getVespeneWorkersPositions() const {
-    int geysers = 0;
+    int geyserWorkersPositions = 0;
     for (const auto& base : m_bot.getManagers().getBasesManager().getBases()) {
-        geysers += base->getBaseWorkers()->getMaximumVespeneWorkers();
+        for (const auto & geyser : base->getBaseLocation()->getGeysers()) {
+            if (geyser->getResourceAmount() > 0) {
+                geyserWorkersPositions += 3;
+            }
+        }
     }
-    return geysers;
+    return geyserWorkersPositions;
 }

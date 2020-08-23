@@ -45,6 +45,7 @@ public:
     int supplyRequired() const;
     int mineralPrice() const;
     int gasPrice() const;
+    float movementSpeed() const;
 
     const std::vector<UnitType> & whatBuilds() const;
 
