@@ -114,26 +114,36 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     else if (item.type.isUnit())
     {
         if (producer->needsRallyPoint()) {
-            int best = -1;
-            std::optional<CCTilePosition> bestTile;
-            int W = producer->getType().getFootPrintRadius() * 2 + .5;
-            int x = producer->getPosition().x - producer->getType().getFootPrintRadius() - 1;
-            int y = producer->getPosition().y - producer->getType().getFootPrintRadius() - 1;
-            for (int cx = x; cx <= x + W + 1; ++cx) {
-                for (int cy = y; cy <= y + W + 1; ++cy) {
-                    if (m_bot.Map().isWalkable(cx, cy)) {
-                        int val = m_bot.Map().getSectorCnt(cx, cy);
-                        if (best < val) {
-                            best = val;
-                            bestTile = {cx, cy};
+            if (producer->isOfType(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+                Base* base = m_bot.getManagers().getBasesManager().findBaseByNexus(producer);
+                if (base != nullptr) {
+                    // mineral closest to center of resources
+                    producer->rightClick(
+                        base->getBaseLocation()->getPosition()
+                    );
+                }
+            } else {
+                int best = -1;
+                std::optional<CCTilePosition> bestTile;
+                int W = producer->getType().getFootPrintRadius() * 2 + .5;
+                int x = producer->getPosition().x - producer->getType().getFootPrintRadius() - 1;
+                int y = producer->getPosition().y - producer->getType().getFootPrintRadius() - 1;
+                for (int cx = x; cx <= x + W + 1; ++cx) {
+                    for (int cy = y; cy <= y + W + 1; ++cy) {
+                        if (m_bot.Map().isWalkable(cx, cy)) {
+                            int val = m_bot.Map().getSectorCnt(cx, cy);
+                            if (best < val) {
+                                best = val;
+                                bestTile = {cx, cy};
+                            }
                         }
                     }
                 }
-            }
-            if (bestTile.has_value()) {
-                float x = bestTile.value().x + .5;
-                float y = bestTile.value().y + .5;
-                producer->rightClick({x, y});
+                if (bestTile.has_value()) {
+                    float x = bestTile.value().x + .5;
+                    float y = bestTile.value().y + .5;
+                    producer->rightClick({x, y});
+                }
             }
         }
         producer->train(buildingType);
