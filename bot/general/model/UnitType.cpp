@@ -377,3 +377,6 @@ float UnitType::visionRange() const {
         default: { return 9.0; }
     }
 }
+float UnitType::movementSpeed() const {
+    return m_bot->Observation()->GetUnitTypeData()[m_type].movement_speed;
+}
