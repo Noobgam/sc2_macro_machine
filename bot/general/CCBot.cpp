@@ -51,13 +51,6 @@ void CCBot::OnGameEnd() {
 void CCBot::OnStep() {
     logging::propagateFrame(GetCurrentFrame());
     ++observationId;
-    if (GetCurrentFrame() >= 20) {
-        static bool sentVersion = false;
-        if (!sentVersion) {
-            sentVersion = true;
-            Actions()->SendChat("Version: " + Version::CURRENT);
-        }
-    }
 #ifdef _STATIC_MAP_CALCULATOR
     if (observationId == 1) {
         Debug()->DebugShowMap();
@@ -70,6 +63,13 @@ void CCBot::OnStep() {
     Control()->RequestLeaveGame();
     return;
 #endif
+    if (GetCurrentFrame() >= 20) {
+        static bool sentVersion = false;
+        if (!sentVersion) {
+            sentVersion = true;
+            Actions()->SendChat("Version: " + Version::CURRENT);
+        }
+    }
     LOG_DEBUG << "Starting onStep()" << BOT_ENDL;
     m_unitInfo.onFrame();
 
