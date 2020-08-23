@@ -28,9 +28,6 @@ std::optional<BuildOrderItem> ProductionManager::getTopPriority() {
     int gateWayCount = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::TOTAL);
     int warpGateCount = m_bot.UnitInfo().getBuildingCount(Players::Self, warpGateType, UnitStatus::TOTAL);
     int activeGatesCount = gateWayCount + warpGateCount;
-    if (activeGatesCount == 0) {
-        return BuildOrderItem({ gatewayType, m_bot }, 7, false );
-    }
     // production time: https://liquipedia.net/starcraft2/Warp_Gate_(Legacy_of_the_Void)#Description
     double potentialAdeptCount = gateWayCount * (1.0 / 27) + warpGateCount * (1.0 / 20);
     // ADEPT_COST = { 100, 25 }

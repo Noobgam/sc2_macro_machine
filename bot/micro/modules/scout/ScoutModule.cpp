@@ -6,6 +6,11 @@
 ScoutModule::ScoutModule(CCBot &bot) : m_bot(bot) {}
 
 void ScoutModule::onFrame() {
+    auto gatewayType = UnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY, m_bot);
+    bool hasGate = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::TOTAL) > 0;
+    if (!hasGate) {
+        return;
+    }
     // clear squad if it is empty
     if (m_basesScoutID.has_value()) {
         const auto& squad = m_bot.getManagers().getSquadManager().getSquad(m_basesScoutID.value());
