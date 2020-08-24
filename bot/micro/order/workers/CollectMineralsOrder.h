@@ -9,7 +9,7 @@ private:
     std::map<ResourceID, std::vector<const Unit*>> m_mineralToWorker;
 
     void assignWorkers(const  std::set<const Unit*>& workers);
-    void fixWorker(const Unit* unit, const Unit* mineral) const;
+    void fixWorker(const Unit* unit, const Resource* mineral) const;
 public:
     CollectMineralsOrder(CCBot & bot, Squad* squad, const Base* base);
 

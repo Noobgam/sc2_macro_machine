@@ -38,15 +38,16 @@ void CollectMineralsOrder::onStep() {
             for (auto worker : mineralWorkers.second) {
                 auto&& workerOrders = worker->getUnitPtr()->orders;
                 if (workerOrders.size() != 1) {
-                    fixWorker(worker, (*iter)->getUnit());
+                    fixWorker(worker, *iter);
                 } else {
                     auto&& order = workerOrders[0];
                     // sanity check. Shouldn't happen unless intervened externally
                     bool drills = worker->carriesResources() && order.ability_id == sc2::ABILITY_ID::HARVEST_GATHER;
                     bool minesOtherMineral =
-                        order.ability_id == sc2::ABILITY_ID::HARVEST_GATHER && order.target_unit_tag != mineralID;
+                        order.ability_id == sc2::ABILITY_ID::HARVEST_GATHER
+                            && order.target_unit_tag != (*iter)->getUnit()->getID();
                     if (drills || minesOtherMineral) {
-                        fixWorker(worker, (*iter)->getUnit());
+                        fixWorker(worker, *iter);
                     }
                 }
             }
@@ -112,10 +113,11 @@ void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) 
         }
     }
 }
-void CollectMineralsOrder::fixWorker(const Unit *worker, const Unit *mineral) const {
+void CollectMineralsOrder::fixWorker(const Unit *worker, const Resource* mineral) const {
+    LOG_DEBUG << "Fixing worker " << worker->getID() << BOT_ENDL;
     if (worker->carriesResources()) {
         worker->returnCargo();
     } else {
-        worker->gatherMineral(*mineral);
+        worker->gatherMineral(*(mineral->getUnit()));
     }
 }
