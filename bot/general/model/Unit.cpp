@@ -148,6 +148,14 @@ void Unit::rightClick(const Unit & target) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::SMART, target.getUnitPtr());
 }
 
+void Unit::gatherMineral(const Unit & target) const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::HARVEST_GATHER, target.getUnitPtr());
+}
+
+void Unit::returnCargo() const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::HARVEST_RETURN);
+}
+
 void Unit::rightClick(const CCPosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::SMART, targetPosition);
 }
@@ -191,4 +199,16 @@ float Unit::shieldPercentage() const {
 }
 bool Unit::needsRallyPoint() const {
     return m_unit->unit_type != sc2::UNIT_TYPEID::PROTOSS_WARPGATE;
+}
+bool Unit::carriesResources() const {
+    for (auto buffId : m_unit->buffs) {
+        if (buffId == sc2::BUFF_ID::CARRYHARVESTABLEVESPENEGEYSERGAS
+            || buffId == sc2::BUFF_ID::CARRYMINERALFIELDMINERALS
+            || buffId == sc2::BUFF_ID::CARRYHIGHYIELDMINERALFIELDMINERALS
+            )
+        {
+            return true;
+        }
+    }
+    return false;
 }

@@ -31,8 +31,28 @@ void CollectMineralsOrder::onStep() {
         });
         if (iter == minerals.end()) {
             toDelete.push_back(mineralID);
+        } else {
+            // otherwise make sure that each probe is gathering the patch it was ordered to.
+            // this will increase income and stabilize probes
+            // it is better to validate it before reassigning probes from dead minerals so that probe doesn't get two orders in a row.
+            for (auto worker : mineralWorkers.second) {
+                auto&& workerOrders = worker->getUnitPtr()->orders;
+                if (workerOrders.size() != 1) {
+                    fixWorker(worker, (*iter)->getUnit());
+                } else {
+                    auto&& order = workerOrders[0];
+                    // sanity check. Shouldn't happen unless intervened externally
+                    bool drills = worker->carriesResources() && order.ability_id == sc2::ABILITY_ID::HARVEST_GATHER;
+                    bool minesOtherMineral =
+                        order.ability_id == sc2::ABILITY_ID::HARVEST_GATHER && order.target_unit_tag != mineralID;
+                    if (drills || minesOtherMineral) {
+                        fixWorker(worker, (*iter)->getUnit());
+                    }
+                }
+            }
         }
     }
+
     // reassign workers
     std::set<const Unit*> unassignedWorkers;
     for (auto& mineralID : toDelete) {
@@ -86,9 +106,16 @@ void CollectMineralsOrder::assignWorkers(const std::set<const Unit *>& workers) 
             }
         );
         if (mineralIt != minerals.end()) {
-            worker->rightClick(*(*mineralIt)->getUnit());
+            worker->gatherMineral(*(*mineralIt)->getUnit());
         } else {
             onEnd();
         }
+    }
+}
+void CollectMineralsOrder::fixWorker(const Unit *worker, const Unit *mineral) const {
+    if (worker->carriesResources()) {
+        worker->returnCargo();
+    } else {
+        worker->gatherMineral(*mineral);
     }
 }
