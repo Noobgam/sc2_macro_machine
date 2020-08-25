@@ -8,9 +8,10 @@ typedef unsigned long long BuildingTaskID;
 
 enum class BuildingStatus {
     NEW = 0,
-    IN_PROGRESS = 1,
-    FAILED = 2,
-    COMPLETED = 3
+    SCHEDULED = 1,
+    IN_PROGRESS = 2,
+    FAILED = 3,
+    COMPLETED = 4
 };
 
 class BuildingTask {
@@ -30,6 +31,7 @@ public:
     std::optional<const Unit*> getBuilding() const;
     BuildingStatus getStatus() const;
 
+    void scheduled();
     void completed();
     void buildingPlaced(const Unit* building);
     void workerDied();

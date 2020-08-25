@@ -42,7 +42,7 @@ void BuildingManager::newUnitCallback(const Unit *unit) {
     }
     for (auto task : m_tasksPtr) {
         if (
-            task->getStatus() == BuildingStatus::NEW &&
+            task->getStatus() == BuildingStatus::SCHEDULED &&
             task->getType() == unit->getType() &&
             task->getPosition() == unit->getPosition()
         ) {
@@ -68,7 +68,7 @@ void BuildingManager::unitDisappearedCallback(const Unit *unit) {
             task->buildingDied();
         }
         if (
-                task->getStatus() == BuildingStatus::NEW &&
+                task->getStatus() == BuildingStatus::SCHEDULED &&
                 task->getWorker().value()->getID() == unit->getID()
         ) {
             LOG_DEBUG << "[BUILDING_MANAGER] Task canceled (worker died): " << task->getId() << " " << task->getType().getName() << BOT_ENDL;

@@ -25,6 +25,8 @@ namespace NPrivate {
                 return std::get<const sc2::Unit*>(target) < std::get<const sc2::Unit*>(rhs.target);
             case POSITIONAL:
                 return comparePositions(std::get<CCPosition>(target), std::get<CCPosition>(rhs.target));
+            case SELF_TARGET:
+                [[fallthrough]];
             case NONE:
                 return false;
         }

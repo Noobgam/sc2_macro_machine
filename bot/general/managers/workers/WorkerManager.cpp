@@ -33,7 +33,7 @@ bool WorkerManager::build(UnitType type, CCPosition position) {
                 worker = w;
             }
         }
-        const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
+        BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
         Squad* squad = formSquad({worker});
         const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
         squad->setOrder(buildOrder);

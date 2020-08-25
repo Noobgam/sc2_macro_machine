@@ -7,8 +7,10 @@ class CollectMineralsOrder: public Order {
 private:
     const Base* m_base;
     std::map<ResourceID, std::vector<const Unit*>> m_mineralToWorker;
+    std::vector<const Unit*> m_unassignedWorkers = {};
 
-    void assignWorkers(const  std::set<const Unit*>& workers);
+    void assignWorkers();
+    void fixWorker(const Unit* unit, const Resource* mineral) const;
 public:
     CollectMineralsOrder(CCBot & bot, Squad* squad, const Base* base);
 

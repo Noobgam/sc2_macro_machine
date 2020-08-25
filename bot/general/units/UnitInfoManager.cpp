@@ -159,7 +159,7 @@ int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus
     }
     for (const auto & task : m_bot.getManagers().getBuildingManager().getTasks()) {
         if (task->getType() == type) {
-            if (status & UnitStatus::ORDERED && task->getStatus() == BuildingStatus::NEW) {
+            if (status & UnitStatus::ORDERED && task->getStatus() == BuildingStatus::SCHEDULED) {
                 count++;
                 continue;
             }
