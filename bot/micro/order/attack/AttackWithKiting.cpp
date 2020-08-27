@@ -8,8 +8,7 @@ AttackWithKiting::AttackWithKiting(CCBot &bot, Squad *squad, CCPosition position
     : Order(bot, squad)
     , m_target_position(position) { }
 
-void AttackWithKiting::onStart() {
-}
+void AttackWithKiting::onStart() { }
 
 void AttackWithKiting::onStep() {
     for (auto unit : m_squad->units()) {
@@ -17,8 +16,7 @@ void AttackWithKiting::onStep() {
     }
 }
 
-void AttackWithKiting::onUnitAdded(const Unit *unit) {
-}
+void AttackWithKiting::onUnitAdded(const Unit *unit) { }
 
 void AttackWithKiting::handleOneUnit(const Unit *unit) {
     auto&& enemies = m_bot.UnitInfo().getUnits(Players::Enemy);
