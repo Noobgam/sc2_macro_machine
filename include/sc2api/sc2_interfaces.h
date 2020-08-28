@@ -230,6 +230,8 @@ public:
     //!< \sa Observation GetObservation()
     virtual const SC2APIProtocol::Observation* GetRawObservation() const = 0;
 
+    virtual const SC2APIProtocol::ResponseObservation* GetResponseObservation() const = 0;
+
 };
 
 //! The QueryInterface provides additional data not contained in the observation.

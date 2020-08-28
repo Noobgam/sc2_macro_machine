@@ -49,6 +49,7 @@ void CCBot::OnGameEnd() {
 }
 
 void CCBot::OnStep() {
+    handleErrors();
     logging::propagateFrame(GetCurrentFrame());
     ++observationId;
 #ifdef _STATIC_MAP_CALCULATOR
@@ -220,4 +221,9 @@ UnitCommandManager &CCBot::getUnitCommandManager() {
 }
 MapTools &CCBot::getMutableMap() {
     return m_map;
+}
+void CCBot::handleErrors() {
+    for (auto x : Observation()->GetResponseObservation()->action_errors()) {
+        LOG_DEBUG << "Ingame error occured: " << x.unit_tag() << " casted " << x.ability_id() << " and it failed with " << x.result() << BOT_ENDL;
+    }
 }
