@@ -57,3 +57,7 @@ void BuildingTask::buildingDied() {
     m_building = {};
 }
 
+void BuildingTask::placementFailure() {
+    m_status = BuildingStatus::FAILED;
+}
+

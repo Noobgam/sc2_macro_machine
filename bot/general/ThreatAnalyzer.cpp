@@ -5,13 +5,16 @@ float ThreatAnalyzer::getUnitTypeThreat(const UnitType& attacker, const UnitType
         // no fucking idea at the moment
         return 0;
     }
-    if (attacker.is(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL)) {
+    if (attacker.is(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL)
+        || attacker.is(sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED)
+        || attacker.is(sc2::UNIT_TYPEID::TERRAN_SIEGETANK)
+    ) {
         return 5;
     }
     if (attacker.is(sc2::UNIT_TYPEID::PROTOSS_VOIDRAY)) {
         return 4;
     }
-    if (attacker.is(sc2::UNIT_TYPEID::PROTOSS_COLOSSUS)) {
+    if (attacker.is(sc2::UNIT_TYPEID::PROTOSS_COLOSSUS) || attacker.is(sc2::UNIT_TYPEID::TERRAN_MARAUDER)) {
         return 3.5;
     }
     if (attacker.is(sc2::UNIT_TYPEID::PROTOSS_STALKER)) {
