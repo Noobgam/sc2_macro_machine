@@ -223,7 +223,7 @@ MapTools &CCBot::getMutableMap() {
     return m_map;
 }
 void CCBot::handleErrors() {
-    for (auto x : Observation()->GetResponseObservation()->action_errors()) {
-        LOG_DEBUG << "Ingame error occured: " << x.unit_tag() << " casted " << x.ability_id() << " and it failed with " << x.result() << BOT_ENDL;
+    for (auto&& err : Observation()->GetResponseObservation()->action_errors()) {
+        getManagers().getBuildingManager().handleError(err);
     }
 }

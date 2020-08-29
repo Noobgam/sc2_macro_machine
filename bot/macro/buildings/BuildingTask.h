@@ -36,4 +36,5 @@ public:
     void buildingPlaced(const Unit* building);
     void workerDied();
     void buildingDied();
+    void placementFailure();
 };
