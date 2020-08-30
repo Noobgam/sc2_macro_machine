@@ -9,11 +9,13 @@ protected:
     // compact 2d vector
     std::vector<float> enemyInfluence;
     std::vector<float> allyInfluence;
-    const int map_width;
-    const int map_height;
-    AbstractInfluenceMap(int width, int height);
+    int map_width;
+    int map_height;
+    float& getAllyInfluenceRef(int x, int y);
+    float& getEnemyInfluenceRef(int x, int y);
 public:
     void clear();
+    void initialize(int width, int height);
     float getAllyInfluence(int x, int y);
     float getEnemyInfluence(int x, int y);
 

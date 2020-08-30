@@ -5,7 +5,10 @@
 #include <sstream>
 #include <util/Util.h>
 
-UnitInfoManager::UnitInfoManager(CCBot & bot) : m_bot(bot) {
+UnitInfoManager::UnitInfoManager(CCBot & bot)
+    : m_bot(bot)
+    , globalInfluenceMap()
+{
     m_units.insert({Players::Self, {}});
     m_units.insert({Players::Enemy, {}});
     m_units.insert({Players::Neutral, {}});
@@ -82,9 +85,16 @@ void UnitInfoManager::updateUnits() {
         m_units.find(owner)->second.push_back(unit);
     }
     globalInfluenceMap.clear();
+    bool refreshedOnce = false;
     for (auto& lr : unitWrapperByTag) {
         auto&& unit = lr.second;
-        globalInfluenceMap.addInfluence(unit->getUnitPtr());
+        globalInfluenceMap.addInfluence(
+                unit->getType().getUnitTypeData(!refreshedOnce),
+                unit->getPosition(),
+                unit->getPlayer(),
+                {}
+        );
+        refreshedOnce = true;
     }
 }
 

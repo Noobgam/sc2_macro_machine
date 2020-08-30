@@ -15,7 +15,7 @@ public:
      * Returns a number which vaguely represents threat of a unit.
      * This function is used to estimate
      */
-    static float getUnitTypeThreat(const UnitType& unit);
+    static float getUnitTypeThreat(const sc2::UnitTypeData &unit);
 };
 
 

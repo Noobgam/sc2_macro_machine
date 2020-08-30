@@ -16,13 +16,12 @@ void ThreatEstimatingInfluenceMap::addInfluence(
     }
     int lx = max(0.f, position.x - maxRange), rx = min(position.x + maxRange + 0.99f, map_width + .0f);
     int ly = max(0.f, position.y - maxRange), ry = min(position.y + maxRange + 0.99f, map_height + .0f);
-    float threat = ThreatAnalyzer::getUnitTypeThreat()
+    float threat = ThreatAnalyzer::getUnitTypeThreat(typeData);
     for (int x = lx; x <= rx; ++x) {
         for (int y = ly; y <= ry; ++y) {
             if (player == Players::Self) {
-                allyInfluence +=
+                getAllyInfluenceRef(x, y) += threat;
             }
         }
     }
-    return
 }
