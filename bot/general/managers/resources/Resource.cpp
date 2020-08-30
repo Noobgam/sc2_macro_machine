@@ -10,7 +10,7 @@ Resource::Resource(const CCBot &bot, const Unit *unit, ResourceID id):
     if (unit->getType().isMineral()) {
         m_type = ResourceType::MINERAL;
     } else if (unit->getType().isGeyser()) {
-        m_type = ResourceType::GEYSER;
+        m_type = ResourceType::VESPENE;
     } else {
         BOT_ASSERT(false, "Resource is neither a mineral or geyser");
     }

@@ -28,6 +28,7 @@ class MacroManager
     int     getFreeMinerals();
     int     getFreeGas();
 
+    void produceBuilding(const UnitType& buildingType);
 public:
 
     explicit MacroManager(CCBot & bot);

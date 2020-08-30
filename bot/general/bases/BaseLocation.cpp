@@ -183,7 +183,7 @@ void BaseLocation::initialize(const std::vector<const Resource*> & resources) {
             // add the position of the minerals to the center
             resourceCenterX += resource->getPosition().x;
             resourceCenterY += resource->getPosition().y;
-        } else if (resource->getResourceType() == ResourceType::GEYSER) {
+        } else if (resource->getResourceType() == ResourceType::VESPENE) {
             m_geysers.push_back(resource);
 
             // pull the resource center toward the geyser if it exists
@@ -225,7 +225,7 @@ const DistanceMap &BaseLocation::getDistanceMap() const {
 bool BaseLocation::containsResource(const Resource *resource) const {
     if (resource->getResourceType() == ResourceType::MINERAL) {
         return std::find(m_minerals.begin(), m_minerals.end(), resource) != m_minerals.end();
-    } else if (resource->getResourceType() == ResourceType::GEYSER) {
+    } else if (resource->getResourceType() == ResourceType::VESPENE) {
         return std::find(m_geysers.begin(), m_geysers.end(), resource) != m_geysers.end();
     }
     BOT_ASSERT(false, "Unexpected resource type.");

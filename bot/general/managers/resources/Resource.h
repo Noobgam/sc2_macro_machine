@@ -8,7 +8,7 @@ class CCBot;
 
 enum ResourceType {
     MINERAL = 0,
-    GEYSER  = 1
+    VESPENE  = 1
 };
 
 class Resource {
