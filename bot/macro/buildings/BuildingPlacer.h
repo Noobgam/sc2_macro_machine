@@ -20,6 +20,7 @@ class BuildingPlacer
 
     std::optional<CCPosition> getRefineryPosition() const;
     std::vector<CCTilePosition> getUnreservedTilesCloseToBases(int threshold) const;
+    std::vector<CCTilePosition> getPoweredTilesCloseToBases() const;
 
 public:
 

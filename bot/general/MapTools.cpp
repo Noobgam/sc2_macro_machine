@@ -389,6 +389,14 @@ void MapTools::updatePowerMap() {
     {
         powerPylon(powerSource.position, powerSource.radius);
     }
+    std::vector<CCTilePosition>().swap(m_poweredTiles);
+    for (int x = 0; x < 2 * m_width; ++x) {
+        for (int y = 0; y < 2 * m_height; ++y) {
+            if (m_powerMap[x][y] != 0) {
+                m_poweredTiles.push_back({x / 2, y / 2});
+            }
+        }
+    }
 }
 
 // call it sometimes?
@@ -598,4 +606,8 @@ float MapTools::getWalkTime(const Unit &unit, CCPosition pos) const {
     // is the multiplication actually necessary?
     float ms = unit.getType().movementSpeed() * 1.4;
     return dist / ms;
+}
+
+const std::vector<CCTilePosition> &MapTools::getPoweredTiles() const {
+    return m_poweredTiles;
 }

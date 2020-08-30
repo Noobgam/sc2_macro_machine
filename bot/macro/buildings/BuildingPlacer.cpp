@@ -141,7 +141,7 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         return bestPosO;
     } else {
 
-        auto closeToBases = getUnreservedTilesCloseToBases(300);
+        auto closeToBases = getPoweredTilesCloseToBases();
         // shuffle to avoid building at the same spot every time
 
         bool isRound = Util::isRound(b.getFootPrintRadius());
@@ -360,5 +360,30 @@ void BuildingPlacer::unitDisappearedCallback(const Unit *unit) {
                 unit->getPosition()
         );
     }
+}
+
+std::vector<CCTilePosition> BuildingPlacer::getPoweredTilesCloseToBases() const {
+    auto &myBases = m_bot.getManagers().getBasesManager().getBases();
+    std::vector<std::pair<int, CCTilePosition>> distAndTiles;
+    for (auto& tile : m_bot.Map().getPoweredTiles()) {
+        int dist = std::numeric_limits<int>::max();
+        for (auto x : myBases) {
+            int distHere = x->getBaseLocation()->getGroundDistance(tile);
+            if (distHere == -1) continue;
+            dist = std::min(dist, distHere);
+        }
+        if (dist == std::numeric_limits<int>::max()) {
+            continue;
+        }
+        distAndTiles.emplace_back(dist, tile);
+    }
+    std::sort(distAndTiles.begin(), distAndTiles.end(), [](auto& lhs, auto& rhs) {
+        return lhs.first < rhs.first;
+    });
+    std::vector<CCTilePosition> sortedTiles;
+    for (int i = 0; i < distAndTiles.size(); ++i) {
+        sortedTiles.push_back(distAndTiles[i].second);
+    }
+    return sortedTiles;
 }
 
