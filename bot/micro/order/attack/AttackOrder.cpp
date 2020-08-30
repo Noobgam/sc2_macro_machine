@@ -5,14 +5,16 @@ AttackOrder::AttackOrder(CCBot &bot, Squad* squad, CCPosition position) :
     m_target_position(position) { }
 
 void AttackOrder::onStart() {
-    for (auto & unit : m_squad->units()) {
+    m_new_units.insert(m_new_units.end(), m_squad->units().begin(), m_squad->units().end());
+}
+
+void AttackOrder::onStep() {
+    for (auto & unit : m_new_units) {
         unit->attackMove(m_target_position);
     }
 }
 
-void AttackOrder::onStep() { }
-
 void AttackOrder::onUnitAdded(const Unit *unit) {
-    unit->attackMove(m_target_position);
+    m_new_units.emplace_back(unit);
 }
 

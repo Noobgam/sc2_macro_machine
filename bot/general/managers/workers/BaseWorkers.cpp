@@ -25,7 +25,7 @@ const Squad* BaseWorkers::getResourceSquad(ResourceType type) const {
     switch (type) {
         case ResourceType::MINERAL:
             return getMineralSquad();
-        case ResourceType::GEYSER:
+        case ResourceType::VESPENE:
             return getVespeneSquad();
     }
     BOT_ASSERT(false, "Unknown resource type");
@@ -44,7 +44,7 @@ int BaseWorkers::getActiveResourceWorkers(ResourceType type) const {
     switch (type) {
         case ResourceType::MINERAL:
             return getActiveMineralWorkers();
-        case ResourceType::GEYSER:
+        case ResourceType::VESPENE:
             return getActiveVespeneWorkers();
     }
     BOT_ASSERT(false, "Unknown resource type");
@@ -63,7 +63,7 @@ int BaseWorkers::getIdealResourceWorkers(ResourceType type) const {
     switch (type) {
         case ResourceType::MINERAL:
             return getIdealMineralWorkers();
-        case ResourceType::GEYSER:
+        case ResourceType::VESPENE:
             return getIdealVespeneWorkers();
     }
     BOT_ASSERT(false, "Unknown resource type");
@@ -82,7 +82,7 @@ int BaseWorkers::getMaximumResourceWorkers(ResourceType type) const {
     switch (type) {
         case ResourceType::MINERAL:
             return getMaximumMineralWorkers();
-        case ResourceType::GEYSER:
+        case ResourceType::VESPENE:
             return getMaximumVespeneWorkers();
     }
     BOT_ASSERT(false, "Unknown resource type");
@@ -101,7 +101,7 @@ double BaseWorkers::getResourceIncome(ResourceType type) const {
     switch (type) {
         case ResourceType::MINERAL:
             return getMineralIncome();
-        case ResourceType::GEYSER:
+        case ResourceType::VESPENE:
             return getVespeneIncome();
     }
     BOT_ASSERT(false, "Unknown resource type");
@@ -131,7 +131,7 @@ void BaseWorkers::assignToResource(ResourceType type, const Unit *unit) {
         case ResourceType::MINERAL:
             assignToMineral(unit);
             return;
-        case ResourceType::GEYSER:
+        case ResourceType::VESPENE:
             assignToVespene(unit);
             return;
     }

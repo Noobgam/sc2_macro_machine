@@ -19,29 +19,9 @@ void WorkerManager::onFrame() {
         }
     }
     fixResourceLines(ResourceType::MINERAL);
-    fixResourceLines(ResourceType::GEYSER);
+    fixResourceLines(ResourceType::VESPENE);
     assignFreeUnits();
     draw();
-}
-
-bool WorkerManager::build(UnitType type, CCPosition position) {
-    auto freeWorkers = getFreeWorkers();
-    if (!freeWorkers.empty()) {
-        const Unit* worker = nullptr;
-        for (auto w : freeWorkers) {
-            if (worker == nullptr || (Util::Dist(w, position) < Util::Dist(worker, position))) {
-                worker = w;
-            }
-        }
-        BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
-        Squad* squad = formSquad({worker});
-        const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
-        squad->setOrder(buildOrder);
-        return true;
-    } else {
-        LOG_DEBUG << "[SURRENDER_REQUEST] No workers found."<< BOT_ENDL;
-        return false;
-    }
 }
 
 std::optional<Squad*> WorkerManager::formSquad(int targetSquadSize) {
@@ -83,7 +63,7 @@ void WorkerManager::assignFreeUnits() {
 
 void WorkerManager::assignUnit(const Unit* unit) {
     const auto& completedBases = m_bot.getManagers().getBasesManager().getCompletedBases();
-    for (const auto& type : {ResourceType::GEYSER, ResourceType::MINERAL}) {
+    for (const auto& type : {ResourceType::VESPENE, ResourceType::MINERAL}) {
         for (auto& base : completedBases) {
             const auto & baseWorkers = base->getBaseWorkers();
             if (baseWorkers->getIdealResourceWorkers(type) > baseWorkers->getActiveResourceWorkers(type)) {
