@@ -10,6 +10,12 @@ public:
      * e.g. Immortal is scary for stalker, so this number is going to be big
      */
     static float getUnitTypeThreat(const UnitType& attacker, const UnitType& attacked);
+
+    /**
+     * Returns a number which vaguely represents threat of a unit.
+     * This function is used to estimate
+     */
+    static float getUnitTypeThreat(const UnitType& unit);
 };
 
 

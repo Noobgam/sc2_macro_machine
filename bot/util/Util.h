@@ -70,4 +70,10 @@ namespace Util
     CCPositionType DistSq(const CCPosition & p1, const CCPosition & p2);
     bool canWalkOverUnit(const UnitType& type);
     bool canBuildOnUnit(const UnitType& type);
+
+    template <class T>
+    void setVectorZero(std::vector<T>& v) {
+        // memset instead of std::fill due to performance drawbacks in debug mode
+        memset(&v[0], 0, v.size() * sizeof v[0]);
+    }
 };

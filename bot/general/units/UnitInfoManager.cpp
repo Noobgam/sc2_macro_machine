@@ -81,6 +81,11 @@ void UnitInfoManager::updateUnits() {
         CCPlayer owner = unit->getPlayer();
         m_units.find(owner)->second.push_back(unit);
     }
+    globalInfluenceMap.clear();
+    for (auto& lr : unitWrapperByTag) {
+        auto&& unit = lr.second;
+        globalInfluenceMap.addInfluence(unit->getUnitPtr());
+    }
 }
 
 void UnitInfoManager::processNewUnit(const Unit* unit) {
