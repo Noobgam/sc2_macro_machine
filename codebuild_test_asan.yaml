@@ -3,7 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - sh fix_timestamps.sh
+      #- sh fix_timestamps.sh
       - sed -i "s/DEVELOPMENT_BRANCH/`date` $CODEBUILD_RESOLVED_SOURCE_VERSION/g" bot/util/Version.h
       - find bot -print -ls
   build:

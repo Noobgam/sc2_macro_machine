@@ -4,6 +4,10 @@
 ChronoBoostModule::ChronoBoostModule(CCBot &bot): m_bot(bot) {}
 
 void ChronoBoostModule::onFrame() {
+    // do not use chrono to early
+    if (m_bot.GetMaxSupply() <= 15) {
+        return;
+    }
     auto nexuses = m_bot.UnitInfo().getUnits(
             Players::Self,
             sc2::UNIT_TYPEID::PROTOSS_NEXUS

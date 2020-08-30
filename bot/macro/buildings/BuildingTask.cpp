@@ -32,6 +32,10 @@ BuildingStatus BuildingTask::getStatus() const {
     return m_status;
 }
 
+void BuildingTask::scheduled() {
+    m_status = BuildingStatus::SCHEDULED;
+}
+
 void BuildingTask::completed() {
     m_status = BuildingStatus::COMPLETED;
     m_building = {};
@@ -51,5 +55,9 @@ void BuildingTask::workerDied() {
 void BuildingTask::buildingDied() {
     m_status = BuildingStatus::FAILED;
     m_building = {};
+}
+
+void BuildingTask::placementFailure() {
+    m_status = BuildingStatus::FAILED;
 }
 

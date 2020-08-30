@@ -1,3 +1,4 @@
+#include <random>
 #include "../../general/model/Common.h"
 #include "../../general/CCBot.h"
 #include "../../util/Util.h"
@@ -109,6 +110,8 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
     if (b.isSupplyProvider()) {
         auto closeToBases = getUnreservedTilesCloseToBases(300);
+        // shuffle to avoid building at the same spot every time
+        std::shuffle(closeToBases.begin(), closeToBases.end(), std::random_device());
         // pylons are built in corners of tiles.
         for (auto& pos : closeToBases) {
             if (canBuildHereWithoutCoveringNexus(pos.x, pos.y, b)) {
@@ -139,6 +142,7 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     } else {
 
         auto closeToBases = getUnreservedTilesCloseToBases(300);
+        // shuffle to avoid building at the same spot every time
 
         bool isRound = Util::isRound(b.getFootPrintRadius());
         for (auto& pos : closeToBases) {

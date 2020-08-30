@@ -24,6 +24,7 @@ public:
     void newUnitCallback(const Unit* unit);
     void unitDisappearedCallback(const Unit* unit);
 
+    Base* findBaseByNexus(const Unit* unit) const;
     const std::vector<Base*> & getBases() const;
     std::vector<Base*> getCompletedBases() const;
     bool isBaseOccupied(BaseLocationID baseId) const;

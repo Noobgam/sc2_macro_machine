@@ -127,3 +127,13 @@ const BaseLocation *BasesManager::getStartLocation() const {
     BOT_ASSERT(m_startLocation != nullptr, "Base location was not setted yet.");
     return m_startLocation;
 }
+
+Base *BasesManager::findBaseByNexus(const Unit* unit) const {
+    for (auto base : m_basesPtrs) {
+        if (base->getNexus() == unit) {
+            return base;
+        }
+    }
+    // kinda should never happen, you know what you're doing when calling this method right?
+    return nullptr;
+}

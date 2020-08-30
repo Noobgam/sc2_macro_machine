@@ -36,7 +36,11 @@ void UnitInfoManager::updateUnits() {
                 BOT_ASSERT(unit->tag == 0, "Placeholder has id not equal to 0");
                 continue;
             }
-            auto inserted = unitWrapperByTag.insert({unit->tag, std::make_unique<Unit>(unit, m_bot, observationId)});
+            auto&& unitHolder = std::make_unique<Unit>(unit, m_bot, observationId);
+            if (unit->tag == 0) {
+                LOG_DEBUG << "Unit of type " << unitHolder->getType().getName() << " has tag 0" << BOT_ENDL;
+            }
+            auto inserted = unitWrapperByTag.insert({unit->tag, std::move(unitHolder)});
             processNewUnit(inserted.first->second.get());
         } else {
             it->second->updateObservationId(observationId);
@@ -155,7 +159,7 @@ int UnitInfoManager::getBuildingCount(CCPlayer player, UnitType type, UnitStatus
     }
     for (const auto & task : m_bot.getManagers().getBuildingManager().getTasks()) {
         if (task->getType() == type) {
-            if (status & UnitStatus::ORDERED && task->getStatus() == BuildingStatus::NEW) {
+            if (status & UnitStatus::ORDERED && task->getStatus() == BuildingStatus::SCHEDULED) {
                 count++;
                 continue;
             }

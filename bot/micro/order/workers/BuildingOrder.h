@@ -5,9 +5,9 @@
 
 class BuildingOrder: public Order {
 private:
-    const BuildingTask* m_task;
+    BuildingTask* m_task;
 public:
-    BuildingOrder(CCBot & bot, Squad* squad, const BuildingTask* task);
+    BuildingOrder(CCBot & bot, Squad* squad, BuildingTask* task);
 
     void onStart() override;
     void onStep() override;

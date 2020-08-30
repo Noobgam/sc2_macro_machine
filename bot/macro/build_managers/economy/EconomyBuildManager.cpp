@@ -26,5 +26,11 @@ std::optional<BuildOrderItem> EconomyBuildManager::getTopPriority() {
     if (item_ptr == items.end()) {
         return {};
     }
-    return *item_ptr;
+    int coef = 1;
+    int ourBases = m_bot.getManagers().getBasesManager().getBases().size();
+    int enemyBases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getEnemyDepots().size();
+    if (ourBases > enemyBases && enemyBases != 0) {
+        coef = 2;
+    }
+    return BuildOrderItem(item_ptr->type, item_ptr->priority / coef, item_ptr->blocking);
 }

@@ -14,7 +14,6 @@ void CollectVespeneOrder::onStart() {
     }
 #endif
     m_unassignedWorkers.insert(m_unassignedWorkers.end(), m_squad->units().begin(), m_squad->units().end());
-    assignWorkers();
 }
 
 void CollectVespeneOrder::onStep() {
@@ -76,17 +75,6 @@ void CollectVespeneOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void CollectVespeneOrder::assignWorkers() {
-    if (!m_unassignedWorkers.empty()) {
-        auto &&logLine = LOG_DEBUG << "About to assign workers to vespene: ";
-        for (auto &worker : m_unassignedWorkers) {
-            if (!worker->isValid()) {
-                logLine << "null ";
-            } else {
-                logLine << worker->getID() << " ";
-            }
-        }
-        logLine << BOT_ENDL;
-    }
     const auto& assimilators = m_base->getActiveAssimilators();
     for (auto workerIt = m_unassignedWorkers.begin(); workerIt != m_unassignedWorkers.end();) {
         auto bestIt = std::min_element(m_assimilatorToWorker.begin(), m_assimilatorToWorker.end(),
@@ -101,6 +89,7 @@ void CollectVespeneOrder::assignWorkers() {
             }
         );
         if (assimilatorIt != assimilators.end()) {
+            LOG_DEBUG << "Worker " << (*workerIt)->getID() << " was assigned on geyser " << (*assimilatorIt).second->getID() << BOT_ENDL;
             bestIt->second.emplace_back(*workerIt);
             (*workerIt)->rightClick(*(*assimilatorIt).first);
             workerIt = m_unassignedWorkers.erase(workerIt);

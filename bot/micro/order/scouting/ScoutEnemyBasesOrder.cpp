@@ -15,25 +15,20 @@ ScoutEnemyBasesOrder::ScoutEnemyBasesOrder(CCBot &bot, Squad *squad, const std::
 void ScoutEnemyBasesOrder::onStart() {
     if (m_nextBaseIt == m_baseLocationsToScout.end()) {
         onEnd();
-    } else {
-        if (m_scout.has_value()) {
-            m_scout.value()->move((*m_nextBaseIt)->getPosition());
-        }
     }
 }
 
 void ScoutEnemyBasesOrder::onStep() {
     if (m_scout.has_value()) {
         const auto& scout = m_scout.value();
-        m_scout.value()->move((*m_nextBaseIt)->getPosition());
         if (Util::Dist(scout, (*m_nextBaseIt)->getPosition()) <= 1) {
             scoutAround(); // we are on base
             if (++m_nextBaseIt == m_baseLocationsToScout.end()) {
                 onEnd();
                 return;
             }
-            scout->move((*m_nextBaseIt)->getPosition());
         }
+        m_scout.value()->move((*m_nextBaseIt)->getPosition());
     }
 }
 

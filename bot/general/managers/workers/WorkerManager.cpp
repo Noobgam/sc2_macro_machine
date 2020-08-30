@@ -1,4 +1,5 @@
 #include <util/LogInfo.h>
+#include <util/Util.h>
 #include "WorkerManager.h"
 #include "../../CCBot.h"
 #include "../../../micro/order/Orders.h"
@@ -26,8 +27,13 @@ void WorkerManager::onFrame() {
 bool WorkerManager::build(UnitType type, CCPosition position) {
     auto freeWorkers = getFreeWorkers();
     if (!freeWorkers.empty()) {
-        const auto & worker = *freeWorkers.begin();
-        const BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
+        const Unit* worker = nullptr;
+        for (auto w : freeWorkers) {
+            if (worker == nullptr || (Util::Dist(w, position) < Util::Dist(worker, position))) {
+                worker = w;
+            }
+        }
+        BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(type, worker, position);
         Squad* squad = formSquad({worker});
         const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
         squad->setOrder(buildOrder);

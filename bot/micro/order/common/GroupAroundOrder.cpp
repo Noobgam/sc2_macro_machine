@@ -41,5 +41,5 @@ void GroupAroundOrder::draw() const {
     }
 }
 float GroupAroundOrder::getCircleRadius() const {
-    return sqrt(m_squad->units().size() / 2.28);
+    return sqrt(m_squad->units().size() / 3.14) * 1.9;
 }
