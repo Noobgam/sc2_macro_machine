@@ -1,5 +1,6 @@
 #include "BuildingManager.h"
 #include "../../../util/LogInfo.h"
+#include <general/CCBot.h>
 
 BuildingManager::BuildingManager(CCBot &bot) : m_bot(bot) { }
 
@@ -22,7 +23,7 @@ void BuildingManager::onFrame() {
 
 BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, CCPosition position) {
     BuildingTaskID id = currentBuildingTaskID++;
-    auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(id, type, unit, position)});
+    auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(m_bot, id, type, unit, position)});
     BuildingTask* ptr = iter.first->second.get();
     m_tasksPtr.emplace_back(ptr);
     LOG_DEBUG << "New task added: " << ptr->getId() << " " << ptr->getType().getName() << BOT_ENDL;
@@ -42,7 +43,7 @@ void BuildingManager::newUnitCallback(const Unit *unit) {
     }
     for (auto task : m_tasksPtr) {
         if (
-            task->getStatus() == BuildingStatus::SCHEDULED &&
+            task->getStatus() == BuildingStatus::ORDERED &&
             task->getType() == unit->getType() &&
             task->getPosition() == unit->getPosition()
         ) {
@@ -68,11 +69,28 @@ void BuildingManager::unitDisappearedCallback(const Unit *unit) {
             task->buildingDied();
         }
         if (
-                task->getStatus() == BuildingStatus::SCHEDULED &&
+                (task->getStatus() == BuildingStatus::NEW || task->getStatus() == BuildingStatus::SCHEDULED || task->getStatus() == BuildingStatus::ORDERED) &&
                 task->getWorker().value()->getID() == unit->getID()
         ) {
             LOG_DEBUG << "[BUILDING_MANAGER] Task canceled (worker died): " << task->getId() << " " << task->getType().getName() << BOT_ENDL;
             task->workerDied();
+        }
+    }
+}
+
+void BuildingManager::handleError(const SC2APIProtocol::ActionError& actionError) {
+    auto tag = actionError.unit_tag();
+    auto abilityId = actionError.ability_id();
+    for (auto task : m_tasksPtr) {
+        BuildingStatus status = task->getStatus();
+        if (status != BuildingStatus::NEW && status != BuildingStatus::SCHEDULED && status != BuildingStatus::ORDERED) {
+            continue;
+        }
+        auto workerTag = task->getWorker().value()->getID();
+        auto buildAbility = m_bot.Data(task->getType()).buildAbility;
+        if (workerTag == tag && abilityId == buildAbility) {
+            task->placementFailure();
+            m_bot.Commander().getMacroManager().getBuildingPlacer().freeTiles(task->getType(), task->getPosition());
         }
     }
 }

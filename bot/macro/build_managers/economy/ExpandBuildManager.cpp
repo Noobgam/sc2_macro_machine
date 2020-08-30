@@ -7,7 +7,7 @@ std::optional<BuildOrderItem> ExpandBuildManager::getTopPriority() {
     const auto& economyManager = m_bot.getManagers().getEconomyManager();
     auto probeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
     auto nexusType = UnitType(sc2::UNIT_TYPEID::PROTOSS_NEXUS, m_bot);
-    int bases = m_bot.getManagers().getBasesManager().getBases().size();
+    int bases = m_bot.UnitInfo().getBuildingCount(Players::Self, nexusType, UnitStatus::TOTAL);
     if (bases >= m_bot.Bases().getBaseLocations().size() / 2) {
         return {};
     }

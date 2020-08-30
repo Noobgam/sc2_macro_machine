@@ -1,3 +1,4 @@
+#include <random>
 #include "../../general/model/Common.h"
 #include "../../general/CCBot.h"
 #include "../../util/Util.h"
@@ -109,6 +110,8 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
     BOT_ASSERT(!myBases.empty(), "No bases found, no idea where to build");
     if (b.isSupplyProvider()) {
         auto closeToBases = getUnreservedTilesCloseToBases(300);
+        // shuffle to avoid building at the same spot every time
+        std::shuffle(closeToBases.begin(), closeToBases.end(), std::random_device());
         // pylons are built in corners of tiles.
         for (auto& pos : closeToBases) {
             if (canBuildHereWithoutCoveringNexus(pos.x, pos.y, b)) {
@@ -138,7 +141,8 @@ std::optional<CCPosition> BuildingPlacer::getBuildLocation(const UnitType & b) c
         return bestPosO;
     } else {
 
-        auto closeToBases = getUnreservedTilesCloseToBases(300);
+        auto closeToBases = getPoweredTilesCloseToBases();
+        // shuffle to avoid building at the same spot every time
 
         bool isRound = Util::isRound(b.getFootPrintRadius());
         for (auto& pos : closeToBases) {
@@ -356,5 +360,30 @@ void BuildingPlacer::unitDisappearedCallback(const Unit *unit) {
                 unit->getPosition()
         );
     }
+}
+
+std::vector<CCTilePosition> BuildingPlacer::getPoweredTilesCloseToBases() const {
+    auto &myBases = m_bot.getManagers().getBasesManager().getBases();
+    std::vector<std::pair<int, CCTilePosition>> distAndTiles;
+    for (auto& tile : m_bot.Map().getPoweredTiles()) {
+        int dist = std::numeric_limits<int>::max();
+        for (auto x : myBases) {
+            int distHere = x->getBaseLocation()->getGroundDistance(tile);
+            if (distHere == -1) continue;
+            dist = std::min(dist, distHere);
+        }
+        if (dist == std::numeric_limits<int>::max()) {
+            continue;
+        }
+        distAndTiles.emplace_back(dist, tile);
+    }
+    std::sort(distAndTiles.begin(), distAndTiles.end(), [](auto& lhs, auto& rhs) {
+        return lhs.first < rhs.first;
+    });
+    std::vector<CCTilePosition> sortedTiles;
+    for (int i = 0; i < distAndTiles.size(); ++i) {
+        sortedTiles.push_back(distAndTiles[i].second);
+    }
+    return sortedTiles;
 }
 

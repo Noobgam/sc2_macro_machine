@@ -9,12 +9,14 @@ typedef unsigned long long BuildingTaskID;
 enum class BuildingStatus {
     NEW = 0,
     SCHEDULED = 1,
-    IN_PROGRESS = 2,
-    FAILED = 3,
-    COMPLETED = 4
+    ORDERED = 2,
+    IN_PROGRESS = 3,
+    FAILED = 4,
+    COMPLETED = 5
 };
 
 class BuildingTask {
+    CCBot& m_bot;
     BuildingTaskID m_id;
     UnitType m_type;
     std::optional<const Unit*> m_worker;
@@ -22,7 +24,7 @@ class BuildingTask {
     BuildingStatus m_status;
     std::optional<const Unit*> m_building;
 public:
-    BuildingTask(BuildingTaskID id, UnitType type, const Unit* builder, CCPosition position);
+    BuildingTask(CCBot& bot, BuildingTaskID id, UnitType type, const Unit* builder, CCPosition position);
 
     BuildingTaskID getId() const;
     UnitType getType() const;
@@ -32,8 +34,10 @@ public:
     BuildingStatus getStatus() const;
 
     void scheduled();
+    void ordered();
     void completed();
     void buildingPlaced(const Unit* building);
     void workerDied();
     void buildingDied();
+    void placementFailure();
 };

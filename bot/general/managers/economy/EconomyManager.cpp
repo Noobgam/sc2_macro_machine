@@ -39,3 +39,32 @@ int EconomyManager::getVespeneWorkersPositions() const {
     }
     return geyserWorkersPositions;
 }
+
+void EconomyManager::reserveResource(ResourceType type, int amount) {
+    switch (type) {
+        case ResourceType::MINERAL:
+            m_reservedMinerals += amount;
+        case ResourceType::VESPENE:
+            m_reservedVespene += amount;
+    }
+}
+
+void EconomyManager::freeResource(ResourceType type, int amount) {
+    switch (type) {
+        case ResourceType::MINERAL:
+            m_reservedMinerals -= amount;
+        case ResourceType::VESPENE:
+            m_reservedVespene -= amount;
+    }
+}
+
+float EconomyManager::getAvailableResources(ResourceType type, float seconds) const {
+    switch (type) {
+        case ResourceType::MINERAL:
+            return m_bot.GetMinerals() - m_reservedMinerals + seconds * getMineralIncome();
+        case ResourceType::VESPENE:
+            return m_bot.GetGas() - m_reservedVespene + seconds * getVespeneIncome();
+    }
+    BOT_ASSERT(false, "Unknown resource type");
+    return 0;
+}

@@ -24,6 +24,9 @@ class MapTools
     std::vector<std::vector<int>>   m_sectorNumber;
     std::vector<int>                m_sectorNumberCnt;         // number of tiles in a sector
 
+    // powered tiles and their close relatives for building placements (powered grid knots power rounded tile)
+    std::vector<CCTilePosition>     m_poweredTiles;
+
     int getSectorNumber(int x, int y) const;
         
     void printMap();
@@ -91,7 +94,7 @@ public:
     bool    isBuildable(const CCTilePosition & tile) const;
 
     // takes into account the fact whether the unit is flying
-    float   getWalkTime(const Unit& unit, CCPosition pos) const;
+    float   getWalkTime(const Unit* unit, CCPosition pos) const;
 
     // returns
     // @first  number of new spots that would be powered
@@ -100,6 +103,7 @@ public:
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<CCTilePosition> & getClosestTilesTo(const CCTilePosition & pos) const;
+    const std::vector<CCTilePosition> & getPoweredTiles() const;
 
 
     void updateNeutralMap();

@@ -49,6 +49,7 @@ void CCBot::OnGameEnd() {
 }
 
 void CCBot::OnStep() {
+    handleErrors();
     logging::propagateFrame(GetCurrentFrame());
     ++observationId;
 #ifdef _STATIC_MAP_CALCULATOR
@@ -220,4 +221,9 @@ UnitCommandManager &CCBot::getUnitCommandManager() {
 }
 MapTools &CCBot::getMutableMap() {
     return m_map;
+}
+void CCBot::handleErrors() {
+    for (auto&& err : Observation()->GetResponseObservation()->action_errors()) {
+        getManagers().getBuildingManager().handleError(err);
+    }
 }

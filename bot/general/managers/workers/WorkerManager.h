@@ -13,14 +13,10 @@ class WorkerManager {
     CCBot & m_bot;
     std::vector<Squad*> m_additionalSquads = {};
 
-    std::vector<const Unit*> getFreeWorkers();
-
     void assignFreeUnits();
     void assignUnit(const Unit * unit);
 
     void fixResourceLines(ResourceType type);
-
-    Squad *formSquad(const std::set<const Unit *> &workers);
 
     void draw();
 public:
@@ -28,9 +24,9 @@ public:
 
     void onFrame();
 
-    // Gives a new build task to a worker. Returns true if
-    bool build(UnitType type, CCPosition position);
+    std::vector<const Unit*> getFreeWorkers();
 
     // Forms new worker squad for the task. Do not forget to call onEnd for the order.
     std::optional<Squad*> formSquad(int targetSquadSize);
+    Squad *formSquad(const std::set<const Unit *> &workers);
 };

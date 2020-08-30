@@ -179,6 +179,7 @@ public:
     const std::vector<PlayerResult>& GetResults() const final { return player_results_; }
 
     const SC2APIProtocol::Observation* GetRawObservation() const final;
+    const SC2APIProtocol::ResponseObservation* GetResponseObservation() const final { return response_.get(); };
 
     bool UpdateObservation();
 };

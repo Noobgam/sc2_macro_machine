@@ -1,4 +1,5 @@
 #include <util/Util.h>
+#include <micro/order/workers/BuildingOrder.h>
 #include "MacroManager.h"
 #include "../general/CCBot.h"
 #include "build_managers/SupplyBuildManager.h"
@@ -67,6 +68,10 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority() {
 }
 
 void MacroManager::produceIfPossible(BuildOrderItem item) {
+    if (item.type.isBuilding()) {
+        produceBuilding(item.type.getUnitType());
+        return;
+    }
     std::optional<const Unit*> producer = getProducer(item.type);
     if (producer.has_value() && canMakeNow(producer.value(), item.type)) {
         produce(producer.value(), item);
@@ -93,26 +98,9 @@ std::optional<const Unit*> MacroManager::getProducer(const MetaType& type) {
 
 // this function will check to see if all preconditions are met and then create a unit
 void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
-    // if we're dealing with a building
-    const UnitType &buildingType = item.type.getUnitType();
-    if (item.type.isBuilding()) {
-        Timer timer;
-        timer.start();
-        std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(buildingType);
-        if (!positionOpt.has_value()) {
-            LOG_DEBUG << "Build place search failed. Took` " << timer.getElapsedTimeInMilliSec() << "ms" << BOT_ENDL;
-            return;
-        }
-        LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << BOT_ENDL;
-        CCPosition position = positionOpt.value();
-        m_buildingPlacer.reserveTiles(buildingType, position);
-        if (!m_bot.getManagers().getWorkerManager().build(buildingType, position)) {
-            m_buildingPlacer.freeTiles(buildingType, position);
-        }
-    }
+    BOT_ASSERT(!item.type.isBuilding(), "Building must be processed earlier");
     // if we're dealing with a non-building unit
-    else if (item.type.isUnit())
-    {
+    if (item.type.isUnit()) {
         if (producer->needsRallyPoint()) {
             if (producer->isOfType(sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
                 Base* base = m_bot.getManagers().getBasesManager().findBaseByNexus(producer);
@@ -146,7 +134,7 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
                 }
             }
         }
-        producer->train(buildingType);
+        producer->train(item.type.getUnitType());
     }
     else if (item.type.isUpgrade())
     {
@@ -155,8 +143,7 @@ void MacroManager::produce(const Unit* producer, BuildOrderItem item) {
     }
 }
 
-bool MacroManager::canMakeNow(const Unit* producer, const MetaType & type)
-{
+bool MacroManager::canMakeNow(const Unit* producer, const MetaType & type) {
     if (!meetsReservedResources(type)) {
         return false;
     }
@@ -194,14 +181,12 @@ int MacroManager::getFreeGas()
     return m_bot.GetGas();
 }
 
-// return whether or not we meet resources, including building reserves
-bool MacroManager::meetsReservedResources(const MetaType & type)
-{
-    // return whether or not we meet the resources
-    int minerals = m_bot.Data(type).mineralCost;
-    int gas = m_bot.Data(type).gasCost;
-
-    return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
+bool MacroManager::meetsReservedResources(const MetaType & type) {
+    int mineralCost = m_bot.Data(type).mineralCost;
+    int vespeneCost = m_bot.Data(type).gasCost;
+    auto& economyManager = m_bot.getManagers().getEconomyManager();
+    return mineralCost <= economyManager.getAvailableResources(ResourceType::MINERAL) &&
+            vespeneCost <= economyManager.getAvailableResources(ResourceType::VESPENE);
 }
 
 void MacroManager::drawProductionInformation() {
@@ -212,4 +197,45 @@ void MacroManager::drawProductionInformation() {
 
 BuildingPlacer &MacroManager::getBuildingPlacer() {
     return m_buildingPlacer;
+}
+
+void MacroManager::produceBuilding(const UnitType& buildingType) {
+    // find build position
+    Timer timer;
+    timer.start();
+    std::optional<CCPosition> positionOpt = m_buildingPlacer.getBuildLocation(buildingType);
+    if (!positionOpt.has_value()) {
+        LOG_DEBUG << "Build place search failed. Took` " << timer.getElapsedTimeInMilliSec() << "ms" << BOT_ENDL;
+        return;
+    }
+    LOG_DEBUG << "Build place search took " << timer.getElapsedTimeInMilliSec() << "ms" << BOT_ENDL;
+    CCPosition position = positionOpt.value();
+
+    // find builder
+    auto freeWorkers = m_bot.getManagers().getWorkerManager().getFreeWorkers();
+    if (freeWorkers.empty()) {
+        LOG_DEBUG << "[SURRENDER_REQUEST] No workers found."<< BOT_ENDL;
+        return;
+    }
+    const Unit *worker = nullptr;
+    for (auto w : freeWorkers) {
+        if (worker == nullptr || (Util::Dist(w, position) < Util::Dist(worker, position))) {
+            worker = w;
+        }
+    }
+
+    // estimate resources
+    int mineralCost = m_bot.Data(buildingType).mineralCost;
+    int vespeneCost = m_bot.Data(buildingType).gasCost;
+    float seconds = m_bot.Map().getWalkTime(worker, position);
+    if (
+        m_bot.getManagers().getEconomyManager().getAvailableResources(ResourceType::MINERAL, seconds) >= mineralCost &&
+        m_bot.getManagers().getEconomyManager().getAvailableResources(ResourceType::VESPENE, seconds) >= vespeneCost
+    ) {
+        m_buildingPlacer.reserveTiles(buildingType, position);
+        BuildingTask* task = m_bot.getManagers().getBuildingManager().newTask(buildingType, worker, position);
+        Squad* squad = m_bot.getManagers().getWorkerManager().formSquad({worker});
+        const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
+        squad->setOrder(buildOrder);
+    }
 }
