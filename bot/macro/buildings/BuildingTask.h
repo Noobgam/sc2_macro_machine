@@ -15,6 +15,8 @@ enum class BuildingStatus {
     COMPLETED = 5
 };
 
+std::ostream& operator <<(std::ostream& stream, BuildingStatus status);
+
 class BuildingTask {
     CCBot& m_bot;
     BuildingTaskID m_id;
