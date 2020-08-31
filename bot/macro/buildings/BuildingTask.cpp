@@ -85,3 +85,20 @@ void BuildingTask::placementFailure() {
     m_status = BuildingStatus::FAILED;
 }
 
+std::ostream& operator <<(std::ostream& stream, BuildingStatus status) {
+    switch (status) {
+        case BuildingStatus::NEW:
+            return stream << "NEW";
+        case BuildingStatus::SCHEDULED:
+            return stream << "SCHEDULED";
+        case BuildingStatus::ORDERED:
+            return stream << "ORDERED";
+        case BuildingStatus::IN_PROGRESS:
+            return stream << "IN_PROGRESS";
+        case BuildingStatus::COMPLETED:
+            return stream << "COMPLETED";
+        default:
+            return stream << "NONE";
+    }
+}
+

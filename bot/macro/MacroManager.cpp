@@ -64,6 +64,12 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority() {
     if (item_ptr == items.end()) {
         return {};
     }
+    ss << '\n';
+    ss << "Tasks in Queue:\n\n:";
+    for (auto taskPtr : m_bot.getManagers().getBuildingManager().getTasks()) {
+        ss << taskPtr->getType().getName() << " " << taskPtr->getStatus();
+    }
+
     return *item_ptr;
 }
 
