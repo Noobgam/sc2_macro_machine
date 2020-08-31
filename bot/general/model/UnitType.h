@@ -46,6 +46,7 @@ public:
     int mineralPrice() const;
     int gasPrice() const;
     float movementSpeed() const;
+    sc2::UnitTypeData getUnitTypeData(bool refresh) const;
 
     const std::vector<UnitType> & whatBuilds() const;
 

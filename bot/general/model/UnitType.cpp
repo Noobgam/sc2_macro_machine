@@ -380,3 +380,7 @@ float UnitType::visionRange() const {
 float UnitType::movementSpeed() const {
     return m_bot->Observation()->GetUnitTypeData()[m_type].movement_speed;
 }
+
+sc2::UnitTypeData UnitType::getUnitTypeData(bool refresh) const {
+    return m_bot->Observation()->GetUnitTypeData(refresh)[m_type];
+}

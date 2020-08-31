@@ -2,6 +2,7 @@
 
 #include "../model/Common.h"
 #include "../model/Unit.h"
+#include <general/influence/ThreatEstimatingInfluenceMap.h>
 
 class CCBot;
 
@@ -22,6 +23,7 @@ class UnitInfoManager {
 
     std::unordered_map<sc2::Tag, std::unique_ptr<Unit>> unitWrapperByTag;
     std::map<CCPlayer, std::vector<const Unit*>> m_units;
+    ThreatEstimatingInfluenceMap globalInfluenceMap;
 
     void                    updateUnits();
 
