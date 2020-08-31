@@ -46,6 +46,8 @@ public:
     int mineralPrice() const;
     int gasPrice() const;
     float movementSpeed() const;
+    bool canAttackGround() const;
+    bool canAttackAir() const;
 
     const std::vector<UnitType> & whatBuilds() const;
 

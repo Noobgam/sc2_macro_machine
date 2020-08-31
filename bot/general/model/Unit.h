@@ -44,7 +44,7 @@ public:
     float shieldPercentage() const;
     bool isCompleted() const;
     bool isBeingConstructed() const;
-    bool isCloaked() const;
+    sc2::Unit::CloakState getCloakState() const;
     bool isFlying() const;
     bool isAlive() const;
     bool isPowered() const;
@@ -56,6 +56,9 @@ public:
     bool isOfType(const sc2::UNIT_TYPEID& type) const;
     bool needsRallyPoint() const;
     bool carriesResources() const;
+    // returns whether unit can attack target
+    // does not take range into account
+    bool canAttack(const Unit* target) const;
 
     void stop           () const;
     void attackUnit     (const Unit & target) const;

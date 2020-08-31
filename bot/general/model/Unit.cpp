@@ -96,7 +96,7 @@ float Unit::getWeaponCooldown() const {
     return m_unit->weapon_cooldown;
 }
 
-bool Unit::isCloaked() const {
+sc2::Unit::CloakState Unit::getCloakState() const {
     return m_unit->cloak;
 }
 
@@ -211,4 +211,20 @@ bool Unit::carriesResources() const {
         }
     }
     return false;
+}
+
+bool Unit::canAttack(const Unit * target) const {
+    // cant attack flying / ground units if no such weapons are present
+    if (target->isFlying() && !getType().canAttackAir()) {
+        return false;
+    }
+    if (!target->isFlying() && !getType().canAttackGround()) {
+        return false;
+    }
+
+    // if cloaked and not detected, unit cannot directly attack enemy
+    if (target->getCloakState() == sc2::Unit::CloakState::Cloaked) {
+        return false;
+    }
+    return true;
 }
