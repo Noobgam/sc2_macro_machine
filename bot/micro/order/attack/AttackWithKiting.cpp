@@ -69,7 +69,7 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
             range + 4,
             m_bot
         );
-        if (!targetO.has_value()) {
+        if (!targetO.has_value() || !unit->canAttack(targetO.value())) {
             unit->attackMove(m_target_position);
             if (Util::Dist(m_target_position, unit->getPosition()) < 2) {
                 onEnd();

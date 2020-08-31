@@ -380,3 +380,23 @@ float UnitType::visionRange() const {
 float UnitType::movementSpeed() const {
     return m_bot->Observation()->GetUnitTypeData()[m_type].movement_speed;
 }
+
+bool UnitType::canAttackGround() const {
+    auto&& weapons = m_bot->Observation()->GetUnitTypeData()[m_type].weapons;
+    for (auto&& weapon : weapons) {
+        if (weapon.type == sc2::Weapon::TargetType::Ground || weapon.type == sc2::Weapon::TargetType::Any) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool UnitType::canAttackAir() const {
+    auto&& weapons = m_bot->Observation()->GetUnitTypeData()[m_type].weapons;
+    for (auto&& weapon : weapons) {
+        if (weapon.type == sc2::Weapon::TargetType::Air || weapon.type == sc2::Weapon::TargetType::Any) {
+            return true;
+        }
+    }
+    return false;
+}
