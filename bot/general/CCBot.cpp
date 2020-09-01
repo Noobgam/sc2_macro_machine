@@ -224,6 +224,7 @@ MapTools &CCBot::getMutableMap() {
 }
 void CCBot::handleErrors() {
     for (auto&& err : Observation()->GetResponseObservation()->action_errors()) {
+        LOG_DEBUG << "Ingame error " << err.unit_tag() << " casted " << err.ability_id() << " : " << err.result() << BOT_ENDL;
         getManagers().getBuildingManager().handleError(err);
     }
 }
