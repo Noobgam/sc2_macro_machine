@@ -19,6 +19,7 @@ void BuildingManager::onFrame() {
             it++;
         }
     }
+    draw();
 }
 
 BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, CCPosition position) {
@@ -96,4 +97,19 @@ void BuildingManager::handleError(const SC2APIProtocol::ActionError& actionError
             m_bot.Commander().getMacroManager().getBuildingPlacer().freeTiles(task->getType(), task->getPosition());
         }
     }
+}
+
+void BuildingManager::draw() {
+#ifdef _DEBUG
+    std::stringstream ss;
+    ss << "Building manager: " << "\n";
+    for (const auto& task : m_tasksPtr) {
+        ss << task->getId() << ": " << task->getStatus() << " " << task->getType().getName();
+        if (task->getWorker().has_value()) {
+            ss << " Worker: " << task->getWorker().value()->getID();
+        }
+        ss << "\n";
+    }
+    m_bot.Map().drawTextScreen(0.01f, 0.3f, ss.str(), CCColor(255, 255, 0));
+#endif
 }

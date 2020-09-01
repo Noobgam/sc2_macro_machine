@@ -7,10 +7,17 @@ class EconomyManager {
 private:
     CCBot & m_bot;
 
+    int m_minerals = 0;
+    int m_vespene = 0;
     int m_reservedMinerals = 0;
     int m_reservedVespene = 0;
 public:
     explicit EconomyManager(CCBot & bot);
+
+    void onFrame();
+
+    int getResource(ResourceType type) const;
+    void useResource(ResourceType type, int amount);
 
     double getMineralIncome() const;
     double getVespeneIncome() const;

@@ -175,16 +175,6 @@ int CCBot::GetMaxSupply() const
     return Observation()->GetFoodCap();
 }
 
-int CCBot::GetMinerals() const
-{
-    return Observation()->GetMinerals();
-}
-
-int CCBot::GetGas() const
-{
-    return Observation()->GetVespene();
-}
-
 //const std::vector<const sc2::Unit*>& CCBot::GetUnits() const {
 //    return Observation()->GetUnits();
 //}

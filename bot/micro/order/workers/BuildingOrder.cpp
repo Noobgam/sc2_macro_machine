@@ -19,7 +19,11 @@ void BuildingOrder::onStep() {
         auto &worker = *m_squad->units().begin();
         auto position = m_task->getPosition();
         const auto& type = m_task->getType();
-        if (m_bot.Data(type).mineralCost <= m_bot.GetMinerals() && m_bot.Data(type).gasCost <= m_bot.GetGas()) {
+        const auto& economyManager = m_bot.getManagers().getEconomyManager();
+        if (
+            m_bot.Data(type).mineralCost <= economyManager.getResource(ResourceType::MINERAL) &&
+            m_bot.Data(type).gasCost <= economyManager.getResource(ResourceType::VESPENE)
+        ) {
             if (m_task->getType().isRefinery()) {
                 // first we find the geyser at the desired location
                 auto &units = m_bot.UnitInfo().getUnits(Players::Neutral);

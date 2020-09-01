@@ -65,8 +65,7 @@ public:
     MapTools & getMutableMap();
 
     int GetCurrentFrame() const;
-    int GetMinerals() const;
+
     int GetCurrentSupply() const;
     int GetMaxSupply() const;
-    int GetGas() const;
 };

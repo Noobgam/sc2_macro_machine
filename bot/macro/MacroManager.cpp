@@ -177,16 +177,6 @@ bool MacroManager::canMakeNow(const Unit* producer, const MetaType & type) {
     return false;
 }
 
-int MacroManager::getFreeMinerals()
-{
-    return m_bot.GetMinerals();
-}
-
-int MacroManager::getFreeGas()
-{
-    return m_bot.GetGas();
-}
-
 bool MacroManager::meetsReservedResources(const MetaType & type) {
     int mineralCost = m_bot.Data(type).mineralCost;
     int vespeneCost = m_bot.Data(type).gasCost;
