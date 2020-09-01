@@ -24,6 +24,9 @@ void BuildingManager::onFrame() {
 BuildingTask *BuildingManager::newTask(const UnitType &type, const Unit *unit, CCPosition position) {
     BuildingTaskID id = currentBuildingTaskID++;
     auto iter = m_tasks.insert({id, std::make_unique<BuildingTask>(m_bot, id, type, unit, position)});
+    m_bot.getManagers().getEconomyManager().reserveResource(ResourceType::MINERAL, m_bot.Data(type).mineralCost);
+    m_bot.getManagers().getEconomyManager().reserveResource(ResourceType::VESPENE, m_bot.Data(type).gasCost);
+
     BuildingTask* ptr = iter.first->second.get();
     m_tasksPtr.emplace_back(ptr);
     LOG_DEBUG << "New task added: " << ptr->getId() << " " << ptr->getType().getName() << BOT_ENDL;

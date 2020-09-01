@@ -10,10 +10,7 @@ BuildingTask::BuildingTask(CCBot& bot, BuildingTaskID id, UnitType type, const U
         m_worker(builder),
         m_position(position),
         m_status(BuildingStatus::NEW),
-        m_building() {
-    m_bot.getManagers().getEconomyManager().reserveResource(ResourceType::MINERAL, m_bot.Data(type).mineralCost);
-    m_bot.getManagers().getEconomyManager().reserveResource(ResourceType::VESPENE, m_bot.Data(type).gasCost);
-}
+        m_building() { }
 
 BuildingTaskID BuildingTask::getId() const {
     return m_id;
