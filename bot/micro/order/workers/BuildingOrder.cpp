@@ -15,6 +15,7 @@ void BuildingOrder::onStep() {
         LOG_DEBUG << worker->getUnitPtr()->tag << " is moving to building position." << BOT_ENDL;
         LOG_DEBUG << "Will take " << m_bot.Map().getWalkTime(worker, m_task->getPosition()) << " to move." << BOT_ENDL;
         m_task->scheduled();
+        return;
     }
     if (m_task->getStatus() == BuildingStatus::SCHEDULED) {
         auto &worker = *m_squad->units().begin();
