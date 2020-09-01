@@ -90,6 +90,7 @@ void Managers::onStart() {
 }
 
 void Managers::onFrame() {
+    m_economyManager.onFrame();
     m_workerManager.onFrame();
     m_squadManager.onFrame();
     m_buildingManager.onFrame();

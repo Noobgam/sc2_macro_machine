@@ -166,18 +166,26 @@ void Unit::repair(const Unit & target) const {
 
 void Unit::build(const UnitType & buildingType, CCPosition pos) const {
     //BOT_ASSERT(m_bot->Map().isConnected(getTilePosition(), pos), "Error: Build Position is not connected to worker");
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::MINERAL, m_bot->Data(buildingType).mineralCost);
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::VESPENE, m_bot->Data(buildingType).gasCost);
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, pos);
 }
 
 void Unit::buildTarget(const UnitType & buildingType, const Unit & target) const {
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::MINERAL, m_bot->Data(buildingType).mineralCost);
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::VESPENE, m_bot->Data(buildingType).gasCost);
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(buildingType).buildAbility, target.getUnitPtr());
 }
 
 void Unit::train(const UnitType & type) const {
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::MINERAL, m_bot->Data(type).mineralCost);
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::VESPENE, m_bot->Data(type).gasCost);
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(type).buildAbility);
 }
 
 void Unit::morph(const UnitType & type) const {
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::MINERAL, m_bot->Data(type).mineralCost);
+    m_bot->getManagers().getEconomyManager().useResource(ResourceType::VESPENE, m_bot->Data(type).gasCost);
     m_bot->getUnitCommandManager().UnitCommand(m_unit, m_bot->Data(type).buildAbility);
 }
 

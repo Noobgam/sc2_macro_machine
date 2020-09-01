@@ -175,16 +175,6 @@ int CCBot::GetMaxSupply() const
     return Observation()->GetFoodCap();
 }
 
-int CCBot::GetMinerals() const
-{
-    return Observation()->GetMinerals();
-}
-
-int CCBot::GetGas() const
-{
-    return Observation()->GetVespene();
-}
-
 //const std::vector<const sc2::Unit*>& CCBot::GetUnits() const {
 //    return Observation()->GetUnits();
 //}
@@ -224,6 +214,7 @@ MapTools &CCBot::getMutableMap() {
 }
 void CCBot::handleErrors() {
     for (auto&& err : Observation()->GetResponseObservation()->action_errors()) {
+        LOG_DEBUG << "Ingame error " << err.unit_tag() << " casted " << err.ability_id() << " : " << err.result() << BOT_ENDL;
         getManagers().getBuildingManager().handleError(err);
     }
 }

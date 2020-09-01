@@ -10,10 +10,7 @@ BuildingTask::BuildingTask(CCBot& bot, BuildingTaskID id, UnitType type, const U
         m_worker(builder),
         m_position(position),
         m_status(BuildingStatus::NEW),
-        m_building() {
-    m_bot.getManagers().getEconomyManager().reserveResource(ResourceType::MINERAL, m_bot.Data(type).mineralCost);
-    m_bot.getManagers().getEconomyManager().reserveResource(ResourceType::VESPENE, m_bot.Data(type).gasCost);
-}
+        m_building() { }
 
 BuildingTaskID BuildingTask::getId() const {
     return m_id;
@@ -83,5 +80,22 @@ void BuildingTask::buildingDied() {
 void BuildingTask::placementFailure() {
     LOG_DEBUG << "[BUILDING_MANAGER] Placement failed for task " << m_id << BOT_ENDL;
     m_status = BuildingStatus::FAILED;
+}
+
+std::ostream& operator <<(std::ostream& stream, BuildingStatus status) {
+    switch (status) {
+        case BuildingStatus::NEW:
+            return stream << "NEW";
+        case BuildingStatus::SCHEDULED:
+            return stream << "SCHEDULED";
+        case BuildingStatus::ORDERED:
+            return stream << "ORDERED";
+        case BuildingStatus::IN_PROGRESS:
+            return stream << "IN_PROGRESS";
+        case BuildingStatus::COMPLETED:
+            return stream << "COMPLETED";
+        default:
+            return stream << "NONE";
+    }
 }
 

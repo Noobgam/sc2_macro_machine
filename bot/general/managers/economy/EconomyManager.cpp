@@ -4,6 +4,31 @@
 
 EconomyManager::EconomyManager(CCBot &bot) : m_bot(bot) { }
 
+void EconomyManager::onFrame() {
+    m_minerals = m_bot.Observation()->GetMinerals();
+    m_vespene = m_bot.Observation()->GetVespene();
+}
+
+int EconomyManager::getResource(ResourceType type) const {
+    switch (type) {
+        case ResourceType::MINERAL:
+            return m_minerals;
+        case ResourceType::VESPENE:
+            return m_vespene;
+    }
+    BOT_ASSERT(false, "Unknown resource type");
+    return 0;
+}
+
+void EconomyManager::useResource(ResourceType type, int amount) {
+    switch (type) {
+        case ResourceType::MINERAL:
+            m_minerals -= amount;
+        case ResourceType::VESPENE:
+            m_vespene -= amount;
+    }
+}
+
 double EconomyManager::getMineralIncome() const {
     double income = 0;
     for (const auto& base : m_bot.getManagers().getBasesManager().getBases()) {
@@ -61,9 +86,9 @@ void EconomyManager::freeResource(ResourceType type, int amount) {
 float EconomyManager::getAvailableResources(ResourceType type, float seconds) const {
     switch (type) {
         case ResourceType::MINERAL:
-            return m_bot.GetMinerals() - m_reservedMinerals + seconds * getMineralIncome();
+            return m_minerals - m_reservedMinerals + seconds * getMineralIncome();
         case ResourceType::VESPENE:
-            return m_bot.GetGas() - m_reservedVespene + seconds * getVespeneIncome();
+            return m_vespene - m_reservedVespene + seconds * getVespeneIncome();
     }
     BOT_ASSERT(false, "Unknown resource type");
     return 0;

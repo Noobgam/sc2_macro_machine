@@ -25,8 +25,6 @@ class MacroManager
 
     bool    meetsReservedResources(const MetaType & type);
     bool    canMakeNow(const Unit* producer, const MetaType & type);
-    int     getFreeMinerals();
-    int     getFreeGas();
 
     void produceBuilding(const UnitType& buildingType);
 public:

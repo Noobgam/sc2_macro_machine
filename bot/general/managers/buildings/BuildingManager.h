@@ -22,4 +22,6 @@ public:
     void newUnitCallback(const Unit* unit);
     void unitDisappearedCallback(const Unit* unit);
     void handleError(const SC2APIProtocol::ActionError& actionError);
+
+    void draw();
 };

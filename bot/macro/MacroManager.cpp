@@ -58,12 +58,19 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority() {
     for (auto& item : items) {
         ss << item.type.getName() << " : " << item.priority << '\n';
     }
+    ss << '\n';
+    ss << "Tasks in Queue:\n\n";
+    for (auto taskPtr : m_bot.getManagers().getBuildingManager().getTasks()) {
+        ss << taskPtr->getType().getName() << " " << taskPtr->getStatus() << '\n';
+    }
     cachedProductionInformation = std::move(ss.str());
 
     auto item_ptr = std::max_element(items.begin(), items.end());
     if (item_ptr == items.end()) {
         return {};
     }
+
+
     return *item_ptr;
 }
 
@@ -169,16 +176,6 @@ bool MacroManager::canMakeNow(const Unit* producer, const MetaType & type) {
     }
 
     return false;
-}
-
-int MacroManager::getFreeMinerals()
-{
-    return m_bot.GetMinerals();
-}
-
-int MacroManager::getFreeGas()
-{
-    return m_bot.GetGas();
 }
 
 bool MacroManager::meetsReservedResources(const MetaType & type) {

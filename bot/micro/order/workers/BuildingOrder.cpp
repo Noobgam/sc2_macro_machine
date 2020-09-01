@@ -15,12 +15,15 @@ void BuildingOrder::onStep() {
         LOG_DEBUG << worker->getUnitPtr()->tag << " is moving to building position." << BOT_ENDL;
         LOG_DEBUG << "Will take " << m_bot.Map().getWalkTime(worker, m_task->getPosition()) << " to move." << BOT_ENDL;
         m_task->scheduled();
-    }
-    if (m_task->getStatus() == BuildingStatus::SCHEDULED) {
+    } else if (m_task->getStatus() == BuildingStatus::SCHEDULED) {
         auto &worker = *m_squad->units().begin();
         auto position = m_task->getPosition();
         const auto& type = m_task->getType();
-        if (m_bot.Data(type).mineralCost <= m_bot.GetMinerals() && m_bot.Data(type).gasCost <= m_bot.GetGas()) {
+        const auto& economyManager = m_bot.getManagers().getEconomyManager();
+        if (
+            m_bot.Data(type).mineralCost <= economyManager.getResource(ResourceType::MINERAL) &&
+            m_bot.Data(type).gasCost <= economyManager.getResource(ResourceType::VESPENE)
+        ) {
             if (m_task->getType().isRefinery()) {
                 // first we find the geyser at the desired location
                 auto &units = m_bot.UnitInfo().getUnits(Players::Neutral);
