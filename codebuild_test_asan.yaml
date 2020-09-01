@@ -12,20 +12,19 @@ phases:
       - cd /var/lib/noobgam/build
       - ln -s $CODEBUILD_SRC_DIR /var/lib/noobgam/code
       - cmake ../code -DCMAKE_BUILD_TYPE=Debug
-      - VERBOSE=1 cmake --build . --target main_bot_asan -- -j 4
+      - VERBOSE=1 cmake --build . --target test_all -- -j 4
   post_build:
     commands:
       - mkdir /var/lib/noobgam/package/data -p
       - cd    /var/lib/noobgam/package
-      - cp    /var/lib/noobgam/build/bin/main_bot Noobgam2
-      - cp    /var/lib/noobgam/code/ladderbots.json .
+      - cp    /var/lib/noobgam/build/bin/test_all test_all
       - cp    /var/lib/noobgam/code/static-map_metas/ data/static_map_metas -r
-      - zip -r Noobgam2.zip *
+      - zip -r TestArchive.zip *
 artifacts:
   base-directory: /var/lib/noobgam/package
   discard-paths: yes
   files:
-    - /var/lib/noobgam/package/Noobgam2.zip
+    - /var/lib/noobgam/package/TestArchive.zip
 cache:
   paths:
     - .git/**/*
