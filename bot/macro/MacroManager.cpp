@@ -59,9 +59,9 @@ std::optional<BuildOrderItem> MacroManager::getTopPriority() {
         ss << item.type.getName() << " : " << item.priority << '\n';
     }
     ss << '\n';
-    ss << "Tasks in Queue:\n\n:";
+    ss << "Tasks in Queue:\n\n";
     for (auto taskPtr : m_bot.getManagers().getBuildingManager().getTasks()) {
-        ss << taskPtr->getType().getName() << " " << taskPtr->getStatus();
+        ss << taskPtr->getType().getName() << " " << taskPtr->getStatus() << '\n';
     }
     cachedProductionInformation = std::move(ss.str());
 
