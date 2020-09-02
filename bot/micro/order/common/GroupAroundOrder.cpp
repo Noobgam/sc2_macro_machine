@@ -21,7 +21,7 @@ void GroupAroundOrder::onStep() {
         if (attackWhileMoving && unit->getWeaponCooldown() < 0.1) {
             auto targetO = MicroUtil::findUnitWithHighestThreat(
                 unit,
-                m_bot
+                m_bot.UnitInfo().getUnits(Players::Enemy)
             );
             if (targetO.has_value()) {
                 unit->attackUnit(*targetO.value());

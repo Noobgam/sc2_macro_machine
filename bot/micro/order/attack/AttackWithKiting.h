@@ -8,6 +8,7 @@ private:
     CCPosition m_target_position;
     std::set<sc2::Tag> endangered;
     void handleOneUnit(const Unit* unit);
+    void attackMoveToMainTarget(const Unit* unit);
 public:
     AttackWithKiting(CCBot & bot, Squad* squad, CCPosition position);
 

@@ -1,6 +1,8 @@
 #include <util/Util.h>
 #include <general/ThreatAnalyzer.h>
 #include <micro/util/MicroUtil.h>
+#include <micro/order/commands/Commands.h>
+#include <util/LogInfo.h>
 
 #include "AttackWithKiting.h"
 
@@ -20,62 +22,49 @@ void AttackWithKiting::onUnitAdded(const Unit *unit) { }
 
 void AttackWithKiting::handleOneUnit(const Unit *unit) {
     auto&& enemies = m_bot.UnitInfo().getUnits(Players::Enemy);
-    float range = unit->getType().getAttackRange();
     auto it = endangered.find(unit->getID());
-    bool weaponOnCooldown = unit->getWeaponCooldown() > 0.1;
     bool inDanger;
     if (it != endangered.end()) {
-        if (unit->shieldPercentage() > 0.8) {
+        if (unit->shieldPercentage() > 0.5) {
             endangered.erase(it);
             inDanger = false;
         } else {
             inDanger = true;
         }
     } else {
-
-        inDanger = unit->hpPercentage() < 0.2 && unit->getShields() == 0;
+        inDanger = unit->hpPercentage() < 0.4 && unit->getShields() == 0;
         if (inDanger) {
             endangered.insert(unit->getID());
         }
     }
     if (inDanger) {
-        std::vector<std::pair<float, const Unit*>> targets;
-        for (auto enemy : enemies) {
-            float dist = Util::Dist(*enemy, *unit);
-            targets.emplace_back(dist, enemy);
+        if (!Commands::kiteBack(m_bot, unit, enemies)) {
+            attackMoveToMainTarget(unit);
         }
-        std::sort(targets.begin(), targets.end());
-        std::vector<const Unit*> closeTargets;
-        for (auto x : targets) {
-            if (x.first > range + 3) {
-                break;
-            }
-            closeTargets.push_back(x.second);
-        }
-        // if on cooldown - run away from targets who are too close
-        if (closeTargets.empty()) {
-            // if nobody is close enough A-click target
-            unit->attackMove(m_target_position);
-            return;
-        }
-        auto center = Util::CalcCenter(closeTargets);
-        auto vec_to_center = center - unit->getPosition();
-        auto backward_direction = Util::NormalizeVector(vec_to_center * -2);
-        CCPosition walkable = m_bot.Map().findClosestWalkablePosition(unit->getPosition() + backward_direction);
-        unit->move(walkable);
     } else {
-        auto targetO = MicroUtil::findUnitWithHighestThreat(
-            unit,
-            range + 4,
-            m_bot
-        );
-        if (!targetO.has_value() || !unit->canAttack(targetO.value())) {
-            unit->attackMove(m_target_position);
-            if (Util::Dist(m_target_position, unit->getPosition()) < 2) {
-                onEnd();
+        // check for situation here
+        auto targetO = MicroUtil::findUnitWithHighestThreat(unit, enemies);
+        if (targetO.has_value()) {
+            LOG_DEBUG << "PRIO " << targetO.value()->getType().getName() << BOT_ENDL;
+        }
+        if (targetO.has_value() && (targetO.value()->getType().isBuilding() || targetO.value()->getType().isWorker())) {
+            LOG_DEBUG << "BUILDING IS TOP PRIO" << BOT_ENDL;
+            if (!Commands::pushForward(m_bot, unit, enemies, targetO.value()->getPosition())) {
+                attackMoveToMainTarget(unit);
             }
         } else {
-            unit->attackUnit(*targetO.value());
+            LOG_DEBUG << "KITE!" << BOT_ENDL;
+            if (!Commands::kiteBack(m_bot, unit, enemies)) {
+                LOG_DEBUG << "NOTHING!" << BOT_ENDL;
+                attackMoveToMainTarget(unit);
+            }
         }
+    }
+}
+
+void AttackWithKiting::attackMoveToMainTarget(const Unit* unit) {
+    unit->attackMove(m_target_position);
+    if (Util::Dist(m_target_position, unit->getPosition()) < 2) {
+        onEnd();
     }
 }
