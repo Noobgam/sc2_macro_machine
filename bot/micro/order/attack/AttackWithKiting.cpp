@@ -44,18 +44,12 @@ void AttackWithKiting::handleOneUnit(const Unit *unit) {
     } else {
         // check for situation here
         auto targetO = MicroUtil::findUnitWithHighestThreat(unit, enemies);
-        if (targetO.has_value()) {
-            LOG_DEBUG << "PRIO " << targetO.value()->getType().getName() << BOT_ENDL;
-        }
         if (targetO.has_value() && (targetO.value()->getType().isBuilding() || targetO.value()->getType().isWorker())) {
-            LOG_DEBUG << "BUILDING IS TOP PRIO" << BOT_ENDL;
             if (!Commands::pushForward(m_bot, unit, enemies, targetO.value()->getPosition())) {
                 attackMoveToMainTarget(unit);
             }
         } else {
-            LOG_DEBUG << "KITE!" << BOT_ENDL;
             if (!Commands::kiteBack(m_bot, unit, enemies)) {
-                LOG_DEBUG << "NOTHING!" << BOT_ENDL;
                 attackMoveToMainTarget(unit);
             }
         }
