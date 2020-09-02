@@ -30,13 +30,11 @@ namespace MicroUtil {
                 continue;
             }
             float dist = Util::Dist(*enemy, *unit) - enemy->getUnitPtr()->radius - unit->getUnitPtr()->radius;
-            LOG_DEBUG << "Dist: " << dist << " " << enemy->getType().getName() << BOT_ENDL;
             // even if it is out of range it does not mean we shouldnt attack it
             if (dist > range) {
                 continue;
             }
             float threat = ThreatAnalyzer::getUnitTypeThreat(enemy->getType(), unit->getType());
-            LOG_DEBUG << "Threat: " << threat << " " << enemy->getType().getName() << BOT_ENDL;
             if (threat > maxPriority) {
                 maxPriority = std::max(threat, maxPriority);
                 maxPriorityTarget = enemy;

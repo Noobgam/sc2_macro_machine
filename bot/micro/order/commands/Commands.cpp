@@ -27,7 +27,6 @@ namespace Commands {
             return false;
         } else {
             unit->attackUnit(*targetO.value());
-            LOG_DEBUG << "ATTACK! " << targetO.value()->getType().getName() << BOT_ENDL;
             return true;
         }
     }
