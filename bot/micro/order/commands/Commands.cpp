@@ -45,14 +45,24 @@ namespace Commands {
         return true;
     }
 
-    bool pushForward(const CCBot &bot, const Unit *unit, std::vector<const Unit *> enemies) {
-        float range = unit->getType().getAttackRange();
-        auto targetO = MicroUtil::findUnitWithHighestThreat(unit,range + 3, enemies);
+    bool destroyUnits(const CCBot &bot, const Unit *unit, std::vector<const Unit *> enemies) {
+        if (enemies.empty()) {
+            return false;
+        }
+        auto targetO = MicroUtil::findUnitWithHighestThreat(unit, 10000, enemies);
         if (!targetO.has_value()) {
             return false;
         } else {
-            return pushForward(bot, unit, enemies, targetO.value()->getPosition());
+            bool weaponOnCooldown = unit->getWeaponCooldown() > 0.1;
+            if (!weaponOnCooldown) {
+                unit->attackUnit(*targetO.value());
+                return true;
+            } else {
+                unit->move(targetO.value()->getPosition());
+                return true;
+            }
         }
+        return true;
     }
 
     bool pushForward(const CCBot &bot, const Unit *unit, std::vector<const Unit *> enemies, CCPosition position) {

@@ -19,6 +19,8 @@ class CombatManager {
     void reformSquads();
     void orderToGroup(Squad* squad);
     const std::optional<const BaseLocation*> getAttackTarget();
+
+    void addDefensiveUnitsToAttack();
 public:
     explicit CombatManager(CCBot & bot);
 
