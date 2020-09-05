@@ -3,5 +3,5 @@
 #include <string>
 
 namespace Version {
-    static const std::string CURRENT = "DEVELOPMENT BRANCH";
+    static const std::string CURRENT = "DEVELOPMENT_BRANCH";
 }
