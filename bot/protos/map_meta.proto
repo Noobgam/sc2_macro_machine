@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+enum WallType {
+  FullWall = 0;
+  WallWithUnitGaps = 1;
+  WallWithPylonGap = 2;
+  WallWithUnitAndPylonGap = 3;
+}
+
+enum BuildingType {
+  PoweringPylon = 0;
+  TwoByTwoBuilding = 1;
+  ThreeByThreeBuilding = 2;
+}
+
+enum GapType {
+  OneByOneGap = 0;
+  TwoByTwoGap = 1;
+}
+
+message Position {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message Building {
+  Position pos = 1;
+  BuildingType type = 2;
+}
+
+message Gap {
+  Position pos = 1;
+  GapType type = 2;
+}
+
+message WallPlacement {
+  int32 startLocationId = 1;
+  int32 baseLocationId  = 2;
+  repeated Building buildings = 3;
+  repeated Gap gaps = 4;
+}
+
+message ScoutingKeypoints {
+  int32 baseLocationId = 1;
+  repeated Position keyPoints = 2;
+  repeated int32 closeProxyTspOrdering = 3;
+}
+
+message MapMeta {
+  repeated WallPlacement wallPlacements = 1;
+  repeated ScoutingKeypoints scoutingKeyPoints = 2;
+}
