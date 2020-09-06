@@ -71,8 +71,8 @@ void WallManager::onStart() {
                 if (chosenPlacement.value().wallType != WallType::FullWall) break;
             }
         } else {
-            LOG_DEBUG << "No wall placements exist, but wall requested" << BOT_ENDL;
-
+            LOG_DEBUG << "No wall placements exist, but wall requested. Turned off walling." << BOT_ENDL;
+            needWall = false;
         }
     }
 }
