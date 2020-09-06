@@ -89,6 +89,7 @@ void UnitInfoManager::processNewUnit(const Unit* unit) {
     m_bot.getManagers().getBuildingManager().newUnitCallback(unit);
     m_bot.getManagers().getBasesManager().newUnitCallback(unit);
     m_bot.getManagers().getEnemyManager().getEnemyBasesManager().newUnitCallback(unit);
+    m_bot.getManagers().getWallManager().newUnitCallback(unit);
 }
 
 void UnitInfoManager::updateSquadsWithNewUnit(const Unit *unit) {
@@ -104,6 +105,7 @@ void UnitInfoManager::processRemoveUnit(const Unit* unit) {
     m_bot.getManagers().getBasesManager().unitDisappearedCallback(unit);
     m_bot.getManagers().getEnemyManager().getEnemyBasesManager().unitDisappearedCallback(unit);
     m_bot.Commander().getMacroManager().getBuildingPlacer().unitDisappearedCallback(unit);
+    m_bot.getManagers().getWallManager().processRemoveUnit(unit);
 }
 
 void UnitInfoManager::updateSquadsWithRemovedUnit(const Unit *unit) {
