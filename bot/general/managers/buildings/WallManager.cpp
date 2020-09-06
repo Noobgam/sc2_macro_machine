@@ -1,6 +1,7 @@
 #include "WallManager.h"
 #include <general/CCBot.h>
 #include <util/Util.h>
+#include <util/LogInfo.h>
 
 std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
     if (!needWall || id >= 3) {
@@ -29,7 +30,7 @@ std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
 
 WallManager::WallManager(CCBot& bot)
     : m_bot(bot)
-    , needWall(false)
+    , needWall(true)
 {
 }
 
@@ -41,10 +42,14 @@ void WallManager::onStart() {
         int myBaseId = (*bases.getCompletedBases().begin())->getBaseLocation()->getBaseId();
         int baseId = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(myBaseId)[1];
         auto wallPlacements = m_bot.getMapMeta().getWallPlacements(myBaseId, baseId);
-        BOT_ASSERT(wallPlacements.size() > 0, "No wall placements exist, but wall requested");
-        while (true) {
-            chosenPlacement = wallPlacements[rand() % wallPlacements.size()];
-            if (chosenPlacement.value().wallType != WallType::FullWall) break;
+        if (wallPlacements.size() != 0) {
+            while (true) {
+                chosenPlacement = wallPlacements[rand() % wallPlacements.size()];
+                if (chosenPlacement.value().wallType != WallType::FullWall) break;
+            }
+        } else {
+            LOG_DEBUG << "No wall placements exist, but wall requested" << BOT_ENDL;
+
         }
     }
 }

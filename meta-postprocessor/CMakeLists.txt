@@ -1,0 +1,20 @@
+include_directories("../include")
+
+# Included for all examples
+include_directories(SYSTEM "${PROJECT_BINARY_DIR}/generated")
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/contrib/SDL-mirror/include")
+
+include_directories("../bot")
+
+add_definitions("-DSC2API")
+add_definitions("-DDEBUG_LOGGING")
+
+file (GLOB_RECURSE all_sources_bot "../bot/*.h" "../bot/*.cpp" "../bot/*.hpp")
+
+# not really cool, but it does what it should
+list(FILTER all_sources_bot EXCLUDE REGEX ".*main.cpp$")
+
+file (GLOB_RECURSE all_sources "*.h" "*.cpp" "*.hpp")
+add_executable(meta_postprocessor ${all_sources} ${all_sources_bot})
+target_link_libraries(meta_postprocessor sc2api sc2lib sc2utils sc2protocol)
+
