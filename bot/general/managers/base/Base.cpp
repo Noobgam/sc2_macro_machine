@@ -1,6 +1,9 @@
 #include <util/LogInfo.h>
+#include <micro/order/defend/ProtectPointOrder.h>
 #include "Base.h"
 #include "general/bases/BaseLocation.h"
+
+#include "general/CCBot.h"
 
 Base::Base(CCBot &bot, const BaseLocation *baseLocation, const Unit *nexus):
     m_bot(bot),
@@ -8,6 +11,9 @@ Base::Base(CCBot &bot, const BaseLocation *baseLocation, const Unit *nexus):
     m_nexus(nexus)
 {
     m_workers = std::make_unique<BaseWorkers>(bot, this);
+    m_defensiveSquad = m_bot.getManagers().getSquadManager().createNewSquad();
+
+    m_defensiveSquad->setOrder(std::make_shared<ProtectPointOrder>(m_bot, m_defensiveSquad, baseLocation->getPosition()));
 }
 
 const BaseLocation *Base::getBaseLocation() const {
@@ -16,6 +22,10 @@ const BaseLocation *Base::getBaseLocation() const {
 
 BaseWorkers *Base::getBaseWorkers() const {
     return m_workers.get();
+}
+
+Squad *Base::getDefensiveSquad() const {
+    return m_defensiveSquad;
 }
 
 const Unit *Base::getNexus() const {

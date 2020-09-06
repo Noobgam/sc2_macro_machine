@@ -149,6 +149,7 @@ endif ()
 
 add_subdirectory("bot")
 add_subdirectory("meta-calculator")
+add_subdirectory("meta-postprocessor")
 add_subdirectory("static-meta-calculator")
 
 add_subdirectory("test")

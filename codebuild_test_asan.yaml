@@ -19,6 +19,7 @@ phases:
       - cd    /var/lib/noobgam/package
       - cp    /var/lib/noobgam/build/bin/test_all test_all
       - cp    /var/lib/noobgam/code/static-map_metas/ data/static_map_metas -r
+      - cp    /var/lib/noobgam/code/processed_map_metas/ data/map_metas -r
       - zip -r TestArchive.zip *
 artifacts:
   base-directory: /var/lib/noobgam/package

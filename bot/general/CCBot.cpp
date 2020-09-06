@@ -21,6 +21,7 @@ CCBot::CCBot()
 
 void CCBot::OnGameStart() {
     LOG_DEBUG << "Starting OnGameStart()" << BOT_ENDL;
+    m_mapMeta = MapMeta::getMeta(Observation()->GetGameInfo().map_name);
     m_techTree.onStart();
     m_unitInfo.onStart();
 

@@ -53,10 +53,8 @@ std::unique_ptr<MapMeta> MapMeta::calculateMeta(const StaticMapMeta &meta, strin
     string fileName = "data/map_metas/" + mapName;
     LOG_DEBUG << "Started calculating [" + mapName + "] meta." << BOT_ENDL;
     auto ptr = std::make_unique<MapMeta>(meta);
-    auto ofs = FileUtils::openWriteFile(fileName);
-    boost::archive::text_oarchive oa(ofs);
-    oa << ptr;
     LOG_DEBUG << "Finished calculating [" + mapName + "] meta." << BOT_ENDL;
+    saveToFile(ptr, fileName);
     return ptr;
 }
 
@@ -70,4 +68,18 @@ std::vector<WallPlacement> MapMeta::getWallPlacements(int startLocationId, int b
         }
     }
     return walls;
+}
+
+void MapMeta::saveToFile(const std::unique_ptr<MapMeta>& ptr, std::string fileName) {
+    auto ofs = FileUtils::openWriteFile(fileName);
+    boost::archive::text_oarchive oa(ofs);
+    oa << ptr;
+}
+
+std::vector<WallPlacement> MapMeta::getAllWallPlacements() const {
+    return wallPlacements;
+}
+
+void MapMeta::setWallPlacements(std::vector<WallPlacement> wallPlacements) {
+    this->wallPlacements = wallPlacements;
 }

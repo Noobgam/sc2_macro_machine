@@ -19,9 +19,10 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
-    if (mainSquad->units().size() >= 10) {
+    if (mainSquad->units().size() >= 8) {
         Order* order = mainSquad->getOrder().get();
         if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
+            addDefensiveUnitsToAttack();
             const auto& base = getAttackTarget();
             if (base.has_value()) {
                 mainSquad->setOrder(std::make_shared<AttackWithKiting>(
@@ -31,7 +32,7 @@ void CombatManager::onFrame() {
                 ));
             }
         }
-    } else if (mainSquad->units().size() > 2) {
+    } else {
         if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
             orderToGroup(mainSquad);
         }
@@ -96,15 +97,32 @@ void CombatManager::reformSquads() {
             toTransfer.insert(unit);
         }
     }
+    Squad* squadWithUnits = mainSquad;
     if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
         squadManager.transferUnits(toTransfer, mainSquad);
     } else {
+        squadWithUnits = leftOverSquad;
         squadManager.transferUnits(toTransfer, leftOverSquad);
-        if (leftOverSquad->units().size() >= 8) {
+        if (leftOverSquad->units().size() >= 6) {
+            addDefensiveUnitsToAttack();
             squadManager.transferUnits(leftOverSquad, mainSquad);
         } else {
             orderToGroup(leftOverSquad);
         }
+    }
+    for (auto& base : m_bot.getManagers().getBasesManager().getBases()) {
+        if (squadWithUnits->units().size() == 0) {
+            break;
+        }
+        if (base->getNexus()->isCompleted() && base->getDefensiveSquad()->isEmpty()) {
+            m_bot.getManagers().getSquadManager().transferUnits({*(squadWithUnits->units().begin())}, base->getDefensiveSquad());
+        }
+    }
+}
+
+void CombatManager::addDefensiveUnitsToAttack() {
+    for (auto& base : m_bot.getManagers().getBasesManager().getBases()) {
+        m_bot.getManagers().getSquadManager().transferUnits(base->getDefensiveSquad(), mainSquad);
     }
 }
 

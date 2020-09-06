@@ -41,7 +41,7 @@ WallPlacement WallPlacement::fullWall(
         int baseLocationId,
         std::vector<std::pair<std::pair<int,int>, BuildingType>> buildings
 ) {
-    return WallPlacement{startLocationId, baseLocationId, WallType::FullWall, buildings, {}};
+    return WallPlacement{baseLocationId, startLocationId, WallType::FullWall, buildings, {}};
 }
 
 struct cmp {
@@ -369,13 +369,6 @@ std::vector<WallPlacement> WallPlacement::getWallsForBaseLocation(
     std::set <std::pair<int,int>> ss;
     for (auto& x : placements) {
         ss.insert(x.buildings[0].first);
-    }
-    for (auto& x : placements) {
-        for (auto y : pylons) {
-            if (ss.count(y) == 0) {
-                x.gaps.emplace_back(y, GapType::TwoByTwo);
-            }
-        }
     }
     LOG_DEBUG << "Found " << ss.size() << " good pylons" << BOT_ENDL;
     LOG_DEBUG << "Found " << pylons.size() - ss.size() << " bad pylons" << BOT_ENDL;

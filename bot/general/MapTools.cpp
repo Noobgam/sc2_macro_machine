@@ -502,6 +502,8 @@ void MapTools::updateNeutralMap() {
     auto&& enemyUnits = m_bot.UnitInfo().getUnits(Players::Enemy);
     std::vector<const Unit*> neutralsAndBuldings;
     neutralsAndBuldings.insert(neutralsAndBuldings.end(), neutrals.begin(), neutrals.end());
+    m_unbuildableUnits.assign(width(), std::vector<bool>(height(), false));
+    m_unwalkableUnits.assign(width(), std::vector<bool>(height(), false));
     for (auto x : myUnits) {
         if (x->getType().isBuilding() && x->isAlive()) {
             neutralsAndBuldings.push_back(x);

@@ -11,6 +11,7 @@ private:
     CCBot & m_bot;
     const BaseLocation * m_baseLocation;
     std::unique_ptr<BaseWorkers> m_workers;
+    Squad* m_defensiveSquad;
     const Unit* m_nexus;
 
     std::vector<std::pair<const Unit*, const Resource*>> m_assimilators;
@@ -19,6 +20,7 @@ public:
 
     const BaseLocation * getBaseLocation() const;
     BaseWorkers * getBaseWorkers() const;
+    Squad * getDefensiveSquad() const;
     const Unit * getNexus() const;
 
     std::vector<std::pair<const Unit*, const Resource*>> getAssimilators() const;

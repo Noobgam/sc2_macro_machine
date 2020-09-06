@@ -32,10 +32,14 @@ struct MapMeta {
     // this constructor is required by boost serialization
     MapMeta();
     MapMeta(const StaticMapMeta& bot);
+    static void saveToFile(const std::unique_ptr<MapMeta>& ptr, std::string fileName);
     static std::unique_ptr<MapMeta> getMeta(std::string mapName);
     static std::unique_ptr<MapMeta> calculateMeta(const StaticMapMeta& meta, std::string mapName);
 
     std::vector<WallPlacement> getWallPlacements(int startLocationId, int baseLocationId) const;
+    std::vector<WallPlacement> getAllWallPlacements() const;
+
+    void setWallPlacements(std::vector<WallPlacement> wallPlacements);
 private:
     // [startLocationId][locationId] -> wallPlacements
     // enemy location id is implied from startLocationId
