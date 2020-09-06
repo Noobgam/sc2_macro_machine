@@ -41,7 +41,7 @@ WallPlacement WallPlacement::fullWall(
         int baseLocationId,
         std::vector<std::pair<std::pair<int,int>, BuildingType>> buildings
 ) {
-    return WallPlacement{startLocationId, baseLocationId, WallType::FullWall, buildings, {}};
+    return WallPlacement{baseLocationId, startLocationId, WallType::FullWall, buildings, {}};
 }
 
 struct cmp {
