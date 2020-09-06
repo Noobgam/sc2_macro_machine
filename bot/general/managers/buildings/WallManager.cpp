@@ -104,6 +104,9 @@ void WallManager::draw() {
 }
 
 int WallManager::findChosenBuildingId(const Unit * unit) const {
+    if (!chosenPlacement.has_value()) {
+        return -1;
+    }
     int x = unit->getPosition().x - unit->getType().getFootPrintRadius() + .5;
     int y = unit->getPosition().y - unit->getType().getFootPrintRadius() + .5;
     int sz = unit->getType().tileWidth();
