@@ -4,25 +4,48 @@
 #include <util/LogInfo.h>
 
 std::optional<CCPosition> WallManager::getBuildLocation(const UnitType &b) {
-    if (!needWall || id >= 3) {
-        // TODO: do not return empty if id > 3
+    if (b.isRefinery()) {
+        return {};
+    }
+    if (!needWall) {
+        return {};
+    }
+    if (wallPartsAlive.size() == chosenPlacement.value().buildings.size()) {
+        // TODO: do not return empty
         //  this will allow multiple-layer walling
         return {};
     }
-    auto& lr = chosenPlacement.value().buildings[id].first;
-    if (b.isSupplyProvider() && id == 0) {
-        id++;
-        return CCPosition(lr.first + 1, lr.second + 1);
-    } else {
-        if (abs(b.getFootPrintRadius() - 1.5) < 1e-9) {
-            auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
-            int pylons = m_bot.UnitInfo().getUnitTypeCount(Players::Self, pylonType);
-            if (pylons == 0) {
-                // cant build gate if pylons were not built
-                return {};
+    int size = b.tileWidth();
+    int index = -1;
+    for (auto& building : chosenPlacement.value().buildings) {
+        ++index;
+        int buildingSize = 2;
+        if (building.second == BuildingType::ThreeByThree) {
+            buildingSize = 3;
+        }
+        if (size != buildingSize) {
+            continue;
+        }
+        bool taken = false;
+        for (auto unit : wallPartsAlive) {
+            if (findChosenBuildingId(unit) == index) {
+                taken = true;
+                break;
             }
-            id++;
-            return CCPosition(lr.first + 1.5, lr.second + 1.5);
+        }
+        if (taken) {
+            continue;
+        }
+        CCPosition pos = {
+                building.first.first + b.getFootPrintRadius(),
+                building.first.second + b.getFootPrintRadius()
+        };
+        if (m_bot.Commander().getMacroManager().getBuildingPlacer().canBuildHere(
+                pos.x,
+                pos.y,
+                b
+        )) {
+            return pos;
         }
     }
     return {};
@@ -77,5 +100,37 @@ void WallManager::draw() {
             m_bot.Map().drawTile(x, y, CCColor(0, 255, 0));
         }
     } else {
+    }
+}
+
+int WallManager::findChosenBuildingId(const Unit * unit) const {
+    int x = unit->getPosition().x - unit->getType().getFootPrintRadius() + .5;
+    int y = unit->getPosition().y - unit->getType().getFootPrintRadius() + .5;
+    int sz = unit->getType().tileWidth();
+    int index = -1;
+    for (auto& building : chosenPlacement.value().buildings) {
+        ++index;
+        int buildingSize = 2;
+        if (building.second == BuildingType::ThreeByThree) {
+            buildingSize = 3;
+        }
+        if (building.first.first == x && building.first.second == y && sz == buildingSize) {
+            return index;
+        }
+    }
+    return -1;
+}
+
+void WallManager::newUnitCallback(const Unit * unit) {
+    int index = findChosenBuildingId(unit);
+    if (index != -1) {
+        wallPartsAlive.push_back(unit);
+    }
+}
+
+void WallManager::processRemoveUnit(const Unit *unit) {
+    auto it = std::find(wallPartsAlive.begin(), wallPartsAlive.end(), unit);
+    if (it != wallPartsAlive.end()) {
+        wallPartsAlive.erase(it);
     }
 }
