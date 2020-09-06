@@ -81,9 +81,9 @@ void WallManager::draw() {
     BRK_IF_NOT_DEBUG
     if (chosenPlacement.has_value()) {
         for (auto x : chosenPlacement->buildings) {
-            int sz = 3;
-            if (x.second == BuildingType::PoweringPylon) {
-                sz = 2;
+            int sz = 2;
+            if (x.second == BuildingType::ThreeByThree) {
+                sz = 3;
             }
             m_bot.Map().drawText({x.first.first + .0f, x.first.second + .0f}, "Wall part");
             for (int i = 0; i < sz; ++i) {
