@@ -26,7 +26,17 @@ namespace Commands {
         if (!targetO.has_value() || !unit->canAttack(targetO.value())) {
             return false;
         } else {
-            unit->attackUnit(*targetO.value());
+            // this move command avoids deceleration of units, units walk towards target until they are in range.
+            // although this must be optimized for units with more than one weapon
+            // e.g. tempest
+            //
+            // although the most abusable unit for this mechanic is a viking.
+            auto dist = Util::Dist(*unit, *targetO.value());
+            if (unit->getType().getAttackRange() + 0.1 < dist) {
+                unit->move(*targetO.value());
+            } else {
+                unit->attackUnit(*targetO.value());
+            }
             return true;
         }
     }

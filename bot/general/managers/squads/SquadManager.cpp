@@ -46,8 +46,35 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
 }
 
 void SquadManager::addUnitCallback(const Unit *unit) {
+    if (unit->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
+        adeptsAndShades.emplace_back(unit, nullptr);
+    } else if (unit->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPTPHASESHIFT)) {
+        // adept-shades are unique in that regard
+        // always attempt to match it with corresponding adept
+        // perhaps interceptors are to be ignored here if they are present in observation
+        // because we cannot issue commands to them
+        std::pair<const Unit*, const Unit*>* adeptShadeRef = nullptr;
+        float distToClosestAdept = -1;
+        for (auto&& adept : adeptsAndShades) {
+            if (adept.second != nullptr) {
+                continue;
+            }
+            float dist = Util::Dist(*unit, *adept.first);
+            if (adeptShadeRef == nullptr || distToClosestAdept < dist) {
+                adeptShadeRef = &adept;
+                distToClosestAdept = dist;
+            }
+        }
+        BOT_ASSERT(adeptShadeRef != nullptr, "No adept matching shade found");
+        adeptShadeRef->second = unit;
+        auto it = m_units.find(adeptShadeRef->first->getID());
+        Squad* squad = it->second;
+        squad->addUnit(unit);
+        m_units.insert({unit->getID(), squad});
+        return;
+    }
     Squad* unassignedSquad = getUnassignedSquad();
-    unassignedSquad->addUnits({ unit });
+    unassignedSquad->addUnit(unit);
     m_units.insert({ unit->getID(), unassignedSquad });
 }
 
@@ -55,6 +82,15 @@ void SquadManager::removeUnitCallback(const Unit *unit) {
     Squad* squad = getUnitSquad(unit);
     m_units.erase(unit->getID());
     squad->removeUnits({unit});
+
+    if (unit->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
+        for (auto it = adeptsAndShades.begin(); it != adeptsAndShades.end(); ++it) {
+            if (it->first == unit) {
+                adeptsAndShades.erase(it);
+                break;
+            }
+        }
+    }
 }
 
 Squad* SquadManager::createNewSquad() {

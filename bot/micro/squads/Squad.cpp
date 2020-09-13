@@ -7,6 +7,11 @@ Squad::Squad(CCBot & bot, SquadID id):
         m_id(id),
         m_order(std::make_shared<EmptyOrder>(bot, this)) { }
 
+void Squad::addUnit(const Unit* unit) {
+    m_units.insert(unit);
+    m_order->onUnitAdded(unit);
+}
+
 void Squad::addUnits(const std::set<const Unit*> & units) {
     for (auto unit : units) {
         m_units.insert(unit);

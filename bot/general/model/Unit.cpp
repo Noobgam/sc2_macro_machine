@@ -140,6 +140,10 @@ void Unit::move(const CCPosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
 }
 
+void Unit::move(const Unit & target) const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, target.getUnitPtr());
+}
+
 void Unit::move(const CCTilePosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, CCPosition((float)targetPosition.x, (float)targetPosition.y));
 }
@@ -235,4 +239,8 @@ bool Unit::canAttack(const Unit * target) const {
         return false;
     }
     return true;
+}
+
+void Unit::castAbility(sc2::ABILITY_ID abilityId, const CCPosition &targetPosition) const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, abilityId, targetPosition);
 }

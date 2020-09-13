@@ -17,6 +17,7 @@ private:
 
     std::shared_ptr<Order> m_order;
 
+    void addUnit(const Unit* unit);
     void addUnits(const std::set<const Unit*> & units);
     void removeUnits(const std::set<const Unit*> & units);
     void clear();

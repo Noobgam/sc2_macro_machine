@@ -14,6 +14,7 @@ class CombatManager {
     ScoutModule           m_scoutModule;
 
     Squad* mainSquad = nullptr;
+    Squad* mainHarassSquad = nullptr;
     Squad* leftOverSquad = nullptr;
 
     void reformSquads();

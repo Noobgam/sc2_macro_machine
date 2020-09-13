@@ -64,11 +64,13 @@ public:
     void attackUnit     (const Unit & target) const;
     void attackMove     (const CCPosition & targetPosition) const;
     void move           (const CCPosition & targetPosition) const;
+    void move           (const Unit & target) const;
     void move           (const CCTilePosition & targetTilePosition) const;
     void gatherMineral  (const Unit & target) const;
     void returnCargo    () const;
     void rightClick     (const Unit & target) const;
     void rightClick     (const CCPosition & targetPosition) const;
+    void castAbility    (sc2::ABILITY_ID abilityId, const CCPosition & targetPosition) const;
     void repair         (const Unit & target) const;
     void build          (const UnitType & buildingType, CCPosition pos) const;
     void buildTarget    (const UnitType & buildingType, const Unit & target) const;
