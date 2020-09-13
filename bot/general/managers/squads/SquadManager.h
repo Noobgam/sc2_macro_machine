@@ -12,6 +12,7 @@ private:
     SquadID currentSquadID = 0;
     std::map<SquadID, std::unique_ptr<Squad>> m_squads;
     std::map<CCUnitID, Squad*> m_units;
+    std::vector<std::pair<const Unit*, const Unit*>> adeptsAndShades;
 
 public:
     SquadID unassignedSquadID;
