@@ -5,6 +5,7 @@
 
 #include <util/LogInfo.h>
 #include <util/Util.h>
+#include <micro/order/attack/AdeptHarassWorkers.h>
 
 CombatManager::CombatManager(CCBot & bot) :
     m_bot(bot),
@@ -15,10 +16,22 @@ CombatManager::CombatManager(CCBot & bot) :
 void CombatManager::onStart() {
     mainSquad = m_bot.getManagers().getSquadManager().createNewSquad();
     leftOverSquad = m_bot.getManagers().getSquadManager().createNewSquad();
+    mainHarassSquad = m_bot.getManagers().getSquadManager().createNewSquad();
 }
 
 void CombatManager::onFrame() {
     reformSquads();
+    if (dynamic_cast<AdeptHarassWorkers*>(mainHarassSquad->getOrder().get()) == nullptr) {
+        auto&& vec = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getAllExpectedEnemyBaseLocations();
+        int target = vec[0]->getBaseId();
+        int backup = vec[0]->getBaseId();
+        mainHarassSquad->setOrder(std::make_shared<AdeptHarassWorkers>(
+                m_bot,
+                mainHarassSquad,
+                target,
+                backup
+        ));
+    }
     if (mainSquad->units().size() >= 8) {
         Order* order = mainSquad->getOrder().get();
         if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
@@ -92,11 +105,15 @@ const std::optional<const BaseLocation*> CombatManager::getAttackTarget() {
 void CombatManager::reformSquads() {
     auto& squadManager = m_bot.getManagers().getSquadManager();
     std::set<const Unit*> toTransfer;
+    std::set<const Unit*> toTransferAdepts;
     for (auto unit : squadManager.getUnassignedSquad()->units()) {
-        if (unit->getType().isRegularUnit() && !unit->getType().isWorker()) {
+        if (unit->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
+            toTransferAdepts.insert(unit);
+        } else if (unit->getType().isRegularUnit() && !unit->getType().isWorker()) {
             toTransfer.insert(unit);
         }
     }
+    squadManager.transferUnits(toTransferAdepts, mainHarassSquad);
     Squad* squadWithUnits = mainSquad;
     if (dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) == nullptr) {
         squadManager.transferUnits(toTransfer, mainSquad);

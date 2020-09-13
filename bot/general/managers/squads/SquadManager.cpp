@@ -47,7 +47,7 @@ Squad *SquadManager::getUnitSquad(const Unit *unit) const {
 
 void SquadManager::addUnitCallback(const Unit *unit) {
     if (unit->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
-        adeptsAndShades.push_back({unit, nullptr});
+        adeptsAndShades.emplace_back(unit, nullptr);
     } else if (unit->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPTPHASESHIFT)) {
         // adept-shades are unique in that regard
         // always attempt to match it with corresponding adept
