@@ -12,6 +12,9 @@ private:
     SquadID currentSquadID = 0;
     std::map<SquadID, std::unique_ptr<Squad>> m_squads;
     std::map<CCUnitID, Squad*> m_units;
+
+    // Beware: there may be stray shades which are not present in this map
+    // during unit removal procedure
     std::vector<std::pair<const Unit*, const Unit*>> adeptsAndShades;
 
 public:
