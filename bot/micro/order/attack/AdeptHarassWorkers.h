@@ -21,6 +21,12 @@ class AdeptHarassWorkers : public Order {
     int backupTargetBase;
     CCPosition shadeTarget;
 
+
+    // processes shades
+    // if returns true - all adepts already have an action scheduled, skip the following frame.
+    bool processShades();
+    void processAdepts();
+
 public:
 
     AdeptHarassWorkers(CCBot &bot, Squad *squad, int currentTargetBase, int backupTargetBase);

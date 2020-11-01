@@ -6,6 +6,7 @@
 #include "build_managers/economy/EconomyBuildManager.h"
 #include "build_managers/ProductionManager.h"
 #include "build_managers/UnitHireManager.h"
+#include "build_managers/AggressiveTechBuildManager.h"
 #include "build_managers/TechBuildManager.h"
 #include "../util/LogInfo.h"
 
@@ -18,7 +19,7 @@ MacroManager::MacroManager(CCBot & bot)
     m_managers.emplace_back(std::make_unique<EconomyBuildManager>(m_bot));
     m_managers.emplace_back(std::make_unique<ProductionManager>(m_bot));
     m_managers.emplace_back(std::make_unique<UnitHireManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
+    m_managers.emplace_back(std::make_unique<AggressiveTechBuildManager>(m_bot));
 }
 
 void MacroManager::onStart() {

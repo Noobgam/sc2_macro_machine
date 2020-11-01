@@ -9,93 +9,10 @@
 using boost::container::flat_set;
 
 void AdeptHarassWorkers::onStep() {
-    // pretend like all adepts are always together.
-    // undefined behaviour when adepts are added dynamically to the squad
-    bool allCanShade = true;
-    int currentFrameId = m_bot.GetCurrentFrame();
-    for (auto&& x : m_squad->units()) {
-        if (!x->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
-            continue;
-        }
-        auto it = lastShadeCast.find(x);
-        if (it == lastShadeCast.end()) {
-            continue;
-        }
-        if (currentFrameId - it->second < AdeptHarassWorkers::SHADE_COOLDOWN) {
-            allCanShade = false;
-            break;
-        } else {
-            lastShadeCast.erase(it);
-        }
-    }
-    LOG_DEBUG << "Frame id: " << currentFrameId << BOT_ENDL;
-    if (allCanShade && !adeptsAndShades.empty()) {
-        // TODO: middle of resources is not a good spot for adepts.
-        CCPosition targetPosition = m_bot.Bases().getBaseLocation(currentTargetBase)->getPosition();
-        LOG_DEBUG << "Shading!" << currentFrameId << BOT_ENDL;
-        for (auto&& adept : m_squad->units()) {
-            if (!adept->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
-                continue;
-            }
-            adept->castAbility(sc2::ABILITY_ID::EFFECT_ADEPTPHASESHIFT, targetPosition);
-            lastShadeCast[adept] = currentFrameId;
-        }
+    if (processShades()) {
         return;
     }
-    // first move shades since it is easier
-    for (auto&& x : m_squad->units()) {
-        if (x->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPTPHASESHIFT)) {
-            x->move(shadeTarget);
-        }
-    }
-    // calculate what can adept directly hit, if they cant hit any workers they stay in the target spot.
-    flat_map<const Unit*, std::vector<const Unit*>> candidates;
-    for (auto&& unit : m_bot.UnitInfo().getUnits(Players::Enemy)) {
-        if (unit->isValid() && unit->isAlive() && unit->getType().isWorker()) {
-            for (auto&& lr : adeptsAndShades) {
-                auto&& adept = lr.first;
-                auto dist = Util::Dist(*unit, *adept);
-                if (dist < adept->getType().getAttackRange() + .1) {
-                    candidates[unit].push_back(adept);
-                }
-            }
-        }
-    }
-    flat_map<const Unit*, const Unit*> adeptTargets;
 
-    // TODO: calculate exact damage using upgrades info
-    int adeptDamage = 22;
-
-    // 2-pass algorithm:
-    // first pass greedily matches adepts to workers. This could be improved by true
-    for (auto&& lr : candidates) {
-        int cnt = 0;
-        for (auto adept : lr.second) {
-            if (adeptTargets.count(adept) != 0) continue;
-            ++cnt;
-        }
-        int totalHealth = lr.first->getHitPoints() + lr.first->getShields();
-        if (adeptDamage * cnt > totalHealth) {
-            int need = (totalHealth + adeptDamage - 1) / adeptDamage;
-            for (auto adept : lr.second) {
-                if (adeptTargets.count(adept) != 0) continue;
-                adeptTargets[adept] = lr.first;
-                if (--need == 0) {
-                    break;
-                }
-            }
-        }
-    }
-    // second pass forces adepts to attack workers if they can. Otherwise it doesn't really matter at the moment
-    for (auto&& lr : candidates) {
-        for (auto adept : lr.second) {
-            if (adeptTargets.count(adept) != 0) continue;
-            adeptTargets[adept] = lr.first;
-        }
-    }
-    for (auto&& lr : adeptTargets) {
-        lr.first->attackUnit(*lr.second);
-    }
 }
 
 void AdeptHarassWorkers::onUnitAdded(const Unit *unit) {
@@ -151,4 +68,98 @@ void AdeptHarassWorkers::onUnitRemoved(const Unit *unit) {
 AdeptHarassWorkers::AdeptHarassWorkers(CCBot &bot, Squad *squad, int currentTargetBase, int backupTargetBase) : Order(
         bot, squad), currentTargetBase(currentTargetBase), backupTargetBase(backupTargetBase) {
     shadeTarget = m_bot.Bases().getBaseLocation(currentTargetBase)->getPosition();
+}
+
+bool AdeptHarassWorkers::processShades() {
+    // first move shades since it is easier
+    for (auto&& x : m_squad->units()) {
+        if (x->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPTPHASESHIFT)) {
+            x->move(shadeTarget);
+        }
+    }
+    // pretend like all adepts are always together.
+    // undefined behaviour when adepts are added dynamically to the squad
+    bool allCanShade = true;
+    int currentFrameId = m_bot.GetCurrentFrame();
+    for (auto&& x : m_squad->units()) {
+        if (!x->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
+            continue;
+        }
+        auto it = lastShadeCast.find(x);
+        if (it == lastShadeCast.end()) {
+            continue;
+        }
+        if (currentFrameId - it->second < AdeptHarassWorkers::SHADE_COOLDOWN) {
+            allCanShade = false;
+            break;
+        } else {
+            lastShadeCast.erase(it);
+        }
+    }
+    LOG_DEBUG << "Frame id: " << currentFrameId << BOT_ENDL;
+    if (allCanShade && !adeptsAndShades.empty()) {
+        // TODO: middle of resources is not a good spot for adepts.
+        CCPosition targetPosition = m_bot.Bases().getBaseLocation(currentTargetBase)->getPosition();
+        LOG_DEBUG << "Shading!" << currentFrameId << BOT_ENDL;
+        for (auto&& adept : m_squad->units()) {
+            if (!adept->getType().is(sc2::UNIT_TYPEID::PROTOSS_ADEPT)) {
+                continue;
+            }
+            adept->castAbility(sc2::ABILITY_ID::EFFECT_ADEPTPHASESHIFT, targetPosition);
+            lastShadeCast[adept] = currentFrameId;
+        }
+        return true;
+    }
+    return false;
+}
+
+void AdeptHarassWorkers::processAdepts() {
+    // calculate what can adept directly hit, if they cant hit any workers they stay in the target spot.
+    flat_map<const Unit*, std::vector<const Unit*>> candidates;
+    for (auto&& unit : m_bot.UnitInfo().getUnits(Players::Enemy)) {
+        if (unit->isValid() && unit->isAlive() && unit->getType().isWorker()) {
+            for (auto&& lr : adeptsAndShades) {
+                auto&& adept = lr.first;
+                auto dist = Util::Dist(*unit, *adept);
+                if (dist < adept->getType().getAttackRange() + .1) {
+                    candidates[unit].push_back(adept);
+                }
+            }
+        }
+    }
+    flat_map<const Unit*, const Unit*> adeptTargets;
+
+    // TODO: calculate exact damage using upgrades info
+    int adeptDamage = 22;
+
+    // 2-pass algorithm:
+    // first pass greedily matches adepts to workers. This could be improved by true
+    for (auto&& lr : candidates) {
+        int cnt = 0;
+        for (auto adept : lr.second) {
+            if (adeptTargets.count(adept) != 0) continue;
+            ++cnt;
+        }
+        int totalHealth = lr.first->getHitPoints() + lr.first->getShields();
+        if (adeptDamage * cnt > totalHealth) {
+            int need = (totalHealth + adeptDamage - 1) / adeptDamage;
+            for (auto adept : lr.second) {
+                if (adeptTargets.count(adept) != 0) continue;
+                adeptTargets[adept] = lr.first;
+                if (--need == 0) {
+                    break;
+                }
+            }
+        }
+    }
+    // second pass forces adepts to attack workers if they can. Otherwise it doesn't really matter at the moment
+    for (auto&& lr : candidates) {
+        for (auto adept : lr.second) {
+            if (adeptTargets.count(adept) != 0) continue;
+            adeptTargets[adept] = lr.first;
+        }
+    }
+    for (auto&& lr : adeptTargets) {
+        lr.first->attackUnit(*lr.second);
+    }
 }
