@@ -21,3 +21,27 @@ void Strategy::onFrame() {
         m_lastUpdate = seconds;
     }
 }
+
+std::optional<int> Strategy::getGasGoal() const {
+    return m_gasGoal;
+}
+
+void Strategy::setGasGoal(std::optional<int> goalO) {
+    m_gasGoal = goalO;
+}
+
+std::optional<int> Strategy::getWorkersGoal() const {
+    return m_workersGoal;
+}
+
+void Strategy::setWorkersGoal(std::optional<int> goalO) {
+    m_workersGoal = goalO;
+}
+
+std::optional<int> Strategy::getExpandGoal() const {
+    return m_expandGoal;
+}
+
+void Strategy::setExpandGoal(std::optional<int> goalO) {
+    m_expandGoal = goalO;
+}

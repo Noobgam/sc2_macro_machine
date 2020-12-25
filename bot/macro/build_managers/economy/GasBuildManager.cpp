@@ -4,7 +4,13 @@
 GasBuildManager::GasBuildManager(CCBot& bot) : BuildManager(bot) { }
 
 std::optional<BuildOrderItem> GasBuildManager::getTopPriority() {
-//    TODO Rich gas
+//  (TODO) proper goal check
+    if (m_bot.getStrategy().getGasGoal().has_value()) {
+        if (m_bot.getStrategy().getGasGoal().value() == 0) {
+            return {};
+        }
+    }
+//  (TODO) Rich gas
     auto assimilatorType = UnitType(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR, m_bot);
     auto probeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
     auto nexusType = UnitType(sc2::UNIT_TYPEID::PROTOSS_NEXUS, m_bot);

@@ -21,7 +21,15 @@ std::optional<BuildOrderItem> SupplyBuildManager::getTopPriority() {
         return BuildOrderItem(MetaType(pylonType, m_bot), 6, false);
     }
     if (availableSupply - expectedConsumedSupply - currentSupply < 10) {
-        return BuildOrderItem(MetaType(pylonType, m_bot), 1, false);
+
+        auto gatewayType = m_bot.getUnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY);
+        auto warpGateType = m_bot.getUnitType(sc2::UNIT_TYPEID::PROTOSS_WARPGATE);
+        int gateWayCount = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::TOTAL);
+        int warpGateCount = m_bot.UnitInfo().getBuildingCount(Players::Self, warpGateType, UnitStatus::TOTAL);
+        if (gateWayCount + warpGateCount > 0) {
+            // if there are no gates (e.g. cannon rushing) there is pretty much no way to waste as much supply
+            return BuildOrderItem(MetaType(pylonType, m_bot), 1, false);
+        }
     }
     return {};
 }

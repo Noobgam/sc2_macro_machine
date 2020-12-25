@@ -11,6 +11,7 @@ ScoutEnemyBaseOrder::ScoutEnemyBaseOrder(CCBot &bot, Squad *squad, const BaseLoc
 }
 
 void ScoutEnemyBaseOrder::onStart() {
+    // first point doesnt matter as much
     chooseNewDirection();
 }
 

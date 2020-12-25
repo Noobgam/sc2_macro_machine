@@ -2,6 +2,8 @@
 
 #include "../../../general/CCBot.h"
 
+const int REASONABLE_MAX_PROBE_COUNT = 80;
+
 WorkerBuildManager::WorkerBuildManager(CCBot& bot) : BuildManager(bot) { }
 
 std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority() {
@@ -12,7 +14,8 @@ std::optional<BuildOrderItem> WorkerBuildManager::getTopPriority() {
         return {};
     }
     int totalWorkers = m_bot.UnitInfo().getUnitTypeCount(Players::Self, probeType, false);
-    if (totalWorkers >= 80) {
+    int maxWorkers = m_bot.getStrategy().getWorkersGoal().value_or(REASONABLE_MAX_PROBE_COUNT);
+    if (totalWorkers >= maxWorkers) {
         return {};
     }
 //    int priority = (10648 - totalWorkers * totalWorkers * totalWorkers) * 10 / 10648;

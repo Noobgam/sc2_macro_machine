@@ -141,6 +141,14 @@ const Managers &CCBot::getManagers() const {
     return m_managers;
 }
 
+Strategy &CCBot::getStrategy() {
+    return m_strategy;
+}
+
+const Strategy &CCBot::getStrategy() const {
+    return m_strategy;
+}
+
 int CCBot::GetCurrentFrame() const
 {
     return (int)Observation()->GetGameLoop();
