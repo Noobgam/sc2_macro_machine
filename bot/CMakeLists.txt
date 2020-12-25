@@ -13,6 +13,7 @@ add_definitions("-DDEBUG_LOGGING")
 
 file (GLOB_RECURSE all_sources "*.h" "*.cpp" "*.hpp")
 add_executable(main_bot ${all_sources})
+set_target_properties(main_bot PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_libraries(main_bot sc2api sc2lib sc2utils sc2protocol -static-libgcc -static-libstdc++ -lm -lc -lgcc)
 
 add_executable(main_bot_debug ${all_sources})
