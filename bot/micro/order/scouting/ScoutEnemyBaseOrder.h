@@ -10,6 +10,7 @@ private:
     CCPosition currentDirection;
 
     void chooseNewDirection();
+    std::optional<CCTilePosition> findBestTile(int seenThreshold);
 
 public:
 

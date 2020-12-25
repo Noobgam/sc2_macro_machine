@@ -12,6 +12,8 @@ class MapTools
     float   m_maxZ;
     int     m_frame;
     std::unique_ptr<StaticMapMeta> m_staticMapMeta;
+
+    bool needRecalculation = true;
     
 
     // a cache of already computed distance maps, which is mutable since it only acts as a cache
@@ -48,6 +50,7 @@ public:
     CCPosition findClosestWalkablePosition(const CCPosition& pos) const;
     int getSectorCnt(int x, int y) const;
 
+    void    prepareRecalculation();
     void    computeConnectivity();
     void    onStart();
     void    onFrame();

@@ -46,10 +46,23 @@ void ScoutEnemyBaseOrder::onUnitRemoved(const Unit *unit) {
 }
 
 void ScoutEnemyBaseOrder::chooseNewDirection() {
+    auto res = findBestTile(200);
+    if (!res.has_value()) {
+        // we've recently scouted every spot in the base, lower the scouting threshold and try again
+        res = findBestTile(50);
+    }
+    if (!res.has_value()) {
+        // there's no target, consider running away from probes
+        return;
+    }
+    currentDirection = Util::GetTileCenter(res.value());
+}
+
+std::optional<CCTilePosition> ScoutEnemyBaseOrder::findBestTile(int seenThreshold) {
     auto&& tiles = scoutedLocation->getDistanceMap().getSortedTiles();
+    int currentFrame = m_bot.Map().getVisibilityFrame();
     std::optional<CCTilePosition> res;
     float minDist = 0;
-    int currentFrame = m_bot.Map().getVisibilityFrame();
     for (auto& tile : tiles) {
         int dst = scoutedLocation->getDistanceMap().getDistance(tile);
         if (dst < 5) {
@@ -59,7 +72,7 @@ void ScoutEnemyBaseOrder::chooseNewDirection() {
             break;
         }
         int lastSeen = m_bot.Map().getLastSeen(tile.x, tile.y);
-        if (lastSeen != 0 && lastSeen >= currentFrame - 200) {
+        if (lastSeen != 0 && lastSeen >= currentFrame - seenThreshold) {
             continue;
         }
         float curDist = Util::Dist(m_scout.value(), Util::GetTileCenter(tile));
@@ -68,11 +81,7 @@ void ScoutEnemyBaseOrder::chooseNewDirection() {
             minDist = curDist;
         }
     }
-    if (!res.has_value()) {
-        // we've recently scouted every spot in the base, there's no target, consider running away from probes
-        return;
-    }
-    currentDirection = Util::GetTileCenter(res.value());
+    return res;
 }
 
 

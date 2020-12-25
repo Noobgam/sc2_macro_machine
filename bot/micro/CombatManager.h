@@ -28,5 +28,6 @@ public:
 
     void onStart();
     void onFrame();
+    void newUnitCallback(const Unit* unit);
 };
 

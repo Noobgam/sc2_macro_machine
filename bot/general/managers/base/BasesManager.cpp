@@ -36,9 +36,8 @@ void BasesManager::newUnitCallback(const Unit *unit) {
     }
 
     if (unit->getType().isBuilding()) {
-        m_bot.getMutableMap().updateNeutralMap();
-        m_bot.getMutableMap().computeConnectivity();
-        // also update distance map in all the bases?
+        m_bot.getMutableMap().prepareRecalculation();
+        m_bot.Bases().prepareRecalculation();
     }
 }
 

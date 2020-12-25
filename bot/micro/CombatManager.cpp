@@ -128,3 +128,7 @@ void CombatManager::addDefensiveUnitsToAttack() {
     }
 }
 
+void CombatManager::newUnitCallback(const Unit *unit) {
+    m_cannonStartModule.newUnitCallback(unit);
+}
+

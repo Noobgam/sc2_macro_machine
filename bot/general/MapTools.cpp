@@ -77,6 +77,12 @@ void MapTools::onFrame()
         }
     }
 
+    if (needRecalculation) {
+        updateNeutralMap();
+        computeConnectivity();
+        // also update distance map for all bases?
+        needRecalculation = false;
+    }
     draw();
 }
 
@@ -620,4 +626,8 @@ int MapTools::getLastSeen(int tileX, int tileY) const {
 
 int MapTools::getVisibilityFrame() const {
     return m_frame;
+}
+
+void MapTools::prepareRecalculation() {
+    needRecalculation = true;
 }
