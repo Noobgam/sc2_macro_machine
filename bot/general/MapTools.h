@@ -79,6 +79,8 @@ public:
     bool    isExplored(const CCTilePosition & pos) const;
     bool    isVisible(int tileX, int tileY) const;
     bool    isVisible(const CCTilePosition& from, const CCTilePosition& to, float R) const;
+    int     getLastSeen(int tileX, int tileY) const;
+    int     getVisibilityFrame() const;
     bool    canBuildTypeAtPosition(float tileX, float tileY, const UnitType & type) const;
 
     const   DistanceMap & getDistanceMap(const CCTilePosition & tile) const;

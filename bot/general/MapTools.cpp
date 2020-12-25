@@ -613,3 +613,11 @@ float MapTools::getWalkTime(const Unit* unit, CCPosition pos) const {
 const std::vector<CCTilePosition> &MapTools::getPoweredTiles() const {
     return m_poweredTiles;
 }
+
+int MapTools::getLastSeen(int tileX, int tileY) const {
+    return m_lastSeen[tileX][tileY];
+}
+
+int MapTools::getVisibilityFrame() const {
+    return m_frame;
+}
