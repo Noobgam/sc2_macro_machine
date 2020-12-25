@@ -1,6 +1,7 @@
 #include <util/LogInfo.h>
 #include "CollectMineralsOrder.h"
 #include "../../../general/bases/BaseLocation.h"
+#include <util/Util.h>
 
 CollectMineralsOrder::CollectMineralsOrder(CCBot &bot, Squad *squad, const Base *base):
     Order(bot, squad),
@@ -81,10 +82,39 @@ void CollectMineralsOrder::onUnitRemoved(const Unit *unit) {
 
 void CollectMineralsOrder::assignWorkers() {
     auto& minerals = m_base->getBaseLocation()->getMinerals();
+    const auto& find_mineral = [&minerals](ResourceID id) {
+        // this could probably be improved by caching to unordered map, but is it necessary?
+        // scenarios to consider:
+        // 1) new worker hired
+        // 2) nexus destroyed (all its workers should become unassigned)
+        return std::find_if(minerals.begin(), minerals.end(),
+                [id](const auto& m) {
+                    return m->getID() == id;
+                }
+        );
+    };
     for (auto workerIt = m_unassignedWorkers.begin(); workerIt != m_unassignedWorkers.end();) {
+        if (m_mineralToWorker.empty()) {
+            // cannot assign worker anywhere since no minerals exist
+            onEnd();
+            break;
+        }
+        auto workerPos = (*workerIt)->getPosition();
         auto bestIt = std::min_element(m_mineralToWorker.begin(), m_mineralToWorker.end(),
-            [](const auto& mw1, const auto& mw2) {
-                return mw1.second.size() < mw2.second.size();
+            [&find_mineral, &minerals, &workerPos](const auto& mw1, const auto& mw2) {
+                auto sz1 = mw1.second.size();
+                auto sz2 = mw2.second.size();
+                if (sz1 != sz2) {
+                    return sz1 < sz2;
+                }
+
+                const auto& mineralIt1 = find_mineral(mw1.first);
+                const auto& mineralIt2 = find_mineral(mw2.first);
+                if (mineralIt1 == minerals.end() || mineralIt2 == minerals.end()) {
+                    return false;
+                }
+                return Util::Dist(*(*mineralIt1)->getUnit(), workerPos)
+                     < Util::Dist(*(*mineralIt2)->getUnit(), workerPos);
             }
         );
         bestIt->second.emplace_back(*workerIt);
@@ -99,6 +129,7 @@ void CollectMineralsOrder::assignWorkers() {
             (*workerIt)->gatherMineral(*(*mineralIt)->getUnit());
             workerIt = m_unassignedWorkers.erase(workerIt);
         } else {
+            // could not find mineral for some reason
             onEnd();
             break;
         }
