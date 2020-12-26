@@ -52,25 +52,21 @@ void CannonStartModule::onFrame() {
     }
 
     static int cnt = 0;
-    if (++cnt > 50 || needRecalculation) {
+    static boolean everAnalyzed = false;
+    if (++cnt > 200 || needRecalculation) {
         analyzer.recalculate(m_bot);
+        analyzer.analyzeAsync(bases[0]);
         cnt = 0;
         needRecalculation = false;
     }
-//    int x = bases[0]->getDepotActualPosition().x;
-//    int y = bases[0]->getDepotActualPosition().y;
-//
-//    for (int i = x - 30; i <= x + 30; ++i) {
-//        for (int j = y - 30; j <= y + 30; ++j) {
-//            if (analyzer.minerals[i][j]) {
-//                m_bot.Map().drawTile(i, j, Colors::Purple);
-//            } else if (analyzer.buildable[i][j]) {
-//                m_bot.Map().drawTile(i, j, Colors::Green);
-//            } else if (analyzer.walkable[i][j]) {
-//                m_bot.Map().drawTile(i, j, Colors::Red);
-//            }
-//        }
-//    }
+
+    if (analyzer.getAnalysisRevision() != 0) {
+        for (auto &&tile : analyzer.relevantTiles) {
+            float x = tile.x;
+            float y = tile.y;
+            m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
+        }
+    }
 }
 
 void CannonStartModule::newUnitCallback(const Unit *unit) {
