@@ -1,5 +1,7 @@
 #include "BasicAnalyser.h"
 #include <general/CCBot.h>
+#include <util/LogInfo.h>
+#include <algorithm>
 
 void BasicAnalyser::recalculate(const CCBot &bot) {
 //    if (analysisInProgress()) {
@@ -59,6 +61,7 @@ bool BasicAnalyser::analysisReady() {
 }
 
 void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
+    LOG_DEBUG << "Started analyzing" << BOT_ENDL;
     static int revision = 0;
     // first simple algorithm. There is a pylon that touches the wall.
     // Other pylons are placed in a ring of 3 tiles radius of previous pylon
@@ -114,11 +117,15 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
         }
     }
 
-    currentAnalysis = {};
+    currentAnalysis = new BaseAnalysis();
+    currentAnalysis->revision = ++revision;
     currentPylonTarget = 3;
     recursion(relevantTiles);
-
-    analysisRevision = ++revision;
+    auto prev = latestAnalysis.exchange(currentAnalysis);
+    if (prev != NULL) {
+        delete prev;
+    }
+    LOG_DEBUG << "Finished analyzing" << BOT_ENDL;
 }
 
 void BasicAnalyser::markUnbuildable(int x, int y, int size) {
@@ -144,8 +151,11 @@ int BasicAnalyser::getAnalysisRevision() {
 }
 
 void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates) {
+    if (cutEarly()) {
+        return;
+    }
     if (chosenPylons.size() == currentPylonTarget) {
-
+        checkCurrentPlacementAndAppend();
         return;
     }
     // every pylon must be placed close to the wall
@@ -167,24 +177,36 @@ void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates
                 || minerals[x + 2][y + 2]
             )
         {
-            addPylon(candidate);
+            if (addPylon(candidate)) {
 
-            // some major performance optimisation is required here.
-            // nice optimization should be to remove pylons that are way too far from this one.
-            // Probably 20 valid ones closest to the last placed pylon are the only ones necessary
-            recursion(relevantTiles);
+                // some major performance optimisation is required here.
+                // nice optimization should be to remove pylons that are way too far from this one.
+                // Probably 20 valid ones closest to the last placed pylon are the only ones necessary
+                recursion(relevantTiles);
 
-            removePylon(candidate);
+                removePylon(candidate);
+            }
         }
     }
 
 }
 
 void BasicAnalyser::checkCurrentPlacementAndAppend() {
-
+    // TODO: add final test here
+    currentAnalysis->pylonPlacements.push_back({
+                                                      chosenPylons,
+                                                      {}
+    });
 }
 
-void BasicAnalyser::addPylon(CCTilePosition tile) {
+bool BasicAnalyser::addPylon(CCTilePosition tile) {
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            if (!buildable[tile.x + i][tile.y + j]) {
+                return false;
+            }
+        }
+    }
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
             buildable[tile.x + i][tile.y + j] = false;
@@ -192,6 +214,7 @@ void BasicAnalyser::addPylon(CCTilePosition tile) {
         }
     }
     chosenPylons.push_back(tile);
+    return true;
 }
 
 void BasicAnalyser::removePylon(CCTilePosition tile) {
@@ -202,4 +225,21 @@ void BasicAnalyser::removePylon(CCTilePosition tile) {
         }
     }
     chosenPylons.pop_back();
+}
+
+bool BasicAnalyser::cutEarly() const {
+    if (chosenPylons.empty()) {
+        return false;
+    }
+    // this is O(3) but can be optimized with a stack.
+    int mnx = std::numeric_limits<int>::max(), mny = std::numeric_limits<int>::max();
+    int mxx = std::numeric_limits<int>::min(), mxy = std::numeric_limits<int>::min();
+    for (auto pylon : chosenPylons) {
+        mnx = std::min(pylon.x, mnx);
+        mny = std::min(pylon.y, mny);
+        mxx = std::max(pylon.x + 1, mxx);
+        mxy = std::max(pylon.y + 1, mxy);
+    }
+    int value = (mxx - mnx) * (mxy - mny);
+    return value > 24;
 }

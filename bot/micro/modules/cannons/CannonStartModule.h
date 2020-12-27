@@ -16,6 +16,7 @@ private:
     std::optional<SquadID> m_mainScoutID;
     std::optional<SquadID> m_subScoutID;
     BasicAnalyser analyzer;
+    BaseAnalysis* currentAnalysis = NULL;
     bool needRecalculation = false;
 
     std::optional<Squad*> assignScoutSquad(const BaseLocation* baseLocation);

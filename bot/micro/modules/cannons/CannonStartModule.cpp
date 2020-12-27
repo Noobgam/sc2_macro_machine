@@ -3,6 +3,7 @@
 #include <general/CCBot.h>
 #include <util/LogInfo.h>
 #include <micro/order/scouting/ScoutEnemyBaseOrder.h>
+#include <random>
 
 CannonStartModule::CannonStartModule(CCBot &bot)
     : m_bot(bot)
@@ -60,11 +61,21 @@ void CannonStartModule::onFrame() {
         needRecalculation = false;
     }
 
-    if (analyzer.getAnalysisRevision() != 0) {
-        for (auto &&tile : analyzer.relevantTiles) {
-            float x = tile.x;
-            float y = tile.y;
-            m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
+    auto val = analyzer.latestAnalysis.exchange(NULL);
+    if (val != NULL) {
+        if (currentAnalysis != NULL) {
+            delete currentAnalysis;
+        }
+        currentAnalysis = val;
+        random_shuffle(currentAnalysis->pylonPlacements.begin(), currentAnalysis->pylonPlacements.end());
+    }
+    if (currentAnalysis != NULL) {
+        if (!currentAnalysis->pylonPlacements.empty()) {
+            for (auto &&tile : currentAnalysis->pylonPlacements[0].pylonPositions) {
+                float x = tile.x;
+                float y = tile.y;
+                m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
+            }
         }
     }
 }

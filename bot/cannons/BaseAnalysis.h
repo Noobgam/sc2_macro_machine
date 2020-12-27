@@ -2,9 +2,7 @@
 #include <vector>
 #include "PylonPlacement.h"
 
-class BaseAnalysis {
-private:
+struct BaseAnalysis {
     std::vector<PylonPlacement> pylonPlacements;
+    int revision;
 };
-
-

@@ -36,8 +36,9 @@ public:
     // boolean relevance map, signifies whether
     std::vector<std::vector<bool>> isRelevantTile;
 
-    BaseAnalysis currentAnalysis;
+    BaseAnalysis* currentAnalysis = NULL;
     int currentPylonTarget;
+    int currentCnt;
     std::vector<CCTilePosition> chosenPylons;
 
     void markUnbuildable(int x, int y, int size);
@@ -45,9 +46,10 @@ public:
 
     // recursion and helpers
     void checkCurrentPlacementAndAppend();
-    void addPylon(CCTilePosition tile);
+    bool addPylon(CCTilePosition tile);
     void removePylon(CCTilePosition tile);
     void recursion(const std::vector<CCTilePosition>& pylonCandidates);
+    bool cutEarly() const;
 
 public:
     void recalculate(const CCBot& bot);
