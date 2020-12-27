@@ -2,12 +2,21 @@
 #include <general/CCBot.h>
 #include <util/LogInfo.h>
 #include <algorithm>
+#include <set>
 
-void BasicAnalyser::recalculate(const CCBot &bot) {
-//    if (analysisInProgress()) {
-//        //BOT_ASSERT(false, "UB will happen if you non-atomically modify vectors. Request ignored");
-//        return;
-//    }
+constexpr auto ACCEPTABLE_REALTIME_STUTTER = std::chrono::milliseconds{5};
+
+bool BasicAnalyser::recalculate(const CCBot &bot) {
+    if (lastCalculationFuture.valid()) {
+        LOG_DEBUG << "UB will happen if you non-atomically modify vectors.";
+        auto res = lastCalculationFuture.wait_for(ACCEPTABLE_REALTIME_STUTTER);
+        if (res == std::future_status::timeout) {
+            LOG_DEBUG << "Dropping request due to timeout";
+            return false;
+        } else {
+            LOG_DEBUG << "Continue recalculating";
+        }
+    }
     auto&& mapTools = bot.Map();
     m_width = mapTools.width();
     m_height = mapTools.height();
@@ -54,6 +63,7 @@ void BasicAnalyser::recalculate(const CCBot &bot) {
             minerals[x + i][y] = true;
         }
     }
+    return true;
 }
 
 bool BasicAnalyser::analysisReady() {
@@ -193,9 +203,17 @@ void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates
 
 void BasicAnalyser::checkCurrentPlacementAndAppend() {
     // TODO: add final test here
+    if (!fastCheck()) {
+        return;
+    }
+    if (!slowCheck()) {
+        return;
+    }
+
     currentAnalysis->pylonPlacements.push_back({
                                                       chosenPylons,
-                                                      {}
+                                                      {},
+                                                      visitedSlow
     });
 }
 
@@ -242,4 +260,126 @@ bool BasicAnalyser::cutEarly() const {
     }
     int value = (mxx - mnx) * (mxy - mny);
     return value > 24;
+}
+
+namespace {
+    using namespace std;
+    struct hash_pair {
+        template<class T1, class T2>
+        size_t operator()(const pair <T1, T2> &p) const {
+            auto hash1 = hash<T1> {}(p.first * 10000);
+            auto hash2 = hash<T2> {}(p.second);
+            return hash1 ^ hash2;
+        }
+    };
+}
+
+bool BasicAnalyser::fastCheck() const {
+    std::unordered_set <std::pair<int,int>, hash_pair> cells;
+    std::unordered_set <std::pair<int,int>, hash_pair> visited;
+    std::vector<std::pair<int,int>> fringe;
+    auto add_cell = [&cells, this] (int x, int y) {
+        if (walkable[x][y]) {
+            cells.insert({x, y});
+        }
+    };
+    for (auto pylon : chosenPylons) {
+        int x = pylon.x;
+        int y = pylon.y;
+        for (int i = x - 1; i <= x + 2; ++i) {
+            add_cell(i, y - 1);
+            add_cell(i, y + 2);
+        }
+        for (int i = y - 1; i <= y + 2; ++i) {
+            add_cell(x - 1, i);
+            add_cell(x + 2, i);
+        }
+    }
+    if (cells.empty()) {
+        // if literally everything around pylons is blocked. Probably this
+        return false;
+    }
+
+    int dx[4] = {-1,0,1,0};
+    int dy[4] = {0,1,0,-1};
+    auto start = *cells.begin();
+    fringe.push_back(start);
+    visited.insert(start);
+    for (int i = 0; i < fringe.size(); ++i) {
+        int x = fringe[i].first;
+        int y = fringe[i].second;
+        for (int s = 0; s < 4; ++s) {
+            int tox = x + dx[s];
+            int toy = y + dy[s];
+            if (!cells.count({tox, toy})) {
+                continue;
+            }
+            auto&& lr = visited.insert({tox, toy});
+            if (lr.second) {
+                fringe.push_back({tox, toy});
+            }
+        }
+    }
+    if (visited.size() == cells.size()) {
+        return false;
+    }
+    return true;
+}
+
+bool BasicAnalyser::slowCheck() {
+    visitedSlow.assign(m_width, std::vector<int>(m_height, 0));
+    visitedComp = 0;
+    int compsOfGoodSize = 0;
+    auto start_dfs = [this, &compsOfGoodSize] (int x, int y) {
+        if (walkable[x][y] && visitedSlow[x][y] == 0) {
+            ++visitedComp;
+            auto lr = dfs(x, y);
+            if (!lr.second && lr.first >= 4) {
+                ++compsOfGoodSize;
+            }
+        }
+    };
+    for (auto pylon : chosenPylons) {
+        int x = pylon.x;
+        int y = pylon.y;
+        for (int i = x - 1; i <= x + 2; ++i) {
+            start_dfs(i, y - 1);
+            start_dfs(i, y + 2);
+        }
+        for (int i = y - 1; i <= y + 2; ++i) {
+            start_dfs(x - 1, i);
+            start_dfs(x + 2, i);
+        }
+    }
+    if (compsOfGoodSize == 0) {
+        // think about ramp walls.
+        return false;
+    }
+    return true;
+}
+
+std::pair<int, bool> BasicAnalyser::dfs(int x, int y) {
+    if (!isRelevantTile[x][y]) {
+        return {0, true};
+    }
+    int total = 1;
+    bool nonRelevant = false;
+    visitedSlow[x][y] = visitedComp;
+    int dx[8] = {-1,-1,-1,0,1,1,1,0};
+    int dy[8] = {-1,0,1,1,1,0,-1,-1};
+    for (int i = 0; i < 8; ++i) {
+        int tox = x + dx[i];
+        int toy = y + dy[i];
+        if (visitedSlow[tox][toy] == 0 && canWalk(x, y, tox, toy)) {
+            auto lr = dfs(tox, toy);
+            total += lr.first;
+            nonRelevant |= lr.second;
+        }
+    }
+    return {total, nonRelevant};
+}
+
+bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {
+    // TODO: take minerals into account
+    return max(abs(fromy - toy), abs(fromx - tox)) <= 1 && walkable[tox][toy];
 }

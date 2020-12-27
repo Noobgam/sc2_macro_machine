@@ -45,6 +45,14 @@ public:
     void analyze(const BaseLocation* baseLocation);
 
     // recursion and helpers
+    bool fastCheck() const;
+    bool canWalk(int fromx, int fromy, int tox, int toy) const;
+
+    int visitedComp;
+    std::vector<std::vector<int>> visitedSlow;
+    // <size_of_component, whether it has non-relevant neighbouring cells>
+    std::pair<int, bool> dfs(int x, int y);
+    bool slowCheck();
     void checkCurrentPlacementAndAppend();
     bool addPylon(CCTilePosition tile);
     void removePylon(CCTilePosition tile);
@@ -52,7 +60,7 @@ public:
     bool cutEarly() const;
 
 public:
-    void recalculate(const CCBot& bot);
+    bool recalculate(const CCBot& bot);
     bool analysisReady();
     int getAnalysisRevision();
 

@@ -367,6 +367,13 @@ float MapTools::terrainHeight(const CCPosition & point) const
 
 void MapTools::draw() const
 {
+//    for (int i = 0; i < width(); ++i) {
+//        for (int j = 0; j < height(); ++j) {
+//            std::ostringstream out;
+//            out << i << " " << j;
+//            drawText({i + .5f, j + .5f}, out.str(), Colors::Red);
+//        }
+//    }
 }
 
 bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const {

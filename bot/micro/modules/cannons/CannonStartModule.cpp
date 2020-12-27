@@ -54,10 +54,11 @@ void CannonStartModule::onFrame() {
 
     static int cnt = 0;
     if (++cnt > 200 || needRecalculation) {
-        analyzer.recalculate(m_bot);
-        analyzer.analyzeAsync(bases[0]);
-        cnt = 0;
-        needRecalculation = false;
+        if (analyzer.recalculate(m_bot)) {
+            needRecalculation = false;
+            analyzer.analyzeAsync(bases[0]);
+            cnt = 0;
+        }
     }
 
     auto val = analyzer.latestAnalysis.exchange(NULL);
@@ -70,10 +71,22 @@ void CannonStartModule::onFrame() {
     }
     if (currentAnalysis != NULL) {
         if (!currentAnalysis->pylonPlacements.empty()) {
-            for (auto &&tile : currentAnalysis->pylonPlacements[0].pylonPositions) {
+            auto&& placement = currentAnalysis->pylonPlacements[0];
+            for (auto &&tile : placement.pylonPositions) {
                 float x = tile.x;
                 float y = tile.y;
                 m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
+            }
+            for (int i = 0; i < m_bot.Map().width(); ++i) {
+                for (int j = 0; j < m_bot.Map().height(); ++j) {
+                    int compNum = placement.visitedSlow[i][j];
+                    if (compNum == 0) continue;
+                    if (compNum % 2 == 1) {
+                        m_bot.Map().drawTile(i, j, Colors::Purple);
+                    } else {
+                        m_bot.Map().drawTile(i, j, Colors::Red);
+                    }
+                }
             }
         }
     }
