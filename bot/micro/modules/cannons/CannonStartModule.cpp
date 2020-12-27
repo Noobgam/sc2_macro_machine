@@ -53,7 +53,6 @@ void CannonStartModule::onFrame() {
     }
 
     static int cnt = 0;
-    static boolean everAnalyzed = false;
     if (++cnt > 200 || needRecalculation) {
         analyzer.recalculate(m_bot);
         analyzer.analyzeAsync(bases[0]);
