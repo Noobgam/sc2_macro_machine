@@ -9,8 +9,12 @@ struct PylonPlacement {
     // pylon placements with replacements are ideal because probe can almost always escape after building a cannon this way
     std::map<CCPosition, CCPosition> pylonReplacements;
 
-    // debug
-    std::vector<std::vector<int>> visitedSlow;
+    PylonPlacement(std::vector<CCTilePosition> pylonPositions,
+                   const std::map<CCPosition, CCPosition> &pylonReplacements);
+
+    size_t hash_code;
+
+    bool operator==(const PylonPlacement& rhs) const;
 };
 
 

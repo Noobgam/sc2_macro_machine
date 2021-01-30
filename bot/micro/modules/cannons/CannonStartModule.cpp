@@ -67,27 +67,32 @@ void CannonStartModule::onFrame() {
             delete currentAnalysis;
         }
         currentAnalysis = val;
-        random_shuffle(currentAnalysis->pylonPlacements.begin(), currentAnalysis->pylonPlacements.end());
+        //std::random_shuffle(currentAnalysis->pylonPlacements.begin(), currentAnalysis->pylonPlacements.end());
     }
     if (currentAnalysis != NULL) {
         if (!currentAnalysis->pylonPlacements.empty()) {
-            auto&& placement = currentAnalysis->pylonPlacements[0];
+            int id = rand() % currentAnalysis->pylonPlacements.size();
+            auto it = currentAnalysis->pylonPlacements.begin();
+            for (int i = 0; i < id; ++i) {
+                ++it;
+            }
+            auto&& placement = *it;
             for (auto &&tile : placement.pylonPositions) {
                 float x = tile.x;
                 float y = tile.y;
                 m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
             }
-            for (int i = 0; i < m_bot.Map().width(); ++i) {
-                for (int j = 0; j < m_bot.Map().height(); ++j) {
-                    int compNum = placement.visitedSlow[i][j];
-                    if (compNum == 0) continue;
-                    if (compNum % 2 == 1) {
-                        m_bot.Map().drawTile(i, j, Colors::Purple);
-                    } else {
-                        m_bot.Map().drawTile(i, j, Colors::Red);
-                    }
-                }
-            }
+//            for (int i = 0; i < m_bot.Map().width(); ++i) {
+//                for (int j = 0; j < m_bot.Map().height(); ++j) {
+//                    int compNum = placement.visitedSlow[i][j];
+//                    if (compNum == 0) continue;
+//                    if (compNum % 2 == 1) {
+//                        m_bot.Map().drawTile(i, j, Colors::Purple);
+//                    } else {
+//                        m_bot.Map().drawTile(i, j, Colors::Red);
+//                    }
+//                }
+//            }
         }
     }
 }

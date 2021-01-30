@@ -52,6 +52,7 @@ public:
     std::vector<std::vector<int>> visitedSlow;
     // <size_of_component, whether it has non-relevant neighbouring cells>
     std::pair<int, bool> dfs(int x, int y);
+    bool dfsCannonPlacement(int x, int y, int comp);
     bool slowCheck();
     void checkCurrentPlacementAndAppend();
     bool addPylon(CCTilePosition tile);

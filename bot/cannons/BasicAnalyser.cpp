@@ -202,7 +202,15 @@ void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates
 }
 
 void BasicAnalyser::checkCurrentPlacementAndAppend() {
-    // TODO: add final test here
+    PylonPlacement placement = {
+            chosenPylons,
+            {}
+            //,visitedSlow
+    };
+    if (currentAnalysis->pylonPlacements.count(placement)) {
+        // no duplicates should be allowed
+        return;
+    }
     if (!fastCheck()) {
         return;
     }
@@ -210,11 +218,7 @@ void BasicAnalyser::checkCurrentPlacementAndAppend() {
         return;
     }
 
-    currentAnalysis->pylonPlacements.push_back({
-                                                      chosenPylons,
-                                                      {},
-                                                      visitedSlow
-    });
+    currentAnalysis->pylonPlacements.insert(std::move(placement));
 }
 
 bool BasicAnalyser::addPylon(CCTilePosition tile) {
@@ -329,13 +333,15 @@ bool BasicAnalyser::fastCheck() const {
 bool BasicAnalyser::slowCheck() {
     visitedSlow.assign(m_width, std::vector<int>(m_height, 0));
     visitedComp = 0;
-    int compsOfGoodSize = 0;
-    auto start_dfs = [this, &compsOfGoodSize] (int x, int y) {
+    vector <int> compIds;
+    vector <pair<int,int>> compRoots;
+    auto start_dfs = [this, &compRoots, &compIds] (int x, int y) {
         if (walkable[x][y] && visitedSlow[x][y] == 0) {
             ++visitedComp;
             auto lr = dfs(x, y);
             if (!lr.second && lr.first >= 4) {
-                ++compsOfGoodSize;
+                compRoots.emplace_back(x, y);
+                compIds.push_back(visitedComp);
             }
         }
     };
@@ -351,11 +357,18 @@ bool BasicAnalyser::slowCheck() {
             start_dfs(x + 2, i);
         }
     }
-    if (compsOfGoodSize == 0) {
+    if (compRoots.size() == 0) {
         // think about ramp walls.
         return false;
     }
-    return true;
+    for (int i = 0; i < compRoots.size(); ++i) {
+        int compId = compIds[i];
+        const auto [x, y] = compRoots[i];
+        if (dfsCannonPlacement(x, y, compId)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 std::pair<int, bool> BasicAnalyser::dfs(int x, int y) {
@@ -377,6 +390,35 @@ std::pair<int, bool> BasicAnalyser::dfs(int x, int y) {
         }
     }
     return {total, nonRelevant};
+}
+
+bool BasicAnalyser::dfsCannonPlacement(int x, int y, int comp) {
+    if (!isRelevantTile[x][y]) {
+        return false;
+    }
+    visitedSlow[x][y] = -visitedSlow[x][y];
+    int dx[8] = {-1,-1,-1,0,1,1,1,0};
+    int dy[8] = {-1,0,1,1,1,0,-1,-1};
+    for (int i = 0; i < 8; ++i) {
+        int tox = x + dx[i];
+        int toy = y + dy[i];
+        if (visitedSlow[tox][toy] == comp && canWalk(x, y, tox, toy)) {
+            if (dfsCannonPlacement(tox, toy, comp)) {
+                return true;
+            }
+        }
+    }
+    // for every possible vertex check [-1 -1] placement
+    bool canPlace = true;
+    for (int i = 0; canPlace && i < 2; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            if (abs(visitedSlow[x - i][y - j]) != comp) {
+                canPlace = false;
+                break;
+            }
+        }
+    }
+    return canPlace;
 }
 
 bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {
