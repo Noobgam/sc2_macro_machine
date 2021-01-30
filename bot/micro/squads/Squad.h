@@ -32,4 +32,9 @@ public:
     void setOrder(const std::shared_ptr<Order>& order);
     void setOrder(std::shared_ptr<Order>&& order);
     void act();
+
+    template <class O>
+    bool hasOrder() {
+        return dynamic_cast<O*>(m_order.get()) != nullptr;
+    }
 };

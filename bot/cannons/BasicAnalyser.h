@@ -9,6 +9,16 @@ class CCBot;
 
 class BasicAnalyser {
 private:
+    struct SlowCheckResult {
+        std::vector<CCTilePosition> cannonPlacements;
+
+        bool isSuccess() {
+            return !cannonPlacements.empty()
+                // disallow ramp blocks, they can be wrongly directed for some reason
+                && cannonPlacements.size() < 10;
+        }
+    };
+
 public:
     int m_width;
     int m_height;
@@ -52,8 +62,8 @@ public:
     std::vector<std::vector<int>> visitedSlow;
     // <size_of_component, whether it has non-relevant neighbouring cells>
     std::pair<int, bool> dfs(int x, int y);
-    bool dfsCannonPlacement(int x, int y, int comp);
-    bool slowCheck();
+    std::vector<CCTilePosition> dfsCannonPlacement(int x, int y, int comp);
+    SlowCheckResult slowCheck();
     void checkCurrentPlacementAndAppend();
     bool addPylon(CCTilePosition tile);
     void removePylon(CCTilePosition tile);

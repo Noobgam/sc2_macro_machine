@@ -4,6 +4,7 @@
 #include <util/LogInfo.h>
 #include <micro/order/scouting/ScoutEnemyBaseOrder.h>
 #include <random>
+#include <micro/order/cannons/FirstPylonPlacementOrder.h>
 
 CannonStartModule::CannonStartModule(CCBot &bot)
     : m_bot(bot)
@@ -32,20 +33,20 @@ void CannonStartModule::onFrame() {
     if (bases.empty()) {
         return;
     }
-    if (!m_mainScoutID.has_value()) {
+    if (!m_mainSquad.has_value()) {
         auto&& squad = assignScoutSquad(bases[0]);
         if (squad.has_value()) {
-            m_mainScoutID = squad.value()->getId();
+            m_mainSquad = squad.value();
         }
         return;
     } else {
-        if (!m_subScoutID.has_value()) {
+        if (!m_subSquad.has_value()) {
             auto forgeType = UnitType(sc2::UNIT_TYPEID::PROTOSS_FORGE, m_bot);
             int forgeNumber = m_bot.UnitInfo().getBuildingCount(Players::Self, forgeType, UnitStatus::TOTAL);
             if (forgeNumber >= 1) {
                 auto&& squad = assignScoutSquad(bases[0]);
                 if (squad.has_value()) {
-                    m_subScoutID = squad.value()->getId();
+                    m_subSquad = squad.value();
                 }
             }
             return;
@@ -71,28 +72,39 @@ void CannonStartModule::onFrame() {
     }
     if (currentAnalysis != NULL) {
         if (!currentAnalysis->pylonPlacements.empty()) {
-            int id = rand() % currentAnalysis->pylonPlacements.size();
-            auto it = currentAnalysis->pylonPlacements.begin();
-            for (int i = 0; i < id; ++i) {
-                ++it;
+            if (!selectedPlacement.has_value()) {
+                srand(time(NULL));
+                int id = rand() % currentAnalysis->pylonPlacements.size();
+                auto it = currentAnalysis->pylonPlacements.begin();
+                for (int i = 0; i < id; ++i) {
+                    ++it;
+                }
+                selectedPlacement = *it;
             }
-            auto&& placement = *it;
-            for (auto &&tile : placement.pylonPositions) {
-                float x = tile.x;
-                float y = tile.y;
-                m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
+        }
+    }
+    if (selectedPlacement.has_value()) {
+        auto&& placement = selectedPlacement.value();
+        for (auto &&tile : placement.pylonPositions) {
+            float x = tile.x;
+            float y = tile.y;
+            m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Green);
+        }
+        for (auto &&tile : placement.cannonPlacements) {
+            float x = tile.x;
+            float y = tile.y;
+            m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Purple);
+        }
+        if (m_bot.getManagers().getEconomyManager().getAvailableResources(ResourceType::MINERAL) > selectedPlacement.value().pylonPositions.size() * 100) {
+            if (!m_mainSquad.value()->hasOrder<cannons::FirstPylonPlacementOrder>()) {
+                m_mainSquad.value()->setOrder(
+                        std::make_shared<cannons::FirstPylonPlacementOrder>(
+                                m_bot,
+                                m_mainSquad.value(),
+                                selectedPlacement.value()
+                        )
+                );
             }
-//            for (int i = 0; i < m_bot.Map().width(); ++i) {
-//                for (int j = 0; j < m_bot.Map().height(); ++j) {
-//                    int compNum = placement.visitedSlow[i][j];
-//                    if (compNum == 0) continue;
-//                    if (compNum % 2 == 1) {
-//                        m_bot.Map().drawTile(i, j, Colors::Purple);
-//                    } else {
-//                        m_bot.Map().drawTile(i, j, Colors::Red);
-//                    }
-//                }
-//            }
         }
     }
 }
@@ -100,5 +112,12 @@ void CannonStartModule::onFrame() {
 void CannonStartModule::newUnitCallback(const Unit *unit) {
     if (unit->getType().isBuilding()) {
         needRecalculation = true;
+        for (auto squad : {m_mainSquad, m_subSquad}) {
+            if (squad.has_value() && squad.value()->hasOrder<cannons::FirstPylonPlacementOrder>()) {
+                cannons::FirstPylonPlacementOrder* order =
+                        dynamic_cast<cannons::FirstPylonPlacementOrder*>(squad.value()->getOrder().get());
+                order->processBuilding(unit);
+            }
+        }
     }
 }

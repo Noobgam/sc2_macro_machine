@@ -1,6 +1,9 @@
 #include "BasicAnalyser.h"
+
 #include <general/CCBot.h>
 #include <util/LogInfo.h>
+#include <util/Util.h>
+
 #include <algorithm>
 #include <set>
 
@@ -8,13 +11,13 @@ constexpr auto ACCEPTABLE_REALTIME_STUTTER = std::chrono::milliseconds{5};
 
 bool BasicAnalyser::recalculate(const CCBot &bot) {
     if (lastCalculationFuture.valid()) {
-        LOG_DEBUG << "UB will happen if you non-atomically modify vectors.";
+        LOG_DEBUG << "UB will happen if you non-atomically modify vectors." << BOT_ENDL;
         auto res = lastCalculationFuture.wait_for(ACCEPTABLE_REALTIME_STUTTER);
         if (res == std::future_status::timeout) {
-            LOG_DEBUG << "Dropping request due to timeout";
+            LOG_DEBUG << "Dropping request due to timeout" << BOT_ENDL;
             return false;
         } else {
-            LOG_DEBUG << "Continue recalculating";
+            LOG_DEBUG << "Continue recalculating" << BOT_ENDL;
         }
     }
     auto&& mapTools = bot.Map();
@@ -204,8 +207,8 @@ void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates
 void BasicAnalyser::checkCurrentPlacementAndAppend() {
     PylonPlacement placement = {
             chosenPylons,
+            {},
             {}
-            //,visitedSlow
     };
     if (currentAnalysis->pylonPlacements.count(placement)) {
         // no duplicates should be allowed
@@ -214,11 +217,15 @@ void BasicAnalyser::checkCurrentPlacementAndAppend() {
     if (!fastCheck()) {
         return;
     }
-    if (!slowCheck()) {
-        return;
+    auto&& slowRes = slowCheck();
+    if (slowRes.isSuccess()) {
+        PylonPlacement finalPlacement = {
+                chosenPylons,
+                {},
+                std::move(slowRes.cannonPlacements)
+        };
+        currentAnalysis->pylonPlacements.insert(std::move(finalPlacement));
     }
-
-    currentAnalysis->pylonPlacements.insert(std::move(placement));
 }
 
 bool BasicAnalyser::addPylon(CCTilePosition tile) {
@@ -330,7 +337,7 @@ bool BasicAnalyser::fastCheck() const {
     return true;
 }
 
-bool BasicAnalyser::slowCheck() {
+BasicAnalyser::SlowCheckResult BasicAnalyser::slowCheck() {
     visitedSlow.assign(m_width, std::vector<int>(m_height, 0));
     visitedComp = 0;
     vector <int> compIds;
@@ -359,16 +366,21 @@ bool BasicAnalyser::slowCheck() {
     }
     if (compRoots.size() == 0) {
         // think about ramp walls.
-        return false;
+        return {};
     }
     for (int i = 0; i < compRoots.size(); ++i) {
         int compId = compIds[i];
         const auto [x, y] = compRoots[i];
-        if (dfsCannonPlacement(x, y, compId)) {
-            return true;
+        auto&& cannons = dfsCannonPlacement(x, y, compId);
+        if (!cannons.empty()) {
+            return {
+                cannons
+            };
         }
     }
-    return false;
+    // there is a check missing that the cannon can actually be placed with these 3 pylons.
+    // might come into play in a ramp-wall (no power upwards/no placement in range)
+    return {};
 }
 
 std::pair<int, bool> BasicAnalyser::dfs(int x, int y) {
@@ -392,19 +404,21 @@ std::pair<int, bool> BasicAnalyser::dfs(int x, int y) {
     return {total, nonRelevant};
 }
 
-bool BasicAnalyser::dfsCannonPlacement(int x, int y, int comp) {
+std::vector<CCTilePosition> BasicAnalyser::dfsCannonPlacement(int x, int y, int comp) {
     if (!isRelevantTile[x][y]) {
-        return false;
+        return {};
     }
     visitedSlow[x][y] = -visitedSlow[x][y];
     int dx[8] = {-1,-1,-1,0,1,1,1,0};
     int dy[8] = {-1,0,1,1,1,0,-1,-1};
+    std::vector<CCTilePosition> placementsHere;
     for (int i = 0; i < 8; ++i) {
         int tox = x + dx[i];
         int toy = y + dy[i];
         if (visitedSlow[tox][toy] == comp && canWalk(x, y, tox, toy)) {
-            if (dfsCannonPlacement(tox, toy, comp)) {
-                return true;
+            auto&& vv = dfsCannonPlacement(tox, toy, comp);
+            if (!vv.empty()) {
+                Util::MoveAppend(vv, placementsHere);
             }
         }
     }
@@ -418,7 +432,10 @@ bool BasicAnalyser::dfsCannonPlacement(int x, int y, int comp) {
             }
         }
     }
-    return canPlace;
+    if (canPlace) {
+        placementsHere.emplace_back(x - 1, y - 1);
+    }
+    return placementsHere;
 }
 
 bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {

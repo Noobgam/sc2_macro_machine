@@ -63,6 +63,7 @@ public:
     void stop           () const;
     void attackUnit     (const Unit & target) const;
     void attackMove     (const CCPosition & targetPosition) const;
+    void queuedMove     (const CCPosition & targetPosition) const;
     void move           (const CCPosition & targetPosition) const;
     void move           (const CCTilePosition & targetTilePosition) const;
     void gatherMineral  (const Unit & target) const;

@@ -1,3 +1,4 @@
+#include <util/LogInfo.h>
 #include "Order.h"
 
 Order::Order(CCBot &bot, Squad* squad) : m_bot(bot), m_squad(squad) { }
@@ -9,6 +10,7 @@ bool Order::isCompleted() const {
 }
 
 void Order::onEnd() {
+    LOG_DEBUG << "Order for squad with id " << m_squad->getId() << " was completed." << BOT_ENDL;
     m_completed = true;
 }
 

@@ -8,9 +8,14 @@ bool PylonPlacement::operator==(const PylonPlacement &rhs) const {
     return this->pylonPositions == rhs.pylonPositions;
 }
 
-PylonPlacement::PylonPlacement(std::vector<CCTilePosition> pylonPositions,
-                               const std::map<CCPosition, CCPosition> &pylonReplacements) :
-                               pylonReplacements(pylonReplacements) {
+PylonPlacement::PylonPlacement(
+        std::vector<CCTilePosition> pylonPositions,
+        const std::map<CCPosition, CCPosition> &pylonReplacements,
+        std::vector<CCTilePosition> cannonPlacements
+)
+    : pylonReplacements(pylonReplacements)
+    , cannonPlacements(cannonPlacements)
+{
     std::sort(pylonPositions.begin(), pylonPositions.end(), [](const auto& lhs, const auto& rhs) {
         if (lhs.x != rhs.x) {
             return lhs.x < rhs.x;

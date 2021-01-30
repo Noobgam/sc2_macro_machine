@@ -70,4 +70,18 @@ namespace Util
     CCPositionType DistSq(const CCPosition & p1, const CCPosition & p2);
     bool canWalkOverUnit(const UnitType& type);
     bool canBuildOnUnit(const UnitType& type);
+    template <class X>
+    void MoveAppend(std::vector<X>& src, std::vector<X>& dst)
+    {
+        if (dst.empty())
+        {
+            dst = std::move(src);
+        }
+        else
+        {
+            dst.reserve(dst.size() + src.size());
+            std::move(std::begin(src), std::end(src), std::back_inserter(dst));
+            src.clear();
+        }
+    }
 };
