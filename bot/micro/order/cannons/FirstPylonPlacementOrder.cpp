@@ -5,6 +5,7 @@
 
 void cannons::FirstPylonPlacementOrder::onStep() {
     if (!placer.has_value()) {
+        onEnd();
         return;
     }
     int needPylons = pylonPlacement.pylonPositions.size();
@@ -99,5 +100,11 @@ void cannons::FirstPylonPlacementOrder::processBuilding(const Unit *newBuilding)
                 scheduledPylons.erase(it);
             }
         }
+    }
+}
+
+void cannons::FirstPylonPlacementOrder::onUnitRemoved(const Unit *unit) {
+    if (placer == unit) {
+        placer = {};
     }
 }

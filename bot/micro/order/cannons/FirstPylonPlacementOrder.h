@@ -23,6 +23,7 @@ namespace cannons {
         int allocatedMinerals = 0;
 
         void onStep() override;
+        void onUnitRemoved(const Unit *unit) override;
 
     public:
 
