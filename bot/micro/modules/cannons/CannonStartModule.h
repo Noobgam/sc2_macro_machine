@@ -13,8 +13,8 @@ class BaseLocation;
 class CannonStartModule {
 private:
     CCBot & m_bot;
-    std::optional<Squad*> m_mainSquad;
-    std::optional<Squad*> m_subSquad;
+    std::optional<SquadID> m_mainSquad;
+    std::optional<SquadID> m_subSquad;
     BasicAnalyser analyzer;
     BaseAnalysis* currentAnalysis = NULL;
     std::optional<PylonPlacement> selectedPlacement;

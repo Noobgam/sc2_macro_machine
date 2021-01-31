@@ -25,6 +25,24 @@ std::optional<Squad*> CannonStartModule::assignScoutSquad(const BaseLocation* ba
 }
 
 void CannonStartModule::onFrame() {
+    if (!m_bot.getManagers().getSquadManager().validateSquadId(m_mainSquad)) {
+        LOG_DEBUG << "Main squad was invalidated." << BOT_ENDL;
+    }
+    if (!m_bot.getManagers().getSquadManager().validateSquadId(m_subSquad)) {
+        LOG_DEBUG << "Main squad was invalidated." << BOT_ENDL;
+    }
+    if (m_mainSquad.has_value()) {
+        if (m_subSquad.has_value()) {
+            m_mainSquad.swap(m_subSquad);
+            return;
+        }
+        auto&& squadO = m_bot.getManagers().getSquadManager().getSquad(m_mainSquad.value());
+        // if squad has been deformed, stop
+        if (!squadO.has_value()) {
+            m_mainSquad = {};
+        }
+    }
+
     // make scout squad if none currently
     auto bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations();
     if (bases.empty()) {
@@ -34,9 +52,13 @@ void CannonStartModule::onFrame() {
         return;
     }
     if (!m_mainSquad.has_value()) {
+        if (m_subSquad.has_value()) {
+            m_mainSquad.swap(m_subSquad);
+            return;
+        }
         auto&& squad = assignScoutSquad(bases[0]);
         if (squad.has_value()) {
-            m_mainSquad = squad.value();
+            m_mainSquad = squad.value()->getId();
         }
         return;
     } else {
@@ -46,7 +68,7 @@ void CannonStartModule::onFrame() {
             if (forgeNumber >= 1) {
                 auto&& squad = assignScoutSquad(bases[0]);
                 if (squad.has_value()) {
-                    m_subSquad = squad.value();
+                    m_subSquad = squad.value()->getId();
                 }
             }
             return;
@@ -83,6 +105,7 @@ void CannonStartModule::onFrame() {
             }
         }
     }
+    auto mainSquad = m_bot.getManagers().getSquadManager().getSquad(m_mainSquad.value()).value();
     if (selectedPlacement.has_value()) {
         auto&& placement = selectedPlacement.value();
         for (auto &&tile : placement.pylonPositions) {
@@ -96,11 +119,11 @@ void CannonStartModule::onFrame() {
             m_bot.Map().drawBox({x + .1f, y + .1f}, {x + 1.9f, y + 1.9f}, Colors::Purple);
         }
         if (m_bot.getManagers().getEconomyManager().getAvailableResources(ResourceType::MINERAL) > selectedPlacement.value().pylonPositions.size() * 100) {
-            if (!m_mainSquad.value()->hasOrder<cannons::FirstPylonPlacementOrder>()) {
-                m_mainSquad.value()->setOrder(
+            if (!mainSquad->hasOrder<cannons::FirstPylonPlacementOrder>()) {
+                mainSquad->setOrder(
                         std::make_shared<cannons::FirstPylonPlacementOrder>(
                                 m_bot,
-                                m_mainSquad.value(),
+                                mainSquad,
                                 selectedPlacement.value()
                         )
                 );
@@ -112,10 +135,14 @@ void CannonStartModule::onFrame() {
 void CannonStartModule::newUnitCallback(const Unit *unit) {
     if (unit->getType().isBuilding()) {
         needRecalculation = true;
-        for (auto squad : {m_mainSquad, m_subSquad}) {
-            if (squad.has_value() && squad.value()->hasOrder<cannons::FirstPylonPlacementOrder>()) {
+        for (auto squadId : {m_mainSquad, m_subSquad}) {
+            if (!squadId.has_value()) {
+                continue;
+            }
+            auto squadO = m_bot.getManagers().getSquadManager().getSquad(squadId.value());
+            if (squadO.has_value() && squadO.value()->hasOrder<cannons::FirstPylonPlacementOrder>()) {
                 cannons::FirstPylonPlacementOrder* order =
-                        dynamic_cast<cannons::FirstPylonPlacementOrder*>(squad.value()->getOrder().get());
+                        dynamic_cast<cannons::FirstPylonPlacementOrder*>(squadO.value()->getOrder().get());
                 order->processBuilding(unit);
             }
         }
