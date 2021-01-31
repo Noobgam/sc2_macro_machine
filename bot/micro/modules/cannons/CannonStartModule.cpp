@@ -85,6 +85,7 @@ void CannonStartModule::onFrame() {
     if (currentAnalysis != NULL) {
         if (!currentAnalysis->pylonPlacements.empty()) {
             if (!selectedPlacement.has_value()) {
+                // TODO: select placement based on threat to mineral line / buildings
                 srand(time(NULL));
                 int id = rand() % currentAnalysis->pylonPlacements.size();
                 auto it = currentAnalysis->pylonPlacements.begin();

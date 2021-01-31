@@ -17,9 +17,9 @@ namespace cannons {
     private:
 
         std::optional<const Unit*> placer;
-        std::vector<const Unit*> placedBuilings;
         std::vector<CCTilePosition> unbuiltPylons;
         std::vector<CCTilePosition> scheduledPylons;
+        std::vector<CCTilePosition> scheduledCannons;
         int allocatedMinerals = 0;
 
         void onStep() override;

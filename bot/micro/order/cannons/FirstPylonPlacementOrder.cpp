@@ -43,14 +43,16 @@ void cannons::FirstPylonPlacementOrder::onStep() {
                 scheduledPylons.push_back(*unbuiltPylons.begin());
                 unbuiltPylons.erase(unbuiltPylons.begin());
             } else {
-                auto cannonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON, m_bot);
-                placer.value()->build(
-                        cannonType,
-                        CCPosition(
-                                pylonPlacement.cannonPlacements[0].x + 1,
-                                pylonPlacement.cannonPlacements[0].y + 1
-                        )
-                );
+                if (scheduledCannons.empty()) {
+                    auto cannonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON, m_bot);
+                    placer.value()->build(
+                            cannonType,
+                            CCPosition(
+                                    pylonPlacement.cannonPlacements[0].x + 1,
+                                    pylonPlacement.cannonPlacements[0].y + 1
+                            )
+                    );
+                }
             }
         }
     } else {
@@ -91,13 +93,23 @@ cannons::FirstPylonPlacementOrder::FirstPylonPlacementOrder(
 
 void cannons::FirstPylonPlacementOrder::processBuilding(const Unit *newBuilding) {
     if (newBuilding->getPlayer() == Players::Self) {
-        if (newBuilding->getAPIUnitType() == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
+        sc2::UnitTypeID buildingType = newBuilding->getAPIUnitType();
+        if (buildingType == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
             auto it = std::find_if(scheduledPylons.begin(), scheduledPylons.end(), [newBuilding](
                     const CCTilePosition& pos) {
                 return newBuilding->getTilePosition() == CCTilePosition(pos.x + 1, pos.y + 1);
             });
             if (it != scheduledPylons.end()) {
                 scheduledPylons.erase(it);
+            }
+        } else if (buildingType == sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON) {
+            auto it = std::find_if(scheduledCannons.begin(), scheduledCannons.end(), [newBuilding](
+                    const CCTilePosition& pos) {
+                return newBuilding->getTilePosition() == CCTilePosition(pos.x + 1, pos.y + 1);
+            });
+            if (it != scheduledCannons.end()) {
+                scheduledCannons.erase(it);
+                onEnd();
             }
         }
     }
