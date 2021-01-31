@@ -1,9 +1,50 @@
+#include <macro/build_managers/SupplyBuildManager.h>
+#include <macro/build_managers/economy/EconomyBuildManager.h>
+#include <macro/build_managers/ForgeBuildManager.h>
+#include <macro/build_managers/TechBuildManager.h>
+#include <macro/build_managers/UnitHireManager.h>
+#include <macro/build_managers/ProductionManager.h>
 #include "Strategy.h"
 #include "general/CCBot.h"
 
-Strategy::Strategy(CCBot& bot) : m_bot(bot) { }
+Strategy::Strategy(CCBot& bot, HighLevelStrategy strategy)
+    : m_bot(bot)
+    , currentStrategy(NONE)
+    , targetStrategy(strategy)
+{ }
 
 void Strategy::onFrame() {
+    if (currentStrategy != targetStrategy) {
+        m_bot.Commander().getMacroManager().getMutableManagers().clear();
+        auto& managers = m_bot.Commander().getMacroManager().getMutableManagers();
+        switch (targetStrategy) {
+            // TODO: proper destruction?
+
+            case HighLevelStrategy::MACRO:
+                managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));
+                managers.emplace_back(std::make_unique<EconomyBuildManager>(m_bot));
+                managers.emplace_back(std::make_unique<ProductionManager>(m_bot));
+                managers.emplace_back(std::make_unique<UnitHireManager>(m_bot));
+                managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
+
+                setGasGoal({});
+                setWorkersGoal({});
+                setExpandGoal({});
+                break;
+            case HighLevelStrategy::CANNONS:
+                managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));
+                managers.emplace_back(std::make_unique<EconomyBuildManager>(m_bot));
+                managers.emplace_back(std::make_unique<ForgeBuildManager>(m_bot));
+
+                setGasGoal({0});
+                setWorkersGoal({16});
+                setExpandGoal({1});
+                break;
+            default:
+                break;
+        }
+        currentStrategy = targetStrategy;
+    }
     int seconds = m_bot.GetCurrentFrame() / 22.4;
     if ((m_lastUpdate == 0 && seconds >= 60) || (seconds - m_lastUpdate >= 120)) {
         const auto& bases = m_bot.Bases().getBaseLocations();
@@ -44,4 +85,8 @@ std::optional<int> Strategy::getExpandGoal() const {
 
 void Strategy::setExpandGoal(std::optional<int> goalO) {
     m_expandGoal = goalO;
+}
+
+void Strategy::setTargetStrategy(Strategy::HighLevelStrategy strategy) {
+    targetStrategy = strategy;
 }

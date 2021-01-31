@@ -247,3 +247,7 @@ void MacroManager::produceBuilding(const UnitType& buildingType) {
         squad->setOrder(buildOrder);
     }
 }
+
+std::vector<std::unique_ptr<BuildManager>> &MacroManager::getMutableManagers() {
+    return m_managers;
+}

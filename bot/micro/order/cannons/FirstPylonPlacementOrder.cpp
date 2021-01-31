@@ -43,14 +43,19 @@ void cannons::FirstPylonPlacementOrder::onStep() {
                 scheduledPylons.push_back(*unbuiltPylons.begin());
                 unbuiltPylons.erase(unbuiltPylons.begin());
             } else {
+                auto cannonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON, m_bot);
                 if (scheduledCannons.empty()) {
-                    auto cannonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON, m_bot);
+                    scheduledCannons.push_back(CCTilePosition(
+                            pylonPlacement.cannonPlacements[0].x,
+                            pylonPlacement.cannonPlacements[0].y
+                    ));
+                } else {
                     placer.value()->build(
                             cannonType,
-                            CCPosition(
-                                    pylonPlacement.cannonPlacements[0].x + 1,
-                                    pylonPlacement.cannonPlacements[0].y + 1
-                            )
+                            CCPosition{
+                                    scheduledCannons[0].x + 1.f,
+                                    scheduledCannons[0].y + 1.f,
+                            }
                     );
                 }
             }
@@ -109,6 +114,7 @@ void cannons::FirstPylonPlacementOrder::processBuilding(const Unit *newBuilding)
             });
             if (it != scheduledCannons.end()) {
                 scheduledCannons.erase(it);
+                m_bot.getStrategy().setTargetStrategy(Strategy::HighLevelStrategy::MACRO);
                 onEnd();
             }
         }

@@ -4,6 +4,13 @@
 class CCBot;
 
 class Strategy {
+public:
+    enum HighLevelStrategy {
+        NONE,
+
+        MACRO,
+        CANNONS,
+    };
 private:
     CCBot & m_bot;
 
@@ -20,10 +27,15 @@ private:
     // e.g. cannon rush will set this goal as 1 at the beginning
     // keep in mind that this number is a very bad metric which will make you have 0 income if you do not expand
     std::optional<int> m_expandGoal;
+
+    HighLevelStrategy currentStrategy;
+    HighLevelStrategy targetStrategy;
+
     int m_lastUpdate = 0;
 public:
-    Strategy(CCBot& bot);
+    Strategy(CCBot& bot, HighLevelStrategy highLevelStrategy);
 
+    void setTargetStrategy(HighLevelStrategy strategy);
     void onFrame();
     std::optional<int> getGasGoal() const;
     void setGasGoal(std::optional<int> goalO);
