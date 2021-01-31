@@ -31,18 +31,6 @@ void CannonStartModule::onFrame() {
     if (!m_bot.getManagers().getSquadManager().validateSquadId(m_subSquad)) {
         LOG_DEBUG << "Main squad was invalidated." << BOT_ENDL;
     }
-    if (m_mainSquad.has_value()) {
-        if (m_subSquad.has_value()) {
-            m_mainSquad.swap(m_subSquad);
-            return;
-        }
-        auto&& squadO = m_bot.getManagers().getSquadManager().getSquad(m_mainSquad.value());
-        // if squad has been deformed, stop
-        if (!squadO.has_value()) {
-            m_mainSquad = {};
-        }
-    }
-
     // make scout squad if none currently
     auto bases = m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations();
     if (bases.empty()) {
@@ -82,6 +70,8 @@ void CannonStartModule::onFrame() {
             analyzer.analyzeAsync(bases[0]);
             cnt = 0;
         }
+    } else {
+        LOG_DEBUG << "Frame cycle: " << cnt << " - " << needRecalculation << BOT_ENDL;
     }
 
     auto val = analyzer.latestAnalysis.exchange(NULL);
