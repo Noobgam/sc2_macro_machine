@@ -53,6 +53,8 @@ public:
           GameCommander & Commander();
           Managers & getManagers();
     const Managers & getManagers() const;
+          Strategy & getStrategy();
+    const Strategy & getStrategy() const;
 
     const TypeData & Data(const UnitType & type) const;
     const TypeData & Data(const CCUpgrade & type) const;

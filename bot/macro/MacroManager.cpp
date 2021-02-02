@@ -1,5 +1,6 @@
 #include <util/Util.h>
 #include <micro/order/workers/BuildingOrder.h>
+#include <macro/build_managers/ForgeBuildManager.h>
 #include "MacroManager.h"
 #include "../general/CCBot.h"
 #include "build_managers/SupplyBuildManager.h"
@@ -9,6 +10,8 @@
 #include "build_managers/TechBuildManager.h"
 #include "../util/LogInfo.h"
 
+static bool NO_CANNON_RUSH = false;
+
 MacroManager::MacroManager(CCBot & bot)
     : m_bot             (bot)
     , m_buildingPlacer (bot)
@@ -16,9 +19,17 @@ MacroManager::MacroManager(CCBot & bot)
 {
     m_managers.emplace_back(std::make_unique<SupplyBuildManager>(m_bot));
     m_managers.emplace_back(std::make_unique<EconomyBuildManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<ProductionManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<UnitHireManager>(m_bot));
-    m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
+    if (NO_CANNON_RUSH) {
+        m_managers.emplace_back(std::make_unique<ProductionManager>(m_bot));
+        m_managers.emplace_back(std::make_unique<UnitHireManager>(m_bot));
+        m_managers.emplace_back(std::make_unique<TechBuildManager>(m_bot));
+    } else {
+        m_managers.emplace_back(std::make_unique<ForgeBuildManager>(m_bot));
+
+        m_bot.getStrategy().setGasGoal({0});
+        m_bot.getStrategy().setWorkersGoal({16});
+        m_bot.getStrategy().setExpandGoal({1});
+    }
 }
 
 void MacroManager::onStart() {
@@ -235,4 +246,8 @@ void MacroManager::produceBuilding(const UnitType& buildingType) {
         const auto& buildOrder = std::make_shared<BuildingOrder>(m_bot, squad, task);
         squad->setOrder(buildOrder);
     }
+}
+
+std::vector<std::unique_ptr<BuildManager>> &MacroManager::getMutableManagers() {
+    return m_managers;
 }

@@ -136,6 +136,10 @@ void Unit::attackMove(const CCPosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::ATTACK_ATTACK, targetPosition);
 }
 
+void Unit::queuedMove(const CCPosition & targetPosition) const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition, true);
+}
+
 void Unit::move(const CCPosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
 }

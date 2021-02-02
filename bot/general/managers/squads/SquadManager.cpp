@@ -79,6 +79,19 @@ void SquadManager::transferUnits(Squad* from, Squad* to) {
         return;
     }
     const std::set<const Unit*>& units = from->units();
+    if (units.empty()) {
+        LOG_DEBUG << "From squad has no units." << BOT_ENDL;
+    } else {
+        auto &line = LOG_DEBUG;
+        line << "Will transfer units: ";
+        for (auto it = units.begin(); it != units.end(); ++it) {
+            if (it != units.begin()) {
+                line << ',';
+            }
+            line << (*it)->getID();
+        }
+        line << BOT_ENDL;
+    }
     to->addUnits(units);
     for (auto& unit : units) {
         DEBUG_ASSERT(unit->isValid(), "Transferred invalid unit");
@@ -105,5 +118,25 @@ void SquadManager::deformSquad(Squad* squad) {
     transferUnits(squad, getUnassignedSquad());
     if (squad->getId() != unassignedSquadID) {
         m_squads.erase(squad->getId());
+    }
+}
+
+bool SquadManager::validateSquadId(std::optional<SquadID> &optSquadId) {
+    if (optSquadId.has_value()) {
+        auto it = m_squads.find(optSquadId.value());
+        if (it == m_squads.end()) {
+            optSquadId = {};
+            return false;
+        }
+        return true;
+    } else {
+        return true;
+    }
+}
+
+void SquadManager::deformSquadById(SquadID squadId) {
+    auto squadO = getSquad(squadId);
+    if (squadO.has_value()) {
+        deformSquad(squadO.value());
     }
 }

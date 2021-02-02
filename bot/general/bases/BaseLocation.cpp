@@ -218,6 +218,10 @@ void BaseLocation::finishInitialization() {
     m_distanceMap = m_bot.Map().getDistanceMap(m_depotActualPosition);
 }
 
+void BaseLocation::recalculateDistanceMap() {
+    m_distanceMap = m_bot.Map().getDistanceMap(m_depotActualPosition);
+}
+
 const DistanceMap &BaseLocation::getDistanceMap() const {
     return m_distanceMap;
 }

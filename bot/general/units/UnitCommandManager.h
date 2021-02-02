@@ -44,9 +44,10 @@ namespace NPrivate {
         Type type;
         sc2::ABILITY_ID abilityId;
         TargetType target;
+        bool queued;
 
         CommandAttribute(const Type type, sc2::ABILITY_ID abilityId,
-                         const TargetType &target);
+                         const TargetType &target, bool queued);
 
         CommandAttribute(const CommandAttribute& rhs);
 
@@ -58,8 +59,13 @@ namespace NPrivate {
     struct Command : CommandAttribute {
         std::vector<const sc2::Unit*> issuers;
 
-        Command(const Type type, sc2::ABILITY_ID abilityId, const TargetType &target,
-                const std::vector<const sc2::Unit*> &issuers);
+        Command(
+                const Type type,
+                sc2::ABILITY_ID abilityId,
+                const TargetType &target,
+                const std::vector<const sc2::Unit*> &issuers,
+                bool queued = false
+        );
     };
 
     struct IssuedCommand : public CommandAttribute {
@@ -91,7 +97,7 @@ public:
     //!< \param unit The unit to send the command to.
     //!< \param ability The ability id of the command.
     //!< \param point The 2D world position to target.
-    void UnitCommand(const sc2::Unit* unit, sc2::AbilityID ability, const CCPosition& point);
+    void UnitCommand(const sc2::Unit* unit, sc2::AbilityID ability, const CCPosition& point, bool queued = false);
 
     //! Issues a command to a unit. Targets another unit.
     //!< \param unit The unit to send the command to.

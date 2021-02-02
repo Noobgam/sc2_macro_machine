@@ -55,15 +55,23 @@ namespace NPrivate {
         return !(rhs == *this);
     }
 
-    CommandAttribute::CommandAttribute(const CommandAttribute::Type type, sc2::ABILITY_ID abilityId,
-                                       const TargetType &target) : type(type),
-                                                                                               abilityId(abilityId),
-                                                                                               target(target) {}
+    CommandAttribute::CommandAttribute(
+            const CommandAttribute::Type type,
+            sc2::ABILITY_ID abilityId,
+            const TargetType &target,
+            bool queued
+    )
+            : type(type)
+            , abilityId(abilityId)
+            , target(target)
+            , queued(queued)
+            {}
 
     CommandAttribute::CommandAttribute(const CommandAttribute& rhs)
             : type(rhs.type)
             , abilityId(rhs.abilityId)
-            , target(rhs.target) {
+            , target(rhs.target)
+            , queued(rhs.queued) {
     }
 
     CommandAttribute::CommandAttribute()
@@ -92,9 +100,13 @@ namespace NPrivate {
         return false;
     }
 
-    Command::Command(const CommandAttribute::Type type, sc2::ABILITY_ID abilityId,
-                     const TargetType &target, const std::vector<const sc2::Unit *> &issuers)
-            : CommandAttribute(type, abilityId, target), issuers(issuers) {}
+    Command::Command(
+            const CommandAttribute::Type type,
+            sc2::ABILITY_ID abilityId,
+            const TargetType &target,
+            const std::vector<const sc2::Unit *> &issuers,
+            bool queued
+    ) : CommandAttribute(type, abilityId, target, queued), issuers(issuers) {}
 
     IssuedCommand::IssuedCommand() {}
 } // namespace NPrivate
@@ -144,12 +156,18 @@ UnitCommandManager::UnitCommandManager(CCBot &bot)
 
 }
 
-void UnitCommandManager::UnitCommand(const sc2::Unit* unit, sc2::AbilityID ability, const CCPosition &point) {
+void UnitCommandManager::UnitCommand(
+        const sc2::Unit* unit,
+        sc2::AbilityID ability,
+        const CCPosition &point,
+        bool queued
+) {
     commands.push_back(NPrivate::Command{
             NPrivate::Command::POSITIONAL,
             ability,
             point,
-            {unit}
+            {unit},
+            queued
     });
 }
 
@@ -179,20 +197,23 @@ void UnitCommandManager::execute(
             m_bot.Actions()->UnitCommand(
                 units,
                 attribute.abilityId,
-                std::get<const sc2::Unit *>(attribute.target)
+                std::get<const sc2::Unit *>(attribute.target),
+                attribute.queued
             );
             break;
         case NPrivate::CommandAttribute::POSITIONAL:
             m_bot.Actions()->UnitCommand(
                 units,
                 attribute.abilityId,
-                std::get<CCPosition>(attribute.target)
+                std::get<CCPosition>(attribute.target),
+                attribute.queued
             );
             break;
         case NPrivate::CommandAttribute::SELF_TARGET:
             m_bot.Actions()->UnitCommand(
                 units,
-                attribute.abilityId
+                attribute.abilityId,
+                attribute.queued
             );
             break;
         case NPrivate::CommandAttribute::NONE:break;

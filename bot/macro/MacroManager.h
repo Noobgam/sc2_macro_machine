@@ -36,9 +36,13 @@ public:
     void    drawProductionInformation();
     BuildingPlacer& getBuildingPlacer();
 
+    std::vector<std::unique_ptr<BuildManager>>& getMutableManagers();
+
 
     /**
         If you don't care about the position of trained / created unit you can use 1-arg func
     **/
     std::optional<const Unit*> getProducer(const MetaType& type);
+
+    friend class Strategy;
 };

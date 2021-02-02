@@ -13,7 +13,7 @@ CCBot::CCBot()
     , m_bases(*this)
     , m_unitInfo(*this)
     , m_managers(*this)
-    , m_strategy(*this)
+    , m_strategy(*this, Strategy::HighLevelStrategy::CANNONS)
     , m_gameCommander(*this)
     , m_techTree(*this)
     , m_unitCommandManager(*this)
@@ -139,6 +139,14 @@ Managers &CCBot::getManagers() {
 
 const Managers &CCBot::getManagers() const {
     return m_managers;
+}
+
+Strategy &CCBot::getStrategy() {
+    return m_strategy;
+}
+
+const Strategy &CCBot::getStrategy() const {
+    return m_strategy;
 }
 
 int CCBot::GetCurrentFrame() const

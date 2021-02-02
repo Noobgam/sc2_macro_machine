@@ -93,3 +93,22 @@ float EconomyManager::getAvailableResources(ResourceType type, float seconds) co
     BOT_ASSERT(false, "Unknown resource type");
     return 0;
 }
+
+int EconomyManager::allocateWithCap(ResourceType type, int amount) {
+    float have;
+    int canAllocate;
+    switch (type) {
+        case ResourceType::MINERAL:
+            have = m_minerals - m_reservedMinerals;
+            canAllocate = std::min(std::max((int)have, 0), amount);
+            m_reservedMinerals += canAllocate;
+            return canAllocate;
+        case ResourceType::VESPENE:
+            have = m_vespene - m_reservedVespene;
+            canAllocate = std::min(std::max((int)have, 0), amount);
+            m_reservedVespene += canAllocate;
+            return canAllocate;
+    }
+    BOT_ASSERT(false, "Unknown resource type");
+    return 0;
+}

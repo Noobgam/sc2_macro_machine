@@ -208,6 +208,8 @@ bool Util::canWalkOverUnit(const UnitType& type) {
         case sc2::UNIT_TYPEID::UNBUILDABLEBRICKSSMALLUNIT:                return true;
         case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEBRICKSDESTRUCTIBLE:     return true;
         case sc2::UNIT_TYPEID::UNBUILDABLEROCKSDESTRUCTIBLE:              return true;
+        // beware when uncommenting this, enemy can very easily raise the depo
+        //case sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOTLOWERED:                 return true;
         case sc2::UNIT_TYPEID::NEUTRAL_UNBUILDABLEPLATESDESTRUCTIBLE:     return true;
         case sc2::UNIT_TYPEID::NEUTRAL_KARAKFEMALE:                       return true;
         case sc2::UNIT_TYPEID::NEUTRAL_UTILITYBOT:                        return true;

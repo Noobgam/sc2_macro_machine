@@ -3,6 +3,7 @@
 #include <micro/modules/ChronoBoostModule.h>
 #include <micro/modules/scout/ScoutModule.h>
 #include <general/bases/BaseLocation.h>
+#include <micro/modules/cannons/CannonStartModule.h>
 #include "../general/model/Common.h"
 #include "../general/managers/squads/SquadManager.h"
 
@@ -12,6 +13,7 @@ class CombatManager {
     CCBot &         m_bot;
     ChronoBoostModule     m_boostModule;
     ScoutModule           m_scoutModule;
+    CannonStartModule     m_cannonStartModule;
 
     Squad* mainSquad = nullptr;
     Squad* leftOverSquad = nullptr;
@@ -26,5 +28,6 @@ public:
 
     void onStart();
     void onFrame();
+    void newUnitCallback(const Unit* unit);
 };
 

@@ -51,6 +51,7 @@ public:
     BaseLocationID  getBaseId() const;
     bool isInResourceBox(int x, int y) const;
 
+    void recalculateDistanceMap();
     const DistanceMap& getDistanceMap() const;
 
     void resourceExpiredCallback(const Resource* resource);
