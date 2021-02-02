@@ -35,5 +35,6 @@ public:
     void transferUnits(Squad* from, Squad* to);
     void transferUnits(const std::set<const Unit*> & units, Squad* to);
 
+    void deformSquadById(SquadID squadId);
     void deformSquad(Squad* squad);
 };

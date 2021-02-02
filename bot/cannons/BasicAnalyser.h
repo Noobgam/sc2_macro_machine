@@ -33,6 +33,7 @@ public:
 
     std::atomic<BaseAnalysis*> latestAnalysis = NULL;
     std::atomic<int> analysisRevision = 0;
+    std::atomic<bool> cancelRequested = false;
     std::future<void> lastCalculationFuture;
 
     // fields below are transient, only used in analysis directly
@@ -67,8 +68,10 @@ public:
     void checkCurrentPlacementAndAppend();
     bool addPylon(CCTilePosition tile);
     void removePylon(CCTilePosition tile);
+    void recursion0(const std::vector<CCTilePosition>& pylonCandidates);
     void recursion(const std::vector<CCTilePosition>& pylonCandidates);
     bool cutEarly() const;
+    void requestCancel();
 
 public:
     bool recalculate(const CCBot& bot);

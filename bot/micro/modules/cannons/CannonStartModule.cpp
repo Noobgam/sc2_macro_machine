@@ -25,6 +25,10 @@ std::optional<Squad*> CannonStartModule::assignScoutSquad(const BaseLocation* ba
 }
 
 void CannonStartModule::onFrame() {
+    updateStrategy();
+    if (strategy != Strategy::HighLevelStrategy::CANNONS) {
+        return;
+    }
     if (!m_bot.getManagers().getSquadManager().validateSquadId(m_mainSquad)) {
         LOG_DEBUG << "Main squad was invalidated." << BOT_ENDL;
     }
@@ -137,5 +141,25 @@ void CannonStartModule::newUnitCallback(const Unit *unit) {
                 order->processBuilding(unit);
             }
         }
+    }
+}
+
+void CannonStartModule::updateStrategy() {
+    if (strategy == m_bot.getStrategy().getCurrentStrategy()) {
+        return;
+    }
+    strategy = m_bot.getStrategy().getCurrentStrategy();
+    if (strategy != Strategy::HighLevelStrategy::CANNONS) {
+        needRecalculation = false;
+        currentAnalysis = NULL;
+        selectedPlacement = {};
+        if (m_mainSquad.has_value()) {
+            m_bot.getManagers().getSquadManager().deformSquadById(m_mainSquad.value());
+        }
+        if (m_subSquad.has_value()) {
+            m_bot.getManagers().getSquadManager().deformSquadById(m_subSquad.value());
+        }
+        analyzer.requestCancel();
+        return;
     }
 }

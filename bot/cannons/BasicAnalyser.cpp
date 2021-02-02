@@ -133,7 +133,11 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
     currentAnalysis = new BaseAnalysis();
     currentAnalysis->revision = ++revision;
     currentPylonTarget = 3;
-    recursion(relevantTiles);
+    recursion0(relevantTiles);
+    if (cancelRequested) {
+        LOG_DEBUG << "Cancel requested, analysis stopped." << BOT_ENDL;
+        return;
+    }
     auto prev = latestAnalysis.exchange(currentAnalysis);
     if (prev != NULL) {
         delete prev;
@@ -161,6 +165,48 @@ void BasicAnalyser::analyzeAsync(const BaseLocation *baseLocation) {
 
 int BasicAnalyser::getAnalysisRevision() {
     return analysisRevision;
+}
+
+void BasicAnalyser::recursion0(const std::vector<CCTilePosition> &pylonCandidates) {
+    if (cutEarly()) {
+        return;
+    }
+    if (chosenPylons.size() == currentPylonTarget) {
+        checkCurrentPlacementAndAppend();
+        return;
+    }
+    // every pylon must be placed close to the wall
+    for (auto candidate : pylonCandidates) {
+        int x = candidate.x;
+        int y = candidate.y;
+        if (
+                !walkable[x - 1][y]
+                || !walkable[x + 2][y]
+                || !walkable[x - 1][y + 1]
+                || !walkable[x + 2][y + 1]
+                || !walkable[x][y - 1]
+                || !walkable[x][y + 2]
+                || !walkable[x + 1][y - 1]
+                || !walkable[x + 1][y + 2]
+                || minerals[x - 1][y - 1]
+                || minerals[x - 1][y + 2]
+                || minerals[x + 2][y - 1]
+                || minerals[x + 2][y + 2]
+        ) {
+            if (cancelRequested) {
+                return;
+            }
+            if (addPylon(candidate)) {
+
+                // some major performance optimisation is required here.
+                // nice optimization should be to remove pylons that are way too far from this one.
+                // Probably 20 valid ones closest to the last placed pylon are the only ones necessary
+                recursion(relevantTiles);
+
+                removePylon(candidate);
+            }
+        }
+    }
 }
 
 void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates) {
@@ -441,4 +487,8 @@ std::vector<CCTilePosition> BasicAnalyser::dfsCannonPlacement(int x, int y, int 
 bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {
     // TODO: take minerals into account
     return max(abs(fromy - toy), abs(fromx - tox)) <= 1 && walkable[tox][toy];
+}
+
+void BasicAnalyser::requestCancel() {
+    cancelRequested.store(true);
 }

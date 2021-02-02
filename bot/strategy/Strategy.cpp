@@ -90,3 +90,7 @@ void Strategy::setExpandGoal(std::optional<int> goalO) {
 void Strategy::setTargetStrategy(Strategy::HighLevelStrategy strategy) {
     targetStrategy = strategy;
 }
+
+Strategy::HighLevelStrategy Strategy::getCurrentStrategy() {
+    return currentStrategy;
+}

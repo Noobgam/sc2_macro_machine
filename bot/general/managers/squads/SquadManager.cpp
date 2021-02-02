@@ -133,3 +133,10 @@ bool SquadManager::validateSquadId(std::optional<SquadID> &optSquadId) {
         return true;
     }
 }
+
+void SquadManager::deformSquadById(SquadID squadId) {
+    auto squadO = getSquad(squadId);
+    if (squadO.has_value()) {
+        deformSquad(squadO.value());
+    }
+}

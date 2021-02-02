@@ -36,6 +36,7 @@ public:
     Strategy(CCBot& bot, HighLevelStrategy highLevelStrategy);
 
     void setTargetStrategy(HighLevelStrategy strategy);
+    HighLevelStrategy getCurrentStrategy();
     void onFrame();
     std::optional<int> getGasGoal() const;
     void setGasGoal(std::optional<int> goalO);
