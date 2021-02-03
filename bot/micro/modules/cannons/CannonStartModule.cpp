@@ -153,11 +153,19 @@ void CannonStartModule::updateStrategy() {
         needRecalculation = false;
         currentAnalysis = NULL;
         selectedPlacement = {};
+
+        // we cannot deform squads because worker manager keeps track of completed orders.
         if (m_mainSquad.has_value()) {
-            m_bot.getManagers().getSquadManager().deformSquadById(m_mainSquad.value());
+            auto&& sqO = m_bot.getManagers().getSquadManager().getSquad(m_mainSquad.value());
+            if (sqO.has_value()) {
+                sqO.value()->getOrder()->onEnd();
+            }
         }
         if (m_subSquad.has_value()) {
-            m_bot.getManagers().getSquadManager().deformSquadById(m_subSquad.value());
+            auto&& sqO = m_bot.getManagers().getSquadManager().getSquad(m_subSquad.value());
+            if (sqO.has_value()) {
+                sqO.value()->getOrder()->onEnd();
+            }
         }
         analyzer.requestCancel();
         return;

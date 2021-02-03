@@ -12,6 +12,7 @@ class CCBot;
 class WorkerManager {
     CCBot & m_bot;
 
+    std::vector<Squad*> m_additionalSquads = {};
     void assignFreeUnits();
     void assignUnit(const Unit * unit);
 

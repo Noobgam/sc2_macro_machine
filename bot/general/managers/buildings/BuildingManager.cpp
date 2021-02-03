@@ -13,10 +13,6 @@ void BuildingManager::onFrame() {
     for (auto it = m_tasksPtr.begin(); it < m_tasksPtr.end();) {
         auto & task = *it;
         if (task->getStatus() == BuildingStatus::COMPLETED || task->getStatus() == BuildingStatus::FAILED) {
-            if (task->getWorker().has_value() && task->getWorker().value()) {
-                Squad* squad = m_bot.getManagers().getSquadManager().getUnitSquad(task->getWorker().value());
-                m_bot.getManagers().getSquadManager().deformSquad(squad);
-            }
             m_tasks.erase(task->getId());
             it = m_tasksPtr.erase(it);
         } else {
