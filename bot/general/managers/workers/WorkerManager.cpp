@@ -8,16 +8,6 @@ WorkerManager::WorkerManager(CCBot &bot) : m_bot(bot) { }
 
 void WorkerManager::onFrame() {
     auto& squadManager = m_bot.getManagers().getSquadManager();
-    // process completed tasks
-    for (auto it = m_additionalSquads.begin(); it < m_additionalSquads.end();) {
-        auto& squad = *it;
-        if (squad->getOrder()->isCompleted()) {
-            squadManager.deformSquad(squad);
-            it = m_additionalSquads.erase(it);
-        } else {
-            it++;
-        }
-    }
     fixResourceLines(ResourceType::MINERAL);
     fixResourceLines(ResourceType::VESPENE);
     assignFreeUnits();
@@ -45,7 +35,6 @@ Squad *WorkerManager::formSquad(const std::set<const Unit *> &workers) {
     auto& squadManager = m_bot.getManagers().getSquadManager();
     Squad* newSquad = squadManager.createNewSquad();
     squadManager.transferUnits(workers, newSquad);
-    m_additionalSquads.emplace_back(newSquad);
     return newSquad;
 }
 
