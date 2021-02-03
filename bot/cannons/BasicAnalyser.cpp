@@ -130,10 +130,10 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
         }
     }
 
-    currentAnalysis = std::make_unique<BaseAnalysis>();
+    std::unique_ptr<BaseAnalysis> currentAnalysis = std::make_unique<BaseAnalysis>();
     currentAnalysis->revision = ++revision;
     currentPylonTarget = 3;
-    recursion0(relevantTiles);
+    recursion0(relevantTiles, currentAnalysis);
     auto prev = latestAnalysis.exchange(currentAnalysis.release());
     if (prev != NULL) {
         delete prev;
@@ -167,12 +167,15 @@ int BasicAnalyser::getAnalysisRevision() {
     return analysisRevision;
 }
 
-void BasicAnalyser::recursion0(const std::vector<CCTilePosition> &pylonCandidates) {
+void BasicAnalyser::recursion0(
+        const std::vector<CCTilePosition> &pylonCandidates,
+        std::unique_ptr<BaseAnalysis>& currentAnalysis
+) {
     if (cutEarly()) {
         return;
     }
     if (chosenPylons.size() == currentPylonTarget) {
-        checkCurrentPlacementAndAppend();
+        checkCurrentPlacementAndAppend(currentAnalysis);
         return;
     }
     // every pylon must be placed close to the wall
@@ -201,7 +204,7 @@ void BasicAnalyser::recursion0(const std::vector<CCTilePosition> &pylonCandidate
                 // some major performance optimisation is required here.
                 // nice optimization should be to remove pylons that are way too far from this one.
                 // Probably 20 valid ones closest to the last placed pylon are the only ones necessary
-                recursion(relevantTiles);
+                recursion(relevantTiles, currentAnalysis);
 
                 removePylon(candidate);
             }
@@ -209,12 +212,15 @@ void BasicAnalyser::recursion0(const std::vector<CCTilePosition> &pylonCandidate
     }
 }
 
-void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates) {
+void BasicAnalyser::recursion(
+        const std::vector<CCTilePosition>& pylonCandidates,
+        std::unique_ptr<BaseAnalysis>& currentAnalysis
+) {
     if (cutEarly()) {
         return;
     }
     if (chosenPylons.size() == currentPylonTarget) {
-        checkCurrentPlacementAndAppend();
+        checkCurrentPlacementAndAppend(currentAnalysis);
         return;
     }
     // every pylon must be placed close to the wall
@@ -241,7 +247,7 @@ void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates
                 // some major performance optimisation is required here.
                 // nice optimization should be to remove pylons that are way too far from this one.
                 // Probably 20 valid ones closest to the last placed pylon are the only ones necessary
-                recursion(relevantTiles);
+                recursion(relevantTiles, currentAnalysis);
 
                 removePylon(candidate);
             }
@@ -250,7 +256,7 @@ void BasicAnalyser::recursion(const std::vector<CCTilePosition>& pylonCandidates
 
 }
 
-void BasicAnalyser::checkCurrentPlacementAndAppend() {
+void BasicAnalyser::checkCurrentPlacementAndAppend(std::unique_ptr<BaseAnalysis>& currentAnalysis) {
     PylonPlacement placement = {
             chosenPylons,
             {},

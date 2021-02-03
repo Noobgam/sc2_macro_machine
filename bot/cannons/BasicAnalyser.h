@@ -47,9 +47,8 @@ public:
     // boolean relevance map, signifies whether
     std::vector<std::vector<bool>> isRelevantTile;
 
-    std::unique_ptr<BaseAnalysis> currentAnalysis = NULL;
+
     int currentPylonTarget;
-    int currentCnt;
     std::vector<CCTilePosition> chosenPylons;
 
     void markUnbuildable(int x, int y, int size);
@@ -65,11 +64,17 @@ public:
     std::pair<int, bool> dfs(int x, int y);
     std::vector<CCTilePosition> dfsCannonPlacement(int x, int y, int comp);
     SlowCheckResult slowCheck();
-    void checkCurrentPlacementAndAppend();
+    void checkCurrentPlacementAndAppend(std::unique_ptr<BaseAnalysis>& currentAnalysis);
     bool addPylon(CCTilePosition tile);
     void removePylon(CCTilePosition tile);
-    void recursion0(const std::vector<CCTilePosition>& pylonCandidates);
-    void recursion(const std::vector<CCTilePosition>& pylonCandidates);
+    void recursion0(
+            const std::vector<CCTilePosition>& pylonCandidates,
+            std::unique_ptr<BaseAnalysis>& currentAnalysis
+    );
+    void recursion(
+            const std::vector<CCTilePosition>& pylonCandidates,
+            std::unique_ptr<BaseAnalysis>& currentAnalysis
+    );
     bool cutEarly() const;
     void requestCancel();
 
