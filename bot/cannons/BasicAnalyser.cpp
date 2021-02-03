@@ -130,11 +130,11 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
         }
     }
 
-    currentAnalysis = new BaseAnalysis();
+    currentAnalysis = std::make_unique<BaseAnalysis>();
     currentAnalysis->revision = ++revision;
     currentPylonTarget = 3;
     recursion0(relevantTiles);
-    auto prev = latestAnalysis.exchange(currentAnalysis);
+    auto prev = latestAnalysis.exchange(currentAnalysis.release());
     if (prev != NULL) {
         delete prev;
     }

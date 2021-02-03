@@ -47,7 +47,7 @@ public:
     // boolean relevance map, signifies whether
     std::vector<std::vector<bool>> isRelevantTile;
 
-    BaseAnalysis* currentAnalysis = NULL;
+    std::unique_ptr<BaseAnalysis> currentAnalysis = NULL;
     int currentPylonTarget;
     int currentCnt;
     std::vector<CCTilePosition> chosenPylons;
