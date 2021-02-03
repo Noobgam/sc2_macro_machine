@@ -9,5 +9,6 @@ public:
     explicit BuildManager(CCBot & bot);
 
 	virtual std::optional<BuildOrderItem> getTopPriority() = 0;
+    virtual ~BuildManager();
 };
 
