@@ -79,6 +79,7 @@ public:
     int getAnalysisRevision();
 
     void analyzeAsync(const BaseLocation* baseLocation);
+    ~BasicAnalyser();
 
 };
 

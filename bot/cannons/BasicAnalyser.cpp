@@ -492,3 +492,10 @@ bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {
 void BasicAnalyser::requestCancel() {
     cancelRequested.store(true);
 }
+
+BasicAnalyser::~BasicAnalyser() {
+    BaseAnalysis* analysis = latestAnalysis.load();
+    if (analysis != nullptr) {
+        delete analysis;
+    }
+}
