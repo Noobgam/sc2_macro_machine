@@ -18,6 +18,7 @@ private:
                 && cannonPlacements.size() < 10;
         }
     };
+    void cleanup();
 
 public:
     int m_width;
@@ -33,6 +34,7 @@ public:
 
     std::atomic<BaseAnalysis*> latestAnalysis = NULL;
     std::atomic<int> analysisRevision = 0;
+    std::atomic<bool> analysing = false;
     std::atomic<bool> cancelRequested = false;
     std::future<void> lastCalculationFuture;
 

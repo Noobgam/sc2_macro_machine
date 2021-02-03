@@ -10,7 +10,7 @@
 constexpr auto ACCEPTABLE_REALTIME_STUTTER = std::chrono::milliseconds{5};
 
 bool BasicAnalyser::recalculate(const CCBot &bot) {
-    if (lastCalculationFuture.valid()) {
+    if (analysing) {
         LOG_DEBUG << "UB will happen if you non-atomically modify vectors." << BOT_ENDL;
         auto res = lastCalculationFuture.wait_for(ACCEPTABLE_REALTIME_STUTTER);
         if (res == std::future_status::timeout) {
@@ -74,6 +74,12 @@ bool BasicAnalyser::analysisReady() {
 }
 
 void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
+    analysing = true;
+    if (cancelRequested) {
+        LOG_DEBUG << "Cancel was requested while analyzing. Request rejected." << BOT_ENDL;
+        analysing = false;
+        return;
+    }
     LOG_DEBUG << "Started analyzing" << BOT_ENDL;
     static int revision = 0;
     // first simple algorithm. There is a pylon that touches the wall.
@@ -138,6 +144,7 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
     if (prev != NULL) {
         delete prev;
     }
+    analysing = false;
     if (cancelRequested) {
         LOG_DEBUG << "Cancel requested, analysis stopped." << BOT_ENDL;
         return;
@@ -156,9 +163,9 @@ void BasicAnalyser::markUnbuildable(int x, int y, int size) {
 }
 
 void BasicAnalyser::analyzeAsync(const BaseLocation *baseLocation) {
-    if (lastCalculationFuture.valid()) {
-        // don't want to discard it for now
-        lastCalculationFuture.wait();
+    if (analysing) {
+        // always discard request instantly.
+        return;
     }
     lastCalculationFuture = std::async(std::launch::async, [this, baseLocation] () { analyze(baseLocation); });
 }
@@ -497,11 +504,19 @@ bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {
 
 void BasicAnalyser::requestCancel() {
     cancelRequested.store(true);
+    if (!analysing) {
+        cleanup();
+    }
 }
 
 BasicAnalyser::~BasicAnalyser() {
+    cleanup();
+}
+
+void BasicAnalyser::cleanup() {
     BaseAnalysis* analysis = latestAnalysis.load();
     if (analysis != nullptr) {
         delete analysis;
     }
+    lastCalculationFuture = {};
 }
