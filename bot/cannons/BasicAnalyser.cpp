@@ -134,13 +134,13 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
     currentAnalysis->revision = ++revision;
     currentPylonTarget = 3;
     recursion0(relevantTiles);
-    if (cancelRequested) {
-        LOG_DEBUG << "Cancel requested, analysis stopped." << BOT_ENDL;
-        return;
-    }
     auto prev = latestAnalysis.exchange(currentAnalysis);
     if (prev != NULL) {
         delete prev;
+    }
+    if (cancelRequested) {
+        LOG_DEBUG << "Cancel requested, analysis stopped." << BOT_ENDL;
+        return;
     }
     LOG_DEBUG << "Finished analyzing" << BOT_ENDL;
 }
