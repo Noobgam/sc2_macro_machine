@@ -61,6 +61,10 @@ namespace logging {
         frameStart = std::chrono::system_clock::now();
     }
 
+    int getPropagatedFrame() {
+        return frameId;
+    }
+
     std::ostream& LogDebug(const char * file, int line)
     {
 #ifdef DEBUG_LOGGING

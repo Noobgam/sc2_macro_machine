@@ -1,5 +1,6 @@
 #include "TestAgent.h"
 #include "TestScenario.h"
+#include <util/LogInfo.h>
 
 void TestAgent::OnGameEnd() {
     Control()->GetObservation();
@@ -10,5 +11,13 @@ void TestAgent::OnGameEnd() {
     });
     if (it != res.end() && it->result == sc2::GameResult::Loss) {
         scenarioResult = ScenarioResult::SUCCESS;
+    }
+}
+
+void TestAgent::OnStep() {
+    if (logging::getPropagatedFrame() > 22.4 * 10 * 60) {
+        // TODO: save replay #147
+        //Control()->SaveReplay("some_path");
+        exit(1);
     }
 }

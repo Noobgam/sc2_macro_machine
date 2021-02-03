@@ -80,10 +80,7 @@ void CannonStartModule::onFrame() {
 
     auto val = analyzer.latestAnalysis.exchange(NULL);
     if (val != NULL) {
-        if (currentAnalysis != NULL) {
-            delete currentAnalysis;
-        }
-        currentAnalysis = val;
+        currentAnalysis.reset(val);
         //std::random_shuffle(currentAnalysis->pylonPlacements.begin(), currentAnalysis->pylonPlacements.end());
     }
     if (currentAnalysis != NULL) {
@@ -151,7 +148,7 @@ void CannonStartModule::updateStrategy() {
     strategy = m_bot.getStrategy().getCurrentStrategy();
     if (strategy != Strategy::HighLevelStrategy::CANNONS) {
         needRecalculation = false;
-        currentAnalysis = NULL;
+        currentAnalysis.reset();
         selectedPlacement = {};
 
         // we cannot deform squads because worker manager keeps track of completed orders.
