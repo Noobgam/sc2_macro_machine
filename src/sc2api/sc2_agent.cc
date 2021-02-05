@@ -18,7 +18,7 @@ public:
 
     ActionImp(ProtoInterface& proto, ControlInterface& control);
 
-    SC2APIProtocol::RequestAction* GetRequestAction();
+    SC2APIProtocol::RequestAction* GetRequestAction() override;
 
     void UnitCommand(const Unit* unit, AbilityID ability, bool queued_command = false) override;
     void UnitCommand(const Unit* unit, AbilityID ability, const Point2D& point, bool queued_command = false) override;

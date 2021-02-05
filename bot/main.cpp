@@ -66,6 +66,10 @@ int main(int argc, char* argv[])
     coordinator.SetStepSize(stepSize);
     coordinator.SetRealtime(true);
     coordinator.SetRandomSeed({12345});
+    coordinator.SetRawAffectsSelection(true);
+
+    sc2::FeatureLayerSettings settings;
+    coordinator.SetFeatureLayers(settings);
 
     coordinator.SetParticipants({
         sc2::CreateParticipant(Util::GetRaceFromString(botRaceString), &bot),

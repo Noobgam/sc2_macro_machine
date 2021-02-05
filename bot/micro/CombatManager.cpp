@@ -5,6 +5,7 @@
 
 #include <util/LogInfo.h>
 #include <util/Util.h>
+#include <micro/order/attack/SimplePrismJuggleOrder.h>
 
 CombatManager::CombatManager(CCBot & bot) :
     m_bot(bot),
@@ -20,16 +21,15 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
-    if (mainSquad->units().size() >= 8) {
+    if (mainSquad->units().size() >= 3) {
         Order* order = mainSquad->getOrder().get();
-        if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
+        if (order->isCompleted() || dynamic_cast<SimplePrismJuggleOrder*>(order) == nullptr) {
             addDefensiveUnitsToAttack();
             const auto& base = getAttackTarget();
             if (base.has_value()) {
-                mainSquad->setOrder(std::make_shared<AttackWithKiting>(
+                mainSquad->setOrder(std::make_shared<SimplePrismJuggleOrder>(
                     m_bot,
-                    mainSquad,
-                    base.value()->getPosition()
+                    mainSquad
                 ));
             }
         }
@@ -52,6 +52,9 @@ void CombatManager::onFrame() {
 }
 
 void CombatManager::orderToGroup(Squad* squad) {
+    if (squad->units().empty()) {
+        return;
+    }
     int startId = m_bot.getManagers().getBasesManager().getStartLocation()->getBaseId();
     auto& orderedBases = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(startId);
     int targetBaseId = -1;
@@ -113,6 +116,7 @@ void CombatManager::reformSquads() {
         }
     }
     for (auto& base : m_bot.getManagers().getBasesManager().getBases()) {
+        break;
         if (squadWithUnits->units().size() == 0) {
             break;
         }
