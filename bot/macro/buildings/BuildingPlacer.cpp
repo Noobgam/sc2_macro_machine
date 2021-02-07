@@ -178,7 +178,7 @@ bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, UnitType type) const
         // dimensions of the base location
         int bx1 = (int)base->getDepotActualPosition().x;
         int by1 = (int)base->getDepotActualPosition().y;
-        auto&& xx = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot);
+        auto&& xx = Util::GetTownHall(m_bot.GetPlayerRequestedRace(Players::Self), m_bot);
         int bx2 = bx1 + xx.tileWidth();
         int by2 = by1 + xx.tileHeight();
 

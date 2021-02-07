@@ -145,6 +145,7 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
         delete prev;
     }
     analysing = false;
+    ++analysisRevision;
     if (cancelRequested) {
         LOG_DEBUG << "Cancel requested, analysis stopped." << BOT_ENDL;
         return;

@@ -19,10 +19,12 @@ private:
     BasicAnalyser analyzer;
     std::unique_ptr<BaseAnalysis> currentAnalysis = NULL;
     std::optional<PylonPlacement> selectedPlacement;
+    int latestProcessedRevision = -1;
     bool needRecalculation = false;
     Strategy::HighLevelStrategy strategy = Strategy::HighLevelStrategy::NONE;
     std::optional<Squad*> assignScoutSquad(const BaseLocation* baseLocation);
     void updateStrategy();
+    bool isPylonPlacementScary(const PylonPlacement& pylonPlacement) const;
 public:
     explicit CannonStartModule(CCBot & bot);
 

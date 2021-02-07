@@ -5,13 +5,12 @@
 
 #include <util/LogInfo.h>
 #include <util/Util.h>
-#include <micro/order/attack/SimplePrismJuggleOrder.h>
 
 CombatManager::CombatManager(CCBot & bot) :
-    m_bot(bot),
-    m_boostModule(bot),
-    m_scoutModule(bot),
-    m_cannonStartModule(bot)
+        m_bot(bot),
+        m_boostModule(bot),
+        m_scoutModule(bot),
+        m_cannonStartModule(bot)
 {}
 
 void CombatManager::onStart() {
@@ -21,15 +20,16 @@ void CombatManager::onStart() {
 
 void CombatManager::onFrame() {
     reformSquads();
-    if (mainSquad->units().size() >= 3) {
+    if (mainSquad->units().size() >= 8) {
         Order* order = mainSquad->getOrder().get();
-        if (order->isCompleted() || dynamic_cast<SimplePrismJuggleOrder*>(order) == nullptr) {
+        if (order->isCompleted() || dynamic_cast<AttackWithKiting*>(order) == nullptr) {
             addDefensiveUnitsToAttack();
             const auto& base = getAttackTarget();
             if (base.has_value()) {
-                mainSquad->setOrder(std::make_shared<SimplePrismJuggleOrder>(
-                    m_bot,
-                    mainSquad
+                mainSquad->setOrder(std::make_shared<AttackWithKiting>(
+                        m_bot,
+                        mainSquad,
+                        base.value()->getPosition()
                 ));
             }
         }
@@ -40,21 +40,18 @@ void CombatManager::onFrame() {
     }
     if (mainSquad->getOrder()->isCompleted() &&
         dynamic_cast<AttackWithKiting*>(mainSquad->getOrder().get()) != nullptr
-    ) {
+            ) {
         const auto &base = getAttackTarget();
         if (base.has_value()) {
             mainSquad->setOrder(std::make_shared<AttackWithKiting>(m_bot, mainSquad, base.value()->getPosition()));
         }
     }
     m_cannonStartModule.onFrame();
-    //m_scoutModule.onFrame();
+    m_scoutModule.onFrame();
     m_boostModule.onFrame();
 }
 
 void CombatManager::orderToGroup(Squad* squad) {
-    if (squad->units().empty()) {
-        return;
-    }
     int startId = m_bot.getManagers().getBasesManager().getStartLocation()->getBaseId();
     auto& orderedBases = m_bot.Map().getStaticMapMeta().getOrderedBasesByStartLocationId().at(startId);
     int targetBaseId = -1;
@@ -70,13 +67,13 @@ void CombatManager::orderToGroup(Squad* squad) {
     } else {
         auto base = m_bot.Bases().getBaseLocation(targetBaseId);
         auto path = base->getDistanceMap().getPathTo(
-            enemyBaseLocation.value()->getDepotActualPosition()
+                enemyBaseLocation.value()->getDepotActualPosition()
         );
         squad->setOrder(std::make_shared<GroupAroundOrder>(
-            m_bot,
-            squad,
-            Util::GetTileCenter(path[10]),
-            true
+                m_bot,
+                squad,
+                Util::GetTileCenter(path[10]),
+                true
         ));
     }
 }
@@ -116,7 +113,6 @@ void CombatManager::reformSquads() {
         }
     }
     for (auto& base : m_bot.getManagers().getBasesManager().getBases()) {
-        break;
         if (squadWithUnits->units().size() == 0) {
             break;
         }
@@ -135,4 +131,3 @@ void CombatManager::addDefensiveUnitsToAttack() {
 void CombatManager::newUnitCallback(const Unit *unit) {
     m_cannonStartModule.newUnitCallback(unit);
 }
-

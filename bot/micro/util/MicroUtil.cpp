@@ -17,7 +17,8 @@ namespace MicroUtil {
     std::optional<const Unit*> findUnitWithHighestThreat(
         const Unit* unit,
         float range,
-        const std::vector<const Unit*>& enemies
+        const std::vector<const Unit*>& enemies,
+        bool filterPossible
     ) {
         float maxPriority = -1;
         std::optional<const Unit*> maxPriorityTarget = {};
@@ -27,6 +28,9 @@ namespace MicroUtil {
                 continue;
             }
             if (enemy->getUnitPtr()->display_type != sc2::Unit::DisplayType::Visible) {
+                continue;
+            }
+            if (filterPossible && !enemy->canAttack(unit)) {
                 continue;
             }
             float dist = Util::Dist(*enemy, *unit) - enemy->getUnitPtr()->radius - unit->getUnitPtr()->radius;

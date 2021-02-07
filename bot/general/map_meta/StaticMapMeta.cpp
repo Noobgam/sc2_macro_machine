@@ -409,7 +409,7 @@ std::vector<BaseLocationProjection> StaticMapMeta::calculateBaseLocations(const 
             return (lx * lx + ly * ly) < (rx * rx + ry * ry);
         });
 
-        UnitType depot = Util::GetTownHall(bot.GetPlayerRace(Players::Self), const_cast<CCBot&>(bot));
+        UnitType depot = Util::GetTownHall(bot.GetPlayerRequestedRace(Players::Self), const_cast<CCBot&>(bot));
 
         bool done = false;
         for (auto pos : bot.Observation()->GetGameInfo().start_locations) {

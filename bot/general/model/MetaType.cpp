@@ -52,7 +52,7 @@ MetaType::MetaType(const CCUpgrade & upgradeType, CCBot & bot)
     m_bot           = &bot;
     m_type          = MetaTypes::Upgrade;
     m_upgrade       = upgradeType;
-    m_race          = m_bot->GetPlayerRace(Players::Self);
+    m_race          = m_bot->GetPlayerRequestedRace(Players::Self);
     m_name          = sc2::UpgradeIDToName(upgradeType);
 }
 
