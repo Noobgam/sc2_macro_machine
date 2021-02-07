@@ -33,7 +33,7 @@ BaseLocation::BaseLocation(CCBot & bot, BaseLocationID baseID, const std::vector
     initialize(resources);
 
     // calculate the depot position
-    UnitType depot = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self), m_bot);
+    UnitType depot = Util::GetTownHall(m_bot.GetPlayerRequestedRace(Players::Self), m_bot);
 
 
     // the position of the depot will be the closest spot we can build one from the resource center
@@ -215,6 +215,10 @@ void BaseLocation::finishInitialization() {
     m_right  = std::max(m_right,  m_depotActualPosition.x + 2.5f);
     m_top    = std::max(m_top,    m_depotActualPosition.y + 2.5f);
     m_bottom = std::min(m_bottom, m_depotActualPosition.y - 2.5f);
+    m_distanceMap = m_bot.Map().getDistanceMap(m_depotActualPosition);
+}
+
+void BaseLocation::recalculateDistanceMap() {
     m_distanceMap = m_bot.Map().getDistanceMap(m_depotActualPosition);
 }
 

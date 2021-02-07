@@ -31,4 +31,5 @@ public:
     void freeResource(ResourceType type, int amount);
 
     float getAvailableResources(ResourceType type, float seconds = 0) const ;
+    int allocateWithCap(ResourceType type, int amount);
 };

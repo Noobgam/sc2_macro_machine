@@ -308,6 +308,8 @@ class ActionInterface {
 public:
     virtual ~ActionInterface() = default;
 
+    virtual SC2APIProtocol::RequestAction* GetRequestAction() = 0;
+
     /*!\fn virtual void UnitCommand(Tag unit_tag, uint32_t ability)
      * Batches a UnitCommand that will be dispatched when SendActions() is called. UnitCommand has many overloaded functions, you can call it with
      * most combinations of Unit types (the Unit object or tag), ability types (the enum or uint32_t) and targets (a 2D position or tag).

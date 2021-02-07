@@ -53,12 +53,14 @@ public:
           GameCommander & Commander();
           Managers & getManagers();
     const Managers & getManagers() const;
+          Strategy & getStrategy();
+    const Strategy & getStrategy() const;
 
     const TypeData & Data(const UnitType & type) const;
     const TypeData & Data(const CCUpgrade & type) const;
     const TypeData & Data(const MetaType & type) const;
     const TypeData & Data(const Unit & unit) const;
-    CCRace GetPlayerRace(int player) const;
+    CCRace GetPlayerRequestedRace(int player) const;
     CCPosition GetStartLocation() const;
     UnitType getUnitType(sc2::UnitTypeID typeId);
     UnitCommandManager& getUnitCommandManager();

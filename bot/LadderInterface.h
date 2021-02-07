@@ -161,6 +161,13 @@ static void RunBot(int argc, char* argv[], sc2::Agent* Agent, sc2::Race race)
 	std::cout << "Connecting to port " << Options.GamePort << std::endl;
 	coordinator.Connect(Options.GamePort);
 	coordinator.SetupPorts(num_agents, Options.StartPort, false);
+	// uncomment this if you need ui actions (e.g. prism juggle)
+
+//    coordinator.SetRawAffectsSelection(true);
+//
+//    sc2::FeatureLayerSettings settings;
+//    coordinator.SetFeatureLayers(settings);
+
 	// Step forward the game simulation.
 	coordinator.JoinGame();
 	coordinator.SetTimeoutMS(10000);

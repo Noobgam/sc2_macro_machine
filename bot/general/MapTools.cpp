@@ -77,6 +77,12 @@ void MapTools::onFrame()
         }
     }
 
+    if (needRecalculation) {
+        updateNeutralMap();
+        computeConnectivity();
+        // also update distance map for all bases?
+        needRecalculation = false;
+    }
     draw();
 }
 
@@ -361,6 +367,13 @@ float MapTools::terrainHeight(const CCPosition & point) const
 
 void MapTools::draw() const
 {
+//    for (int i = 0; i < width(); ++i) {
+//        for (int j = 0; j < height(); ++j) {
+//            std::ostringstream out;
+//            out << i << " " << j;
+//            drawText({i + .5f, j + .5f}, out.str(), Colors::Red);
+//        }
+//    }
 }
 
 bool MapTools::pylonPowers(const CCPosition& pylonPos, float radius, const CCPosition& candidate) const {
@@ -612,4 +625,16 @@ float MapTools::getWalkTime(const Unit* unit, CCPosition pos) const {
 
 const std::vector<CCTilePosition> &MapTools::getPoweredTiles() const {
     return m_poweredTiles;
+}
+
+int MapTools::getLastSeen(int tileX, int tileY) const {
+    return m_lastSeen[tileX][tileY];
+}
+
+int MapTools::getVisibilityFrame() const {
+    return m_frame;
+}
+
+void MapTools::prepareRecalculation() {
+    needRecalculation = true;
 }

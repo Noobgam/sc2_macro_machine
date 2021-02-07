@@ -13,7 +13,7 @@ CCBot::CCBot()
     , m_bases(*this)
     , m_unitInfo(*this)
     , m_managers(*this)
-    , m_strategy(*this)
+    , m_strategy(*this, Strategy::HighLevelStrategy::NONE)
     , m_gameCommander(*this)
     , m_techTree(*this)
     , m_unitCommandManager(*this)
@@ -24,6 +24,12 @@ void CCBot::OnGameStart() {
     m_mapMeta = MapMeta::getMeta(Observation()->GetGameInfo().map_name);
     m_techTree.onStart();
     m_unitInfo.onStart();
+    sc2::Race race = GetPlayerRequestedRace(Players::Enemy);
+    if (race == sc2::Protoss || race == sc2::Terran) {
+        m_strategy.setTargetStrategy(Strategy::HighLevelStrategy::CANNONS);
+    } else {
+        m_strategy.setTargetStrategy(Strategy::HighLevelStrategy::MACRO);
+    }
 
 #ifdef _STATIC_MAP_CALCULATOR
     return;
@@ -94,17 +100,33 @@ size_t CCBot::getObservationId() const {
     return observationId;
 }
 
-CCRace CCBot::GetPlayerRace(int player) const
+CCRace CCBot::GetPlayerRequestedRace(int player) const
 {
+    // crutch for enum values
     auto playerID = Observation()->GetPlayerID();
-    for (auto & playerInfo : Observation()->GetGameInfo().player_info)
-    {
-        if (playerInfo.player_id == playerID)
+    if (player == Players::Self) {
+        for (auto & playerInfo : Observation()->GetGameInfo().player_info)
         {
-            return playerInfo.race_actual;
+            if (playerInfo.player_type == sc2::Observer) {
+                continue;
+            }
+            if (playerInfo.player_id == playerID)
+            {
+                return playerInfo.race_requested;
+            }
+        }
+    } else if (player == Players::Enemy) {
+        for (auto & playerInfo : Observation()->GetGameInfo().player_info)
+        {
+            if (playerInfo.player_type == sc2::Observer) {
+                continue;
+            }
+            if (playerInfo.player_id != playerID)
+            {
+                return playerInfo.race_requested;
+            }
         }
     }
-
     BOT_ASSERT(false, "Didn't find player to get their race");
     return sc2::Race::Random;
 }
@@ -139,6 +161,14 @@ Managers &CCBot::getManagers() {
 
 const Managers &CCBot::getManagers() const {
     return m_managers;
+}
+
+Strategy &CCBot::getStrategy() {
+    return m_strategy;
+}
+
+const Strategy &CCBot::getStrategy() const {
+    return m_strategy;
 }
 
 int CCBot::GetCurrentFrame() const

@@ -20,7 +20,9 @@ class TestAgent : public sc2::Agent {
 
  public:
 
-  void OnGameEnd() override;
+    void OnStep() override;
+
+    void OnGameEnd() override;
 };
 
 

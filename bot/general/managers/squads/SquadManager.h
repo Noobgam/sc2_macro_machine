@@ -30,9 +30,11 @@ public:
 
     Squad* createNewSquad();
     Squad* mergeSquads(std::vector<Squad*> & squads);
+    bool validateSquadId(std::optional<SquadID>& optSquadId);
 
     void transferUnits(Squad* from, Squad* to);
     void transferUnits(const std::set<const Unit*> & units, Squad* to);
 
+    void deformSquadById(SquadID squadId);
     void deformSquad(Squad* squad);
 };

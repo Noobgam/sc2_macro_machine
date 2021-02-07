@@ -8,12 +8,12 @@ protected:
     Squad* m_squad;
     bool m_completed = false;
 
-    virtual void onEnd();
 public:
     explicit Order(CCBot & bot, Squad* squad);
 
     virtual void onStart();
     virtual void onStep() = 0;
+    virtual void onEnd();
     virtual void draw() const;
 
     virtual void onUnitAdded(const Unit* unit);

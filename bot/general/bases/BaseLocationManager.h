@@ -7,6 +7,8 @@ class CCBot;
 class BaseLocationManager {
     CCBot & m_bot;
 
+    bool needRecalculation;
+
     std::map<BaseLocationID, std::unique_ptr<BaseLocation>> m_baseLocationData;
     std::vector<BaseLocation *>                             m_baseLocationPtrs;
     std::vector<std::vector<BaseLocation *>>                m_tileBaseLocations;
@@ -20,6 +22,8 @@ public:
 
     void onStart();
     void onFrame();
+
+    void prepareRecalculation();
 
     void resourceExpiredCallback(const Resource* resource);
 

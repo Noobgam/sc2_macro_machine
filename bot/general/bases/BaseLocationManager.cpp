@@ -64,6 +64,12 @@ void BaseLocationManager::onStart() {
 }
 
 void BaseLocationManager::onFrame() {
+    if (needRecalculation) {
+        for (auto baseLocation : m_baseLocationPtrs) {
+            baseLocation->recalculateDistanceMap();
+        }
+        needRecalculation = false;
+    }
     drawBaseLocations();
 }
 
@@ -216,5 +222,9 @@ CCPosition BaseLocationManager::getNextExpansion(int player) const {
 void BaseLocationManager::resourceExpiredCallback(const Resource* resource) {
     BaseLocation *baseLocation = getBaseLocation(resource);
     baseLocation->resourceExpiredCallback(resource);
+}
+
+void BaseLocationManager::prepareRecalculation() {
+    needRecalculation = true;
 }
 
