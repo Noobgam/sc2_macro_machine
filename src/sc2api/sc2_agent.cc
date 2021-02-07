@@ -77,10 +77,7 @@ void ActionImp::SendActions() {
     }
 
     request_actions_ = nullptr;
-    auto&& response = control_.WaitForResponse();
-    for (auto effect : response->data().effects()) {
-        std::cerr << effect.effect_id() << " " << effect.name() << " " << effect.friendly_name() << std::endl;
-    }
+    control_.WaitForResponse();
 }
 
 void ActionImp::ToggleAutocast(Tag unit_tag, AbilityID ability) {
