@@ -90,14 +90,48 @@ void CannonStartModule::onFrame() {
     }
     if (currentAnalysis != NULL) {
         int analysisRev = analyzer.analysisRevision;
-        LOG_DEBUG << "Ready to change: " << analysisRev << " " << latestProcessedRevision << BOT_ENDL;
         if (analysisRev != latestProcessedRevision) {
+            LOG_DEBUG << "Ready to change: " << analysisRev << " " << latestProcessedRevision << BOT_ENDL;
             std::vector<PylonPlacement> pylonPlacements;
+            LOG_DEBUG << "Initial number of placements: " << currentAnalysis->pylonPlacements.size() << BOT_ENDL;
             for (auto&& pp : currentAnalysis->pylonPlacements) {
-                if (isPylonPlacementScary(pp)) {
+                if (isPlacementValid(pp) && isPylonPlacementScary(pp)) {
                     pylonPlacements.push_back(pp);
+                } else {
+                    if (!isPlacementValid(pp)) {
+                        auto&& log = LOG_DEBUG << "Rejected invalid placement: ";
+                        for (auto x : pp.pylonPositions) {
+                            log << x.x << ":" << x.y << " ";
+                        }
+                        log << BOT_ENDL;
+                    }
+                    if (!isPylonPlacementScary(pp)) {
+                        auto&& log = LOG_DEBUG << "Rejected non-scary placement: ";
+                        for (auto x : pp.pylonPositions) {
+                            log << x.x << ":" << x.y << " ";
+                        }
+                        log << BOT_ENDL;
+                    }
                 }
             }
+            LOG_DEBUG << "First filter of placements: " << pylonPlacements.size() << BOT_ENDL;
+
+            int mnPylonCount = 100;
+            if (!pylonPlacements.empty()) {
+                for (auto&& placement : pylonPlacements) {
+                    mnPylonCount = std::min(mnPylonCount, static_cast<int>(placement.pylonPositions.size()));
+                }
+            }
+            {
+                std::vector<PylonPlacement> pylonPlacements2;
+                for (auto&& placement : pylonPlacements) {
+                    if (placement.pylonPositions.size() == mnPylonCount) {
+                        pylonPlacements2.push_back(placement);
+                    }
+                }
+                pylonPlacements.swap(pylonPlacements2);
+            }
+            LOG_DEBUG << "Selected only [" << mnPylonCount << "] pylon placements. " << pylonPlacements.size() << " left." << BOT_ENDL;
 
             if (!pylonPlacements.empty()) {
                 srand(time(NULL));
@@ -117,6 +151,10 @@ void CannonStartModule::onFrame() {
     }
     auto mainSquad = m_bot.getManagers().getSquadManager().getSquad(m_mainSquad.value()).value();
     if (selectedPlacement.has_value()) {
+        if (!isPlacementValid(selectedPlacement.value())) {
+            selectedPlacement = {};
+            return;
+        }
         auto&& placement = selectedPlacement.value();
         for (auto &&tile : placement.pylonPositions) {
             float x = tile.x;
@@ -190,6 +228,7 @@ void CannonStartModule::updateStrategy() {
 bool CannonStartModule::isPylonPlacementScary(const PylonPlacement &pylonPlacement) const {
     auto&& enemies = m_bot.UnitInfo().getUnits(Players::Enemy);
     std::vector<const Unit*> targets;
+    std::vector<const Resource*> targetMinerals;
 
     std::copy_if (enemies.begin(), enemies.end(), std::back_inserter(targets),
                   [](const Unit* unit) {
@@ -203,31 +242,65 @@ bool CannonStartModule::isPylonPlacementScary(const PylonPlacement &pylonPlaceme
 
     for (auto&& occ : m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations()) {
         for (auto&& mineral : occ->getMinerals()) {
-            targets.push_back(mineral->getUnit());
-
+            targetMinerals.push_back(mineral);
         }
     }
 
     int goodCannons = 0;
     for (auto&& cannon : pylonPlacement.cannonPlacements) {
-        for (auto&& unit : targets) {
-            const int PHOTON_CANNON_RANGE = 7;
-            CCPosition cannonCenter{
+        const float PHOTON_CANNON_RANGE = 7.5;
+        CCPosition cannonCenter{
                 cannon.x + 1.f,
                 cannon.y + 1.f
-            };
-            float scaryRange =
-                    unit->getType().isMineral()
-                        ? PHOTON_CANNON_RANGE - 1.f
-                        : PHOTON_CANNON_RANGE + unit->getUnitPtr()->radius - 0.1;
+        };
+
+        bool thisIsGood = false;
+
+        for (auto&& unit : targets) {
+
+            float scaryRange = PHOTON_CANNON_RANGE + unit->getUnitPtr()->radius - 0.1f;
             if (Util::Dist(unit, cannonCenter) <= scaryRange) {
-                ++goodCannons;
+                thisIsGood = true;
                 break;
             }
+        }
+
+        if (thisIsGood) {
+            ++goodCannons;
+            continue;
+        }
+
+        for (auto&& mineral : targetMinerals) {
+            float dist = Util::Dist(mineral->getUnit(), cannonCenter);
+            LOG_DEBUG << "Distance to mineral " << mineral->getID() << "=" << dist << BOT_ENDL;
+            float scaryRange = PHOTON_CANNON_RANGE - 1.f;
+            if (dist <= scaryRange) {
+                thisIsGood = true;
+                break;
+            }
+        }
+        if (thisIsGood) {
+            ++goodCannons;
+            continue;
         }
     }
     if (goodCannons == pylonPlacement.cannonPlacements.size()) {
         return true;
     }
     return false;
+}
+
+bool CannonStartModule::isPlacementValid(const PylonPlacement &placement) const {
+    for (auto&& pylonPos : placement.pylonPositions) {
+        for (int dx = 0; dx < 2; ++dx) {
+            for (int dy = 0; dy < 2; ++dy) {
+                int x = pylonPos.x + dx;
+                int y = pylonPos.y + dy;
+                if (!m_bot.Map().isBuildable(x, y)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }

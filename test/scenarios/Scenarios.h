@@ -12,7 +12,7 @@ namespace Scenarios {
         "CanWinAgainstEmptyBot",
         "SubmarineLE.SC2Map",
         12345,
-        false,
+        true,
         sc2::Race::Protoss,
         sc2::Race::Protoss,
         [] () { return std::make_unique<CCBot>(); },

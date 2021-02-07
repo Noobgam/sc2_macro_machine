@@ -5,7 +5,7 @@
 
 using std::vector;
 
-const int D = 3;
+const int D = 1;
 
 inline int step(int x) {
     if (x < 0) {
@@ -27,11 +27,17 @@ inline float dist(float a, float b) {
     return sqrt(a * a + b * b);
 }
 
-ExactDistanceMap::ExactDistanceMap(const StaticMapMeta & mapMeta, const CCTilePosition &startTile, int limit)
-        : m_width(mapMeta.width())
-        , m_height(mapMeta.height())
-        , m_startTile(startTile)
-        , limit(limit)
+ExactDistanceMap::ExactDistanceMap(
+        int width,
+        int height,
+        const CCTilePosition &startTile,
+        int limit,
+        std::function<int(int, int)> walkable
+)   : m_width(width)
+    , m_height(height)
+    , m_startTile(startTile)
+    , limit(limit)
+    , walkable(walkable)
 {
     std::priority_queue<pair<float, pair<int,int>>> pq;
     pq.push({0, {startTile.x, startTile.y}});
@@ -69,7 +75,7 @@ ExactDistanceMap::ExactDistanceMap(const StaticMapMeta & mapMeta, const CCTilePo
             for (int dy = -D; dy <= D; ++dy) {
                 int tox = dx + x;
                 int toy = dy + y;
-                if (mapMeta.isWalkable(tox, toy)) {
+                if (!walkable(tox, toy)) {
                     blocked[dx + D][dy + D] = true;
                 }
             }

@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <set>
 
+using namespace std;
+
 constexpr auto ACCEPTABLE_REALTIME_STUTTER = std::chrono::milliseconds{5};
 
 bool BasicAnalyser::recalculate(const CCBot &bot) {
@@ -138,6 +140,7 @@ void BasicAnalyser::analyze(const BaseLocation *baseLocation) {
 
     std::unique_ptr<BaseAnalysis> currentAnalysis = std::make_unique<BaseAnalysis>();
     currentAnalysis->revision = ++revision;
+    minPylonTarget = 2;
     currentPylonTarget = 3;
     recursion0(relevantTiles, currentAnalysis);
     auto prev = latestAnalysis.exchange(currentAnalysis.release());
@@ -179,13 +182,6 @@ void BasicAnalyser::recursion0(
         const std::vector<CCTilePosition> &pylonCandidates,
         std::unique_ptr<BaseAnalysis>& currentAnalysis
 ) {
-    if (cutEarly()) {
-        return;
-    }
-    if (chosenPylons.size() == currentPylonTarget) {
-        checkCurrentPlacementAndAppend(currentAnalysis);
-        return;
-    }
     // every pylon must be placed close to the wall
     for (auto candidate : pylonCandidates) {
         int x = candidate.x;
@@ -227,9 +223,11 @@ void BasicAnalyser::recursion(
     if (cutEarly()) {
         return;
     }
-    if (chosenPylons.size() == currentPylonTarget) {
+    if (chosenPylons.size() >= minPylonTarget) {
         checkCurrentPlacementAndAppend(currentAnalysis);
-        return;
+        if (chosenPylons.size() == currentPylonTarget) {
+            return;
+        }
     }
     // every pylon must be placed close to the wall
     for (auto candidate : pylonCandidates) {
@@ -331,18 +329,6 @@ bool BasicAnalyser::cutEarly() const {
     }
     int value = (mxx - mnx) * (mxy - mny);
     return value > 24;
-}
-
-namespace {
-    using namespace std;
-    struct hash_pair {
-        template<class T1, class T2>
-        size_t operator()(const pair <T1, T2> &p) const {
-            auto hash1 = hash<T1> {}(p.first * 10000);
-            auto hash2 = hash<T2> {}(p.second);
-            return hash1 ^ hash2;
-        }
-    };
 }
 
 bool BasicAnalyser::fastCheck() const {
@@ -500,7 +486,17 @@ std::vector<CCTilePosition> BasicAnalyser::dfsCannonPlacement(int x, int y, int 
 
 bool BasicAnalyser::canWalk(int fromx, int fromy, int tox, int toy) const {
     // TODO: take minerals into account
-    return max(abs(fromy - toy), abs(fromx - tox)) <= 1 && walkable[tox][toy];
+    int dx = tox - fromx;
+    int dy = toy - fromy;
+    if (max(abs(dx), abs(dy)) > 1 || !walkable[tox][toy]) {
+        return false;
+    }
+    if (abs(dx) + abs(dy) == 2) {
+        if (minerals[fromx][toy] || minerals[tox][fromy]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void BasicAnalyser::requestCancel() {
