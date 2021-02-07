@@ -25,6 +25,7 @@ private:
     std::optional<Squad*> assignScoutSquad(const BaseLocation* baseLocation);
     void updateStrategy();
     bool isPylonPlacementScary(const PylonPlacement& pylonPlacement) const;
+    bool isPlacementValid(const PylonPlacement& placement) const;
 public:
     explicit CannonStartModule(CCBot & bot);
 
