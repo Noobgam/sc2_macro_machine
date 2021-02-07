@@ -272,7 +272,6 @@ bool CannonStartModule::isPylonPlacementScary(const PylonPlacement &pylonPlaceme
 
         for (auto&& mineral : targetMinerals) {
             float dist = Util::Dist(mineral->getUnit(), cannonCenter);
-            LOG_DEBUG << "Distance to mineral " << mineral->getID() << "=" << dist << BOT_ENDL;
             float scaryRange = PHOTON_CANNON_RANGE - 1.f;
             if (dist <= scaryRange) {
                 thisIsGood = true;
