@@ -69,12 +69,14 @@ void CombatManager::orderToGroup(Squad* squad) {
         auto path = base->getDistanceMap().getPathTo(
                 enemyBaseLocation.value()->getDepotActualPosition()
         );
-        squad->setOrder(std::make_shared<GroupAroundOrder>(
-                m_bot,
-                squad,
-                Util::GetTileCenter(path[10]),
-                true
-        ));
+        if (!squad->isEmpty()) {
+            squad->setOrder(std::make_shared<GroupAroundOrder>(
+                    m_bot,
+                    squad,
+                    Util::GetTileCenter(path[10]),
+                    true
+            ));
+        }
     }
 }
 

@@ -49,7 +49,7 @@ public:
     // boolean relevance map, signifies whether
     std::vector<std::vector<bool>> isRelevantTile;
 
-
+    int minPylonTarget;
     int currentPylonTarget;
     std::vector<CCTilePosition> chosenPylons;
 

@@ -42,7 +42,13 @@ ScoutingKeyPoints ScoutingKeyPoints::getScoutingKeyPoints(const StaticMapMeta &m
     CCTilePosition targetLocation = std::find_if(bases.begin(), bases.end(), [baseLocationId](auto& base) {
         return base.getBaseId() == baseLocationId;
     })->depotPos;
-    auto emp = make_unique<ExactDistanceMap>(mapMeta, targetLocation, 75);
+    auto emp = make_unique<ExactDistanceMap>(
+            mapMeta.width(),
+            mapMeta.height(),
+            targetLocation,
+            75,
+            [mapMeta](int x, int y) { return mapMeta.isWalkable(x, y); }
+    );
     vector <CCTilePosition> positions;
     positions.reserve(emp->m_dist.size());
     for (auto& lr : emp->m_dist) {
