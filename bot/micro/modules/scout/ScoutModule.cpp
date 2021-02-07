@@ -6,6 +6,9 @@
 ScoutModule::ScoutModule(CCBot &bot) : m_bot(bot) {}
 
 void ScoutModule::onFrame() {
+    if (m_bot.getStrategy().getCurrentStrategy() == Strategy::HighLevelStrategy::CANNONS) {
+        return;
+    }
     auto gatewayType = UnitType(sc2::UNIT_TYPEID::PROTOSS_GATEWAY, m_bot);
     bool hasGate = m_bot.UnitInfo().getBuildingCount(Players::Self, gatewayType, UnitStatus::TOTAL) > 0;
     if (!hasGate) {

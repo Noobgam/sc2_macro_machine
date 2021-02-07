@@ -15,7 +15,8 @@ namespace MicroUtil {
     std::optional<const Unit*> findUnitWithHighestThreat(
         const Unit* unit,
         float range,
-        const std::vector<const Unit*>& enemies
+        const std::vector<const Unit*>& enemies,
+        bool filterPossible = false
     );
 
     std::vector<const Unit*> detectCloseTargets(CCPosition position, int range, const std::vector<const Unit*>& enemies);

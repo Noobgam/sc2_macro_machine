@@ -5,6 +5,7 @@
 #include <micro/order/scouting/ScoutEnemyBaseOrder.h>
 #include <random>
 #include <micro/order/cannons/FirstPylonPlacementOrder.h>
+#include <util/Util.h>
 
 CannonStartModule::CannonStartModule(CCBot &bot)
     : m_bot(bot)
@@ -48,9 +49,13 @@ void CannonStartModule::onFrame() {
             m_mainSquad.swap(m_subSquad);
             return;
         }
-        auto&& squad = assignScoutSquad(bases[0]);
-        if (squad.has_value()) {
-            m_mainSquad = squad.value()->getId();
+        auto pylonType = UnitType(sc2::UNIT_TYPEID::PROTOSS_PYLON, m_bot);
+        int pylonNumber = m_bot.UnitInfo().getBuildingCount(Players::Self, pylonType, UnitStatus::TOTAL);
+        if (pylonNumber >= 1) {
+            auto&& squad = assignScoutSquad(bases[0]);
+            if (squad.has_value()) {
+                m_mainSquad = squad.value()->getId();
+            }
         }
         return;
     } else {
@@ -84,17 +89,30 @@ void CannonStartModule::onFrame() {
         //std::random_shuffle(currentAnalysis->pylonPlacements.begin(), currentAnalysis->pylonPlacements.end());
     }
     if (currentAnalysis != NULL) {
-        if (!currentAnalysis->pylonPlacements.empty()) {
-            if (!selectedPlacement.has_value()) {
-                // TODO: select placement based on threat to mineral line / buildings
+        int analysisRev = analyzer.analysisRevision;
+        LOG_DEBUG << "Ready to change: " << analysisRev << " " << latestProcessedRevision << BOT_ENDL;
+        if (analysisRev != latestProcessedRevision) {
+            std::vector<PylonPlacement> pylonPlacements;
+            for (auto&& pp : currentAnalysis->pylonPlacements) {
+                if (isPylonPlacementScary(pp)) {
+                    pylonPlacements.push_back(pp);
+                }
+            }
+
+            if (!pylonPlacements.empty()) {
                 srand(time(NULL));
-                int id = rand() % currentAnalysis->pylonPlacements.size();
-                auto it = currentAnalysis->pylonPlacements.begin();
+                int id = rand() % pylonPlacements.size();
+                auto it = pylonPlacements.begin();
                 for (int i = 0; i < id; ++i) {
                     ++it;
                 }
                 selectedPlacement = *it;
+            } else {
+                selectedPlacement = {};
+                // TODO: there are no pylon placements which are valid. We need to change our strategy
+                //  or cannon rush other base
             }
+            latestProcessedRevision = analysisRev;
         }
     }
     auto mainSquad = m_bot.getManagers().getSquadManager().getSquad(m_mainSquad.value()).value();
@@ -167,4 +185,49 @@ void CannonStartModule::updateStrategy() {
         analyzer.requestCancel();
         return;
     }
+}
+
+bool CannonStartModule::isPylonPlacementScary(const PylonPlacement &pylonPlacement) const {
+    auto&& enemies = m_bot.UnitInfo().getUnits(Players::Enemy);
+    std::vector<const Unit*> targets;
+
+    std::copy_if (enemies.begin(), enemies.end(), std::back_inserter(targets),
+                  [](const Unit* unit) {
+            return unit->getType().isBuilding();
+        }
+    );
+//    auto&& minerals = m_bot.getManagers().getResourceManager().getMinerals();
+//    for (auto&& mineral : minerals) {
+//        targets.push_back(mineral->getUnit());
+//    }
+
+    for (auto&& occ : m_bot.getManagers().getEnemyManager().getEnemyBasesManager().getOccupiedEnemyBaseLocations()) {
+        for (auto&& mineral : occ->getMinerals()) {
+            targets.push_back(mineral->getUnit());
+
+        }
+    }
+
+    int goodCannons = 0;
+    for (auto&& cannon : pylonPlacement.cannonPlacements) {
+        for (auto&& unit : targets) {
+            const int PHOTON_CANNON_RANGE = 7;
+            CCPosition cannonCenter{
+                cannon.x + 1.f,
+                cannon.y + 1.f
+            };
+            float scaryRange =
+                    unit->getType().isMineral()
+                        ? PHOTON_CANNON_RANGE - 1.f
+                        : PHOTON_CANNON_RANGE + unit->getUnitPtr()->radius - 0.1;
+            if (Util::Dist(unit, cannonCenter) <= scaryRange) {
+                ++goodCannons;
+                break;
+            }
+        }
+    }
+    if (goodCannons == pylonPlacement.cannonPlacements.size()) {
+        return true;
+    }
+    return false;
 }

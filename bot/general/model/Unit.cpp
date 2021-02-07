@@ -144,6 +144,10 @@ void Unit::move(const CCPosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, targetPosition);
 }
 
+void Unit::move(const Unit & target) const {
+    m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, target.getUnitPtr());
+}
+
 void Unit::move(const CCTilePosition & targetPosition) const {
     m_bot->getUnitCommandManager().UnitCommand(m_unit, sc2::ABILITY_ID::MOVE_MOVE, CCPosition((float)targetPosition.x, (float)targetPosition.y));
 }
@@ -239,4 +243,37 @@ bool Unit::canAttack(const Unit * target) const {
         return false;
     }
     return true;
+}
+
+void Unit::unloadUnitById(CCUnitID unitId) const {
+    int passengerIndex = -1;
+    for (int i = 0; i < m_unit->passengers.size(); ++i) {
+        if (m_unit->passengers[i].tag == unitId) {
+            passengerIndex = i;
+            break;
+        }
+    }
+    if (passengerIndex != -1) {
+        m_bot->Actions()->SendActions();
+        SC2APIProtocol::RequestAction* request_action = m_bot->Actions()->GetRequestAction();
+        {
+            // select unit
+            SC2APIProtocol::Action *action = request_action->add_actions();
+            SC2APIProtocol::ActionRaw *action_raw = action->mutable_action_raw();
+            SC2APIProtocol::ActionRawUnitCommand *command = action_raw->mutable_unit_command();
+
+            command->set_ability_id(0);
+            command->add_unit_tags(m_unit->tag);
+        }
+        {
+            // drop passenger
+            SC2APIProtocol::Action *action = request_action->add_actions();
+            SC2APIProtocol::ActionUI *action_ui = action->mutable_action_ui();
+            SC2APIProtocol::ActionCargoPanelUnload *command = action_ui->mutable_cargo_panel();
+
+            command->set_unit_index(passengerIndex);
+        }
+        m_bot->Actions()->SendActions();
+
+    }
 }
